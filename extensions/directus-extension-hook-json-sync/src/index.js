@@ -22,6 +22,7 @@ const emptyPayload = () => ({
 	playlists: [],
 	delete_clients: [],
 	delete_players: [],
+	delete_player_routes: [],
 	delete_streams: [],
 	delete_devices: [],
 });
@@ -189,6 +190,10 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 
 	const clientSnapshot = async (clientId) => ({
 		playerIds: await playerIdsFromClients([clientId]),
+		playerCodes: uniq((await readRowsByQuery('players', {
+			fields: ['code'],
+			filter: { client: { _eq: clientId } },
+		})).map((row) => String(row?.code || '').trim().toLowerCase()).filter(Boolean)),
 		streamIds: await streamIdsFromClients([clientId]),
 	});
 
@@ -196,9 +201,10 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 		const payload = emptyPayload();
 
 		for (const clientId of uniq(clientIds)) {
-			const snapshot = snapshotsByClient[clientId] || { playerIds: [], streamIds: [] };
+			const snapshot = snapshotsByClient[clientId] || { playerIds: [], playerCodes: [], streamIds: [] };
 			payload.delete_clients.push(clientId);
 			payload.delete_players.push(...snapshot.playerIds);
+			payload.delete_player_routes.push(...snapshot.playerCodes);
 			payload.delete_devices.push(...snapshot.playerIds);
 			payload.delete_streams.push(...snapshot.streamIds);
 		}
@@ -235,6 +241,7 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 			return mergePayload({
 				players: playerIds,
 				clients: clientIds,
+				delete_player_routes: extra.delete_player_routes,
 			});
 		}
 
@@ -425,10 +432,13 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 				extra = { streams: uniq(rows.map((row) => valueToId(row?.streams_id)).filter(Boolean)) };
 			} else if (collection === 'players') {
 				const rows = await readRowsByQuery('players', {
-					fields: ['id', 'client'],
+					fields: ['id', 'client', 'code'],
 					filter: { id: { _in: ids } },
 				});
-				extra = { clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)) };
+				extra = {
+					clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)),
+					delete_player_routes: uniq(rows.map((row) => String(row?.code || '').trim().toLowerCase()).filter(Boolean)),
+				};
 			} else if (collection === 'ads') {
 				const rows = await readRowsByQuery('ads', {
 					fields: ['id', 'client'],
@@ -486,10 +496,13 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 				extra = { streams: uniq(rows.map((row) => valueToId(row?.streams_id)).filter(Boolean)) };
 			} else if (collection === 'players') {
 				const rows = await readRowsByQuery('players', {
-					fields: ['id', 'client'],
+					fields: ['id', 'client', 'code'],
 					filter: { id: { _in: ids } },
 				});
-				extra = { clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)) };
+				extra = {
+					clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)),
+					delete_player_routes: uniq(rows.map((row) => String(row?.code || '').trim().toLowerCase()).filter(Boolean)),
+				};
 			} else if (collection === 'ads') {
 				const rows = await readRowsByQuery('ads', {
 					fields: ['id', 'client'],
@@ -567,6 +580,7 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 		const body = {
 			clients: payload.delete_clients,
 			players: payload.delete_players,
+			player_routes: payload.delete_player_routes,
 			devices: payload.delete_devices,
 			streams: payload.delete_streams,
 		};

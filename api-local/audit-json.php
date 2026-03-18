@@ -116,19 +116,24 @@ foreach ($clientsRows as $row) {
 }
 
 $resPlayers = directus_get($ENV, '/items/players', [
-    'fields' => 'id,status,client,stream',
+    'fields' => 'id,code,status,client,stream',
     'limit' => $limit,
 ]);
 if (!$resPlayers['ok']) $errors[] = ['entity' => 'players', 'error' => $resPlayers['error'], 'status' => $resPlayers['status'] ?? 0];
 $playersRows = $resPlayers['ok'] && is_array($resPlayers['data']['data'] ?? null) ? $resPlayers['data']['data'] : [];
 
 $streamIdsFromPlayers = [];
+$playerIdByCode = [];
 foreach ($playersRows as $row) {
     if (!is_array($row)) continue;
     $id = trim((string)($row['id'] ?? ''));
     if ($id === '') continue;
+    $code = strtolower(trim((string)($row['code'] ?? '')));
 
-    if (($row['status'] ?? '') !== 'archived') $expected['players'][] = $id;
+    if (($row['status'] ?? '') !== 'archived' && $code !== '') {
+        $expected['players'][] = $code;
+        $playerIdByCode[$code] = $id;
+    }
 
     $streamId = value_id($row['stream'] ?? null);
     if ($streamId !== '') $streamIdsFromPlayers[] = $streamId;
@@ -297,7 +302,22 @@ if ($mode === 'fix') {
         $extra = $result[$key]['extra'];
 
         if ($missing) {
-            $res = call_local_php($ENV, $scripts[$key], $missing);
+            $writeIds = $missing;
+            if ($key === 'players') {
+                $writeIds = [];
+                foreach ($missing as $code) {
+                    $code = strtolower(trim((string)$code));
+                    $playerId = $playerIdByCode[$code] ?? '';
+                    if ($playerId !== '') $writeIds[] = $playerId;
+                }
+            }
+
+            if ($writeIds) {
+                $res = call_local_php($ENV, $scripts[$key], $writeIds);
+            } else {
+                $res = ['ok' => true];
+            }
+
             if ($res['ok']) {
                 $fixed['written'][$key] = count($missing);
             } else {

@@ -4,34 +4,10 @@ declare(strict_types=1);
 
 $dataDir = '/var/www/app/data/cdn/data';
 $settingsPath = __DIR__ . '/config/settings.json';
-$player = isset($_GET['player']) ? trim((string)$_GET['player']) : '';
 require_once __DIR__ . '/config/messages.php';
 require_once __DIR__ . '/config/settings.php';
-
-function readJsonFile(string $path): mixed {
-    if (!is_file($path) || !is_readable($path)) {
-        return null;
-    }
-
-    $json = file_get_contents($path);
-    if ($json === false || $json === '') {
-        return null;
-    }
-
-    try {
-        return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-    } catch (Throwable $e) {
-        return null;
-    }
-}
-
-function playerPath(string $base, string $player): string {
-    return $base . '/players/' . $player . '.json';
-}
-
-function clientPath(string $base, string $client): string {
-    return $base . '/clients/' . $client . '.json';
-}
+require_once __DIR__ . '/runtime.php';
+$player = isset($_GET['player']) ? runtime_normalize_player_code($_GET['player']) : '';
 
 function resolveTimezoneOffsetMinutes(): int {
     $value = $_GET['tz'] ?? null;
@@ -82,7 +58,7 @@ if ($player === '') {
 }
 
 $tzOffset = resolveTimezoneOffsetMinutes();
-$playerData = readJsonFile(playerPath($dataDir, $player));
+$context = runtime_resolve_player_context($dataDir, $player);
 $settings = player_settings($settingsPath);
 $appVersion = player_settings_app_version($settingsPath);
 $playerFrontendSettings = [
@@ -93,9 +69,12 @@ $playerFrontendSettings = [
 $pinPlaceholder = trim((string)($settings['messages']['pin_placeholder'] ?? ''));
 $pinSubmitLabel = trim((string)($settings['messages']['pin_submit'] ?? ''));
 
-if (!is_array($playerData)) {
+if (!is_array($context) || !is_array($context['player'] ?? null)) {
     renderState(player_message('player_not_found'));
 }
+
+/** @var array<string,mixed> $playerData */
+$playerData = $context['player'];
 
 if (isset($playerData['status']) && !isActiveStatus($playerData['status'])) {
     renderState(player_message('player_inactive'));
@@ -105,12 +84,13 @@ if (isExpired($playerData['end'] ?? null, $tzOffset)) {
     renderState(player_message('player_expired'));
 }
 
-$client = isset($playerData['client']) ? trim((string)$playerData['client']) : '';
+$client = trim((string)($context['client_id'] ?? ''));
 if ($client === '') {
     renderState(player_message('player_client_missing'));
 }
 
-$clientData = readJsonFile(clientPath($dataDir, $client));
+/** @var mixed $clientData */
+$clientData = $context['client'] ?? null;
 if (!is_array($clientData)) {
     renderState(player_message('client_not_found'));
 }

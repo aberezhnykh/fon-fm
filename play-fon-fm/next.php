@@ -12,6 +12,7 @@ $dataDir = '/var/www/app/data/cdn/data';
 $settingsPath = __DIR__ . '/config/settings.json';
 require_once __DIR__ . '/config/messages.php';
 require_once __DIR__ . '/config/settings.php';
+require_once __DIR__ . '/runtime.php';
 const AD_WINDOW_SECONDS = 300;
 const MIN_QUEUE_SECONDS = 300;
 const MAX_IDLE_RETRY_SECONDS = 300;
@@ -194,23 +195,6 @@ function breakDuration(array $break): int {
     return $total;
 }
 
-function readJsonFile(string $path): mixed {
-    if (!is_file($path) || !is_readable($path)) {
-        return null;
-    }
-
-    $json = file_get_contents($path);
-    if ($json === false || $json === '') {
-        return null;
-    }
-
-    try {
-        return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-    } catch (Throwable $e) {
-        return null;
-    }
-}
-
 function writeJsonFile(string $path, array $data): bool {
     $dir = dirname($path);
 
@@ -226,24 +210,12 @@ function writeJsonFile(string $path, array $data): bool {
     return file_put_contents($path, $json . PHP_EOL, LOCK_EX) !== false;
 }
 
-function playerPath(string $base, string $player): string {
-    return $base . '/players/' . $player . '.json';
-}
-
-function clientPath(string $base, string $client): string {
-    return $base . '/clients/' . $client . '.json';
-}
-
 function streamPath(string $base, string $stream): string {
     return $base . '/streams/' . $stream . '.json';
 }
 
 function playlistPath(string $base, string $playlist): string {
     return $base . '/playlists/' . $playlist . '.json';
-}
-
-function devicePath(string $base, string $player): string {
-    return $base . '/devices/' . $player . '.json';
 }
 
 function resolveTimezoneOffsetMinutes(): int {
@@ -662,7 +634,7 @@ function pickTrackFromPlaylists(string $dataDir, array $playlists, ?int $playlis
         return null;
     }
 
-    $playlistData = readJsonFile(playlistPath($dataDir, (string)$playlistPick['id']));
+    $playlistData = runtime_read_json(playlistPath($dataDir, (string)$playlistPick['id']));
     if (!is_array($playlistData)) {
         return null;
     }
@@ -768,7 +740,7 @@ function buildQueue(
  * Start
  */
 
-$player = isset($_GET['player']) ? trim((string)$_GET['player']) : '';
+$player = isset($_GET['player']) ? runtime_normalize_player_code($_GET['player']) : '';
 $device = isset($_GET['device']) ? normalizeDevice($_GET['device']) : '';
 $tzOffset = resolveTimezoneOffsetMinutes();
 $clientVersion = isset($_GET['version']) ? trim((string)$_GET['version']) : '';
@@ -792,8 +764,15 @@ if (isset($_GET['playlist']) && $_GET['playlist'] !== '') {
     $playlistIndex = (int)$_GET['playlist'];
 }
 
-$playerData = readJsonFile(playerPath($dataDir, $player));
-if (!is_array($playerData)) {
+$context = runtime_resolve_player_context($dataDir, $player);
+if (!is_array($context) || !is_array($context['player'] ?? null)) {
+    message('player_not_found');
+}
+
+/** @var array<string,mixed> $playerData */
+$playerData = $context['player'];
+$playerId = trim((string)($context['player_id'] ?? ''));
+if ($playerId === '') {
     message('player_not_found');
 }
 
@@ -807,8 +786,8 @@ if (isExpired($playerData['end'] ?? null, $tzOffset)) {
     message('player_expired');
 }
 
-$deviceFile = devicePath($dataDir, $player);
-$deviceData = readJsonFile($deviceFile);
+$deviceFile = runtime_device_path($dataDir, $playerId);
+$deviceData = runtime_read_json($deviceFile);
 $storedDevice = '';
 
 if (is_array($deviceData) && isset($deviceData['device'])) {
@@ -827,12 +806,13 @@ if ($storedDevice === '') {
     message('device_busy');
 }
 
-$client = isset($playerData['client']) ? (string)$playerData['client'] : '';
+$client = trim((string)($context['client_id'] ?? ''));
 if ($client === '') {
     message('player_client_missing');
 }
 
-$clientData = readJsonFile(clientPath($dataDir, $client));
+/** @var mixed $clientData */
+$clientData = $context['client'] ?? null;
 if (!is_array($clientData)) {
     message('client_not_found');
 }
@@ -852,7 +832,7 @@ if (!$schedules) {
     okIdle('', null, $tzOffset);
 }
 
-$schedule = pickSchedule($schedules, $player, $tzOffset);
+$schedule = pickSchedule($schedules, $playerId, $tzOffset);
 if ($schedule === null) {
     okIdle('', null, $tzOffset);
 }
@@ -872,7 +852,7 @@ if ($stream === '') {
     okIdle('', nextSlotDelay($schedule, $tzOffset), $tzOffset);
 }
 
-$streamData = readJsonFile(streamPath($dataDir, $stream));
+$streamData = runtime_read_json(streamPath($dataDir, $stream));
 if (!is_array($streamData)) {
     message('stream_not_found');
 }
@@ -884,14 +864,14 @@ if (!is_array($playlists) || !$playlists) {
     okIdle($streamTitle, null, $tzOffset);
 }
 
-$dueBreak = pickDueBreakNow($ads, $player, $tzOffset);
+$dueBreak = pickDueBreakNow($ads, $playerId, $tzOffset);
 if ($startMode !== 'manual' && $startMode !== 'auto' && $dueBreak !== null) {
     $queueBuild = buildQueue(
         $dataDir,
         $playlists,
         $streamTitle,
         $ads,
-        $player,
+        $playerId,
         $tzOffset,
         $playlistIndex,
         $dueBreak['slot'] + breakDuration($dueBreak['break'])
@@ -906,7 +886,7 @@ $queueBuild = buildQueue(
     $playlists,
     $streamTitle,
     $ads,
-    $player,
+    $playerId,
     $tzOffset,
     $playlistIndex,
     localNowTimestamp($tzOffset)

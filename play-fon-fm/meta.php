@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $dataDir = '/var/www/app/data/cdn/data';
 require_once __DIR__ . '/config/messages.php';
+require_once __DIR__ . '/runtime.php';
 
 function respond(array $data, int $status = 200): never {
     http_response_code($status);
@@ -20,27 +21,6 @@ function message(string $code): never {
         'action' => player_message_action($code),
         'message' => $text,
     ]);
-}
-
-function readJsonFile(string $path): mixed {
-    if (!is_file($path) || !is_readable($path)) {
-        return null;
-    }
-
-    $json = file_get_contents($path);
-    if ($json === false || $json === '') {
-        return null;
-    }
-
-    try {
-        return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-    } catch (Throwable $e) {
-        return null;
-    }
-}
-
-function playerPath(string $base, string $player): string {
-    return $base . '/players/' . $player . '.json';
 }
 
 function resolveTimezoneOffsetMinutes(): int {
@@ -79,17 +59,20 @@ function isExpired(?string $end, int $offset): bool {
     return todayDate($offset) > $end;
 }
 
-$player = isset($_GET['player']) ? trim((string)$_GET['player']) : '';
+$player = isset($_GET['player']) ? runtime_normalize_player_code($_GET['player']) : '';
 $tzOffset = resolveTimezoneOffsetMinutes();
 
 if ($player === '') {
     message('player_required');
 }
 
-$playerData = readJsonFile(playerPath($dataDir, $player));
-if (!is_array($playerData)) {
+$context = runtime_resolve_player_context($dataDir, $player);
+if (!is_array($context) || !is_array($context['player'] ?? null)) {
     message('player_not_found');
 }
+
+/** @var array<string,mixed> $playerData */
+$playerData = $context['player'];
 
 if (isset($playerData['status']) && !isActiveStatus($playerData['status'])) {
     message('player_inactive');
@@ -102,7 +85,7 @@ if (isExpired($playerData['end'] ?? null, $tzOffset)) {
 respond([
     'ok' => true,
     'player' => $player,
-    'code' => isset($playerData['code']) ? (string)$playerData['code'] : '',
+    'code' => isset($playerData['code']) ? (string)$playerData['code'] : $player,
     'title' => isset($playerData['title']) ? (string)$playerData['title'] : '',
     'level' => isset($playerData['level']) ? $playerData['level'] : null,
 ]);

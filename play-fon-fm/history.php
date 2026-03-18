@@ -4,37 +4,13 @@ declare(strict_types=1);
 
 $dataDir = '/var/www/app/data/cdn/data';
 $historyDir = $dataDir . '/history';
+require_once __DIR__ . '/runtime.php';
 
 function respond(array $data, int $status = 200): never {
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
-}
-
-function readJsonFile(string $path): mixed {
-    if (!is_file($path) || !is_readable($path)) {
-        return null;
-    }
-
-    $json = file_get_contents($path);
-    if ($json === false || $json === '') {
-        return null;
-    }
-
-    try {
-        return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-    } catch (Throwable $e) {
-        return null;
-    }
-}
-
-function playerPath(string $base, string $player): string {
-    return $base . '/players/' . $player . '.json';
-}
-
-function devicePath(string $base, string $player): string {
-    return $base . '/devices/' . $player . '.json';
 }
 
 function normalizeDevice(mixed $value): string {
@@ -64,7 +40,7 @@ function validType(string $value): bool {
     return $value === 'track' || $value === 'ad';
 }
 
-$player = normalizeString($_REQUEST['player'] ?? '');
+$player = runtime_normalize_player_code($_REQUEST['player'] ?? '');
 $device = normalizeDevice($_REQUEST['device'] ?? '');
 $type = normalizeString($_REQUEST['type'] ?? '');
 $id = normalizeString($_REQUEST['id'] ?? '');
@@ -75,12 +51,17 @@ if ($player === '' || $device === '' || $id === '' || !validType($type) || $date
     respond(['ok' => false], 400);
 }
 
-$playerData = readJsonFile(playerPath($dataDir, $player));
-if (!is_array($playerData)) {
+$context = runtime_resolve_player_context($dataDir, $player);
+if (!is_array($context) || !is_array($context['player'] ?? null)) {
     respond(['ok' => false], 404);
 }
 
-$deviceData = readJsonFile(devicePath($dataDir, $player));
+$playerId = trim((string)($context['player_id'] ?? ''));
+if ($playerId === '') {
+    respond(['ok' => false], 404);
+}
+
+$deviceData = runtime_read_json(runtime_device_path($dataDir, $playerId));
 $storedDevice = is_array($deviceData) ? normalizeDevice($deviceData['device'] ?? '') : '';
 if ($storedDevice !== '' && $storedDevice !== $device) {
     respond(['ok' => false], 409);
@@ -92,7 +73,7 @@ $payload = [
     'id' => $id,
 ];
 
-$path = $historyDir . '/' . $player . '/' . $date . '.ndjson';
+$path = $historyDir . '/' . $playerId . '/' . $date . '.ndjson';
 
 if (!writeHistoryLine($path, $payload)) {
     respond(['ok' => false], 500);

@@ -77,7 +77,15 @@ $adsMap = [
     'gain' => 'gain',
 ];
 
-$playerFields = ['id'];
+$playerFields = [
+    'id',
+    'title',
+    'status',
+    'end',
+    'code',
+    'pin',
+    'level',
+];
 $junctionFields = ['schedules_id.id', 'players_id.id'];
 $scheduleFields = [
     'id',
@@ -183,13 +191,30 @@ foreach ($ids as $id) {
     }
 
     $playerIds = [];
+    $players = [];
     $playerRows = $resPlayers['data']['data'] ?? [];
     if (is_array($playerRows)) {
         foreach ($playerRows as $row) {
             if (!is_array($row)) continue;
             $pid = trim((string)($row['id'] ?? ''));
-            if ($pid === '' || in_array($pid, $playerIds, true)) continue;
+            $status = trim((string)($row['status'] ?? ''));
+            if ($pid === '' || $status === 'archived' || in_array($pid, $playerIds, true)) continue;
             $playerIds[] = $pid;
+
+            $code = strtolower(trim((string)($row['code'] ?? '')));
+            if ($code === '') continue;
+
+            $playerJson = clean_array([
+                'id' => $pid,
+                'title' => (string)($row['title'] ?? ''),
+                'status' => $status,
+                'end' => (string)($row['end'] ?? ''),
+                'code' => $code,
+                'pin' => (string)($row['pin'] ?? ''),
+                'level' => $row['level'] ?? null,
+            ]);
+
+            if ($playerJson !== []) $players[] = $playerJson;
         }
     }
 
@@ -288,6 +313,7 @@ foreach ($ids as $id) {
     }
 
     $json = clean_array(array_merge($clientJson, [
+        'players' => $players,
         'ads' => $ads,
         'schedules' => $schedules,
     ]));

@@ -330,7 +330,7 @@
       }
 
     function renderPlayerHead(code, title) {
-      const safeCode = escapeHtml(code || "");
+      const safeCode = escapeHtml(String(code || "").toUpperCase());
       const safeTitle = escapeHtml(title || "");
 
       if (!safeCode && !safeTitle) {
