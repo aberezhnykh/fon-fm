@@ -53,12 +53,8 @@ function renderState(string $message = ''): never {
     exit;
 }
 
-if ($player === '') {
-    renderState(player_message('player_not_found'));
-}
-
 $tzOffset = resolveTimezoneOffsetMinutes();
-$context = runtime_resolve_player_context($dataDir, $player);
+$context = $player !== '' ? runtime_resolve_player_context($dataDir, $player) : null;
 $settings = player_settings($settingsPath);
 $appVersion = player_settings_app_version($settingsPath);
 $playerFrontendSettings = [
@@ -66,36 +62,40 @@ $playerFrontendSettings = [
     'checks' => $settings['checks'] ?? [],
     'retry' => $settings['retry'] ?? [],
 ];
-$pinPlaceholder = trim((string)($settings['messages']['pin_placeholder'] ?? ''));
-$pinSubmitLabel = trim((string)($settings['messages']['pin_submit'] ?? ''));
+$claimYesLabel = trim((string)($settings['messages']['device_confirm_yes'] ?? ''));
+$claimNoLabel = trim((string)($settings['messages']['device_confirm_no'] ?? ''));
+$setupTitle = trim((string)($settings['messages']['setup_title'] ?? ''));
+$setupPlaceholder = trim((string)($settings['messages']['setup_placeholder'] ?? ''));
+$setupSubmitLabel = trim((string)($settings['messages']['setup_submit'] ?? ''));
+$logoutLabel = trim((string)($settings['messages']['logout'] ?? ''));
 
-if (!is_array($context) || !is_array($context['player'] ?? null)) {
+if ($player !== '' && (!is_array($context) || !is_array($context['player'] ?? null))) {
     renderState(player_message('player_not_found'));
 }
 
-/** @var array<string,mixed> $playerData */
-$playerData = $context['player'];
+/** @var array<string,mixed>|null $playerData */
+$playerData = is_array($context) && is_array($context['player'] ?? null) ? $context['player'] : null;
 
-if (isset($playerData['status']) && !isActiveStatus($playerData['status'])) {
+if (is_array($playerData) && isset($playerData['status']) && !isActiveStatus($playerData['status'])) {
     renderState(player_message('player_inactive'));
 }
 
-if (isExpired($playerData['end'] ?? null, $tzOffset)) {
+if (is_array($playerData) && isExpired($playerData['end'] ?? null, $tzOffset)) {
     renderState(player_message('player_expired'));
 }
 
 $client = trim((string)($context['client_id'] ?? ''));
-if ($client === '') {
+if ($player !== '' && $client === '') {
     renderState(player_message('player_client_missing'));
 }
 
 /** @var mixed $clientData */
 $clientData = $context['client'] ?? null;
-if (!is_array($clientData)) {
+if ($player !== '' && !is_array($clientData)) {
     renderState(player_message('client_not_found'));
 }
 
-if (isset($clientData['status']) && !isActiveStatus($clientData['status'])) {
+if (is_array($clientData) && isset($clientData['status']) && !isActiveStatus($clientData['status'])) {
     renderState(player_message('client_inactive'));
 }
 ?>
@@ -111,7 +111,7 @@ if (isset($clientData['status']) && !isActiveStatus($clientData['status'])) {
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="FON.FM" />
   <title>fon.fm</title>
-  <link rel="manifest" href="/manifest?player=<?= rawurlencode($player) ?>" />
+  <link id="manifestLink" rel="manifest" href="/manifest<?= $player !== '' ? '?player=' . rawurlencode($player) : '' ?>" />
   <link rel="icon" href="/app-icon-192.png" sizes="192x192" type="image/png" />
   <link rel="icon" href="/app-icon-512.png" sizes="512x512" type="image/png" />
   <link rel="icon" href="/app-icon.svg" type="image/svg+xml" />
@@ -124,33 +124,51 @@ if (isset($clientData['status']) && !isActiveStatus($clientData['status'])) {
 
 <body>
   <div class="page">
-    <div class="player-shell">
-      <div id="playerHead" class="player-head"></div>
+    <div id="setupWrap" class="setup-screen"<?= $player === '' ? '' : ' hidden' ?>>
+      <div class="setup-shell">
+        <div class="setup-brand">fon.fm</div>
+        <div id="setupTitle" class="setup-title"><?= htmlspecialchars($setupTitle, ENT_QUOTES, 'UTF-8') ?></div>
+        <div id="setupMessage" class="setup-message"></div>
+        <div class="setup-form">
+          <input id="setupInput" class="setup-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="5" placeholder="<?= htmlspecialchars($setupPlaceholder, ENT_QUOTES, 'UTF-8') ?>">
+          <button id="setupSubmit" class="ui-btn setup-submit" type="button"><?= htmlspecialchars($setupSubmitLabel, ENT_QUOTES, 'UTF-8') ?></button>
+        </div>
+      </div>
+    </div>
 
-      <div class="player-wrap">
-        <button id="playButton" class="player-btn" type="button" aria-label="Play / Stop">
-          <div id="icon" class="icon play"></div>
-        </button>
+    <div id="playerShell" class="player-shell"<?= $player === '' ? ' hidden' : '' ?>>
+      <div class="player-header">
+        <div id="playerHead" class="player-head"></div>
       </div>
 
-      <div id="contentArea" class="content-area">
-        <div id="stream" class="stream"></div>
+      <div class="player-main">
+        <div class="player-wrap">
+          <button id="playButton" class="player-btn" type="button" aria-label="Play / Stop">
+            <div id="icon" class="icon play"></div>
+          </button>
+        </div>
 
-        <div id="infoWrap" class="info-wrap">
-          <div id="info" class="info"></div>
+        <div id="contentArea" class="content-area">
+          <div id="stream" class="stream"></div>
 
-          <div id="pinWrap" class="pin-wrap">
-            <div class="pin-box">
-              <input id="pinInput" class="pin-input" type="password" inputmode="numeric" autocomplete="one-time-code" placeholder="<?= htmlspecialchars($pinPlaceholder, ENT_QUOTES, 'UTF-8') ?>" maxlength="4">
-              <button id="pinSubmit" class="pin-submit" type="button"><?= htmlspecialchars($pinSubmitLabel, ENT_QUOTES, 'UTF-8') ?></button>
+          <div id="infoWrap" class="info-wrap">
+            <div id="info" class="info"></div>
+
+            <div id="pinWrap" class="pin-wrap">
+              <div class="pin-box">
+                <button id="pinSubmit" class="ui-btn pin-submit" type="button"><?= htmlspecialchars($claimYesLabel, ENT_QUOTES, 'UTF-8') ?></button>
+                <button id="pinCancel" class="ui-btn pin-submit pin-cancel" type="button"><?= htmlspecialchars($claimNoLabel, ENT_QUOTES, 'UTF-8') ?></button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="bottom-meta">
+      <div class="player-footer">
         <div id="meta" class="meta"></div>
-        <button id="installButton" class="install-btn" type="button" hidden>Установить приложение</button>
+        <div class="player-actions">
+          <button id="logoutButton" class="ui-btn footer-btn logout-btn" type="button"><?= htmlspecialchars($logoutLabel, ENT_QUOTES, 'UTF-8') ?></button>
+        </div>
         <div class="brand"><a href="https://fon.fm/" target="_blank" rel="noopener noreferrer">FON.FM APP <?= htmlspecialchars($appVersion, ENT_QUOTES, 'UTF-8') ?></a></div>
       </div>
     </div>

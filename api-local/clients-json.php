@@ -83,7 +83,6 @@ $playerFields = [
     'status',
     'end',
     'code',
-    'pin',
     'level',
 ];
 $junctionFields = ['schedules_id.id', 'players_id.id'];
@@ -210,7 +209,6 @@ foreach ($ids as $id) {
                 'status' => $status,
                 'end' => (string)($row['end'] ?? ''),
                 'code' => $code,
-                'pin' => (string)($row['pin'] ?? ''),
                 'level' => $row['level'] ?? null,
             ]);
 

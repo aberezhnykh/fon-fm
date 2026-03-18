@@ -15,6 +15,7 @@
     const CONNECTIVITY_CHECK_URL = stringSetting(SETTINGS_CHECKS.connectivity_url, "https://radiosparx.ru/img/logo-dark.svg");
     const CONNECTIVITY_CHECK_TIMEOUT_MS = numberSetting(SETTINGS_CHECKS.connectivity_timeout_ms, 5000);
     const DEVICE_STORAGE_KEY = "fonfm_device";
+    const PLAYER_CODE_STORAGE_KEY = "fonfm_player_code";
     const AUTOSTART_STORAGE_KEY = "fonfm_autostart_after_reload";
     const UPDATED_STORAGE_KEY = "fonfm_updated_after_reload";
     const INTERNET_CHECK_TEXT = stringSetting(SETTINGS_MESSAGES.offline, "");
@@ -25,14 +26,12 @@
     const PLAYER_REQUIRED_TEXT = stringSetting(SETTINGS_MESSAGES.player_required, "");
     const COPY_HINT_TEXT = stringSetting(SETTINGS_MESSAGES.copy_hint, "");
     const COPY_DONE_TEXT = stringSetting(SETTINGS_MESSAGES.copy_done, "");
-    const CLAIM_BUSY_TEXT = stringSetting(SETTINGS_MESSAGES.pin_required, "");
-    const PIN_REQUIRED_TEXT = stringSetting(SETTINGS_MESSAGES.pin_required, "");
-    const PIN_INVALID_LENGTH_TEXT = stringSetting(SETTINGS_MESSAGES.pin_invalid, "");
-    const PIN_INVALID_TEXT = stringSetting(SETTINGS_MESSAGES.pin_invalid, "");
+    const CLAIM_BUSY_TEXT = stringSetting(SETTINGS_MESSAGES.device_busy, "");
     const PLAYER_UPDATED_TEXT = stringSetting(SETTINGS_MESSAGES.player_updated, "");
     const PLAYER_RELOADING_TEXT = stringSetting(SETTINGS_MESSAGES.player_reloading, "");
     const AD_LABEL_TEXT = stringSetting(SETTINGS_MESSAGES.ad_label, "");
     const NOT_FOUND_FALLBACK_TEXT = stringSetting(SETTINGS_MESSAGES.not_found, "");
+    const SETUP_INVALID_TEXT = stringSetting(SETTINGS_MESSAGES.setup_invalid, "");
     const OFFLINE_RETRY_DELAY_INITIAL = numberSetting(SETTINGS_RETRY.offline_initial_ms, 5000);
     const OFFLINE_RETRY_DELAY_MAX = numberSetting(SETTINGS_RETRY.offline_max_ms, 30000);
     const SERVER_RETRY_DELAY_INITIAL = numberSetting(SETTINGS_RETRY.server_initial_ms, 10000);
@@ -46,15 +45,21 @@
     const audio = document.getElementById("audio");
     const button = document.getElementById("playButton");
     const icon = document.getElementById("icon");
+    const setupWrap = document.getElementById("setupWrap");
+    const setupMessage = document.getElementById("setupMessage");
+    const setupInput = document.getElementById("setupInput");
+    const setupSubmit = document.getElementById("setupSubmit");
+    const playerShell = document.getElementById("playerShell");
     const info = document.getElementById("info");
     const infoWrap = document.getElementById("infoWrap");
     const meta = document.getElementById("meta");
+    const manifestLink = document.getElementById("manifestLink");
     const streamEl = document.getElementById("stream");
     const playerHeadEl = document.getElementById("playerHead");
-    const installButton = document.getElementById("installButton");
+    const logoutButton = document.getElementById("logoutButton");
     const pinWrap = document.getElementById("pinWrap");
-    const pinInput = document.getElementById("pinInput");
     const pinSubmit = document.getElementById("pinSubmit");
+    const pinCancel = document.getElementById("pinCancel");
 
     let player = resolvePlayer();
     let device = resolveDevice();
@@ -84,20 +89,17 @@
     let historyLogKey = "";
     let offlineRetryDelay = OFFLINE_RETRY_DELAY_INITIAL;
     let serverRetryDelay = SERVER_RETRY_DELAY_INITIAL;
-    let installPromptEvent = null;
     let playerLevel = 1;
 
-    initPlayerInfo();
     setupMediaSession();
     registerAppShell();
-    setupInstallPrompt();
-    applyStoppedState();
     restoreUpdatedNotice();
     restoreAutostart();
+    setupInitialScreen();
 
     button.addEventListener("click", async () => {
       if (!player) {
-        showMessage(PLAYER_REQUIRED_TEXT);
+        showSetupScreen(PLAYER_REQUIRED_TEXT || SETUP_INVALID_TEXT);
         return;
       }
 
@@ -125,11 +127,35 @@
       await submitClaim();
     });
 
-    pinInput.addEventListener("keydown", async (e) => {
+    pinCancel.addEventListener("click", () => {
+      hidePin();
+      applyStoppedState();
+    });
+
+    setupSubmit.addEventListener("click", async () => {
+      await submitPlayerCode();
+    });
+
+    setupInput.addEventListener("keydown", async (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        await submitClaim();
+        await submitPlayerCode();
       }
+    });
+
+    setupInput.addEventListener("input", () => {
+      const filtered = String(setupInput.value || "")
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .slice(0, 5)
+        .toUpperCase();
+
+      if (setupInput.value !== filtered) {
+        setupInput.value = filtered;
+      }
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      await logoutPlayer();
     });
 
     audio.addEventListener("ended", async () => {
@@ -225,8 +251,70 @@
       e.returnValue = "";
     });
 
+    function normalizePlayerCode(value) {
+      const code = String(value || "").trim().toLowerCase();
+      return /^[a-z0-9]{5}$/.test(code) ? code : "";
+    }
+
+    function formatPlayerCodeForDisplay(value) {
+      return String(value || "").trim().toUpperCase();
+    }
+
+    function loadPlayerCode() {
+      try {
+        return normalizePlayerCode(localStorage.getItem(PLAYER_CODE_STORAGE_KEY) || "");
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function savePlayerCode(code) {
+      const normalized = normalizePlayerCode(code);
+      if (!normalized) return "";
+
+      try {
+        localStorage.setItem(PLAYER_CODE_STORAGE_KEY, normalized);
+      } catch (e) {}
+
+      return normalized;
+    }
+
+    function clearPlayerCode() {
+      try {
+        localStorage.removeItem(PLAYER_CODE_STORAGE_KEY);
+      } catch (e) {}
+    }
+
+    function syncCleanUrl() {
+      if (!window.history || typeof window.history.replaceState !== "function") {
+        return;
+      }
+
+      const currentUrl = new URL(window.location.href);
+      if (currentUrl.pathname === "/" && !currentUrl.searchParams.has("player")) {
+        return;
+      }
+
+      window.history.replaceState({}, "", "/");
+    }
+
+    function updateManifestLink(code = player) {
+      if (!manifestLink) return;
+      manifestLink.href = code ? `/manifest?player=${encodeURIComponent(code)}` : "/manifest";
+    }
+
     function resolvePlayer() {
-      return PLAYER_ID || "";
+      const fromUrl = normalizePlayerCode(PLAYER_ID || "");
+      if (fromUrl) {
+        savePlayerCode(fromUrl);
+        syncCleanUrl();
+        updateManifestLink(fromUrl);
+        return fromUrl;
+      }
+
+      const fromStorage = loadPlayerCode();
+      updateManifestLink(fromStorage);
+      return fromStorage;
     }
 
     function registerAppShell() {
@@ -237,45 +325,6 @@
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("/sw.js").catch(() => {});
       }, { once: true });
-    }
-
-    function isStandaloneMode() {
-      return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
-    }
-
-    function updateInstallButton() {
-      if (!installButton) return;
-      installButton.hidden = !installPromptEvent || isStandaloneMode();
-    }
-
-    function setupInstallPrompt() {
-      if (!installButton) return;
-
-      installButton.addEventListener("click", async () => {
-        if (!installPromptEvent) return;
-
-        const promptEvent = installPromptEvent;
-        installPromptEvent = null;
-        updateInstallButton();
-
-        try {
-          await promptEvent.prompt();
-          await promptEvent.userChoice;
-        } catch (e) {}
-      });
-
-      window.addEventListener("beforeinstallprompt", (event) => {
-        event.preventDefault();
-        installPromptEvent = event;
-        updateInstallButton();
-      });
-
-      window.addEventListener("appinstalled", () => {
-        installPromptEvent = null;
-        updateInstallButton();
-      });
-
-      updateInstallButton();
     }
 
     function stringSetting(value, fallback) {
@@ -673,26 +722,11 @@
     }
 
     async function submitClaim() {
-      const pin = pinInput.value.trim();
-
-      if (!pin) {
-        showClaimPrompt(PIN_REQUIRED_TEXT);
-        pinInput.focus();
-        return;
-      }
-
-      if (pin.length !== 4) {
-        showClaimPrompt(PIN_INVALID_LENGTH_TEXT);
-        pinInput.focus();
-        pinInput.select();
-        return;
-      }
-
       try {
         pinSubmit.disabled = true;
-        pinInput.disabled = true;
+        pinCancel.disabled = true;
 
-        await claimHere(pin);
+        await claimHere();
 
         isStarted = true;
         isStoppedByUser = false;
@@ -701,18 +735,79 @@
 
         await startFirstTrack("manual");
       } catch (e) {
-        showClaimPrompt(PIN_INVALID_TEXT);
+        showClaimPrompt(e && e.message ? e.message : CLAIM_BUSY_TEXT);
       } finally {
         pinSubmit.disabled = false;
-        pinInput.disabled = false;
+        pinCancel.disabled = false;
       }
     }
 
-    async function claimHere(pin) {
+    function showSetupScreen(text = "") {
+      playerShell.hidden = true;
+      setupWrap.hidden = false;
+      clearPlaybackState();
+      hidePin();
+      isStarted = false;
+      isStoppedByUser = true;
+      setPlayIcon();
+      playerHeadEl.textContent = "";
+      meta.textContent = "";
+      updateManifestLink();
+      if (setupMessage) setupMessage.textContent = text || "";
+      if (setupInput) {
+        setupInput.value = formatPlayerCodeForDisplay(player);
+        setTimeout(() => setupInput.focus(), 0);
+      }
+    }
+
+    function showPlayerScreen() {
+      setupWrap.hidden = true;
+      playerShell.hidden = false;
+      updateManifestLink();
+      applyStoppedState();
+      void initPlayerInfo();
+    }
+
+    function setupInitialScreen() {
+      if (!player) {
+        showSetupScreen();
+        return;
+      }
+
+      showPlayerScreen();
+    }
+
+    async function submitPlayerCode() {
+      const nextPlayer = normalizePlayerCode(setupInput.value);
+      if (!nextPlayer) {
+        showSetupScreen(SETUP_INVALID_TEXT);
+        if (setupInput) {
+          setupInput.focus();
+          setupInput.select();
+        }
+        return;
+      }
+
+      player = savePlayerCode(nextPlayer);
+      setupInput.value = formatPlayerCodeForDisplay(player);
+      if (setupMessage) setupMessage.textContent = "";
+      showPlayerScreen();
+    }
+
+    async function logoutPlayer() {
+      clearPlayerCode();
+      player = "";
+      await stopPlayer();
+      meta.textContent = "";
+      playerHeadEl.textContent = "";
+      if (setupMessage) setupMessage.textContent = "";
+      showSetupScreen();
+    }
+
+    async function claimHere() {
       const params = new URLSearchParams();
       params.set("player", player);
       params.set("device", device);
-      params.set("pin", pin);
       params.set("tz", TIMEZONE_OFFSET);
 
       const url = `${CLAIM_BASE_URL}?${params.toString()}`;
@@ -722,13 +817,13 @@
       });
 
       if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        throw new Error(CLAIM_BUSY_TEXT);
       }
 
       const data = await res.json();
 
       if (!data || data.ok !== true) {
-        throw new Error(data && data.message ? data.message : "claim failed");
+        throw new Error(data && data.message ? data.message : CLAIM_BUSY_TEXT);
       }
     }
 
@@ -1328,9 +1423,8 @@
       historyLogKey = "";
 
       meta.textContent = "";
-      pinInput.value = "";
       pinSubmit.disabled = false;
-      pinInput.disabled = false;
+      pinCancel.disabled = false;
 
       hideContentBlocks();
       setPlayIcon();
@@ -1370,9 +1464,8 @@
       historyLogKey = "";
 
       meta.textContent = "";
-      pinInput.value = "";
       pinSubmit.disabled = false;
-      pinInput.disabled = false;
+      pinCancel.disabled = false;
 
       hideContentBlocks();
       setPlayIcon();
@@ -1421,7 +1514,8 @@
 
       streamEl.textContent = "";
       info.textContent = "";
-      pinInput.value = "";
+      pinSubmit.disabled = false;
+      pinCancel.disabled = false;
     }
 
     function showStream(text) {
@@ -1442,17 +1536,16 @@
       isStarted = false;
       isStoppedByUser = true;
       setPlayIcon();
-      // Здесь сразу открываем ПИН, чтобы не было лишнего шага с кнопкой.
       info.textContent = text || CLAIM_BUSY_TEXT;
       infoWrap.classList.add("active");
       pinWrap.classList.add("active");
-      pinInput.focus();
-      pinInput.select();
+      pinSubmit.focus();
     }
 
     function hidePin() {
       pinWrap.classList.remove("active");
-      pinInput.value = "";
+      pinSubmit.disabled = false;
+      pinCancel.disabled = false;
     }
 
     function applyStoppedState() {

@@ -84,7 +84,6 @@ function isExpired(?string $end, int $offset): bool {
 
 $player = isset($_GET['player']) ? runtime_normalize_player_code($_GET['player']) : '';
 $device = isset($_GET['device']) ? normalizeDevice($_GET['device']) : '';
-$pin = isset($_GET['pin']) ? trim((string)$_GET['pin']) : '';
 $tzOffset = resolveTimezoneOffsetMinutes();
 
 if ($player === '') {
@@ -93,10 +92,6 @@ if ($player === '') {
 
 if ($device === '') {
     message('device_required');
-}
-
-if ($pin === '') {
-    message('pin_required');
 }
 
 $context = runtime_resolve_player_context($dataDir, $player);
@@ -113,11 +108,6 @@ if (isset($playerData['status']) && !isActiveStatus($playerData['status'])) {
 
 if (isExpired($playerData['end'] ?? null, $tzOffset)) {
     message('player_expired');
-}
-
-$storedPin = isset($playerData['pin']) ? trim((string)$playerData['pin']) : '';
-if ($storedPin === '' || $storedPin !== $pin) {
-    message('pin_invalid');
 }
 
 $playerId = trim((string)($context['player_id'] ?? ''));

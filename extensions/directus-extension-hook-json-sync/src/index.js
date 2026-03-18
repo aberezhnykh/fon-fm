@@ -7,6 +7,7 @@ const WATCHED = [
 	'players',
 	'ads',
 	'schedules',
+	'slots',
 	'schedules_players',
 	'streams_playlists',
 	'streams',
@@ -266,6 +267,25 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 			return mergePayload({ clients: await clientIdsFromPlayers(playerIds) });
 		}
 
+		if (collection === 'slots') {
+			const rows = await readRowsByQuery('slots', {
+				fields: ['schedule'],
+				filter: { id: { _in: ids } },
+			});
+			const scheduleIds = uniq([
+				...rows.map((row) => valueToId(row?.schedule)).filter(Boolean),
+				...((extra.schedule_ids || []).map(String)),
+			]);
+			if (!scheduleIds.length) return emptyPayload();
+
+			const playerRows = await readRowsByQuery('schedules_players', {
+				fields: ['players_id'],
+				filter: { schedules_id: { _in: scheduleIds } },
+			});
+			const playerIds = uniq(playerRows.map((row) => valueToId(row?.players_id)).filter(Boolean));
+			return mergePayload({ clients: await clientIdsFromPlayers(playerIds) });
+		}
+
 		if (collection === 'schedules_players') {
 			const rows = await readRowsByQuery('schedules_players', {
 				fields: ['players_id'],
@@ -451,6 +471,12 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 					filter: { id: { _in: ids } },
 				});
 				extra = { player_ids: uniq(rows.map((row) => valueToId(row?.players_id)).filter(Boolean)) };
+			} else if (collection === 'slots') {
+				const rows = await readRowsByQuery('slots', {
+					fields: ['id', 'schedule'],
+					filter: { id: { _in: ids } },
+				});
+				extra = { schedule_ids: uniq(rows.map((row) => valueToId(row?.schedule)).filter(Boolean)) };
 			} else if (collection === 'playlists') {
 				const rows = await readRowsByQuery('streams_playlists', {
 					fields: ['streams_id'],
@@ -515,6 +541,12 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 					filter: { id: { _in: ids } },
 				});
 				extra = { player_ids: uniq(rows.map((row) => valueToId(row?.players_id)).filter(Boolean)) };
+			} else if (collection === 'slots') {
+				const rows = await readRowsByQuery('slots', {
+					fields: ['id', 'schedule'],
+					filter: { id: { _in: ids } },
+				});
+				extra = { schedule_ids: uniq(rows.map((row) => valueToId(row?.schedule)).filter(Boolean)) };
 			} else if (collection === 'playlists') {
 				const rows = await readRowsByQuery('streams_playlists', {
 					fields: ['streams_id'],
