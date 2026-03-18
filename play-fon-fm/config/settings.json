@@ -1,0 +1,40 @@
+{
+  "app": {
+    "version": "1.0.1"
+  },
+  "messages": {
+    "offline": "Требуется интернет",
+    "server_wait": "Временная остановка",
+    "idle": "Перерыв...",
+    "idle_until": "Перерыв до {time}",
+    "blocked": "Плеер заблокирован",
+    "idle_stream": "Запусти поток",
+    "player_required": "Не указан плеер",
+    "device_required": "Не указано устройство",
+    "not_found": "Плеер не найден",
+    "subscription_required": "Нужна подписка",
+    "pin_required": "Введите ПИН",
+    "pin_invalid": "Неверный ПИН",
+    "update_required": "Требуется обновление",
+    "copy_hint": "Скопировать",
+    "copy_done": "Скопировано",
+    "pin_placeholder": "####",
+    "pin_submit": "OK",
+    "player_updated": "Плеер обновлен",
+    "player_reloading": "Обновление…",
+    "ad_label": "Реклама"
+  },
+  "checks": {
+    "connectivity_url": "https://radiosparx.ru/img/logo-dark.svg",
+    "fetch_timeout_ms": 8000,
+    "connectivity_timeout_ms": 5000
+  },
+  "retry": {
+    "offline_initial_ms": 5000,
+    "offline_max_ms": 30000,
+    "server_initial_ms": 10000,
+    "server_max_ms": 60000,
+    "blocked_ms": 60000,
+    "pause_ms": 300000
+  }
+}

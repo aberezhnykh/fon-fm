@@ -1,0 +1,38 @@
+RewriteEngine On
+
+# Красивые адреса API
+RewriteRule ^meta/?$ meta.php [L,QSA]
+RewriteRule ^next/?$ next.php [L,QSA]
+RewriteRule ^claim/?$ claim.php [L,QSA]
+RewriteRule ^history/?$ history.php [L,QSA]
+RewriteRule ^manifest/?$ manifest.php [L,QSA]
+
+# Закрытая служебная папка конфигурации
+RewriteRule ^config/ - [F,L]
+
+# Запрет прямого обращения к API-файлам
+RewriteCond %{THE_REQUEST} \s/+meta\.php[\s?] [NC]
+RewriteRule ^meta\.php$ - [F,L]
+RewriteCond %{THE_REQUEST} \s/+next\.php[\s?] [NC]
+RewriteRule ^next\.php$ - [F,L]
+RewriteCond %{THE_REQUEST} \s/+claim\.php[\s?] [NC]
+RewriteRule ^claim\.php$ - [F,L]
+RewriteCond %{THE_REQUEST} \s/+history\.php[\s?] [NC]
+RewriteRule ^history\.php$ - [F,L]
+RewriteCond %{THE_REQUEST} \s/+manifest\.php[\s?] [NC]
+RewriteRule ^manifest\.php$ - [F,L]
+RewriteCond %{THE_REQUEST} \s/+player\.js\.php[\s?] [NC]
+RewriteRule ^player\.js\.php$ - [F,L]
+RewriteCond %{THE_REQUEST} \s/+player\.css\.php[\s?] [NC]
+RewriteRule ^player\.css\.php$ - [F,L]
+
+# Существующие файлы и папки не переписывать
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Корень сайта
+RewriteRule ^$ index.php [L]
+
+# player_id в URL
+RewriteRule ^([^/]+)/?$ player.php?player=$1 [L,QSA]
