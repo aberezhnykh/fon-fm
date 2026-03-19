@@ -723,7 +723,17 @@ if (isset($_GET['playlist']) && $_GET['playlist'] !== '') {
 }
 
 $context = runtime_resolve_player_context($dataDir, $player);
-if (!is_array($context) || !is_array($context['player'] ?? null)) {
+if (!is_array($context)) {
+    message('player_not_found');
+}
+
+/** @var mixed $clientData */
+$clientData = $context['client'] ?? null;
+if (!is_array($clientData)) {
+    message('config_error');
+}
+
+if (!is_array($context['player'] ?? null)) {
     message('player_not_found');
 }
 
@@ -731,7 +741,7 @@ if (!is_array($context) || !is_array($context['player'] ?? null)) {
 $playerData = $context['player'];
 $playerId = trim((string)($context['player_id'] ?? ''));
 if ($playerId === '') {
-    message('player_not_found');
+    message('config_error');
 }
 
 $CURRENT_PLAYER_LEVEL = normalizePlayerLevel($playerData['level'] ?? null);
@@ -766,13 +776,7 @@ if ($storedDevice === '') {
 
 $client = trim((string)($context['client_id'] ?? ''));
 if ($client === '') {
-    message('player_client_missing');
-}
-
-/** @var mixed $clientData */
-$clientData = $context['client'] ?? null;
-if (!is_array($clientData)) {
-    message('client_not_found');
+    message('config_error');
 }
 
 if (isset($clientData['status']) && !isActiveStatus($clientData['status'])) {
@@ -812,7 +816,7 @@ if ($stream === '') {
 
 $streamData = runtime_read_json(streamPath($dataDir, $stream));
 if (!is_array($streamData)) {
-    message('stream_not_found');
+    message('config_error');
 }
 
 $streamTitle = isset($streamData['title']) ? trim((string)$streamData['title']) : '';

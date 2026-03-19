@@ -10,6 +10,7 @@ $lock = lock_open('streams-json');
 
 // Поток хранит только свои поля и список пригодных для runtime playlist ids.
 $map = [
+    'updated' => 'updated',
     'title' => 'title',
 ];
 $fields = array_merge(array_keys($map), ['status']);

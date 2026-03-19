@@ -72,7 +72,7 @@
     let isStarted = false;
     let isStoppedByUser = false;
     let timer = null;
-    let playlist = null;
+    let playlistIndex = null;
     let playQueue = [];
     let prefetchDone = false;
 
@@ -688,7 +688,7 @@
 
       try {
         if (typeof current.playlist === "number") {
-          playlist = current.playlist;
+          playlistIndex = current.playlist;
         }
 
           applyPlaybackVolume(current);
@@ -727,8 +727,8 @@
         params.set("start", nextStartMode);
       }
 
-      if (playlist !== null && Number.isInteger(playlist)) {
-        params.set("playlist", String(playlist));
+      if (playlistIndex !== null && Number.isInteger(playlistIndex)) {
+        params.set("playlist", String(playlistIndex));
       }
 
       const url = `${NEXT_BASE_URL}?${params.toString()}`;
@@ -1462,15 +1462,15 @@
         return;
       }
 
+      const startVolume = audio.volume;
+
       if (IS_IOS || !Number.isFinite(durationMs) || durationMs <= 0 || audio.paused) {
         audio.pause();
-        audio.volume = 1;
+        audio.volume = startVolume;
         return;
       }
 
       isFadingOut = true;
-
-      const startVolume = audio.volume;
       const steps = Math.max(1, Math.round(durationMs / 50));
 
       try {
@@ -1552,7 +1552,7 @@
       audio.volume = 1;
       updateMediaSessionMetadata(null);
 
-      playlist = null;
+      playlistIndex = null;
       playQueue = [];
       prefetchDone = false;
       currentTrackUrl = "";
@@ -1593,7 +1593,7 @@
       audio.load();
       updateMediaSessionMetadata(null);
 
-      playlist = null;
+      playlistIndex = null;
       playQueue = [];
       prefetchDone = false;
       currentTrackUrl = "";

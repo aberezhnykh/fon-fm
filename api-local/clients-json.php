@@ -47,6 +47,7 @@ $map = [
     'title' => 'title',
     'status' => 'status',
     'end' => 'end',
+    'updated' => 'updated',
 ];
 $fields = array_keys($map);
 $adsFields = [
@@ -90,6 +91,7 @@ $scheduleFields = [
     'id',
     'title',
     'status',
+    'updated',
     'start',
     'weekdays',
     'slots.id',
@@ -124,6 +126,7 @@ foreach ($ids as $id) {
             $done[] = ['id' => $id, 'deleted' => true];
             continue;
         }
+        client_json_patch_state($ENV, $id, 'error', 'client_query_failed');
         $errs[] = ['id' => $id, 'error' => $res['error'], 'status' => $res['status'] ?? 0];
         continue;
     }
@@ -298,6 +301,7 @@ foreach ($ids as $id) {
                     if (!$slotsOut) continue;
 
                     $scheduleJson = clean_array([
+                        'updated' => (string)($schedule['updated'] ?? ''),
                         'title' => (string)($schedule['title'] ?? ''),
                         'start' => (string)($schedule['start'] ?? ''),
                         'weekdays' => $schedule['weekdays'] ?? null,

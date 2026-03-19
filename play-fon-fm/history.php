@@ -13,6 +13,11 @@ function respond(array $data, int $status = 200): never {
     exit;
 }
 
+function respondNoContent(): never {
+    http_response_code(204);
+    exit;
+}
+
 function normalizeDevice(mixed $value): string {
     return trim((string)$value);
 }
@@ -64,7 +69,9 @@ if ($playerId === '') {
 $deviceData = runtime_read_json(runtime_device_path($dataDir, $playerId));
 $storedDevice = is_array($deviceData) ? normalizeDevice($deviceData['device'] ?? '') : '';
 if ($storedDevice !== '' && $storedDevice !== $device) {
-    respond(['ok' => false], 409);
+    // История вторична: если устройство уже не владеет плеером,
+    // просто пропускаем запись без шумной ошибки в консоли браузера.
+    respondNoContent();
 }
 
 $payload = [

@@ -77,6 +77,9 @@ const isOperationalClientUpdate = (collection, payload, meta) => {
 	return hasOnlyKeys(sourcePayload, ['state', 'error', 'updated']);
 };
 
+const isBlankMediaValue = (value) =>
+	value === null || value === '' || (typeof value === 'string' && value.trim() === '');
+
 export default defineHook(({ filter, action }, { services, logger, env, database, getSchema }) => {
 	const { ItemsService } = services;
 
@@ -115,6 +118,18 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 			logger.warn({ collection, query, error: stringifyError(error) }, 'readRowsByQuery failed');
 			return [];
 		}
+	};
+
+	const adsNeedMediaRecompute = async (ids) => {
+		ids = uniq(ids);
+		if (!ids.length) return false;
+
+		const rows = await readRowsByQuery('ads', {
+			fields: ['id', 'duration', 'gain'],
+			filter: { id: { _in: ids } },
+		});
+
+		return rows.some((row) => isBlankMediaValue(row?.duration) || isBlankMediaValue(row?.gain));
 	};
 
 	const readRelIds = async (collection, ids, fieldsToTry) => {
@@ -694,6 +709,14 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 		rememberMap.delete(key);
 
 		const extra = remembered?.extra || {};
+
+		if (collection === 'ads' && await adsNeedMediaRecompute(ids)) {
+			try {
+				await callPhp('ads-media.php', ids);
+			} catch (error) {
+				logger.warn({ collection, ids, error: stringifyError(error) }, 'ads media recompute failed');
+			}
+		}
 
 		if (collection === 'clients') {
 			const statusMap = await readClientStatusMap(ids);
