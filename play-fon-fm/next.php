@@ -13,7 +13,6 @@ $settingsPath = __DIR__ . '/config/settings.json';
 require_once __DIR__ . '/config/messages.php';
 require_once __DIR__ . '/config/settings.php';
 require_once __DIR__ . '/runtime.php';
-const AD_WINDOW_SECONDS = 300;
 const MIN_QUEUE_SECONDS = 300;
 const MAX_IDLE_RETRY_SECONDS = 300;
 $CURRENT_PLAYER_LEVEL = null;
@@ -538,51 +537,6 @@ function adMedia(array $ad, int $slotTimestamp): array {
     ];
 }
 
-function pickDueBreakNow(array $ads, string $player, int $offset): ?array {
-    $today = todayDate($offset);
-    $now = localNowTimestamp($offset);
-    $pickedSlot = null;
-    $pickedItems = [];
-    $pickedExactly = false;
-
-    foreach ($ads as $ad) {
-        if (!is_array($ad) || !adMatchesFilters($ad, $player, $offset)) {
-            continue;
-        }
-
-        foreach (adSlotsForDate($ad, $today) as $slotTimestamp) {
-            if ($slotTimestamp > $now) {
-                continue;
-            }
-
-            if ($now >= ($slotTimestamp + AD_WINDOW_SECONDS)) {
-                continue;
-            }
-
-            if ($pickedSlot === null || $slotTimestamp < $pickedSlot) {
-                $pickedSlot = $slotTimestamp;
-                $pickedItems = [adMedia($ad, $slotTimestamp)];
-                $pickedExactly = !empty($ad['exactly']);
-                continue;
-            }
-
-            if ($pickedSlot === $slotTimestamp) {
-                $pickedItems[] = adMedia($ad, $slotTimestamp);
-                $pickedExactly = $pickedExactly || !empty($ad['exactly']);
-            }
-        }
-    }
-
-    if ($pickedSlot === null || !$pickedItems) {
-        return null;
-    }
-
-    return [
-        'slot' => $pickedSlot,
-        'break' => adBreak($pickedItems, $pickedExactly, $pickedSlot),
-    ];
-}
-
 function pickUpcomingBreak(array $ads, string $player, int $offset, int $fromLocal, int $untilLocal): ?array {
     $today = todayDate($offset);
     $pickedSlot = null;
@@ -671,6 +625,10 @@ function buildQueue(
     ?int $playlistIndex,
     int $startLocal
 ): array {
+    // Очередь всегда собирается с учетом ближайшего exact-break:
+    // трек остается целым, но "занимает" в расчетах только время до точки break.
+    // Это позволяет клиенту заранее видеть break в хвосте очереди и самому
+    // мягко перейти к ролику ровно в нужный момент.
     // Сервер собирает вперед только безопасный запас контента.
     $queue = [];
     $currentLocal = $startLocal;
@@ -708,11 +666,11 @@ function buildQueue(
         $break = $upcomingBreak['break'];
         $breakSlot = $upcomingBreak['slot'];
 
-        // Для exact-блока считаем укороченную длину трека только для сборки очереди.
+        // Для exact-блока учитываем в длине очереди только время до break-slot,
+        // иначе сервер соберет хвост так, будто трек должен доиграть до конца.
         if (!empty($break['exactly'])) {
             $playFor = max(1, $breakSlot - $currentLocal);
             if ($playFor < $trackDuration) {
-                $track['play_for'] = $playFor;
                 $queueSeconds += $playFor;
                 $currentLocal += $playFor;
             } else {
@@ -864,23 +822,9 @@ if (!is_array($playlists) || !$playlists) {
     okIdle($streamTitle, null, $tzOffset);
 }
 
-$dueBreak = pickDueBreakNow($ads, $playerId, $tzOffset);
-if ($startMode !== 'manual' && $startMode !== 'auto' && $dueBreak !== null) {
-    $queueBuild = buildQueue(
-        $dataDir,
-        $playlists,
-        $streamTitle,
-        $ads,
-        $playerId,
-        $tzOffset,
-        $playlistIndex,
-        $dueBreak['slot'] + breakDuration($dueBreak['break'])
-    );
-
-    $tailQueue = $queueBuild['queue'] ?? [];
-    respondQueue(array_merge([$dueBreak['break']], is_array($tailQueue) ? $tailQueue : []));
-}
-
+// Exact-break отдается только как часть заранее собранной очереди.
+// Мы сознательно не "догоняем" уже наступивший slot на следующем /next,
+// иначе один и тот же ролик может быть выдан повторно после своего выхода.
 $queueBuild = buildQueue(
     $dataDir,
     $playlists,

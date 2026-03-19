@@ -26,7 +26,10 @@
     "setup_placeholder": "abc12",
     "setup_submit": "Войти",
     "setup_invalid": "Введите код из 5 символов",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "settings_open": "Настройки",
+    "settings_close": "Закрыть",
+    "settings_thanks": "Спасибо!"
   },
   "checks": {
     "connectivity_url": "https://radiosparx.ru/img/logo-dark.svg",

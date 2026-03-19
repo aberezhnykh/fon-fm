@@ -31,7 +31,10 @@
     const PLAYER_RELOADING_TEXT = stringSetting(SETTINGS_MESSAGES.player_reloading, "");
     const AD_LABEL_TEXT = stringSetting(SETTINGS_MESSAGES.ad_label, "");
     const NOT_FOUND_FALLBACK_TEXT = stringSetting(SETTINGS_MESSAGES.not_found, "");
+    const SETUP_SUBMIT_TEXT = stringSetting(SETTINGS_MESSAGES.setup_submit, "");
     const SETUP_INVALID_TEXT = stringSetting(SETTINGS_MESSAGES.setup_invalid, "");
+    const SETTINGS_THANKS_TEXT = stringSetting(SETTINGS_MESSAGES.settings_thanks, "");
+    const LOGOUT_TEXT = stringSetting(SETTINGS_MESSAGES.logout, "");
     const OFFLINE_RETRY_DELAY_INITIAL = numberSetting(SETTINGS_RETRY.offline_initial_ms, 5000);
     const OFFLINE_RETRY_DELAY_MAX = numberSetting(SETTINGS_RETRY.offline_max_ms, 30000);
     const SERVER_RETRY_DELAY_INITIAL = numberSetting(SETTINGS_RETRY.server_initial_ms, 10000);
@@ -45,18 +48,20 @@
     const audio = document.getElementById("audio");
     const button = document.getElementById("playButton");
     const icon = document.getElementById("icon");
-    const setupWrap = document.getElementById("setupWrap");
+    const setupMain = document.getElementById("setupMain");
     const setupMessage = document.getElementById("setupMessage");
     const setupInput = document.getElementById("setupInput");
     const setupSubmit = document.getElementById("setupSubmit");
+    const SETUP_DEFAULT_TEXT = setupMessage ? setupMessage.textContent.trim() : "";
     const playerShell = document.getElementById("playerShell");
+    const playerMain = document.getElementById("playerMain");
     const info = document.getElementById("info");
     const infoWrap = document.getElementById("infoWrap");
-    const meta = document.getElementById("meta");
     const manifestLink = document.getElementById("manifestLink");
     const streamEl = document.getElementById("stream");
     const playerHeadEl = document.getElementById("playerHead");
-    const logoutButton = document.getElementById("logoutButton");
+    const headerActionButton = document.getElementById("headerActionButton");
+    const headerActionGlyph = document.getElementById("headerActionGlyph");
     const pinWrap = document.getElementById("pinWrap");
     const pinSubmit = document.getElementById("pinSubmit");
     const pinCancel = document.getElementById("pinCancel");
@@ -82,6 +87,7 @@
     let currentMediaType = "";
     let isFadingOut = false;
     let isStopping = false;
+    let isQueueTransitioning = false;
     let isRefreshingQueue = false;
     let resumeRequiresReload = false;
     let isResettingPlayback = false;
@@ -90,6 +96,7 @@
     let offlineRetryDelay = OFFLINE_RETRY_DELAY_INITIAL;
     let serverRetryDelay = SERVER_RETRY_DELAY_INITIAL;
     let playerLevel = 1;
+    let appScreenMode = "player";
 
     setupMediaSession();
     registerAppShell();
@@ -118,6 +125,7 @@
     });
 
     playerHeadEl.addEventListener("click", async () => {
+      if (appScreenMode !== "player") return;
       const text = playerHeadEl.textContent.trim();
       if (!text) return;
       await copyPlayerHead(text);
@@ -133,10 +141,19 @@
     });
 
     setupSubmit.addEventListener("click", async () => {
+      if (appScreenMode === "settings") {
+        await logoutPlayer();
+        return;
+      }
+
       await submitPlayerCode();
     });
 
     setupInput.addEventListener("keydown", async (e) => {
+      if (appScreenMode === "settings") {
+        return;
+      }
+
       if (e.key === "Enter") {
         e.preventDefault();
         await submitPlayerCode();
@@ -144,6 +161,10 @@
     });
 
     setupInput.addEventListener("input", () => {
+      if (appScreenMode === "settings") {
+        return;
+      }
+
       const filtered = String(setupInput.value || "")
         .replace(/[^a-zA-Z0-9]/g, "")
         .slice(0, 5)
@@ -154,9 +175,18 @@
       }
     });
 
-    logoutButton.addEventListener("click", async () => {
-      await logoutPlayer();
-    });
+    if (headerActionButton) {
+      headerActionButton.addEventListener("click", () => {
+        if (appScreenMode === "player") {
+          showSettingsScreen();
+          return;
+        }
+
+        if (appScreenMode === "settings") {
+          showPlayerScreen();
+        }
+      });
+    }
 
     audio.addEventListener("ended", async () => {
       if (isStoppedByUser) return;
@@ -199,6 +229,7 @@
       if (audio.ended) return;
       if (isPageHidden) return;
       if (isFadingOut || isStopping) return;
+      if (isQueueTransitioning) return;
       if (isResettingPlayback) return;
 
       resumeRequiresReload = true;
@@ -209,6 +240,7 @@
       if (!isStarted || isStoppedByUser) return;
       if (!resumeRequiresReload) return;
       if (isFadingOut || isStopping) return;
+      if (isQueueTransitioning) return;
       if (isResettingPlayback) return;
 
       audio.pause();
@@ -389,12 +421,33 @@
 
       if (safeTitle) {
         playerHeadEl.innerHTML =
-          `<span class="code">${safeCode}</span> <span class="title">• ${safeTitle}</span>`;
+          `<span class="app-title-text"><span class="code">${safeCode}</span> <span class="title">• ${safeTitle}</span></span>`;
       } else {
-        playerHeadEl.innerHTML = `<span class="code">${safeCode}</span>`;
+        playerHeadEl.innerHTML = `<span class="app-title-text"><span class="code">${safeCode}</span></span>`;
       }
 
       playerHeadEl.title = COPY_HINT_TEXT;
+    }
+
+    function renderStaticHead(text = "") {
+      playerHeadEl.classList.add("app-title-static");
+      playerHeadEl.innerHTML = `<span class="app-title-text">${escapeHtml(text || "")}</span>`;
+      playerHeadEl.removeAttribute("title");
+    }
+
+    function configurePlayerHeader() {
+      appScreenMode = "player";
+      playerHeadEl.classList.remove("app-title-static");
+
+      if (headerActionButton) {
+        headerActionButton.hidden = false;
+        headerActionButton.setAttribute("aria-label", "<?= addslashes($settingsOpenLabel) ?>");
+        headerActionButton.title = "<?= addslashes($settingsOpenLabel) ?>";
+      }
+
+      if (headerActionGlyph) {
+        headerActionGlyph.textContent = "⋯";
+      }
     }
 
     function escapeHtml(value) {
@@ -457,6 +510,7 @@
 
     async function prefetchNext() {
       if (playQueue.length > 0) return;
+      if (hasPendingExactBreak()) return;
 
       try {
         const data = await fetchNext();
@@ -488,8 +542,7 @@
         }
 
         playQueue = queue;
-        scheduledBreakAt = resolveScheduledBreakAt();
-        scheduleBreakWatch();
+        syncExactBreakState();
 
         if (shouldTriggerBreakNow()) {
           await fadeOutAndContinue();
@@ -512,8 +565,7 @@
       prefetchDone = false;
       currentTrackUrl = "";
       currentMediaType = "";
-      scheduledBreakAt = null;
-      clearBreakWatchTimer();
+      clearExactBreakState();
       clearTimer();
 
       await loadNextAndPlay();
@@ -546,8 +598,7 @@
     }
 
     async function playQueueItem(current, retryAfter = null) {
-      clearBreakWatchTimer();
-      scheduledBreakAt = null;
+      clearExactBreakState();
       resumeRequiresReload = false;
       clearHistoryLogTimer();
 
@@ -578,7 +629,7 @@
         audio.pause();
         currentTrackUrl = "";
         currentMediaType = "";
-        meta.textContent = "";
+        setStatusText("");
         playQueue = [];
         clearHistoryLogTimer();
         historyLogKey = "";
@@ -598,7 +649,7 @@
         audio.pause();
         currentTrackUrl = "";
         currentMediaType = "";
-        meta.textContent = "";
+        setStatusText("");
         playQueue = [];
         clearHistoryLogTimer();
         historyLogKey = "";
@@ -649,7 +700,7 @@
         } else {
           showTrackMeta(current);
           showStream(current.stream || "");
-          scheduledBreakAt = resolveScheduledBreakAt();
+          syncExactBreakState();
         }
 
         currentTrackUrl = url;
@@ -660,7 +711,6 @@
         audio.load();
         await audio.play();
         scheduleHistoryLog(current);
-        scheduleBreakWatch();
         resetRetryDelay();
       } catch (e) {
         await handleMediaError();
@@ -742,29 +792,90 @@
       }
     }
 
+    function configureSetupScreen(mode, text = "") {
+      appScreenMode = mode;
+      const isSettingsMode = mode === "settings";
+
+      if (headerActionButton) {
+        headerActionButton.hidden = mode === "setup";
+        headerActionButton.setAttribute("aria-label", isSettingsMode ? "<?= addslashes($settingsCloseLabel) ?>" : "<?= addslashes($settingsOpenLabel) ?>");
+        headerActionButton.title = isSettingsMode ? "<?= addslashes($settingsCloseLabel) ?>" : "<?= addslashes($settingsOpenLabel) ?>";
+      }
+
+      if (headerActionGlyph) {
+        headerActionGlyph.textContent = isSettingsMode ? "×" : "⋯";
+      }
+
+      if (setupInput) {
+        setupInput.readOnly = isSettingsMode;
+      }
+
+      if (setupSubmit) {
+        setupSubmit.textContent = isSettingsMode ? LOGOUT_TEXT : SETUP_SUBMIT_TEXT;
+      }
+
+      if (setupMessage) {
+        setupMessage.textContent = text || (isSettingsMode ? SETTINGS_THANKS_TEXT : SETUP_DEFAULT_TEXT);
+      }
+
+      if (setupInput) {
+        setupInput.value = formatPlayerCodeForDisplay(player);
+      }
+
+      if (!player) {
+        renderStaticHead("");
+      }
+    }
+
+    function setMainView(mode) {
+      const showSetup = mode !== "player";
+
+      if (playerMain) playerMain.hidden = showSetup;
+      if (setupMain) setupMain.hidden = !showSetup;
+    }
+
     function showSetupScreen(text = "") {
-      playerShell.hidden = true;
-      setupWrap.hidden = false;
+      setMainView("setup");
       clearPlaybackState();
       hidePin();
       isStarted = false;
       isStoppedByUser = true;
       setPlayIcon();
-      playerHeadEl.textContent = "";
-      meta.textContent = "";
+      setStatusText("");
+      if (!player) {
+        renderStaticHead("");
+      }
       updateManifestLink();
-      if (setupMessage) setupMessage.textContent = text || "";
+      configureSetupScreen("setup", text);
       if (setupInput) {
-        setupInput.value = formatPlayerCodeForDisplay(player);
         setTimeout(() => setupInput.focus(), 0);
       }
     }
 
-    function showPlayerScreen() {
-      setupWrap.hidden = true;
-      playerShell.hidden = false;
+    function showSettingsScreen() {
+      if (!player) {
+        showSetupScreen();
+        return;
+      }
+
+      setMainView("settings");
+      configureSetupScreen("settings");
+      if (headerActionButton) {
+        setTimeout(() => headerActionButton.focus(), 0);
+      }
+    }
+
+    function showPlayerScreen(refreshInfo = false) {
+      appScreenMode = "player";
+      setMainView("player");
+      configurePlayerHeader();
       updateManifestLink();
-      applyStoppedState();
+      if (!isStarted) {
+        applyStoppedState();
+      }
+      if (!refreshInfo) return;
+
+      renderPlayerHead(player, "");
       void initPlayerInfo();
     }
 
@@ -774,7 +885,7 @@
         return;
       }
 
-      showPlayerScreen();
+      showPlayerScreen(true);
     }
 
     async function submitPlayerCode() {
@@ -790,17 +901,14 @@
 
       player = savePlayerCode(nextPlayer);
       setupInput.value = formatPlayerCodeForDisplay(player);
-      if (setupMessage) setupMessage.textContent = "";
-      showPlayerScreen();
+      showPlayerScreen(true);
     }
 
     async function logoutPlayer() {
       clearPlayerCode();
       player = "";
       await stopPlayer();
-      meta.textContent = "";
-      playerHeadEl.textContent = "";
-      if (setupMessage) setupMessage.textContent = "";
+      setStatusText("");
       showSetupScreen();
     }
 
@@ -917,15 +1025,14 @@
       audio.load();
       currentTrackUrl = "";
       currentMediaType = "";
-      scheduledBreakAt = null;
       playQueue = [];
       prefetchDone = false;
       clearTimer();
       clearRestoreTimer();
-      clearBreakWatchTimer();
+      clearExactBreakState();
       clearHistoryLogTimer();
       historyLogKey = "";
-      meta.textContent = "";
+      setStatusText("");
       updateMediaSessionMetadata(null);
       setTimeout(() => {
         isResettingPlayback = false;
@@ -1118,11 +1225,11 @@
       const parts = [];
       if (track.set) parts.push(track.set);
       if (track.code) parts.push(track.code);
-      meta.textContent = parts.join(" • ");
+      setStatusText(parts.join(" • "));
     }
 
     function showAdMeta(ad) {
-      meta.textContent = ad && ad.title ? String(ad.title) : "";
+      setStatusText(ad && ad.title ? String(ad.title) : "");
     }
 
     function resolveRetryDelay(mode, ms) {
@@ -1173,6 +1280,9 @@
     }
 
     function resolveScheduledBreakAt() {
+      // Exact-break лежит в хвосте очереди как отдельный элемент break.
+      // Плеер держит только ближайший такой timestamp и не пытается
+      // вычислять момент прерывания из длительности текущего трека.
       const upcomingBreak = playQueue.find((item) => item && item.type === "break");
       if (!upcomingBreak || !upcomingBreak.exactly) {
         return null;
@@ -1186,13 +1296,27 @@
       return at;
     }
 
+    function clearExactBreakState() {
+      scheduledBreakAt = null;
+      clearBreakWatchTimer();
+    }
+
+    function syncExactBreakState() {
+      // Единственная точка синхронизации exact-break state после смены очереди.
+      scheduledBreakAt = resolveScheduledBreakAt();
+      scheduleBreakWatch();
+    }
+
+    function hasPendingExactBreak() {
+      return Number.isFinite(scheduledBreakAt) && scheduledBreakAt > localNowTimestamp();
+    }
+
     function scheduleBreakWatch() {
       clearBreakWatchTimer();
 
-      if (!Number.isFinite(scheduledBreakAt) || scheduledBreakAt <= 0) {
-        return;
-      }
+      if (!hasPendingExactBreak()) return;
 
+      // Exact-break обязан сработать независимо от оставшейся duration у track.
       const delay = Math.max(0, ((scheduledBreakAt - localNowTimestamp()) * 1000) - 250);
 
       breakWatchTimer = setTimeout(async () => {
@@ -1317,8 +1441,20 @@
     }
 
     async function fadeOutAndContinue() {
-      await fadeOutAudio(currentMediaType === "track" ? TRACK_FADE_MS : 0);
-      await playPreparedOrLoadNext();
+      if (isQueueTransitioning || isFadingOut) return;
+
+      // Для exact-break допускаем только один переход, иначе можно перескочить
+      // через break и уйти сразу к следующему track.
+      isQueueTransitioning = true;
+      resumeRequiresReload = false;
+      clearExactBreakState();
+
+      try {
+        await fadeOutAudio(currentMediaType === "track" ? STOP_FADE_MS : 0);
+        await playPreparedOrLoadNext();
+      } finally {
+        isQueueTransitioning = false;
+      }
     }
 
     async function fadeOutAudio(durationMs) {
@@ -1375,6 +1511,7 @@
       if (!isStarted || isStoppedByUser) return;
       if (isPageHidden) return;
       if (isRecovering) return;
+      if (isQueueTransitioning) return;
       if (!currentTrackUrl) return;
       if (!audio.paused) return;
 
@@ -1397,6 +1534,7 @@
       }
 
       isStopping = true;
+      button.classList.add("is-stopping");
       button.disabled = true;
       isStarted = false;
       isStoppedByUser = true;
@@ -1419,10 +1557,10 @@
       prefetchDone = false;
       currentTrackUrl = "";
       currentMediaType = "";
-      scheduledBreakAt = null;
+      clearExactBreakState();
       historyLogKey = "";
 
-      meta.textContent = "";
+      setStatusText("");
       pinSubmit.disabled = false;
       pinCancel.disabled = false;
 
@@ -1439,6 +1577,7 @@
       }
 
       isStopping = true;
+      button.classList.add("is-stopping");
       button.disabled = true;
       isStarted = false;
       isStoppedByUser = true;
@@ -1459,11 +1598,11 @@
       prefetchDone = false;
       currentTrackUrl = "";
       currentMediaType = "";
-      scheduledBreakAt = null;
+      clearExactBreakState();
       resumeRequiresReload = false;
       historyLogKey = "";
 
-      meta.textContent = "";
+      setStatusText("");
       pinSubmit.disabled = false;
       pinCancel.disabled = false;
 
@@ -1507,28 +1646,31 @@
       window.location.reload();
     }
 
+    function setStreamText(text) {
+      streamEl.textContent = text || "";
+    }
+
+    function setStatusText(text) {
+      info.textContent = text || "";
+    }
+
     function hideContentBlocks() {
-      streamEl.classList.remove("active");
-      infoWrap.classList.remove("active");
       pinWrap.classList.remove("active");
 
-      streamEl.textContent = "";
-      info.textContent = "";
+      setStreamText("");
+      setStatusText("");
       pinSubmit.disabled = false;
       pinCancel.disabled = false;
     }
 
     function showStream(text) {
-      hideContentBlocks();
-      streamEl.textContent = text || "";
       streamEl.classList.remove("idle");
-      streamEl.classList.add("active");
+      setStreamText(text);
     }
 
     function showMessage(text) {
       hideContentBlocks();
-      info.textContent = text || "";
-      infoWrap.classList.add("active");
+      setStatusText(text);
     }
 
     function showClaimPrompt(text) {
@@ -1536,8 +1678,7 @@
       isStarted = false;
       isStoppedByUser = true;
       setPlayIcon();
-      info.textContent = text || CLAIM_BUSY_TEXT;
-      infoWrap.classList.add("active");
+      setStatusText(text || CLAIM_BUSY_TEXT);
       pinWrap.classList.add("active");
       pinSubmit.focus();
     }
@@ -1551,15 +1692,19 @@
     function applyStoppedState() {
       showStream(IDLE_STREAM_TEXT);
       streamEl.classList.add("idle");
-      meta.textContent = "";
+      setStatusText("");
     }
 
     function setPlayIcon() {
       icon.classList.remove("stop");
       icon.classList.add("play");
+      button.classList.remove("is-stopping");
+      button.classList.remove("is-playing");
     }
 
     function setStopIcon() {
       icon.classList.remove("play");
       icon.classList.add("stop");
+      button.classList.remove("is-stopping");
+      button.classList.add("is-playing");
     }
