@@ -14,8 +14,11 @@ Sub Class_Globals
 	Private Const NEXT_BASE_URL As String = "https://play.fon.fm/next"
 	Private Const CLAIM_BASE_URL As String = "https://play.fon.fm/claim"
 	Private Const HISTORY_BASE_URL As String = "https://play.fon.fm/history"
+	Private Const DATA_BASE_URL As String = "https://play.fon.fm/data.php"
+	Private Const PLAYLIST_CDN_BASE_URL As String = "https://cdn.fon.fm/data/playlists/"
 	Private Const CONNECTIVITY_CHECK_URL As String = "https://radiosparx.ru/img/logo-dark.svg"
 	Private Const APP_VERSION As String = "1.0.1"
+	Private Const USE_DATA_PLAYBACK_RESOLVER As Boolean = True
 	Private Const ICON_PLAY As String = Chr(0xE037)
 	Private Const ICON_STOP As String = Chr(0xE047)
 	Private Const ICON_MORE As String = Chr(0xE5D3)
@@ -27,6 +30,7 @@ Sub Class_Globals
 	Private Const TRACK_OVERLAP_MS As Int = 1800
 	Private Const AD_TAIL_OVERLAP_MS As Int = 350
 	Private Const HISTORY_LOG_DELAY_MS As Int = 15000
+	Private Const OFFLINE_DATA_REFRESH_MS As Int = 5 * 60 * 1000
 	Private Const FETCH_TIMEOUT_MS As Int = 8000
 	Private Const CONNECTIVITY_CHECK_TIMEOUT_MS As Int = 5000
 	Private Const PAUSE_RETRY_DELAY As Int = 300000
@@ -40,11 +44,13 @@ Sub Class_Globals
 	Private storageDir As String
 	Private storageFile As String = "player_state.json"
 	Private storageDbName As String = "PlayerState"
+	Private offlineDataFile As String = "offline_data.json"
+	Private offlinePlaylistRequirementsFile As String = "offline_playlist_requirements.json"
+	Private offlinePlaylistsDirName As String = "playlists"
 	Private debugResponsesDir As String
 
 	Private card As B4XView
 	Private headerPane As B4XView
-	Private headerActionPane As B4XView
 	Private headerActionPane As B4XView
 	Private contentPane As B4XView
 	Private footerPane As B4XView
@@ -93,11 +99,13 @@ Sub Class_Globals
 	Private traceLogLimit As Int = 1000
 	Private serverSnapshots As List
 	Private serverSnapshotLimit As Int = 30
+	Private offlineData As Map
 
 	Private retryTimer As Timer
 	Private breakTimer As Timer
 	Private historyTimer As Timer
 	Private orbitTimer As Timer
+	Private offlineDataRefreshTimer As Timer
 	Private machineGuidShell As Shell
 
 	Private playerCode As String
@@ -133,6 +141,10 @@ Sub Class_Globals
 	Private orbitPulseStep As Int
 	Private orbitFadeValue As Double
 	Private orbitFadeTarget As Double
+	Private offlineDataUpdatedAt As Long
+	Private isOfflineDataRefreshInProgress As Boolean
+	Private recentResolvedTrackIds As List
+	Private dataSlotPlaylistCursors As Map
 End Sub
 
 Public Sub Initialize
@@ -148,6 +160,7 @@ Private Sub B4XPage_Created (root1 As B4XView)
 	audioPrimary.Initialize("AudioPrimary", Me)
 	audioSecondary.Initialize("AudioSecondary", Me)
 	TraceLog("Приложение запущено. Версия=" & APP_VERSION & ", код плеера=" & FormatPlayerCodeForDisplay(playerCode) & ", deviceId=" & deviceId)
+	StartOfflineDataRefresh
 	ShowInitialScreen
 End Sub
 
@@ -194,12 +207,16 @@ Private Sub InitState
 	playerCode = NormalizePlayerCode(storage.GetDefault("player_code", ""))
 	traceLogs.Initialize
 	serverSnapshots.Initialize
+	offlineData.Initialize
 	playQueue.Initialize
+	recentResolvedTrackIds.Initialize
+	dataSlotPlaylistCursors.Initialize
 	deviceId = GetOrCreateDeviceId
 	retryTimer.Initialize("RetryTimer", SERVER_RETRY_DELAY_INITIAL)
 	breakTimer.Initialize("BreakTimer", 1000)
 	historyTimer.Initialize("HistoryTimer", HISTORY_LOG_DELAY_MS)
 	orbitTimer.Initialize("OrbitTimer", 70)
+	offlineDataRefreshTimer.Initialize("OfflineDataRefreshTimer", OFFLINE_DATA_REFRESH_MS)
 	historyItem.Initialize
 	historyStartedAtTicks = 0
 	activeItem.Initialize
@@ -208,6 +225,8 @@ Private Sub InitState
 	preparedAudioKey = ""
 	pendingPlayAudioKey = ""
 	pendingPrepareAudioKey = ""
+	offlineDataUpdatedAt = storage.GetDefault("offline_data_updated_at", 0)
+	offlineData = LoadOfflineData
 	ResolveMachineGuidAsync
 	TraceLog("Состояние инициализировано. Папка=" & storageDir & ", сохраненный код=" & FormatPlayerCodeForDisplay(playerCode))
 End Sub
@@ -473,9 +492,121 @@ Private Sub ShowInitialScreen
 	End If
 End Sub
 
+Private Sub StartOfflineDataRefresh
+	offlineDataRefreshTimer.Enabled = False
+	If playerCode = "" Then Return
+	CallSubDelayed(Me, "RefreshOfflineDataNowAsync")
+	offlineDataRefreshTimer.Interval = OFFLINE_DATA_REFRESH_MS
+	offlineDataRefreshTimer.Enabled = True
+	TraceLog("Запущено обновление офлайн-метаданных. Интервал=" & OFFLINE_DATA_REFRESH_MS & " ms")
+End Sub
+
+Private Sub RefreshOfflineDataNowAsync
+	Wait For (RefreshOfflineDataNow) Complete (unused As Boolean)
+End Sub
+
+Private Sub OfflineDataRefreshTimer_Tick
+	Wait For (RefreshOfflineDataNow) Complete (unused As Boolean)
+End Sub
+
+Private Sub RefreshOfflineDataNow As ResumableSub
+	If playerCode = "" Then Return False
+	If isOfflineDataRefreshInProgress Then Return False
+	isOfflineDataRefreshInProgress = True
+	TraceLog("Запрос офлайн-метаданных. playerCode=" & FormatPlayerCodeForDisplay(playerCode) & ", deviceId=" & deviceId)
+	Wait For (FetchJsonWithTimeout(DATA_BASE_URL & "?" & BuildParams(CreateDataParams), FETCH_TIMEOUT_MS)) Complete (result As Map)
+	If result.GetDefault("Success", False) = False Then
+		TraceLog("Не удалось обновить офлайн-метаданные. kind=" & result.GetDefault("Kind", "") & ", message=" & result.GetDefault("ErrorMessage", ""))
+		isOfflineDataRefreshInProgress = False
+		Return False
+	End If
+	Dim resultData As Object = result.Get("Data")
+	If resultData Is Map Then
+		Dim data As Map = resultData
+		If data.GetDefault("ok", False) = True And data.GetDefault("type", "") = "data" Then
+			SaveOfflineData(data)
+			Wait For (SyncOfflinePlaylistMetadata) Complete (unused As Boolean)
+			isOfflineDataRefreshInProgress = False
+			Return True
+		End If
+		TraceLog("Ответ data.php не подходит для офлайн-режима. type=" & data.GetDefault("type", "") & ", ok=" & data.GetDefault("ok", False))
+	Else
+		TraceLog("Ответ data.php не является Map.")
+	End If
+	isOfflineDataRefreshInProgress = False
+	Return False
+End Sub
+
+Private Sub EnsureDataPlaybackReady As ResumableSub
+	If CanUseDataPlaybackResolver Then Return True
+	TraceLog("Подготовка локального playback-resolver из data/playlists перед стартом.")
+	Wait For (RefreshOfflineDataNow) Complete (refreshed As Boolean)
+	If refreshed = False Then
+		TraceLog("Не удалось подготовить data/playlists для локального воспроизведения.")
+		Return False
+	End If
+	Return CanUseDataPlaybackResolver
+End Sub
+
+Private Sub CanUseDataPlaybackResolver As Boolean
+	If USE_DATA_PLAYBACK_RESOLVER = False Then Return False
+	If offlineData.IsInitialized = False Then Return False
+	If offlineData.GetDefault("ok", False) <> True Then Return False
+	Dim schedules As List = offlineData.GetDefault("schedules", Null)
+	If schedules.IsInitialized = False Or schedules.Size = 0 Then Return False
+	Return True
+End Sub
+
+Private Sub EnsureDataPlaybackQueue(minItems As Int) As ResumableSub
+	If minItems <= 0 Then Return False
+	Do While playQueue.Size < minItems
+		Wait For (BuildNextTrackFromDataPlayback) Complete (nextItem As Map)
+		If nextItem.IsInitialized = False Then Exit
+		playQueue.Add(nextItem)
+	Loop
+	Return playQueue.Size >= minItems
+End Sub
+
+Private Sub BuildNextTrackFromDataPlayback As ResumableSub
+	Dim emptyItem As Map
+	emptyItem.Initialize
+	Dim currentSlot As Map = ResolveCurrentDataSlot
+	If currentSlot.IsInitialized = False Then
+		TraceLog("Не удалось определить текущий слот из data.")
+		Return emptyItem
+	End If
+	Dim playlistDescriptor As Map = ChooseNextPlaylistDescriptor(currentSlot)
+	If playlistDescriptor.IsInitialized = False Then
+		TraceLog("Не удалось выбрать playlist для текущего слота.")
+		Return emptyItem
+	End If
+	Dim playlistData As Map = LoadCachedPlaylistMetadata(playlistDescriptor.GetDefault("id", ""))
+	If playlistData.IsInitialized = False Then
+		Wait For (EnsureSinglePlaylistMetadata(playlistDescriptor)) Complete (downloaded As Boolean)
+		If downloaded = False Then Return emptyItem
+		playlistData = LoadCachedPlaylistMetadata(playlistDescriptor.GetDefault("id", ""))
+		If playlistData.IsInitialized = False Then Return emptyItem
+	End If
+	Dim selectedTrack As Map = ChooseRandomTrackFromPlaylist(playlistData)
+	If selectedTrack.IsInitialized = False Then
+		TraceLog("Не удалось выбрать трек из playlist. playlistId=" & playlistDescriptor.GetDefault("id", ""))
+		Return emptyItem
+	End If
+	Dim queueItem As Map = CreateQueueTrackFromPlaylist(currentSlot, playlistDescriptor, selectedTrack)
+	RememberResolvedTrack(queueItem.GetDefault("id", ""))
+	Return queueItem
+End Sub
+
 Private Sub AutoStartSavedPlayer
 	If playerCode = "" Then Return
 	If isStarted Or isStopping Then Return
+	If USE_DATA_PLAYBACK_RESOLVER Then
+		Wait For (EnsureDataPlaybackReady) Complete (resolverReady As Boolean)
+		If resolverReady = False Then
+			TraceLog("Автозапуск отложен: data/playlists ещё не готовы.")
+			Return
+		End If
+	End If
 	isStarted = True
 	isStoppedByUser = False
 	SetStopIcon
@@ -681,6 +812,7 @@ Private Sub SubmitPlayerCode As ResumableSub
 	playerCode = nextPlayer
 	SaveValue("player_code", playerCode)
 	txtPlayerCode.Text = FormatPlayerCodeForDisplay(playerCode)
+	StartOfflineDataRefresh
 	ShowPlayerScreen(True)
 	Return True
 End Sub
@@ -899,6 +1031,27 @@ End Sub
 Private Sub LoadNextAndPlay As ResumableSub
 	ClearRetryTimer
 	TraceLog("Запрос очереди и запуск. Режим старта=" & nextStartMode & ", размер очереди до запроса=" & playQueue.Size)
+	If USE_DATA_PLAYBACK_RESOLVER Then
+		If CanUseDataPlaybackResolver = False Then
+			Wait For (EnsureDataPlaybackReady) Complete (resolverReady As Boolean)
+			If resolverReady = False Then
+				TraceLog("Локальный resolver недоступен. Запуск через next.php отключен в тестовом режиме.")
+				HandleTemporaryState("server", "")
+				Return False
+			End If
+		End If
+		Wait For (EnsureDataPlaybackQueue(2)) Complete (queuePrepared As Boolean)
+		If queuePrepared = False Then
+			TraceLog("Не удалось собрать очередь из data/playlists. Запуск через next.php отключен в тестовом режиме.")
+			HandleTemporaryState("server", "")
+			Return False
+		Else
+			SyncExactBreakState
+			TraceLog("Локальная очередь из data/playlists готова. Элементов=" & playQueue.Size)
+			Wait For (PlayQueueItem(ShiftQueueItem, 0)) Complete (unusedLocal As Boolean)
+			Return True
+		End If
+	End If
 	Wait For (FetchNext) Complete (result As Map)
 	If result.GetDefault("Success", False) = False Then
 		Wait For (HandleFetchFailure(result)) Complete (unused As Boolean)
@@ -933,6 +1086,18 @@ Private Sub PrefetchNext As ResumableSub
 	If playQueue.Size > 0 Then
 		Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
 		Return preparedOk
+	End If
+	If USE_DATA_PLAYBACK_RESOLVER Then
+		If CanUseDataPlaybackResolver = False Then
+			Wait For (EnsureDataPlaybackReady) Complete (resolverReady As Boolean)
+			If resolverReady = False Then Return False
+		End If
+		Wait For (EnsureDataPlaybackQueue(1)) Complete (queuePrepared As Boolean)
+		If queuePrepared And playQueue.Size > 0 Then
+			Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
+			Return preparedOk
+		End If
+		Return False
 	End If
 	If HasPendingExactBreak Then Return False
 	Wait For (FetchNext) Complete (result As Map)
@@ -1911,11 +2076,22 @@ Private Sub MediaUrl(item As Map) As String
 End Sub
 
 Private Sub CurrentVolume(item As Map) As Double
-	Dim volume As Double = 0.7
-	If item.ContainsKey("volume") Then volume = item.Get("volume")
-	If volume < 0 Then volume = 0
-	If volume > 1 Then volume = 1
-	Return volume
+	Return ResolveItemVolume(item)
+End Sub
+
+Private Sub ResolveItemVolume(item As Map) As Double
+	If item.IsInitialized = False Then Return 0.7
+	Dim itemType As String = item.GetDefault("type", "")
+	Dim gainDb As Double = NormalizeDbValue(item.GetDefault("gain", -3), -3)
+	Dim baseFactor As Double = 1
+	If itemType = "track" Then baseFactor = ResolvePlayerLevelFactor
+	Return Max(0, Min(1, baseFactor * DbToFactor(gainDb)))
+End Sub
+
+Private Sub ResolvePlayerLevelFactor As Double
+	Dim playerData As Map = offlineData.GetDefault("player", CreateInitializedMap)
+	Dim playerLevel As Double = playerData.GetDefault("level", 100)
+	Return PlayerLevelToFactor(playerLevel)
 End Sub
 
 Private Sub NormalizeQueueResponse(data As Object) As List
@@ -1990,6 +2166,16 @@ Private Sub CreateClaimParams As Map
 	params.Put("player", playerCode)
 	params.Put("device", deviceId)
 	params.Put("tz", TimezoneOffsetMinutes)
+	Return params
+End Sub
+
+Private Sub CreateDataParams As Map
+	Dim params As Map
+	params.Initialize
+	params.Put("player", playerCode)
+	params.Put("device", deviceId)
+	params.Put("tz", TimezoneOffsetMinutes)
+	params.Put("version", APP_VERSION)
 	Return params
 End Sub
 
@@ -2094,6 +2280,583 @@ Private Sub MigrateLegacyStorageIfNeeded
 	Catch
 		TraceLog("Не удалось перенести legacy JSON в KVS. " & LastException.Message)
 	End Try
+End Sub
+
+Private Sub LoadOfflineData As Map
+	Dim data As Map
+	data.Initialize
+	If File.Exists(storageDir, offlineDataFile) = False Then Return data
+	Try
+		Dim parser As JSONParser
+		parser.Initialize(File.ReadString(storageDir, offlineDataFile))
+		Dim parsedData As Map = parser.NextObject
+		If parsedData.IsInitialized Then
+			data = parsedData
+			TraceLog("Офлайн-метаданные загружены. playlists=" & GetOfflinePlaylistIds(data).Size & ", ads=" & GetOfflineAdsCount(data) & ", schedules=" & GetOfflineSchedulesCount(data))
+		End If
+	Catch
+		data.Initialize
+		TraceLog("Не удалось загрузить offline_data.json. " & LastException.Message)
+	End Try
+	Return data
+End Sub
+
+Private Sub SaveOfflineData(sourceData As Map)
+	Dim normalizedData As Map = NormalizeOfflineData(sourceData)
+	offlineData = normalizedData
+	offlineDataUpdatedAt = DateTime.Now
+	SaveValue("offline_data_updated_at", offlineDataUpdatedAt)
+	SaveValue("offline_data_source_updated", normalizedData.GetDefault("updated", ""))
+	Dim playlistIds As List = GetOfflinePlaylistIds(normalizedData)
+	Dim playlistDescriptors As List = BuildOfflinePlaylistDescriptors(normalizedData)
+	Dim playlistCacheStatus As Map = CompareOfflinePlaylistsWithCache(playlistDescriptors)
+	SaveValue("offline_playlist_ids", playlistIds)
+	SaveValue("offline_playlist_descriptors", playlistDescriptors)
+	SaveValue("offline_playlist_download_ids", playlistCacheStatus.GetDefault("DownloadIds", CreateInitializedList))
+	SaveValue("offline_playlist_missing_count", playlistCacheStatus.GetDefault("MissingCount", 0))
+	SaveValue("offline_playlist_outdated_count", playlistCacheStatus.GetDefault("OutdatedCount", 0))
+	SaveValue("offline_playlist_actual_count", playlistCacheStatus.GetDefault("ActualCount", 0))
+	SaveValue("offline_ads_count", GetOfflineAdsCount(normalizedData))
+	SaveValue("offline_schedules_count", GetOfflineSchedulesCount(normalizedData))
+	Dim generator As JSONGenerator
+	generator.Initialize(normalizedData)
+	File.WriteString(storageDir, offlineDataFile, generator.ToString)
+	WriteOfflinePlaylistRequirementsFile(playlistDescriptors)
+	TraceLog("Офлайн-метаданные сохранены. playlists=" & playlistIds.Size & ", ads=" & GetOfflineAdsCount(normalizedData) & ", schedules=" & GetOfflineSchedulesCount(normalizedData) & ", missingPlaylists=" & playlistCacheStatus.GetDefault("MissingCount", 0) & ", outdatedPlaylists=" & playlistCacheStatus.GetDefault("OutdatedCount", 0))
+End Sub
+
+Private Sub NormalizeOfflineData(sourceData As Map) As Map
+	Dim normalizedData As Map
+	normalizedData.Initialize
+	normalizedData.Put("ok", sourceData.GetDefault("ok", False))
+	normalizedData.Put("type", sourceData.GetDefault("type", ""))
+	normalizedData.Put("updated", sourceData.GetDefault("updated", ""))
+	normalizedData.Put("saved_at", DateTime.Now)
+	normalizedData.Put("player_code", playerCode)
+	normalizedData.Put("device_id", deviceId)
+	If sourceData.ContainsKey("player") Then normalizedData.Put("player", sourceData.Get("player"))
+	If sourceData.ContainsKey("ads") Then normalizedData.Put("ads", sourceData.Get("ads"))
+	If sourceData.ContainsKey("schedules") Then normalizedData.Put("schedules", sourceData.Get("schedules"))
+	Return normalizedData
+End Sub
+
+Private Sub GetOfflinePlaylistIds(data As Map) As List
+	Dim playlistIds As List
+	playlistIds.Initialize
+	If data.IsInitialized = False Then Return playlistIds
+	Dim uniqueIds As Map
+	uniqueIds.Initialize
+	Dim schedules As List = data.GetDefault("schedules", Null)
+	If schedules.IsInitialized = False Then Return playlistIds
+	For Each scheduleObject As Object In schedules
+		If scheduleObject Is Map Then
+			Dim schedule As Map = scheduleObject
+			Dim slots As List = schedule.GetDefault("slots", Null)
+			If slots.IsInitialized = False Then Continue
+			For Each slotObject As Object In slots
+				If slotObject Is Map Then
+					Dim slot As Map = slotObject
+					Dim playlists As List = slot.GetDefault("playlists", Null)
+					If playlists.IsInitialized = False Then Continue
+					For Each playlistObject As Object In playlists
+						If playlistObject Is Map Then
+							Dim playlist As Map = playlistObject
+							Dim playlistId As String = playlist.GetDefault("id", "")
+							If playlistId <> "" And uniqueIds.ContainsKey(playlistId) = False Then
+								uniqueIds.Put(playlistId, True)
+								playlistIds.Add(playlistId)
+							End If
+						End If
+					Next
+				End If
+			Next
+		End If
+	Next
+	Return playlistIds
+End Sub
+
+Private Sub GetOfflineAdsCount(data As Map) As Int
+	If data.IsInitialized = False Then Return 0
+	Dim ads As List = data.GetDefault("ads", Null)
+	If ads.IsInitialized = False Then Return 0
+	Return ads.Size
+End Sub
+
+Private Sub GetOfflineSchedulesCount(data As Map) As Int
+	If data.IsInitialized = False Then Return 0
+	Dim schedules As List = data.GetDefault("schedules", Null)
+	If schedules.IsInitialized = False Then Return 0
+	Return schedules.Size
+End Sub
+
+Private Sub BuildOfflinePlaylistDescriptors(data As Map) As List
+	Dim descriptors As List
+	descriptors.Initialize
+	If data.IsInitialized = False Then Return descriptors
+	Dim uniqueDescriptors As Map
+	uniqueDescriptors.Initialize
+	Dim schedules As List = data.GetDefault("schedules", Null)
+	If schedules.IsInitialized = False Then Return descriptors
+	For Each scheduleObject As Object In schedules
+		If scheduleObject Is Map Then
+			Dim schedule As Map = scheduleObject
+			Dim scheduleTitle As String = schedule.GetDefault("title", "")
+			Dim slots As List = schedule.GetDefault("slots", Null)
+			If slots.IsInitialized = False Then Continue
+			For Each slotObject As Object In slots
+				If slotObject Is Map Then
+					Dim slot As Map = slotObject
+					Dim slotTime As String = slot.GetDefault("time", "")
+					Dim streamId As String = slot.GetDefault("stream", "")
+					Dim playlists As List = slot.GetDefault("playlists", Null)
+					If playlists.IsInitialized = False Then Continue
+					For Each playlistObject As Object In playlists
+						If playlistObject Is Map Then
+							Dim playlist As Map = playlistObject
+							Dim playlistId As String = playlist.GetDefault("id", "")
+							If playlistId = "" Then Continue
+							If uniqueDescriptors.ContainsKey(playlistId) Then Continue
+							Dim descriptor As Map
+							descriptor.Initialize
+							descriptor.Put("id", playlistId)
+							descriptor.Put("updated", playlist.GetDefault("updated", ""))
+							descriptor.Put("title", playlist.GetDefault("title", ""))
+							descriptor.Put("schedule_title", scheduleTitle)
+							descriptor.Put("slot_time", slotTime)
+							descriptor.Put("stream_id", streamId)
+							uniqueDescriptors.Put(playlistId, descriptor)
+							descriptors.Add(descriptor)
+						End If
+					Next
+				End If
+			Next
+		End If
+	Next
+	Return descriptors
+End Sub
+
+Private Sub ResolveCurrentDataSlot As Map
+	Dim slotContext As Map
+	slotContext.Initialize
+	If offlineData.IsInitialized = False Then Return slotContext
+	Dim schedules As List = offlineData.GetDefault("schedules", Null)
+	If schedules.IsInitialized = False Or schedules.Size = 0 Then Return slotContext
+	Dim todayKey As String = FormatIsoDate(DateTime.Now)
+	Dim nowMinutes As Int = CurrentMinutesOfDay
+	Dim todayWeekday As String = CurrentIsoWeekday
+	Dim matchedSlots As List
+	matchedSlots.Initialize
+	For Each scheduleObject As Object In schedules
+		If scheduleObject Is Map Then
+			Dim schedule As Map = scheduleObject
+			If ScheduleAppliesToday(schedule, todayKey, todayWeekday) = False Then Continue
+			Dim scheduleTitle As String = schedule.GetDefault("title", "")
+			Dim slots As List = schedule.GetDefault("slots", Null)
+			If slots.IsInitialized = False Then Continue
+			For Each slotObject As Object In slots
+				If slotObject Is Map Then
+					Dim slot As Map = slotObject
+					Dim slotTime As String = slot.GetDefault("time", "")
+					Dim slotMinutes As Int = TimeStringToMinutes(slotTime)
+					If slotMinutes < 0 Then Continue
+					Dim entry As Map
+					entry.Initialize
+					entry.Put("schedule_title", scheduleTitle)
+					entry.Put("slot_time", slotTime)
+					entry.Put("slot_minutes", slotMinutes)
+					entry.Put("stream_id", slot.GetDefault("stream", ""))
+					entry.Put("playlists", slot.GetDefault("playlists", CreateInitializedList))
+					matchedSlots.Add(entry)
+				End If
+			Next
+		End If
+	Next
+	If matchedSlots.Size = 0 Then Return slotContext
+	Dim selectedSlot As Map
+	selectedSlot.Initialize
+	Dim selectedMinutes As Int = -1
+	For Each slotEntryObject As Object In matchedSlots
+		Dim slotEntry As Map = slotEntryObject
+		Dim slotMinutes As Int = slotEntry.GetDefault("slot_minutes", -1)
+		If slotMinutes <= nowMinutes And slotMinutes >= selectedMinutes Then
+			selectedSlot = slotEntry
+			selectedMinutes = slotMinutes
+		End If
+	Next
+	If selectedSlot.IsInitialized = False Then
+		For Each slotEntryObject As Object In matchedSlots
+			Dim slotEntry As Map = slotEntryObject
+			Dim slotMinutes As Int = slotEntry.GetDefault("slot_minutes", -1)
+			If slotMinutes > selectedMinutes Then
+				selectedSlot = slotEntry
+				selectedMinutes = slotMinutes
+			End If
+		Next
+	End If
+	Return selectedSlot
+End Sub
+
+Private Sub ScheduleAppliesToday(schedule As Map, todayKey As String, todayWeekday As String) As Boolean
+	Dim startDate As String = schedule.GetDefault("start", "")
+	If startDate <> "" And startDate.CompareTo(todayKey) > 0 Then Return False
+	Dim weekdays As List = schedule.GetDefault("weekdays", Null)
+	If weekdays.IsInitialized = False Or weekdays.Size = 0 Then Return True
+	For Each weekdayObject As Object In weekdays
+		If ("" & weekdayObject).Trim = todayWeekday Then Return True
+	Next
+	Return False
+End Sub
+
+Private Sub ChooseNextPlaylistDescriptor(currentSlot As Map) As Map
+	Dim emptyDescriptor As Map
+	emptyDescriptor.Initialize
+	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
+	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return emptyDescriptor
+	Dim slotKey As String = BuildDataSlotKey(currentSlot)
+	Dim cursorValue As Int = dataSlotPlaylistCursors.GetDefault(slotKey, 0)
+	If cursorValue < 0 Then cursorValue = 0
+	Dim playlistIndexForSlot As Int = cursorValue Mod playlists.Size
+	dataSlotPlaylistCursors.Put(slotKey, playlistIndexForSlot + 1)
+	Dim playlistObject As Object = playlists.Get(playlistIndexForSlot)
+	If playlistObject Is Map Then
+		Dim playlist As Map = playlistObject
+		TraceLog("Выбран playlist для локального воспроизведения. slot=" & slotKey & ", index=" & playlistIndexForSlot & ", playlistId=" & playlist.GetDefault("id", "") & ", title=" & playlist.GetDefault("title", ""))
+		Return playlistObject
+	End If
+	Return emptyDescriptor
+End Sub
+
+Private Sub BuildDataSlotKey(currentSlot As Map) As String
+	Return currentSlot.GetDefault("schedule_title", "") & "|" & currentSlot.GetDefault("stream_id", "") & "|" & currentSlot.GetDefault("slot_time", "")
+End Sub
+
+Private Sub LoadCachedPlaylistMetadata(playlistId As String) As Map
+	Dim playlistData As Map
+	playlistData.Initialize
+	If playlistId = "" Then Return playlistData
+	If File.Exists(GetOfflinePlaylistsDir, PlaylistMetadataFileName(playlistId)) = False Then Return playlistData
+	Try
+		Dim parser As JSONParser
+		parser.Initialize(File.ReadString(GetOfflinePlaylistsDir, PlaylistMetadataFileName(playlistId)))
+		Dim parsedData As Map = parser.NextObject
+		If parsedData.IsInitialized Then playlistData = parsedData
+	Catch
+		playlistData.Initialize
+		TraceLog("Не удалось загрузить playlist metadata из кэша. id=" & playlistId & ", message=" & LastException.Message)
+	End Try
+	Return playlistData
+End Sub
+
+Private Sub EnsureSinglePlaylistMetadata(descriptor As Map) As ResumableSub
+	Dim cachedPlaylistIndex As Map = storage.GetDefault("cached_playlist_index", CreateInitializedMap)
+	Wait For (DownloadOfflinePlaylistMetadata(descriptor, cachedPlaylistIndex)) Complete (downloaded As Boolean)
+	If downloaded Then storage.Put("cached_playlist_index", cachedPlaylistIndex)
+	Return downloaded
+End Sub
+
+Private Sub ChooseRandomTrackFromPlaylist(playlistData As Map) As Map
+	Dim emptyTrack As Map
+	emptyTrack.Initialize
+	If playlistData.IsInitialized = False Then Return emptyTrack
+	Dim tracks As List = playlistData.GetDefault("tracks", Null)
+	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return emptyTrack
+	Dim filteredTracks As List
+	filteredTracks.Initialize
+	For Each trackObject As Object In tracks
+		If trackObject Is Map Then
+			Dim track As Map = trackObject
+			Dim trackId As String = track.GetDefault("id", "")
+			If trackId = "" Then Continue
+			If recentResolvedTrackIds.IndexOf(trackId) = -1 Then filteredTracks.Add(track)
+		End If
+	Next
+	Dim sourceTracks As List = tracks
+	If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
+	Dim randomIndex As Int = Rnd(0, sourceTracks.Size)
+	Dim trackObject As Object = sourceTracks.Get(randomIndex)
+	If trackObject Is Map Then Return trackObject
+	Return emptyTrack
+End Sub
+
+Private Sub CreateQueueTrackFromPlaylist(currentSlot As Map, playlistDescriptor As Map, track As Map) As Map
+	Dim item As Map
+	item.Initialize
+	item.Put("type", "track")
+	item.Put("id", track.GetDefault("id", ""))
+	item.Put("code", track.GetDefault("code", ""))
+	item.Put("set", track.GetDefault("set", ""))
+	item.Put("duration", track.GetDefault("duration", 0))
+	item.Put("gain", track.GetDefault("gain", -3))
+	item.Put("stream", ResolvePlaybackStreamTitle(currentSlot, playlistDescriptor))
+	item.Put("playlist_id", playlistDescriptor.GetDefault("id", ""))
+	item.Put("playlist_title", playlistDescriptor.GetDefault("title", ""))
+	item.Put("schedule_title", currentSlot.GetDefault("schedule_title", ""))
+	item.Put("slot_time", currentSlot.GetDefault("slot_time", ""))
+	Return item
+End Sub
+
+Private Sub ResolvePlaybackStreamTitle(currentSlot As Map, playlistDescriptor As Map) As String
+	Dim scheduleTitle As String = currentSlot.GetDefault("schedule_title", "")
+	If scheduleTitle <> "" Then Return scheduleTitle
+	Return playlistDescriptor.GetDefault("title", "")
+End Sub
+
+Private Sub ResolveTrackVolumeFromData(track As Map) As Double
+	Dim baseFactor As Double = ResolvePlayerLevelFactor
+	Dim gainDb As Double = NormalizeDbValue(track.GetDefault("gain", -3), -3)
+	Return Max(0, Min(1, baseFactor * DbToFactor(gainDb)))
+End Sub
+
+Private Sub PlayerLevelToFactor(levelValue As Double) As Double
+	Dim normalized As Double = Max(0, Min(1, levelValue / 100))
+	If normalized <= 0 Then Return 0
+	Return Power(normalized, 0.7)
+End Sub
+
+Private Sub NormalizeDbValue(value As Object, fallbackValue As Double) As Double
+	Dim db As Double = fallbackValue
+	Try
+		db = value
+	Catch
+		db = fallbackValue
+	End Try
+	If db > 0 Then db = 0
+	If db < -24 Then db = -24
+	Return db
+End Sub
+
+Private Sub DbToFactor(db As Double) As Double
+	If db >= 0 Then Return 1
+	Return Power(10, db / 20)
+End Sub
+
+Private Sub RememberResolvedTrack(trackId As String)
+	If trackId = "" Then Return
+	recentResolvedTrackIds.Add(trackId)
+	Do While recentResolvedTrackIds.Size > 20
+		recentResolvedTrackIds.RemoveAt(0)
+	Loop
+End Sub
+
+Private Sub FormatIsoDate(ticks As Long) As String
+	Dim previousDateFormat As String = DateTime.DateFormat
+	DateTime.DateFormat = "yyyy-MM-dd"
+	Dim value As String = DateTime.Date(ticks)
+	DateTime.DateFormat = previousDateFormat
+	Return value
+End Sub
+
+Private Sub CurrentMinutesOfDay As Int
+	Dim previousTimeFormat As String = DateTime.TimeFormat
+	DateTime.TimeFormat = "HH:mm:ss"
+	Dim timeValue As String = DateTime.Time(DateTime.Now)
+	DateTime.TimeFormat = previousTimeFormat
+	Dim parts() As String = Regex.Split(":", timeValue)
+	If parts.Length < 2 Then Return 0
+	Return parts(0) * 60 + parts(1)
+End Sub
+
+Private Sub CurrentIsoWeekday As String
+	Dim jo As JavaObject
+	jo.InitializeStatic("java.time.LocalDate")
+	Dim today As JavaObject = jo.RunMethod("now", Null)
+	Dim dayOfWeek As JavaObject = today.RunMethod("getDayOfWeek", Null)
+	Return "" & dayOfWeek.RunMethod("getValue", Null)
+End Sub
+
+Private Sub TimeStringToMinutes(value As String) As Int
+	If value = "" Then Return -1
+	Dim parts() As String = Regex.Split(":", value)
+	If parts.Length < 2 Then Return -1
+	Try
+		Dim hours As Int = parts(0)
+		Dim minutes As Int = parts(1)
+		If hours < 0 Or hours > 23 Then Return -1
+		If minutes < 0 Or minutes > 59 Then Return -1
+		Return hours * 60 + minutes
+	Catch
+		Return -1
+	End Try
+End Sub
+
+Private Sub CompareOfflinePlaylistsWithCache(descriptors As List) As Map
+	Dim result As Map
+	result.Initialize
+	Dim downloadIds As List
+	downloadIds.Initialize
+	Dim cachedPlaylistIndex As Map = storage.GetDefault("cached_playlist_index", CreateInitializedMap)
+	Dim missingCount As Int = 0
+	Dim outdatedCount As Int = 0
+	Dim actualCount As Int = 0
+	For Each descriptorObject As Object In descriptors
+		If descriptorObject Is Map Then
+			Dim descriptor As Map = descriptorObject
+			Dim playlistId As String = descriptor.GetDefault("id", "")
+			If playlistId = "" Then Continue
+			If cachedPlaylistIndex.ContainsKey(playlistId) = False Then
+				missingCount = missingCount + 1
+				downloadIds.Add(playlistId)
+				Continue
+			End If
+			Dim cachedEntryObject As Object = cachedPlaylistIndex.Get(playlistId)
+			If cachedEntryObject Is Map Then
+				Dim cachedEntry As Map = cachedEntryObject
+				If cachedEntry.GetDefault("updated", "") <> descriptor.GetDefault("updated", "") Then
+					outdatedCount = outdatedCount + 1
+					downloadIds.Add(playlistId)
+				Else
+					actualCount = actualCount + 1
+				End If
+			Else
+				missingCount = missingCount + 1
+				downloadIds.Add(playlistId)
+			End If
+		End If
+	Next
+	result.Put("DownloadIds", downloadIds)
+	result.Put("MissingCount", missingCount)
+	result.Put("OutdatedCount", outdatedCount)
+	result.Put("ActualCount", actualCount)
+	Return result
+End Sub
+
+Private Sub WriteOfflinePlaylistRequirementsFile(descriptors As List)
+	Dim payload As Map
+	payload.Initialize
+	payload.Put("saved_at", DateTime.Now)
+	payload.Put("player_code", playerCode)
+	payload.Put("descriptors", descriptors)
+	Dim generator As JSONGenerator
+	generator.Initialize(payload)
+	File.WriteString(storageDir, offlinePlaylistRequirementsFile, generator.ToString)
+End Sub
+
+Private Sub SyncOfflinePlaylistMetadata As ResumableSub
+	Dim playlistDescriptors As List = storage.GetDefault("offline_playlist_descriptors", CreateInitializedList)
+	If playlistDescriptors.IsInitialized = False Or playlistDescriptors.Size = 0 Then
+		TraceLog("Для синхронизации playlist metadata ничего не найдено.")
+		Return False
+	End If
+	EnsureDirectory(GetOfflinePlaylistsDir)
+	Dim cachedPlaylistIndex As Map = storage.GetDefault("cached_playlist_index", CreateInitializedMap)
+	Dim downloadedCount As Int = 0
+	Dim updatedCount As Int = 0
+	Dim failedCount As Int = 0
+	For Each descriptorObject As Object In playlistDescriptors
+		If descriptorObject Is Map Then
+			Dim descriptor As Map = descriptorObject
+			Dim syncAction As String = ResolvePlaylistSyncAction(descriptor, cachedPlaylistIndex)
+			If syncAction = "skip" Then Continue
+			Wait For (DownloadOfflinePlaylistMetadata(descriptor, cachedPlaylistIndex)) Complete (downloaded As Boolean)
+			If downloaded Then
+				If syncAction = "missing" Then
+					downloadedCount = downloadedCount + 1
+				Else
+					updatedCount = updatedCount + 1
+				End If
+			Else
+				failedCount = failedCount + 1
+			End If
+		End If
+	Next
+	storage.Put("cached_playlist_index", cachedPlaylistIndex)
+	Dim refreshedCacheStatus As Map = CompareOfflinePlaylistsWithCache(playlistDescriptors)
+	SaveValue("offline_playlist_download_ids", refreshedCacheStatus.GetDefault("DownloadIds", CreateInitializedList))
+	SaveValue("offline_playlist_missing_count", refreshedCacheStatus.GetDefault("MissingCount", 0))
+	SaveValue("offline_playlist_outdated_count", refreshedCacheStatus.GetDefault("OutdatedCount", 0))
+	SaveValue("offline_playlist_actual_count", refreshedCacheStatus.GetDefault("ActualCount", 0))
+	TraceLog("Синхронизация playlist metadata завершена. downloaded=" & downloadedCount & ", updated=" & updatedCount & ", failed=" & failedCount & ", actual=" & refreshedCacheStatus.GetDefault("ActualCount", 0))
+	Return failedCount = 0
+End Sub
+
+Private Sub ResolvePlaylistSyncAction(descriptor As Map, cachedPlaylistIndex As Map) As String
+	Dim playlistId As String = descriptor.GetDefault("id", "")
+	If playlistId = "" Then Return "skip"
+	If cachedPlaylistIndex.ContainsKey(playlistId) = False Then Return "missing"
+	Dim cachedEntryObject As Object = cachedPlaylistIndex.Get(playlistId)
+	If cachedEntryObject Is Map Then
+		Dim cachedEntry As Map = cachedEntryObject
+		If cachedEntry.GetDefault("updated", "") <> descriptor.GetDefault("updated", "") Then Return "outdated"
+		If File.Exists(GetOfflinePlaylistsDir, PlaylistMetadataFileName(playlistId)) = False Then Return "missing"
+		Return "skip"
+	End If
+	Return "missing"
+End Sub
+
+Private Sub DownloadOfflinePlaylistMetadata(descriptor As Map, cachedPlaylistIndex As Map) As ResumableSub
+	Dim playlistId As String = descriptor.GetDefault("id", "")
+	If playlistId = "" Then Return False
+	Dim playlistUrl As String = PlaylistMetadataUrl(playlistId)
+	TraceLog("Загрузка playlist metadata. id=" & playlistId & ", url=" & playlistUrl)
+	Wait For (FetchJsonWithTimeout(playlistUrl, FETCH_TIMEOUT_MS)) Complete (result As Map)
+	If result.GetDefault("Success", False) = False Then
+		TraceLog("Не удалось загрузить playlist metadata. id=" & playlistId & ", message=" & result.GetDefault("ErrorMessage", ""))
+		Return False
+	End If
+	Dim resultData As Object = result.Get("Data")
+	If resultData Is Map Then
+	Else
+		TraceLog("Playlist metadata не является Map. id=" & playlistId)
+		Return False
+	End If
+	Dim playlistData As Map = resultData
+	Dim normalizedPlaylistData As Map = NormalizeOfflinePlaylistData(descriptor, playlistData)
+	Dim generator As JSONGenerator
+	generator.Initialize(normalizedPlaylistData)
+	File.WriteString(GetOfflinePlaylistsDir, PlaylistMetadataFileName(playlistId), generator.ToString)
+	Dim cachedEntry As Map
+	cachedEntry.Initialize
+	cachedEntry.Put("id", playlistId)
+	cachedEntry.Put("updated", descriptor.GetDefault("updated", ""))
+	cachedEntry.Put("saved_at", DateTime.Now)
+	cachedEntry.Put("title", descriptor.GetDefault("title", ""))
+	cachedEntry.Put("track_count", GetPlaylistTrackCount(normalizedPlaylistData))
+	cachedPlaylistIndex.Put(playlistId, cachedEntry)
+	TraceLog("Playlist metadata сохранен. id=" & playlistId & ", tracks=" & cachedEntry.GetDefault("track_count", 0) & ", updated=" & cachedEntry.GetDefault("updated", ""))
+	Return True
+End Sub
+
+Private Sub NormalizeOfflinePlaylistData(descriptor As Map, playlistData As Map) As Map
+	Dim normalizedPlaylistData As Map
+	normalizedPlaylistData.Initialize
+	For Each key As String In playlistData.Keys
+		normalizedPlaylistData.Put(key, playlistData.Get(key))
+	Next
+	normalizedPlaylistData.Put("id", descriptor.GetDefault("id", ""))
+	normalizedPlaylistData.Put("required_updated", descriptor.GetDefault("updated", ""))
+	normalizedPlaylistData.Put("saved_at", DateTime.Now)
+	Return normalizedPlaylistData
+End Sub
+
+Private Sub GetPlaylistTrackCount(playlistData As Map) As Int
+	If playlistData.IsInitialized = False Then Return 0
+	Dim tracks As List = playlistData.GetDefault("tracks", Null)
+	If tracks.IsInitialized = False Then Return 0
+	Return tracks.Size
+End Sub
+
+Private Sub GetOfflinePlaylistsDir As String
+	Return File.Combine(storageDir, offlinePlaylistsDirName)
+End Sub
+
+Private Sub PlaylistMetadataFileName(playlistId As String) As String
+	Return playlistId & ".json"
+End Sub
+
+Private Sub PlaylistMetadataUrl(playlistId As String) As String
+	Return PLAYLIST_CDN_BASE_URL & playlistId & ".json"
+End Sub
+
+Private Sub CreateInitializedMap As Map
+	Dim m As Map
+	m.Initialize
+	Return m
+End Sub
+
+Private Sub CreateInitializedList As List
+	Dim items As List
+	items.Initialize
+	Return items
 End Sub
 
 Public Sub SaveWindowState
