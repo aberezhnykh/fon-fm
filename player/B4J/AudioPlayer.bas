@@ -19,7 +19,7 @@ Sub Class_Globals
 	Private loadTimer As Timer
 	Private fadeTimer As Timer
 	Private playerState As Int
-	Private maxVolume As Int
+	Private maxVolume As Double
 	Private fadeMode As Int
 	Private fadeTargetVolume As Double
 	Private fadeStepVolume As Double
@@ -33,14 +33,16 @@ Public Sub Initialize (eventNameValue As String, targetModuleValue As Object)
 	checkTimer.Initialize("CheckTimer", 10 * DateTime.TicksPerSecond)
 	timeUpdateTimer.Initialize("TimeUpdateTimer", 250)
 	fadeTimer.Initialize("FadeTimer", 40)
+	TraceAudio("Initialize")
 End Sub
 
-Public Sub LoadUrl(url As String, volume As Int)
+Public Sub LoadUrl(url As String, volume As Double)
 	Reset
 	loadTimer.Interval = 10 * DateTime.TicksPerSecond
 	loadTimer.Enabled = True
 	playerState = STATE_LOADING
-	maxVolume = Max(0, Min(100, volume))
+	maxVolume = Max(0, Min(1, volume))
+	TraceAudio("LoadUrl. volume=" & NumberFormat2(maxVolume, 1, 3, 3, False) & ", url=" & url)
 	Try
 		player.Initialize("Player", url)
 		jo = player
@@ -62,11 +64,12 @@ Public Sub PlayWithFade(fadeTimeMs As Int)
 	checkTimer.Enabled = True
 	timeUpdateTimer.Enabled = True
 	player.Play
+	TraceAudio("PlayWithFade. fadeTimeMs=" & fadeTimeMs & ", maxVolume=" & NumberFormat2(maxVolume, 1, 3, 3, False))
 	If fadeTimeMs > 0 Then
 		SetPlayerVolume(0)
-		StartFade(FADE_IN, maxVolume / 100, fadeTimeMs)
+		StartFade(FADE_IN, maxVolume, fadeTimeMs)
 	Else
-		SetPlayerVolume(maxVolume / 100)
+		SetPlayerVolume(maxVolume)
 	End If
 End Sub
 
@@ -77,8 +80,10 @@ Public Sub Stop(fadeTimeMs As Int)
 	lastPosition = 0
 	If player.IsInitialized = False Then
 		playerState = STATE_STOPPED
+		TraceAudio("Stop ignored. player not initialized.")
 		Return
 	End If
+	TraceAudio("Stop. fadeTimeMs=" & fadeTimeMs & ", currentVolume=" & NumberFormat2(currentVolume, 1, 3, 3, False))
 	If fadeTimeMs > 0 And currentVolume > 0 Then
 		playerState = STATE_STOPPED
 		StartFade(FADE_OUT, 0, fadeTimeMs)
@@ -150,6 +155,7 @@ End Sub
 Private Sub Ready_Event(methodName As String, args() As Object)
 	playerState = STATE_READY
 	loadTimer.Enabled = False
+	TraceAudio("Ready")
 	CallIfExists(eventName & "_Ready")
 End Sub
 
@@ -160,6 +166,7 @@ Private Sub Error_Event(methodName As String, args() As Object)
 	Catch
 		msg = LastException.Message
 	End Try
+	TraceAudio("Error_Event. message=" & msg)
 	NotifyError(msg)
 End Sub
 
@@ -172,10 +179,12 @@ Private Sub Player_Complete
 	fadeMode = FADE_NONE
 	currentVolume = 0
 	playerState = STATE_STOPPED
+	TraceAudio("Complete")
 	CallIfExists(eventName & "_Complete")
 End Sub
 
 Private Sub NotifyError(message As String)
+	TraceAudio("NotifyError. message=" & message)
 	Reset
 	Dim subName As String = eventName & "_Error"
 	If SubExists(targetModule, subName) Then
@@ -206,6 +215,7 @@ End Sub
 
 Private Sub LoadTimer_Tick
 	loadTimer.Enabled = False
+	TraceAudio("Load timeout")
 	NotifyError("Track loading timeout expired")
 End Sub
 
@@ -267,6 +277,7 @@ Private Sub StopImmediately
 	fadeMode = FADE_NONE
 	playerState = STATE_STOPPED
 	currentVolume = 0
+	TraceAudio("StopImmediately")
 	If player.IsInitialized = False Then Return
 	Try
 		player.Volume = 0
@@ -274,4 +285,11 @@ Private Sub StopImmediately
 	Catch
 		Log(LastException.Message)
 	End Try
+End Sub
+
+Private Sub TraceAudio(message As String)
+	Dim subName As String = "TraceLog"
+	If SubExists(targetModule, subName) Then
+		CallSubDelayed2(targetModule, subName, "[" & eventName & "] " & message)
+	End If
 End Sub

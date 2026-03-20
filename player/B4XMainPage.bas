@@ -22,7 +22,9 @@ Sub Class_Globals
 	Private Const ICON_CLOSE As String = Chr(0xE5CD)
 	Private Const PREFETCH_SECONDS As Int = 10
 	Private Const STOP_FADE_MS As Int = 3000
+	Private Const ORBIT_FADE_MS As Int = 3000
 	Private Const TRACK_OVERLAP_MS As Int = 1800
+	Private Const AD_TAIL_OVERLAP_MS As Int = 350
 	Private Const HISTORY_LOG_DELAY_MS As Int = 15000
 	Private Const FETCH_TIMEOUT_MS As Int = 8000
 	Private Const CONNECTIVITY_CHECK_TIMEOUT_MS As Int = 5000
@@ -32,14 +34,15 @@ Sub Class_Globals
 	Private Const SERVER_RETRY_DELAY_INITIAL As Int = 10000
 	Private Const SERVER_RETRY_DELAY_MAX As Int = 60000
 	Private Const BLOCKED_RETRY_DELAY As Int = 60000
-
 	Private rootView As B4XView
 	Private xui As XUI
 	Private storageDir As String
 	Private storageFile As String = "player_state.json"
+	Private debugResponsesDir As String
 
 	Private card As B4XView
 	Private headerPane As B4XView
+	Private headerActionPane As B4XView
 	Private headerActionPane As B4XView
 	Private contentPane As B4XView
 	Private footerPane As B4XView
@@ -84,10 +87,15 @@ Sub Class_Globals
 	Private storage As Map
 	Private playQueue As List
 	Private messages As Map
+	Private traceLogs As List
+	Private traceLogLimit As Int = 1000
+	Private serverSnapshots As List
+	Private serverSnapshotLimit As Int = 30
 
 	Private retryTimer As Timer
 	Private breakTimer As Timer
 	Private historyTimer As Timer
+	Private orbitTimer As Timer
 
 	Private playerCode As String
 	Private deviceId As String
@@ -117,6 +125,9 @@ Sub Class_Globals
 	Private serverRetryDelay As Int = SERVER_RETRY_DELAY_INITIAL
 	Private playlistIndex As Int = -1
 	Private scheduledBreakAt As Long = -1
+	Private orbitPulseStep As Int
+	Private orbitFadeValue As Double
+	Private orbitFadeTarget As Double
 End Sub
 
 Public Sub Initialize
@@ -130,6 +141,7 @@ Private Sub B4XPage_Created (root1 As B4XView)
 	BuildUi
 	audioPrimary.Initialize("AudioPrimary", Me)
 	audioSecondary.Initialize("AudioSecondary", Me)
+	TraceLog("Приложение запущено. Версия=" & APP_VERSION & ", код плеера=" & FormatPlayerCodeForDisplay(playerCode) & ", deviceId=" & deviceId)
 	ShowInitialScreen
 End Sub
 
@@ -139,6 +151,8 @@ Private Sub B4XPage_Resize (width As Int, height As Int)
 End Sub
 
 Private Sub InitSettings
+	DateTime.DateFormat = "dd.MM.yyyy"
+	DateTime.TimeFormat = "HH:mm:ss"
 	messages.Initialize
 	messages.Put("offline", "Требуется интернет")
 	messages.Put("server_wait", "Временная остановка")
@@ -167,13 +181,17 @@ End Sub
 
 Private Sub InitState
 	storageDir = File.DirData("fonfm")
+	debugResponsesDir = File.Combine(storageDir, "debugresponses")
 	storage = LoadStorage
 	deviceId = GetOrCreateDeviceId
 	playerCode = NormalizePlayerCode(storage.GetDefault("player_code", ""))
+	traceLogs.Initialize
+	serverSnapshots.Initialize
 	playQueue.Initialize
 	retryTimer.Initialize("RetryTimer", SERVER_RETRY_DELAY_INITIAL)
 	breakTimer.Initialize("BreakTimer", 1000)
 	historyTimer.Initialize("HistoryTimer", HISTORY_LOG_DELAY_MS)
+	orbitTimer.Initialize("OrbitTimer", 70)
 	historyItem.Initialize
 	activeItem.Initialize
 	preparedItem.Initialize
@@ -181,6 +199,7 @@ Private Sub InitState
 	preparedAudioKey = ""
 	pendingPlayAudioKey = ""
 	pendingPrepareAudioKey = ""
+	TraceLog("Состояние инициализировано. Папка=" & storageDir & ", сохраненный код=" & FormatPlayerCodeForDisplay(playerCode))
 End Sub
 
 Private Sub BuildUi
@@ -731,6 +750,7 @@ Private Sub ActivateLoadedItem(audioKey As String, item As Map, fadeInMs As Int)
 		preparedItem.Initialize
 	End If
 	UpdatePlaybackMeta(item)
+	TraceLog("ActivateLoadedItem. audio=" & audioKey & ", item=" & DescribeItem(item) & ", fadeInMs=" & fadeInMs)
 	GetAudioByKey(audioKey).PlayWithFade(fadeInMs)
 	ScheduleHistoryLog(item)
 	ResetRetryDelay
@@ -742,8 +762,10 @@ Private Sub StartPlaybackWithAudioKey(audioKey As String, item As Map, fadeInMs 
 	pendingPlayAudioKey = audioKey
 	pendingPlayItem = item
 	pendingPlayFadeInMs = fadeInMs
+	TraceLog("StartPlaybackWithAudioKey. audio=" & audioKey & ", item=" & DescribeItem(item) & ", volume=" & NumberFormat2(CurrentVolume(item), 1, 3, 3, False) & ", fadeInMs=" & fadeInMs)
 	GetAudioByKey(audioKey).LoadUrl(MediaUrl(item), CurrentVolume(item))
 	Wait For PlaybackStartDone(result As Map)
+	TraceLog("PlaybackStartDone. audio=" & audioKey & ", success=" & result.GetDefault("Success", False) & ", message=" & result.GetDefault("Message", ""))
 	Return result.GetDefault("Success", False)
 End Sub
 
@@ -763,8 +785,10 @@ Private Sub PrepareNextPlayable As ResumableSub
 	ClearPreparedState(False)
 	pendingPrepareAudioKey = targetAudioKey
 	pendingPrepareItem = CloneMap(nextItem)
+	TraceLog("PrepareNextPlayable. targetAudio=" & targetAudioKey & ", item=" & DescribeItem(nextItem) & ", volume=" & NumberFormat2(CurrentVolume(nextItem), 1, 3, 3, False))
 	GetAudioByKey(targetAudioKey).LoadUrl(MediaUrl(nextItem), CurrentVolume(nextItem))
 	Wait For PreloadDone(result As Map)
+	TraceLog("PreloadDone. audio=" & targetAudioKey & ", success=" & result.GetDefault("Success", False) & ", message=" & result.GetDefault("Message", ""))
 	Return result.GetDefault("Success", False)
 End Sub
 
@@ -776,17 +800,39 @@ Private Sub CanCrossfadePreparedItem As Boolean
 	Return True
 End Sub
 
+Private Sub CanStartPreparedOnTrackTail As Boolean
+	If isQueueTransitioning Or isCrossfadeTriggered Then Return False
+	If currentMediaType <> "track" Then Return False
+	If preparedAudioKey = "" Or preparedItem.IsInitialized = False Then Return False
+	Return preparedItem.GetDefault("type", "") = "ad"
+End Sub
+
+Private Sub PreparedFadeInMs As Int
+	Return 0
+End Sub
+
+Private Sub PreparedFadeOutMs As Int
+	If currentMediaType <> "track" Then Return 0
+	If preparedItem.IsInitialized = False Then Return 0
+	Dim nextType As String = preparedItem.GetDefault("type", "")
+	If nextType = "track" Then Return TRACK_OVERLAP_MS
+	If nextType = "ad" Then Return AD_TAIL_OVERLAP_MS
+	Return 0
+End Sub
+
 Private Sub PromotePreparedPlayer(fadeInMs As Int, fadeOutMs As Int) As Boolean
 	If preparedAudioKey = "" Or preparedItem.IsInitialized = False Then Return False
 	Dim previousAudioKey As String = activeAudioKey
+	Dim nextAudioKey As String = preparedAudioKey
 	Dim promotedItem As Map = CloneMap(preparedItem)
+	TraceLog("PromotePreparedPlayer. fromAudio=" & previousAudioKey & ", toAudio=" & nextAudioKey & ", item=" & DescribeItem(promotedItem) & ", fadeOutMs=" & fadeOutMs)
 	ConsumePreparedQueueItem
-	activeAudioKey = preparedAudioKey
-	ActivateLoadedItem(activeAudioKey, promotedItem, fadeInMs)
-	ClearPreparedState(False)
-	If previousAudioKey <> "" And previousAudioKey <> activeAudioKey Then
+	If previousAudioKey <> "" And previousAudioKey <> nextAudioKey Then
 		GetAudioByKey(previousAudioKey).Stop(fadeOutMs)
 	End If
+	activeAudioKey = nextAudioKey
+	ActivateLoadedItem(activeAudioKey, promotedItem, fadeInMs)
+	ClearPreparedState(False)
 	Return True
 End Sub
 
@@ -795,12 +841,14 @@ Private Sub StartFirstTrack(mode As String) As ResumableSub
 	playQueue.Clear
 	prefetchDone = False
 	isCrossfadeTriggered = False
+	TraceLog("Запуск первого трека. Режим=" & mode)
 	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
 	Return True
 End Sub
 
 Private Sub LoadNextAndPlay As ResumableSub
 	ClearRetryTimer
+	TraceLog("Запрос очереди и запуск. Режим старта=" & nextStartMode & ", размер очереди до запроса=" & playQueue.Size)
 	Wait For (FetchNext) Complete (result As Map)
 	If result.GetDefault("Success", False) = False Then
 		Wait For (HandleFetchFailure(result)) Complete (unused As Boolean)
@@ -814,7 +862,9 @@ Private Sub LoadNextAndPlay As ResumableSub
 		Return False
 	End If
 	playQueue = queue
+	SyncExactBreakState
 	Dim retryAfter As Int = NormalizeRetryAfter(result.Get("Data"))
+	TraceLog("Очередь загружена. Элементов=" & playQueue.Size & ", retryAfter=" & retryAfter)
 	Wait For (PlayQueueItem(ShiftQueueItem, retryAfter)) Complete (unused2 As Boolean)
 	Return True
 End Sub
@@ -840,6 +890,7 @@ Private Sub PrefetchNext As ResumableSub
 	Dim queue As List = NormalizeQueueResponse(result.Get("Data"))
 	If queue.IsInitialized = False Or queue.Size = 0 Then Return False
 	playQueue = queue
+	SyncExactBreakState
 	Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
 	Return preparedOk
 End Sub
@@ -859,19 +910,25 @@ Private Sub FetchJsonWithTimeout(url As String, timeoutMs As Int) As ResumableSu
 	result.Put("ErrorMessage", "")
 	Dim j As HttpJob
 	j.Initialize("", Me)
+	TraceLog("HTTP GET. timeoutMs=" & timeoutMs & ", url=" & url)
 	j.Download(url)
 	j.GetRequest.Timeout = timeoutMs
 	Wait For (j) JobDone(j As HttpJob)
 	If j.Success Then
 		Try
+			Dim responseText As String = j.GetString
+			SaveServerSnapshot("GET", url, True, responseText, "")
 			Dim parser As JSONParser
-			parser.Initialize(j.GetString)
+			parser.Initialize(responseText)
 			result.Put("Data", parser.NextObject)
 			result.Put("Success", True)
 			result.Put("Kind", "")
+			TraceLog("HTTP OK. url=" & url)
 		Catch
 			result.Put("Kind", "server")
 			result.Put("ErrorMessage", "bad_json")
+			SaveServerSnapshot("GET", url, False, "", "bad_json")
+			TraceLog("HTTP parse error. url=" & url & ", message=bad_json")
 		End Try
 	Else
 		Dim errorMessage As String = j.ErrorMessage
@@ -881,6 +938,8 @@ Private Sub FetchJsonWithTimeout(url As String, timeoutMs As Int) As ResumableSu
 		Else
 			result.Put("Kind", "server")
 		End If
+		SaveServerSnapshot("GET", url, False, "", errorMessage)
+		TraceLog("HTTP failed. kind=" & result.GetDefault("Kind", "") & ", url=" & url & ", message=" & errorMessage)
 	End If
 	j.Release
 	Return result
@@ -889,6 +948,7 @@ End Sub
 Private Sub SubmitClaim As ResumableSub
 	btnConfirmYes.Enabled = False
 	btnConfirmNo.Enabled = False
+	TraceLog("SubmitClaim. playerCode=" & FormatPlayerCodeForDisplay(playerCode) & ", deviceId=" & deviceId)
 	Wait For (FetchJsonWithTimeout(CLAIM_BASE_URL & "?" & BuildParams(CreateClaimParams), FETCH_TIMEOUT_MS)) Complete (result As Map)
 	If result.GetDefault("Success", False) Then
 		Dim resultData As Object = result.Get("Data")
@@ -899,6 +959,7 @@ Private Sub SubmitClaim As ResumableSub
 				isStoppedByUser = False
 				SetStopIcon
 				HideContentBlocks
+				TraceLog("Claim OK. starting playback.")
 				Wait For (StartFirstTrack("manual")) Complete (unused As Boolean)
 				btnConfirmYes.Enabled = True
 				btnConfirmNo.Enabled = True
@@ -906,6 +967,7 @@ Private Sub SubmitClaim As ResumableSub
 			End If
 		End If
 	End If
+	TraceLog("Claim rejected. message=" & ResolveErrorMessage(result, MessageValue("device_busy")))
 	ShowClaimPrompt(ResolveErrorMessage(result, MessageValue("device_busy")))
 	btnConfirmYes.Enabled = True
 	btnConfirmNo.Enabled = True
@@ -919,6 +981,7 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 	If current Is Map Then
 		Dim item As Map = current
 		Dim itemType As String = item.GetDefault("type", "")
+		TraceLog("PlayQueueItem. type=" & itemType & ", retryAfter=" & retryAfter & ", item=" & DescribeItem(item))
 		
 		If itemType = "message" Then
 			HandleMessageItem(item)
@@ -965,7 +1028,6 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 		If item.ContainsKey("playlist") Then playlistIndex = item.Get("playlist")
 		prefetchDone = False
 		Dim fadeInMs As Int = 0
-		If itemType = "track" And currentMediaType = "track" And activeAudioKey <> "" Then fadeInMs = TRACK_OVERLAP_MS
 		Dim targetAudioKey As String = GetInactiveAudioKey
 		If activeAudioKey = "" Then targetAudioKey = "primary"
 		Wait For (StartPlaybackWithAudioKey(targetAudioKey, item, fadeInMs)) Complete (playbackStarted As Boolean)
@@ -979,6 +1041,7 @@ End Sub
 
 Private Sub HandleMessageItem(item As Map)
 	Dim action As String = item.GetDefault("action", "")
+	TraceLog("HandleMessageItem. action=" & action & ", message=" & item.GetDefault("message", ""))
 	If action = "claim" Then
 		ClearPlaybackState
 		isStarted = False
@@ -1006,9 +1069,12 @@ Private Sub MergeBreakItems(item As Map)
 		merged.Add(existing)
 	Next
 	playQueue = merged
+	SyncExactBreakState
+	TraceLog("В очередь добавлен break. Размер очереди=" & playQueue.Size & ", scheduledBreakAt=" & scheduledBreakAt)
 End Sub
 
 Private Sub HandleFetchFailure(result As Map) As ResumableSub
+	TraceLog("Ошибка загрузки данных. kind=" & result.GetDefault("Kind", "") & ", message=" & result.GetDefault("ErrorMessage", ""))
 	If result.GetDefault("Kind", "") = "offline" Then
 		HandleTemporaryState("offline", "")
 		Return True
@@ -1034,6 +1100,7 @@ Private Sub CheckExternalConnectivity As ResumableSub
 End Sub
 
 Private Sub HandleTemporaryState(mode As String, text As String)
+	TraceLog("Временное состояние. mode=" & mode & ", text=" & text)
 	ClearPlaybackState
 	HidePin
 	If text <> "" Then
@@ -1047,6 +1114,7 @@ Private Sub HandleTemporaryState(mode As String, text As String)
 End Sub
 
 Private Sub HandleBlockedState
+	TraceLog("Плеер заблокирован.")
 	ClearPlaybackState
 	HidePin
 	ShowMessage(MessageValue("blocked"))
@@ -1054,6 +1122,7 @@ Private Sub HandleBlockedState
 End Sub
 
 Private Sub StopForMissingData(text As String)
+	TraceLog("Остановка из-за отсутствующих данных. text=" & text)
 	ClearPlaybackState
 	HidePin
 	isStarted = False
@@ -1088,12 +1157,14 @@ End Sub
 Private Sub ScheduleRetry(mode As String, delayMs As Int)
 	ClearRetryTimer
 	retryTimer.Interval = ResolveRetryDelay(mode, delayMs)
+	TraceLog("ScheduleRetry. mode=" & mode & ", delayMs=" & retryTimer.Interval)
 	retryTimer.Enabled = True
 End Sub
 
 Private Sub RetryTimer_Tick
 	retryTimer.Enabled = False
 	If isStarted = False Or isStoppedByUser Then Return
+	TraceLog("RetryTimer_Tick. reloading next queue chunk.")
 	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
 End Sub
 
@@ -1112,11 +1183,12 @@ Private Sub ResolveScheduledBreakAt
 		If itemObj Is Map Then
 			Dim item As Map = itemObj
 			If item.GetDefault("type", "") = "break" And item.GetDefault("exactly", False) = True And item.ContainsKey("at") Then
-				scheduledBreakAt = item.Get("at")
+				scheduledBreakAt = ToLongDefault(item.Get("at"), -1)
 				Exit
 			End If
 		End If
 	Next
+	TraceLog("Определена точка exact-break. value=" & scheduledBreakAt & ", queueSize=" & playQueue.Size)
 End Sub
 
 Private Sub SyncExactBreakState
@@ -1136,6 +1208,7 @@ Private Sub BreakTimer_Tick
 	breakTimer.Enabled = False
 	If isStarted = False Or isStoppedByUser Then Return
 	If ShouldTriggerBreakNow = False Then Return
+	TraceLog("Сработал таймер exact-break.")
 	Wait For (FadeOutAndContinue) Complete (unused As Boolean)
 End Sub
 
@@ -1175,6 +1248,7 @@ Private Sub FadeOutAndContinue As ResumableSub
 	Else
 		fadeMs = 0
 	End If
+	TraceLog("Переход через fade-out. currentType=" & currentMediaType & ", fadeMs=" & fadeMs)
 	If activeAudioKey <> "" Then GetAudioByKey(activeAudioKey).Stop(fadeMs)
 	ClearPreparedState(False)
 	Wait For (PlayPreparedOrLoadNext) Complete (unused As Boolean)
@@ -1187,6 +1261,7 @@ Private Sub ScheduleHistoryLog(item As Map)
 	Dim itemType As String = item.GetDefault("type", "")
 	If itemType <> "track" And itemType <> "ad" Then Return
 	If item.GetDefault("id", "") = "" Then Return
+	TraceLog("ScheduleHistoryLog. item=" & DescribeItem(item) & ", delayMs=" & HISTORY_LOG_DELAY_MS)
 	ClearHistoryLogTimer
 	historyItem = item
 	historyTimer.Interval = HISTORY_LOG_DELAY_MS
@@ -1203,6 +1278,7 @@ Private Sub HistoryTimer_Tick
 End Sub
 
 Private Sub SendHistory(item As Map) As ResumableSub
+	TraceLog("SendHistory. item=" & DescribeItem(item))
 	Dim params As Map
 	params.Initialize
 	params.Put("player", playerCode)
@@ -1217,6 +1293,12 @@ Private Sub SendHistory(item As Map) As ResumableSub
 	j.GetRequest.Timeout = 5000
 	j.GetRequest.SetContentType("application/x-www-form-urlencoded;charset=UTF-8")
 	Wait For (j) JobDone(j As HttpJob)
+	If j.Success Then
+		SaveServerSnapshot("POST", HISTORY_BASE_URL, True, j.GetString, "")
+	Else
+		SaveServerSnapshot("POST", HISTORY_BASE_URL, False, "", j.ErrorMessage)
+	End If
+	TraceLog("SendHistory complete. success=" & j.Success)
 	j.Release
 	Return True
 End Sub
@@ -1229,6 +1311,7 @@ End Sub
 Private Sub StopPlayer As ResumableSub
 	If isStopping Then Return False
 	isStopping = True
+	TraceLog("StopPlayer requested. currentType=" & currentMediaType & ", activeAudio=" & activeAudioKey & ", preparedAudio=" & preparedAudioKey)
 	isStarted = False
 	isStoppedByUser = True
 	ClearRetryTimer
@@ -1262,6 +1345,7 @@ Private Sub StopPlayer As ResumableSub
 End Sub
 
 Private Sub ClearPlaybackState
+	TraceLog("ClearPlaybackState")
 	audioPrimary.Reset
 	audioSecondary.Reset
 	currentTrackUrl = ""
@@ -1314,6 +1398,7 @@ Private Sub AudioSecondary_Timeupdate
 End Sub
 
 Private Sub HandleAudioReady(audioKey As String)
+	TraceLog("Аудио готово. audio=" & audioKey)
 	If pendingPlayAudioKey = audioKey Then
 		ActivateLoadedItem(audioKey, pendingPlayItem, pendingPlayFadeInMs)
 		ClearPendingPlayState
@@ -1330,6 +1415,7 @@ Private Sub HandleAudioReady(audioKey As String)
 End Sub
 
 Private Sub HandleAudioError(audioKey As String, message As String) As ResumableSub
+	TraceLog("Ошибка аудио. audio=" & audioKey & ", message=" & message)
 	If pendingPlayAudioKey = audioKey Then
 		ClearPendingPlayState
 		CallSubDelayed2(Me, "PlaybackStartDone", CreateMap("Success": False, "Message": message))
@@ -1349,6 +1435,7 @@ End Sub
 Private Sub HandleAudioComplete(audioKey As String) As ResumableSub
 	If isStoppedByUser Then Return False
 	If audioKey <> activeAudioKey Then Return False
+	TraceLog("Аудио завершилось. audio=" & audioKey & ", элемент=" & DescribeItem(activeItem))
 	If PromotePreparedPlayer(0, 0) Then Return True
 	Wait For (PlayPreparedOrLoadNext) Complete (unused As Boolean)
 	Return True
@@ -1358,22 +1445,154 @@ Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
 	If audioKey <> activeAudioKey Then Return False
 	If isStarted = False Or isStoppedByUser Then Return False
 	If ShouldTriggerBreakNow Then
+		TraceLog("Достигнута точка exact-break.")
 		Wait For (FadeOutAndContinue) Complete (unused As Boolean)
 		Return True
 	End If
 	Dim remain As Long = EffectiveTrackRemainMs
 	If CanCrossfadePreparedItem And remain > 0 And remain <= TRACK_OVERLAP_MS Then
 		isCrossfadeTriggered = True
-		PromotePreparedPlayer(TRACK_OVERLAP_MS, TRACK_OVERLAP_MS)
+		TraceLog("Запуск overlap треков. remainMs=" & remain & ", next=" & DescribeItem(preparedItem))
+		PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
+		Return True
+	End If
+	If CanStartPreparedOnTrackTail And remain > 0 And remain <= AD_TAIL_OVERLAP_MS Then
+		isCrossfadeTriggered = True
+		TraceLog("Запуск ролика на хвосте трека. remainMs=" & remain & ", next=" & DescribeItem(preparedItem))
+		PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
 		Return True
 	End If
 	If prefetchDone Then Return False
 	If remain <= 0 Then Return False
 	If remain <= PREFETCH_SECONDS * 1000 Then
 		prefetchDone = True
+		TraceLog("Запуск предзагрузки следующего элемента. remainMs=" & remain)
 		Wait For (PrefetchNext) Complete (unused2 As Boolean)
 	End If
 	Return True
+End Sub
+
+Public Sub TraceLog(message As String)
+	If traceLogs.IsInitialized = False Then traceLogs.Initialize
+	Dim entry As String = DateTime.Date(DateTime.Now) & " " & DateTime.Time(DateTime.Now) & " | " & message
+	traceLogs.Add(entry)
+	Do While traceLogs.Size > traceLogLimit
+		traceLogs.RemoveAt(0)
+	Loop
+	Log(entry)
+End Sub
+
+Public Sub GetTraceLogText As String
+	If traceLogs.IsInitialized = False Or traceLogs.Size = 0 Then Return ""
+	Return JoinList(traceLogs, CRLF)
+End Sub
+
+Public Sub GetTraceLogList As List
+	Dim copy As List
+	copy.Initialize
+	If traceLogs.IsInitialized = False Then Return copy
+	For Each entry As String In traceLogs
+		copy.Add(entry)
+	Next
+	Return copy
+End Sub
+
+Public Sub GetServerTraceText As String
+	If serverSnapshots.IsInitialized = False Or serverSnapshots.Size = 0 Then Return ""
+	Dim lines As List
+	lines.Initialize
+	For Each entry As Map In serverSnapshots
+		lines.Add(entry.GetDefault("Header", ""))
+		lines.Add(entry.GetDefault("Body", ""))
+		lines.Add("")
+	Next
+	Return JoinList(lines, CRLF)
+End Sub
+
+Public Sub GetServerTraceList As List
+	Dim copy As List
+	copy.Initialize
+	If serverSnapshots.IsInitialized = False Then Return copy
+	For Each entry As Map In serverSnapshots
+		copy.Add(CloneMap(entry))
+	Next
+	Return copy
+End Sub
+
+Private Sub SaveServerSnapshot(method As String, url As String, success As Boolean, body As String, errorMessage As String)
+	If serverSnapshots.IsInitialized = False Then serverSnapshots.Initialize
+	Dim timestamp As String = DateTime.Date(DateTime.Now) & " " & DateTime.Time(DateTime.Now)
+	Dim header As String = timestamp & " | " & method & " | success=" & success & " | " & url
+	If errorMessage <> "" Then header = header & " | error=" & errorMessage
+	Dim entry As Map
+	entry.Initialize
+	entry.Put("Timestamp", timestamp)
+	entry.Put("Method", method)
+	entry.Put("Url", url)
+	entry.Put("Success", success)
+	entry.Put("Error", errorMessage)
+	entry.Put("Body", body)
+	entry.Put("Header", header)
+	serverSnapshots.Add(entry)
+	Do While serverSnapshots.Size > serverSnapshotLimit
+		serverSnapshots.RemoveAt(0)
+	Loop
+	WriteServerSnapshotFile(entry)
+	CleanupServerSnapshotFiles
+End Sub
+
+Private Sub WriteServerSnapshotFile(entry As Map)
+	Try
+		EnsureDirectory(storageDir)
+		EnsureDirectory(debugResponsesDir)
+		Dim stamp As String = Regex.Replace("[^0-9]", entry.GetDefault("Timestamp", ""), "")
+		If stamp = "" Then stamp = "" & DateTime.Now
+		Dim name As String = stamp & "_" & entry.GetDefault("Method", "REQ") & ".txt"
+		Dim text As String = entry.GetDefault("Header", "") & CRLF & CRLF & entry.GetDefault("Body", "")
+		File.WriteString(debugResponsesDir, name, text)
+	Catch
+		TraceLog("Не удалось записать snapshot сервера. " & LastException.Message)
+	End Try
+End Sub
+
+Private Sub EnsureDirectory(path As String)
+	Dim joFile As JavaObject
+	joFile.InitializeNewInstance("java.io.File", Array As Object(path))
+	joFile.RunMethod("mkdirs", Null)
+End Sub
+
+Private Sub CleanupServerSnapshotFiles
+	Try
+		If File.Exists(debugResponsesDir, "") = False Then Return
+		Dim files As List = File.ListFiles(debugResponsesDir)
+		If files.IsInitialized = False Or files.Size <= serverSnapshotLimit Then Return
+		files.Sort(True)
+		Do While files.Size > serverSnapshotLimit
+			Dim fileName As String = files.Get(0)
+			File.Delete(debugResponsesDir, fileName)
+			files.RemoveAt(0)
+		Loop
+	Catch
+		TraceLog("Не удалось очистить старые snapshots сервера. " & LastException.Message)
+	End Try
+End Sub
+
+Private Sub DescribeItem(itemObj As Object) As String
+	If itemObj Is Map Then
+	Else
+		Return "<empty>"
+	End If
+	Dim item As Map = itemObj
+	If item.IsInitialized = False Then Return "<empty>"
+	Dim parts As List
+	parts.Initialize
+	parts.Add("тип=" & item.GetDefault("type", ""))
+	If item.GetDefault("id", "") <> "" Then parts.Add("id=" & item.GetDefault("id", ""))
+	If item.GetDefault("title", "") <> "" Then parts.Add("название=" & item.GetDefault("title", ""))
+	If item.GetDefault("stream", "") <> "" Then parts.Add("поток=" & item.GetDefault("stream", ""))
+	If item.GetDefault("set", "") <> "" Then parts.Add("сет=" & item.GetDefault("set", ""))
+	If item.GetDefault("code", "") <> "" Then parts.Add("код=" & item.GetDefault("code", ""))
+	Return JoinList(parts, ", ")
 End Sub
 
 Private Sub SetPlayIcon
@@ -1381,6 +1600,7 @@ Private Sub SetPlayIcon
 	lblPlayIcon.Text = ICON_PLAY
 	ApplyMaterialIconFont(lblPlayIcon, playIconBaseSize)
 	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, 0x00D0FF71, 999dip)
+	StopOrbitAnimation
 	UpdatePlayButtonAppearance(False)
 End Sub
 
@@ -1389,6 +1609,7 @@ Private Sub SetStopIcon
 	lblPlayIcon.Text = ICON_STOP
 	ApplyMaterialIconFont(lblPlayIcon, stopIconBaseSize)
 	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, 0x66D0FF71, 999dip)
+	StartOrbitAnimation
 	UpdatePlayButtonAppearance(False)
 End Sub
 
@@ -1420,6 +1641,51 @@ Private Sub UpdatePlayButtonAppearance(isHovered As Boolean)
 	End If
 	playButtonPane.SetColorAndBorder(backgroundColor, 4dip, borderColor, 999dip)
 	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, orbitBorderColor, 999dip)
+End Sub
+
+Private Sub StartOrbitAnimation
+	orbitPulseStep = 0
+	orbitFadeTarget = 1
+	orbitTimer.Enabled = True
+End Sub
+
+Private Sub StopOrbitAnimation
+	orbitFadeTarget = 0
+	If orbitFadeValue > 0 Then
+		orbitTimer.Enabled = True
+	Else
+		orbitTimer.Enabled = False
+		ApplyOrbitFrame(0)
+	End If
+End Sub
+
+Private Sub OrbitTimer_Tick
+	orbitPulseStep = (orbitPulseStep + 1) Mod 24
+	Dim fadeStep As Double = orbitTimer.Interval / ORBIT_FADE_MS
+	If orbitFadeValue < orbitFadeTarget Then
+		orbitFadeValue = Min(orbitFadeTarget, orbitFadeValue + fadeStep)
+	Else If orbitFadeValue > orbitFadeTarget Then
+		orbitFadeValue = Max(orbitFadeTarget, orbitFadeValue - fadeStep)
+	End If
+	ApplyOrbitFrame(orbitPulseStep)
+	If orbitFadeValue = 0 And orbitFadeTarget = 0 Then orbitTimer.Enabled = False
+End Sub
+
+Private Sub ApplyOrbitFrame(stepIndex As Int)
+	Dim opacity As Double
+	If orbitFadeValue <= 0 Then
+		opacity = 0
+	Else
+		Dim basePhase As Double = stepIndex / 24
+		Dim wave As Double = (Sin(basePhase * cPI * 2) + 1) / 2
+		opacity = (0.38 + wave * 0.28) * orbitFadeValue
+	End If
+	ApplyOrbitState(opacity)
+End Sub
+
+Private Sub ApplyOrbitState(opacity As Double)
+	Dim jo As JavaObject = orbitPane
+	jo.RunMethod("setOpacity", Array As Object(opacity))
 End Sub
 
 Private Sub UpdateHeaderActionAppearance(isHovered As Boolean)
@@ -1548,12 +1814,12 @@ Private Sub MediaUrl(item As Map) As String
 	Return "https://cdn.fon.fm/media/" & folder & "/" & first & "/" & id & ".mp3"
 End Sub
 
-Private Sub CurrentVolume(item As Map) As Int
+Private Sub CurrentVolume(item As Map) As Double
 	Dim volume As Double = 0.7
 	If item.ContainsKey("volume") Then volume = item.Get("volume")
 	If volume < 0 Then volume = 0
 	If volume > 1 Then volume = 1
-	Return Round(volume * 100)
+	Return volume
 End Sub
 
 Private Sub NormalizeQueueResponse(data As Object) As List
@@ -1706,6 +1972,19 @@ End Sub
 
 Private Sub LocalNowTimestamp As Long
 	Return Floor(DateTime.Now / 1000) - (TimezoneOffsetMinutes * 60)
+End Sub
+
+Private Sub ToLongDefault(value As Object, defaultValue As Long) As Long
+	Try
+		If value = Null Then Return defaultValue
+		Return value
+	Catch
+		Try
+			Return Floor(("" & value).Trim)
+		Catch
+			Return defaultValue
+		End Try
+	End Try
 End Sub
 
 Private Sub JoinList(items As List, separator As String) As String
