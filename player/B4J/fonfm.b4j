@@ -1,0 +1,58 @@
+﻿AppType=JavaFX
+Build1=Default,b4j.example
+File1=MainPage.bjl
+FileGroup1=New Group
+Group=Default Group
+Library1=b4xpages
+Library2=javaobject
+Library3=jcore
+Library4=jfx
+Library5=jokhttputils2
+Library6=json
+Library7=jsystemtray
+Module1=AudioPlayer
+Module2=|relative|..\B4XMainPage
+NumberOfFiles=1
+NumberOfLibraries=7
+NumberOfModules=2
+Version=10.5
+@EndOfDesignText@
+#Region Project Attributes 
+	#MainFormWidth: 680
+	#MainFormHeight: 760 
+#End Region
+
+Sub Process_Globals
+	Private fx As JFX
+	Private mainForm As Form
+End Sub
+
+Sub AppStart (form1 As Form, args() As String)
+	mainForm = form1
+	mainForm.Show
+	Dim pagesManager As B4XPagesManager
+	pagesManager.Initialize(mainForm)
+End Sub
+
+'Template version: B4J-1.0
+#Region Delegates
+Sub MainForm_FocusChanged (hasFocus As Boolean)
+	B4XPages.Delegate.MainForm_FocusChanged(hasFocus)
+End Sub
+
+Sub MainForm_Resize (width As Double, height As Double)
+	B4XPages.Delegate.MainForm_Resize(width, height)
+End Sub
+
+Sub MainForm_Closed
+	B4XPages.Delegate.MainForm_Closed
+End Sub
+
+Sub MainForm_CloseRequest (eventData As Event)
+	B4XPages.Delegate.MainForm_CloseRequest(eventData)
+End Sub
+
+Public Sub MainForm_IconifiedChanged (iconified As Boolean)
+	B4XPages.Delegate.MainForm_IconifiedChanged(iconified)
+End Sub
+#End Region

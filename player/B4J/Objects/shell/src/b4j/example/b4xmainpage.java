@@ -1,0 +1,115 @@
+
+package b4j.example;
+
+import anywheresoftware.b4a.pc.PCBA;
+import anywheresoftware.b4a.pc.RemoteObject;
+
+public class b4xmainpage {
+    public static RemoteObject myClass;
+	public b4xmainpage() {
+	}
+    public static PCBA staticBA = new PCBA(null, b4xmainpage.class);
+
+public static RemoteObject __c = RemoteObject.declareNull("anywheresoftware.b4a.keywords.Common");
+public static RemoteObject _player_base_url = RemoteObject.createImmutable("");
+public static RemoteObject _next_base_url = RemoteObject.createImmutable("");
+public static RemoteObject _claim_base_url = RemoteObject.createImmutable("");
+public static RemoteObject _history_base_url = RemoteObject.createImmutable("");
+public static RemoteObject _connectivity_check_url = RemoteObject.createImmutable("");
+public static RemoteObject _app_version = RemoteObject.createImmutable("");
+public static RemoteObject _prefetch_seconds = RemoteObject.createImmutable(0);
+public static RemoteObject _stop_fade_ms = RemoteObject.createImmutable(0);
+public static RemoteObject _track_overlap_ms = RemoteObject.createImmutable(0);
+public static RemoteObject _history_log_delay_ms = RemoteObject.createImmutable(0);
+public static RemoteObject _fetch_timeout_ms = RemoteObject.createImmutable(0);
+public static RemoteObject _connectivity_check_timeout_ms = RemoteObject.createImmutable(0);
+public static RemoteObject _pause_retry_delay = RemoteObject.createImmutable(0);
+public static RemoteObject _offline_retry_delay_initial = RemoteObject.createImmutable(0);
+public static RemoteObject _offline_retry_delay_max = RemoteObject.createImmutable(0);
+public static RemoteObject _server_retry_delay_initial = RemoteObject.createImmutable(0);
+public static RemoteObject _server_retry_delay_max = RemoteObject.createImmutable(0);
+public static RemoteObject _blocked_retry_delay = RemoteObject.createImmutable(0);
+public static RemoteObject _rootview = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _xui = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper.XUI");
+public static RemoteObject _storagedir = RemoteObject.createImmutable("");
+public static RemoteObject _storagefile = RemoteObject.createImmutable("");
+public static RemoteObject _card = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _headerpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _headeractionpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _contentpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _footerpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _setuppane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _playerpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _setupheropane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _setupdetailpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _setupprimarypane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _setupstatuspane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _playerheropane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _playerdetailpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _playerprimarypane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _playerstatuspane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _orbitpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _playbuttonpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _confirmpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _accesscirclepane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _accesscorepane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _accessinputpane = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _lblheader = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _lblheaderaction = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _lblplayicon = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _lblstream = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _lblinfo = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _lblfooter = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _lblsetupmessage = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _txtplayercode = RemoteObject.declareNull("anywheresoftware.b4j.objects.TextInputControlWrapper.TextFieldWrapper");
+public static RemoteObject _txtplayercodeview = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _btnsetupsubmit = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _btnconfirmyes = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _btnconfirmno = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
+public static RemoteObject _playiconbasesize = RemoteObject.createImmutable(0f);
+public static RemoteObject _stopiconbasesize = RemoteObject.createImmutable(0f);
+public static RemoteObject _headeractionfontsize = RemoteObject.createImmutable(0f);
+public static RemoteObject _codefontsize = RemoteObject.createImmutable(0f);
+public static RemoteObject _iscodeinputfocused = RemoteObject.createImmutable(false);
+public static RemoteObject _audioprimary = RemoteObject.declareNull("b4j.example.audioplayer");
+public static RemoteObject _audiosecondary = RemoteObject.declareNull("b4j.example.audioplayer");
+public static RemoteObject _storage = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+public static RemoteObject _playqueue = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
+public static RemoteObject _messages = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+public static RemoteObject _retrytimer = RemoteObject.declareNull("anywheresoftware.b4a.objects.Timer");
+public static RemoteObject _breaktimer = RemoteObject.declareNull("anywheresoftware.b4a.objects.Timer");
+public static RemoteObject _historytimer = RemoteObject.declareNull("anywheresoftware.b4a.objects.Timer");
+public static RemoteObject _playercode = RemoteObject.createImmutable("");
+public static RemoteObject _deviceid = RemoteObject.createImmutable("");
+public static RemoteObject _appscreenmode = RemoteObject.createImmutable("");
+public static RemoteObject _nextstartmode = RemoteObject.createImmutable("");
+public static RemoteObject _currenttrackurl = RemoteObject.createImmutable("");
+public static RemoteObject _currentmediatype = RemoteObject.createImmutable("");
+public static RemoteObject _activeaudiokey = RemoteObject.createImmutable("");
+public static RemoteObject _preparedaudiokey = RemoteObject.createImmutable("");
+public static RemoteObject _historyitem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+public static RemoteObject _activeitem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+public static RemoteObject _prepareditem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+public static RemoteObject _pendingplayaudiokey = RemoteObject.createImmutable("");
+public static RemoteObject _pendingprepareaudiokey = RemoteObject.createImmutable("");
+public static RemoteObject _pendingplayitem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+public static RemoteObject _pendingprepareitem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+public static RemoteObject _pendingplayfadeinms = RemoteObject.createImmutable(0);
+public static RemoteObject _isstarted = RemoteObject.createImmutable(false);
+public static RemoteObject _isstoppedbyuser = RemoteObject.createImmutable(false);
+public static RemoteObject _isstopping = RemoteObject.createImmutable(false);
+public static RemoteObject _isqueuetransitioning = RemoteObject.createImmutable(false);
+public static RemoteObject _prefetchdone = RemoteObject.createImmutable(false);
+public static RemoteObject _iscrossfadetriggered = RemoteObject.createImmutable(false);
+public static RemoteObject _offlineretrydelay = RemoteObject.createImmutable(0);
+public static RemoteObject _serverretrydelay = RemoteObject.createImmutable(0);
+public static RemoteObject _playlistindex = RemoteObject.createImmutable(0);
+public static RemoteObject _scheduledbreakat = RemoteObject.createImmutable(0L);
+public static b4j.example.main _main = null;
+public static b4j.example.b4xpages _b4xpages = null;
+public static b4j.example.b4xcollections _b4xcollections = null;
+public static b4j.example.httputils2service _httputils2service = null;
+public static Object[] GetGlobals(RemoteObject _ref) throws Exception {
+		return new Object[] {"accessCirclePane",_ref.getField(false, "_accesscirclepane"),"accessCorePane",_ref.getField(false, "_accesscorepane"),"accessInputPane",_ref.getField(false, "_accessinputpane"),"activeAudioKey",_ref.getField(false, "_activeaudiokey"),"activeItem",_ref.getField(false, "_activeitem"),"APP_VERSION",_ref.getField(false, "_app_version"),"appScreenMode",_ref.getField(false, "_appscreenmode"),"audioPrimary",_ref.getField(false, "_audioprimary"),"audioSecondary",_ref.getField(false, "_audiosecondary"),"BLOCKED_RETRY_DELAY",_ref.getField(false, "_blocked_retry_delay"),"breakTimer",_ref.getField(false, "_breaktimer"),"btnConfirmNo",_ref.getField(false, "_btnconfirmno"),"btnConfirmYes",_ref.getField(false, "_btnconfirmyes"),"btnSetupSubmit",_ref.getField(false, "_btnsetupsubmit"),"card",_ref.getField(false, "_card"),"CLAIM_BASE_URL",_ref.getField(false, "_claim_base_url"),"codeFontSize",_ref.getField(false, "_codefontsize"),"confirmPane",_ref.getField(false, "_confirmpane"),"CONNECTIVITY_CHECK_TIMEOUT_MS",_ref.getField(false, "_connectivity_check_timeout_ms"),"CONNECTIVITY_CHECK_URL",_ref.getField(false, "_connectivity_check_url"),"contentPane",_ref.getField(false, "_contentpane"),"currentMediaType",_ref.getField(false, "_currentmediatype"),"currentTrackUrl",_ref.getField(false, "_currenttrackurl"),"deviceId",_ref.getField(false, "_deviceid"),"FETCH_TIMEOUT_MS",_ref.getField(false, "_fetch_timeout_ms"),"footerPane",_ref.getField(false, "_footerpane"),"headerActionFontSize",_ref.getField(false, "_headeractionfontsize"),"headerActionPane",_ref.getField(false, "_headeractionpane"),"headerPane",_ref.getField(false, "_headerpane"),"HISTORY_BASE_URL",_ref.getField(false, "_history_base_url"),"HISTORY_LOG_DELAY_MS",_ref.getField(false, "_history_log_delay_ms"),"historyItem",_ref.getField(false, "_historyitem"),"historyTimer",_ref.getField(false, "_historytimer"),"isCodeInputFocused",_ref.getField(false, "_iscodeinputfocused"),"isCrossfadeTriggered",_ref.getField(false, "_iscrossfadetriggered"),"isQueueTransitioning",_ref.getField(false, "_isqueuetransitioning"),"isStarted",_ref.getField(false, "_isstarted"),"isStoppedByUser",_ref.getField(false, "_isstoppedbyuser"),"isStopping",_ref.getField(false, "_isstopping"),"lblFooter",_ref.getField(false, "_lblfooter"),"lblHeader",_ref.getField(false, "_lblheader"),"lblHeaderAction",_ref.getField(false, "_lblheaderaction"),"lblInfo",_ref.getField(false, "_lblinfo"),"lblPlayIcon",_ref.getField(false, "_lblplayicon"),"lblSetupMessage",_ref.getField(false, "_lblsetupmessage"),"lblStream",_ref.getField(false, "_lblstream"),"messages",_ref.getField(false, "_messages"),"NEXT_BASE_URL",_ref.getField(false, "_next_base_url"),"nextStartMode",_ref.getField(false, "_nextstartmode"),"OFFLINE_RETRY_DELAY_INITIAL",_ref.getField(false, "_offline_retry_delay_initial"),"OFFLINE_RETRY_DELAY_MAX",_ref.getField(false, "_offline_retry_delay_max"),"offlineRetryDelay",_ref.getField(false, "_offlineretrydelay"),"orbitPane",_ref.getField(false, "_orbitpane"),"PAUSE_RETRY_DELAY",_ref.getField(false, "_pause_retry_delay"),"pendingPlayAudioKey",_ref.getField(false, "_pendingplayaudiokey"),"pendingPlayFadeInMs",_ref.getField(false, "_pendingplayfadeinms"),"pendingPlayItem",_ref.getField(false, "_pendingplayitem"),"pendingPrepareAudioKey",_ref.getField(false, "_pendingprepareaudiokey"),"pendingPrepareItem",_ref.getField(false, "_pendingprepareitem"),"playButtonPane",_ref.getField(false, "_playbuttonpane"),"PLAYER_BASE_URL",_ref.getField(false, "_player_base_url"),"playerCode",_ref.getField(false, "_playercode"),"playerDetailPane",_ref.getField(false, "_playerdetailpane"),"playerHeroPane",_ref.getField(false, "_playerheropane"),"playerPane",_ref.getField(false, "_playerpane"),"playerPrimaryPane",_ref.getField(false, "_playerprimarypane"),"playerStatusPane",_ref.getField(false, "_playerstatuspane"),"playIconBaseSize",_ref.getField(false, "_playiconbasesize"),"playlistIndex",_ref.getField(false, "_playlistindex"),"playQueue",_ref.getField(false, "_playqueue"),"PREFETCH_SECONDS",_ref.getField(false, "_prefetch_seconds"),"prefetchDone",_ref.getField(false, "_prefetchdone"),"preparedAudioKey",_ref.getField(false, "_preparedaudiokey"),"preparedItem",_ref.getField(false, "_prepareditem"),"retryTimer",_ref.getField(false, "_retrytimer"),"rootView",_ref.getField(false, "_rootview"),"scheduledBreakAt",_ref.getField(false, "_scheduledbreakat"),"SERVER_RETRY_DELAY_INITIAL",_ref.getField(false, "_server_retry_delay_initial"),"SERVER_RETRY_DELAY_MAX",_ref.getField(false, "_server_retry_delay_max"),"serverRetryDelay",_ref.getField(false, "_serverretrydelay"),"setupDetailPane",_ref.getField(false, "_setupdetailpane"),"setupHeroPane",_ref.getField(false, "_setupheropane"),"setupPane",_ref.getField(false, "_setuppane"),"setupPrimaryPane",_ref.getField(false, "_setupprimarypane"),"setupStatusPane",_ref.getField(false, "_setupstatuspane"),"STOP_FADE_MS",_ref.getField(false, "_stop_fade_ms"),"stopIconBaseSize",_ref.getField(false, "_stopiconbasesize"),"storage",_ref.getField(false, "_storage"),"storageDir",_ref.getField(false, "_storagedir"),"storageFile",_ref.getField(false, "_storagefile"),"TRACK_OVERLAP_MS",_ref.getField(false, "_track_overlap_ms"),"txtPlayerCode",_ref.getField(false, "_txtplayercode"),"txtPlayerCodeView",_ref.getField(false, "_txtplayercodeview"),"xui",_ref.getField(false, "_xui")};
+}
+}

@@ -1,0 +1,1787 @@
+﻿B4A=true
+Group=Default Group
+ModulesStructureVersion=1
+Type=Class
+Version=9.85
+@EndOfDesignText@
+#Region Shared Files
+#CustomBuildAction: folders ready, %WINDIR%\System32\Robocopy.exe,"..\..\Shared Files" "..\Files"
+'Ctrl + click to sync files: ide://run?file=%WINDIR%\System32\Robocopy.exe&args=..\..\Shared+Files&args=..\Files&FilesSync=True
+#End Region
+
+Sub Class_Globals
+	Private Const PLAYER_BASE_URL As String = "https://play.fon.fm/meta"
+	Private Const NEXT_BASE_URL As String = "https://play.fon.fm/next"
+	Private Const CLAIM_BASE_URL As String = "https://play.fon.fm/claim"
+	Private Const HISTORY_BASE_URL As String = "https://play.fon.fm/history"
+	Private Const CONNECTIVITY_CHECK_URL As String = "https://radiosparx.ru/img/logo-dark.svg"
+	Private Const APP_VERSION As String = "1.0.1"
+	Private Const PREFETCH_SECONDS As Int = 10
+	Private Const STOP_FADE_MS As Int = 3000
+	Private Const TRACK_OVERLAP_MS As Int = 1800
+	Private Const HISTORY_LOG_DELAY_MS As Int = 15000
+	Private Const FETCH_TIMEOUT_MS As Int = 8000
+	Private Const CONNECTIVITY_CHECK_TIMEOUT_MS As Int = 5000
+	Private Const PAUSE_RETRY_DELAY As Int = 300000
+	Private Const OFFLINE_RETRY_DELAY_INITIAL As Int = 5000
+	Private Const OFFLINE_RETRY_DELAY_MAX As Int = 30000
+	Private Const SERVER_RETRY_DELAY_INITIAL As Int = 10000
+	Private Const SERVER_RETRY_DELAY_MAX As Int = 60000
+	Private Const BLOCKED_RETRY_DELAY As Int = 60000
+
+	Private rootView As B4XView
+	Private xui As XUI
+	Private storageDir As String
+	Private storageFile As String = "player_state.json"
+
+	Private card As B4XView
+	Private headerPane As B4XView
+	Private headerActionPane As B4XView
+	Private contentPane As B4XView
+	Private footerPane As B4XView
+	Private setupPane As B4XView
+	Private playerPane As B4XView
+	Private setupHeroPane As B4XView
+	Private setupDetailPane As B4XView
+	Private setupPrimaryPane As B4XView
+	Private setupStatusPane As B4XView
+	Private playerHeroPane As B4XView
+	Private playerDetailPane As B4XView
+	Private playerPrimaryPane As B4XView
+	Private playerStatusPane As B4XView
+	Private orbitPane As B4XView
+	Private playButtonPane As B4XView
+	Private confirmPane As B4XView
+	Private accessCirclePane As B4XView
+	Private accessCorePane As B4XView
+	Private accessInputPane As B4XView
+
+	Private lblHeader As B4XView
+	Private lblHeaderAction As B4XView
+	Private lblPlayIcon As B4XView
+	Private lblStream As B4XView
+	Private lblInfo As B4XView
+	Private lblFooter As B4XView
+	Private lblSetupMessage As B4XView
+
+	Private txtPlayerCode As TextField
+	Private txtPlayerCodeView As B4XView
+	Private btnSetupSubmit As B4XView
+	Private btnConfirmYes As B4XView
+	Private btnConfirmNo As B4XView
+	Private playIconBaseSize As Float
+	Private stopIconBaseSize As Float
+	Private headerActionFontSize As Float
+	Private codeFontSize As Float
+	Private isCodeInputFocused As Boolean
+
+	Private audioPrimary As AudioPlayer
+	Private audioSecondary As AudioPlayer
+	Private storage As Map
+	Private playQueue As List
+	Private messages As Map
+
+	Private retryTimer As Timer
+	Private breakTimer As Timer
+	Private historyTimer As Timer
+
+	Private playerCode As String
+	Private deviceId As String
+	Private appScreenMode As String
+	Private nextStartMode As String
+	Private currentTrackUrl As String
+	Private currentMediaType As String
+	Private activeAudioKey As String
+	Private preparedAudioKey As String
+	Private historyItem As Map
+	Private activeItem As Map
+	Private preparedItem As Map
+	Private pendingPlayAudioKey As String
+	Private pendingPrepareAudioKey As String
+	Private pendingPlayItem As Map
+	Private pendingPrepareItem As Map
+	Private pendingPlayFadeInMs As Int
+
+	Private isStarted As Boolean
+	Private isStoppedByUser As Boolean = True
+	Private isStopping As Boolean
+	Private isQueueTransitioning As Boolean
+	Private prefetchDone As Boolean
+	Private isCrossfadeTriggered As Boolean
+
+	Private offlineRetryDelay As Int = OFFLINE_RETRY_DELAY_INITIAL
+	Private serverRetryDelay As Int = SERVER_RETRY_DELAY_INITIAL
+	Private playlistIndex As Int = -1
+	Private scheduledBreakAt As Long = -1
+End Sub
+
+Public Sub Initialize
+End Sub
+
+Private Sub B4XPage_Created (root1 As B4XView)
+	rootView = root1
+	rootView.Color = 0xFF0E0F11
+	InitSettings
+	InitState
+	BuildUi
+	audioPrimary.Initialize("AudioPrimary", Me)
+	audioSecondary.Initialize("AudioSecondary", Me)
+	ShowInitialScreen
+End Sub
+
+Private Sub B4XPage_Resize (width As Int, height As Int)
+	If card.IsInitialized = False Then Return
+	LayoutUi(width, height)
+End Sub
+
+Private Sub InitSettings
+	messages.Initialize
+	messages.Put("offline", "Требуется интернет")
+	messages.Put("server_wait", "Временная остановка")
+	messages.Put("idle", "Перерыв...")
+	messages.Put("idle_until", "Перерыв до {time}")
+	messages.Put("blocked", "Плеер заблокирован")
+	messages.Put("idle_stream", "Запусти поток")
+	messages.Put("player_required", "Не указан плеер")
+	messages.Put("device_required", "Не указано устройство")
+	messages.Put("device_busy", "Плеер играет на другом устройстве. Играть здесь?")
+	messages.Put("device_confirm_yes", "Да")
+	messages.Put("device_confirm_no", "Нет")
+	messages.Put("not_found", "Плеер не найден")
+	messages.Put("player_updated", "Плеер обновлен")
+	messages.Put("player_reloading", "Обновление…")
+	messages.Put("ad_label", "Реклама")
+	messages.Put("setup_title", "Введите код плеера")
+	messages.Put("setup_placeholder", "abc12")
+	messages.Put("setup_submit", "Войти")
+	messages.Put("setup_invalid", "Введите код из 5 символов")
+	messages.Put("logout", "Выйти")
+	messages.Put("settings_open", "Настройки")
+	messages.Put("settings_close", "Закрыть")
+	messages.Put("settings_thanks", "Спасибо!")
+End Sub
+
+Private Sub InitState
+	storageDir = File.DirData("fonfm")
+	storage = LoadStorage
+	deviceId = GetOrCreateDeviceId
+	playerCode = NormalizePlayerCode(storage.GetDefault("player_code", ""))
+	playQueue.Initialize
+	retryTimer.Initialize("RetryTimer", SERVER_RETRY_DELAY_INITIAL)
+	breakTimer.Initialize("BreakTimer", 1000)
+	historyTimer.Initialize("HistoryTimer", HISTORY_LOG_DELAY_MS)
+	historyItem.Initialize
+	activeItem.Initialize
+	preparedItem.Initialize
+	activeAudioKey = ""
+	preparedAudioKey = ""
+	pendingPlayAudioKey = ""
+	pendingPrepareAudioKey = ""
+End Sub
+
+Private Sub BuildUi
+	card = xui.CreatePanel("")
+	headerPane = xui.CreatePanel("")
+	headerActionPane = xui.CreatePanel("HeaderActionPane")
+	contentPane = xui.CreatePanel("")
+	footerPane = xui.CreatePanel("")
+	setupPane = xui.CreatePanel("")
+	playerPane = xui.CreatePanel("")
+	setupHeroPane = xui.CreatePanel("")
+	setupDetailPane = xui.CreatePanel("")
+	setupPrimaryPane = xui.CreatePanel("")
+	setupStatusPane = xui.CreatePanel("")
+	playerHeroPane = xui.CreatePanel("")
+	playerDetailPane = xui.CreatePanel("")
+	playerPrimaryPane = xui.CreatePanel("")
+	playerStatusPane = xui.CreatePanel("")
+	orbitPane = xui.CreatePanel("")
+	playButtonPane = xui.CreatePanel("PlayButtonPane")
+	confirmPane = xui.CreatePanel("")
+	accessCirclePane = xui.CreatePanel("")
+	accessCorePane = xui.CreatePanel("")
+	accessInputPane = xui.CreatePanel("")
+
+	card.SetColorAndBorder(0xFF1A1B1E, 1dip, 0x14FFFFFF, 24dip)
+	accessCirclePane.SetColorAndBorder(0x07FFFFFF, 4dip, 0x55FFFFFF, 999dip)
+	accessCorePane.SetColorAndBorder(xui.Color_Transparent, 2dip, 0x66FFFFFF, 999dip)
+	accessInputPane.SetColorAndBorder(xui.Color_Transparent, 0, xui.Color_Transparent, 999dip)
+	playButtonPane.SetColorAndBorder(xui.Color_Transparent, 4dip, 0x33FFFFFF, 999dip)
+	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, 0x00D0FF71, 999dip)
+	headerActionPane.SetColorAndBorder(xui.Color_Transparent, 0, xui.Color_Transparent, 999dip)
+
+	lblHeader = CreateLabel("", 12, 0xFF747B86, False, True)
+	lblHeaderAction = CreateLabel(Chr(0x22EF), 22, 0xFFB9C0C9, True, False)
+	lblPlayIcon = CreateLabel("▶", 48, 0xFFD0FF71, True, False)
+	lblStream = CreateLabel("", 36, 0xFFD0FF71, True, True)
+	lblInfo = CreateLabel("", 17, 0xFFBCC3CD, False, True)
+	lblFooter = CreateLabel("FON.FM APP " & APP_VERSION, 12, 0xFF747B86, False, True)
+	lblSetupMessage = CreateLabel("", 17, 0xFFBCC3CD, False, True)
+
+	txtPlayerCode.Initialize("txtPlayerCode")
+	txtPlayerCodeView = txtPlayerCode
+	btnSetupSubmit = CreateTextButton(MessageValue("setup_submit"), "BtnSetupSubmit")
+	btnConfirmYes = CreateTextButton(MessageValue("device_confirm_yes"), "BtnConfirmYes")
+	btnConfirmNo = CreateTextButton(MessageValue("device_confirm_no"), "BtnConfirmNo")
+
+	rootView.AddView(card, 0, 0, 0, 0)
+	card.AddView(headerPane, 0, 0, 0, 0)
+	card.AddView(contentPane, 0, 0, 0, 0)
+	card.AddView(footerPane, 0, 0, 0, 0)
+	headerPane.AddView(lblHeader, 0, 0, 0, 0)
+	headerPane.AddView(headerActionPane, 0, 0, 0, 0)
+	headerActionPane.AddView(lblHeaderAction, 0, 0, 0, 0)
+	contentPane.AddView(setupPane, 0, 0, 0, 0)
+	contentPane.AddView(playerPane, 0, 0, 0, 0)
+	footerPane.AddView(lblFooter, 0, 0, 0, 0)
+
+	setupPane.AddView(setupHeroPane, 0, 0, 0, 0)
+	setupPane.AddView(setupDetailPane, 0, 0, 0, 0)
+	setupHeroPane.AddView(accessCorePane, 0, 0, 0, 0)
+	setupHeroPane.AddView(accessCirclePane, 0, 0, 0, 0)
+	accessCirclePane.AddView(accessInputPane, 0, 0, 0, 0)
+	accessInputPane.AddView(txtPlayerCodeView, 0, 0, 0, 0)
+	setupDetailPane.AddView(setupPrimaryPane, 0, 0, 0, 0)
+	setupDetailPane.AddView(setupStatusPane, 0, 0, 0, 0)
+	setupPrimaryPane.AddView(btnSetupSubmit, 0, 0, 0, 0)
+	setupStatusPane.AddView(lblSetupMessage, 0, 0, 0, 0)
+
+	playerPane.AddView(playerHeroPane, 0, 0, 0, 0)
+	playerPane.AddView(playerDetailPane, 0, 0, 0, 0)
+	playerHeroPane.AddView(orbitPane, 0, 0, 0, 0)
+	playerHeroPane.AddView(playButtonPane, 0, 0, 0, 0)
+	playButtonPane.AddView(lblPlayIcon, 0, 0, 0, 0)
+	playerDetailPane.AddView(playerPrimaryPane, 0, 0, 0, 0)
+	playerDetailPane.AddView(playerStatusPane, 0, 0, 0, 0)
+	playerPrimaryPane.AddView(lblStream, 0, 0, 0, 0)
+	playerStatusPane.AddView(lblInfo, 0, 0, 0, 0)
+	playerStatusPane.AddView(confirmPane, 0, 0, 0, 0)
+	confirmPane.AddView(btnConfirmYes, 0, 0, 0, 0)
+	confirmPane.AddView(btnConfirmNo, 0, 0, 0, 0)
+
+	SetPaneStyle(card, "-fx-background-radius: 24; -fx-border-radius: 24;")
+	SetPaneStyle(headerActionPane, "-fx-cursor: hand; -fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 999; -fx-border-radius: 999;")
+	SetPaneStyle(playButtonPane, "-fx-cursor: hand; -fx-background-color: rgba(255,255,255,0.07); -fx-background-radius: 999; -fx-border-radius: 999;")
+	SetPaneStyle(accessCirclePane, "-fx-background-radius: 999; -fx-border-radius: 999;")
+	SetPaneStyle(accessCorePane, "-fx-background-radius: 999; -fx-border-radius: 999;")
+	SetPaneStyle(accessInputPane, "-fx-background-color: transparent; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0;")
+	SetPaneStyle(txtPlayerCodeView, "-fx-background-color: transparent; -fx-text-fill: " & ColorToCss(0xFFDDF1FF) & "; -fx-prompt-text-fill: " & ColorToCss(0x7AFFFFFF) & "; -fx-alignment: center; -fx-background-insets: 0; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0; -fx-padding: 0 0 2 0;")
+	accessCorePane.Visible = True
+	accessCirclePane.Visible = True
+	accessInputPane.Visible = True
+	SetPickOnBounds(headerActionPane, True)
+	SetPickOnBounds(playButtonPane, True)
+	txtPlayerCode.PromptText = MessageValue("setup_placeholder").ToUpperCase
+	txtPlayerCode.Visible = True
+	UpdateHeaderActionAppearance(False)
+	UpdatePlayButtonAppearance(False)
+	UpdateCodeInputAppearance(False)
+	BringToFront(accessCorePane)
+	BringToFront(accessCirclePane)
+	BringToFront(accessInputPane)
+	BringToFront(txtPlayerCodeView)
+
+	confirmPane.Visible = False
+	LayoutUi(rootView.Width, rootView.Height)
+End Sub
+
+Private Sub LayoutUi(width As Int, height As Int)
+	Dim safeWidth As Int = Max(width, 320dip)
+	Dim safeHeight As Int = Max(height, 420dip)
+	Dim outerPad As Int = ScaleValue(safeWidth, 12dip, 20dip, 20dip)
+	Dim horizontalPad As Int = ScaleValue(safeWidth, 12dip, 16dip, 24dip)
+	Dim sectionGap As Int = ScaleValue(safeWidth, 24dip, 32dip, 48dip)
+	Dim contentGap As Int = ScaleValue(safeWidth, 8dip, 12dip, 12dip)
+	Dim headerHeight As Int = ScaleValue(safeWidth, 56dip, 64dip, 72dip)
+	Dim footerHeight As Int = headerHeight
+	Dim cardWidth As Int = Min(620dip, safeWidth - outerPad * 2)
+	Dim preferredHeight As Int = Max(400dip, safeHeight - outerPad * 2)
+	Dim cardHeight As Int = Min(preferredHeight, safeHeight - 8dip)
+	Dim cardLeft As Int = (safeWidth - cardWidth) / 2
+	Dim cardTop As Int = (safeHeight - cardHeight) / 2
+
+	card.SetLayoutAnimated(0, cardLeft, cardTop, cardWidth, cardHeight)
+	headerPane.SetLayoutAnimated(0, 0, 0, cardWidth, headerHeight)
+	contentPane.SetLayoutAnimated(0, 0, headerHeight + sectionGap / 2, cardWidth, cardHeight - headerHeight - footerHeight - sectionGap)
+	footerPane.SetLayoutAnimated(0, 0, cardHeight - footerHeight, cardWidth, footerHeight)
+
+	Dim headerActionSize As Int = ScaleValue(safeWidth, 36dip, 40dip, 42dip)
+	headerActionPane.SetLayoutAnimated(0, cardWidth - horizontalPad - headerActionSize, (headerHeight - headerActionSize) / 2, headerActionSize, headerActionSize)
+	lblHeaderAction.SetLayoutAnimated(0, 0, 0, headerActionPane.Width, headerActionPane.Height)
+	lblHeader.SetLayoutAnimated(0, horizontalPad + headerActionSize + contentGap, 0, cardWidth - (horizontalPad + headerActionSize + contentGap) * 2, headerHeight)
+
+	setupPane.SetLayoutAnimated(0, 0, 0, contentPane.Width, contentPane.Height)
+	playerPane.SetLayoutAnimated(0, 0, 0, contentPane.Width, contentPane.Height)
+
+	Dim contentHeight As Int = contentPane.Height
+	Dim heroHeight As Int = Max(160dip, (contentHeight - sectionGap) / 2)
+	Dim detailHeight As Int = Max(120dip, contentHeight - heroHeight - sectionGap)
+	Dim contentWidth As Int = cardWidth - horizontalPad * 2
+
+	setupHeroPane.SetLayoutAnimated(0, horizontalPad, 0, contentWidth, heroHeight)
+	setupDetailPane.SetLayoutAnimated(0, horizontalPad, heroHeight + sectionGap, contentWidth, detailHeight)
+	playerHeroPane.SetLayoutAnimated(0, horizontalPad, 0, contentWidth, heroHeight)
+	playerDetailPane.SetLayoutAnimated(0, horizontalPad, heroHeight + sectionGap, contentWidth, detailHeight)
+
+	Dim controlSize As Int = ScaleValue(safeWidth, 156dip, 172dip, 182dip)
+	Dim inputLeft As Int = (setupHeroPane.Width - controlSize) / 2
+	Dim inputTop As Int = Max(0, (setupHeroPane.Height - controlSize) / 2)
+	Dim accessOrbitSize As Int = controlSize + 20dip
+	accessCorePane.SetLayoutAnimated(0, inputLeft - 10dip, inputTop - 10dip, accessOrbitSize, accessOrbitSize)
+	accessCirclePane.SetLayoutAnimated(0, inputLeft, inputTop, controlSize, controlSize)
+	Dim inputPaneWidth As Int = controlSize - 34dip
+	Dim inputPaneHeight As Int = Min(72dip, controlSize - 62dip)
+	Dim inputPaneLeft As Int = (controlSize - inputPaneWidth) / 2
+	Dim inputPaneTop As Int = (controlSize - inputPaneHeight) / 2
+	accessInputPane.SetLayoutAnimated(0, inputPaneLeft, inputPaneTop, inputPaneWidth, inputPaneHeight)
+	Dim codeFieldHeight As Int = inputPaneHeight
+	txtPlayerCodeView.SetLayoutAnimated(0, 0, 0, inputPaneWidth, codeFieldHeight)
+
+	Dim orbitSize As Int = controlSize + 20dip
+	Dim orbitLeft As Int = (playerHeroPane.Width - orbitSize) / 2
+	Dim controlLeft As Int = (playerHeroPane.Width - controlSize) / 2
+	Dim controlTop As Int = Max(0, (playerHeroPane.Height - controlSize) / 2)
+	orbitPane.SetLayoutAnimated(0, orbitLeft, controlTop - 10dip, orbitSize, orbitSize)
+	playButtonPane.SetLayoutAnimated(0, controlLeft, controlTop, controlSize, controlSize)
+	lblPlayIcon.SetLayoutAnimated(0, 0, 0, controlSize, controlSize)
+
+	setupPrimaryPane.SetLayoutAnimated(0, 0, 0, setupDetailPane.Width, Max(56dip, setupDetailPane.Height * 0.38))
+	setupStatusPane.SetLayoutAnimated(0, 0, setupPrimaryPane.Height + contentGap, setupDetailPane.Width, setupDetailPane.Height - setupPrimaryPane.Height - contentGap)
+	btnSetupSubmit.SetLayoutAnimated(0, Max(0, (setupPrimaryPane.Width - 132dip) / 2), Max(0, (setupPrimaryPane.Height - 44dip) / 2), 132dip, 44dip)
+	lblSetupMessage.SetLayoutAnimated(0, 0, 0, setupStatusPane.Width, setupStatusPane.Height)
+
+	playerPrimaryPane.SetLayoutAnimated(0, 0, 0, playerDetailPane.Width, Max(56dip, playerDetailPane.Height * 0.4))
+	playerStatusPane.SetLayoutAnimated(0, 0, playerPrimaryPane.Height + contentGap, playerDetailPane.Width, playerDetailPane.Height - playerPrimaryPane.Height - contentGap)
+	lblStream.SetLayoutAnimated(0, 0, 0, playerPrimaryPane.Width, playerPrimaryPane.Height)
+	Dim infoHeight As Int = Max(54dip, playerStatusPane.Height - ConfirmReservedHeight)
+	lblInfo.SetLayoutAnimated(0, 0, 0, playerStatusPane.Width, infoHeight)
+	If confirmPane.Visible Then
+		confirmPane.SetLayoutAnimated(0, 0, playerStatusPane.Height - 72dip, playerStatusPane.Width, 72dip)
+	Else
+		confirmPane.SetLayoutAnimated(0, 0, playerStatusPane.Height, playerStatusPane.Width, 0)
+	End If
+	btnConfirmYes.SetLayoutAnimated(0, Max(0, (confirmPane.Width - 236dip) / 2), 14dip, 112dip, 44dip)
+	btnConfirmNo.SetLayoutAnimated(0, btnConfirmYes.Left + 124dip, 14dip, 112dip, 44dip)
+
+	lblFooter.SetLayoutAnimated(0, horizontalPad, 0, cardWidth - horizontalPad * 2, footerHeight)
+	UpdateResponsiveStyles(safeWidth)
+	UpdateVisibleMode
+End Sub
+
+Private Sub ConfirmReservedHeight As Int
+	If confirmPane.Visible Then Return 84dip
+	Return 0
+End Sub
+
+Private Sub UpdateResponsiveStyles(availableWidth As Int)
+	Dim small As Boolean = availableWidth <= 420dip
+	Dim medium As Boolean = availableWidth <= 720dip
+	Dim streamFontSize As Float
+	Dim infoFontSize As Float
+	Dim playFontSize As Float
+	Dim stopFontSize As Float
+	Dim headerActionSize As Float
+	Dim codeSize As Float
+	Dim cardRadius As Int
+
+	If small Then
+		streamFontSize = 28
+		infoFontSize = 16
+		playFontSize = 60
+		stopFontSize = 44
+		headerActionSize = 24
+		codeSize = 31
+		cardRadius = 16dip
+	Else If medium Then
+		streamFontSize = 32
+		infoFontSize = 17
+		playFontSize = 68
+		stopFontSize = 50
+		headerActionSize = 26
+		codeSize = 35
+		cardRadius = 20dip
+	Else
+		streamFontSize = 38
+		infoFontSize = 17
+		playFontSize = 74
+		stopFontSize = 54
+		headerActionSize = 28
+		codeSize = 38
+		cardRadius = 24dip
+	End If
+
+	playIconBaseSize = playFontSize
+	stopIconBaseSize = stopFontSize
+	headerActionFontSize = headerActionSize
+	codeFontSize = codeSize
+	lblStream.Font = xui.CreateDefaultBoldFont(streamFontSize)
+	lblInfo.Font = xui.CreateDefaultFont(infoFontSize)
+	lblHeader.Font = xui.CreateDefaultFont(12)
+	lblFooter.Font = xui.CreateDefaultFont(12)
+	lblHeaderAction.Font = xui.CreateDefaultBoldFont(headerActionFontSize)
+	card.SetColorAndBorder(0xFF1A1B1E, 1dip, 0x14FFFFFF, cardRadius)
+	UpdateCodeInputAppearance(isCodeInputFocused)
+	If isStarted Then
+		SetStopIcon
+	Else
+		SetPlayIcon
+	End If
+End Sub
+
+Private Sub ShowInitialScreen
+	If playerCode = "" Then
+		ShowSetupScreen("")
+	Else
+		ShowPlayerScreen(True)
+	End If
+End Sub
+
+Private Sub ShowSetupScreen(text As String)
+	appScreenMode = "setup"
+	ClearPlaybackState
+	HidePin
+	isStarted = False
+	isStoppedByUser = True
+	SetPlayIcon
+	SetStatusText("")
+	lblHeader.Text = ""
+	ConfigureSetupScreen("setup", text)
+	UpdateVisibleMode
+	If txtPlayerCode.IsInitialized Then txtPlayerCode.RequestFocus
+End Sub
+
+Private Sub ShowSettingsScreen
+	If playerCode = "" Then
+		ShowSetupScreen("")
+		Return
+	End If
+	appScreenMode = "settings"
+	ConfigureSetupScreen("settings", "")
+	UpdateVisibleMode
+End Sub
+
+Private Sub ShowPlayerScreen(refreshInfo As Boolean)
+	appScreenMode = "player"
+	ConfigurePlayerHeader
+	UpdateVisibleMode
+	If isStarted = False Then ApplyStoppedState
+	If refreshInfo = False Then Return
+	RenderPlayerHead(playerCode, "")
+	Wait For (InitPlayerInfo) Complete (unused As Boolean)
+End Sub
+
+Private Sub ConfigureSetupScreen(mode As String, text As String)
+	Dim isSettingsMode As Boolean = mode = "settings"
+	headerActionPane.Visible = mode <> "setup"
+	If isSettingsMode Then
+		lblHeaderAction.Text = "×"
+	Else
+		lblHeaderAction.Text = Chr(0x22EF)
+	End If
+	If isSettingsMode Then
+		txtPlayerCode.Editable = False
+	Else
+		txtPlayerCode.Editable = True
+	End If
+	txtPlayerCode.Text = FormatPlayerCodeForDisplay(playerCode)
+	If isSettingsMode Then
+		btnSetupSubmit.Text = MessageValue("logout").ToUpperCase
+	Else
+		btnSetupSubmit.Text = MessageValue("setup_submit").ToUpperCase
+	End If
+	If text <> "" Then
+		lblSetupMessage.Text = text
+	Else If isSettingsMode Then
+		lblSetupMessage.Text = MessageValue("settings_thanks")
+	Else
+		lblSetupMessage.Text = MessageValue("setup_title")
+	End If
+	If playerCode = "" Then lblHeader.Text = ""
+End Sub
+
+Private Sub ConfigurePlayerHeader
+	headerActionPane.Visible = True
+	lblHeaderAction.Text = Chr(0x22EF)
+End Sub
+
+Private Sub UpdateVisibleMode
+	setupPane.Visible = appScreenMode <> "player"
+	If appScreenMode = "player" Then
+		playerPane.Visible = True
+	Else
+		playerPane.Visible = False
+	End If
+	If appScreenMode = "setup" Then headerActionPane.Visible = False
+End Sub
+
+Private Sub PlayButtonPane_Click
+	If playerCode = "" Then
+		ShowSetupScreen(MessageValue("player_required"))
+		Return
+	End If
+	If isStarted = False Then
+		If isStopping Then Return
+		isStarted = True
+		isStoppedByUser = False
+		SetStopIcon
+		HideContentBlocks
+		Wait For (StartFirstTrack("manual")) Complete (unused As Boolean)
+		Return
+	End If
+	If isStopping Then Return
+	Wait For (StopPlayer) Complete (unused2 As Boolean)
+End Sub
+
+Private Sub PlayButtonPane_MouseClicked (eventData As MouseEvent)
+	PlayButtonPane_Click
+End Sub
+
+Private Sub PlayButtonPane_MouseEntered (eventData As MouseEvent)
+	UpdatePlayButtonAppearance(True)
+End Sub
+
+Private Sub PlayButtonPane_MouseExited (eventData As MouseEvent)
+	UpdatePlayButtonAppearance(False)
+End Sub
+
+Private Sub HeaderActionPane_Click
+	If appScreenMode = "player" Then
+		ShowSettingsScreen
+	Else If appScreenMode = "settings" Then
+		ShowPlayerScreen(False)
+	End If
+End Sub
+
+Private Sub HeaderActionPane_MouseClicked (eventData As MouseEvent)
+	HeaderActionPane_Click
+End Sub
+
+Private Sub HeaderActionPane_MouseEntered (eventData As MouseEvent)
+	UpdateHeaderActionAppearance(True)
+End Sub
+
+Private Sub HeaderActionPane_MouseExited (eventData As MouseEvent)
+	UpdateHeaderActionAppearance(False)
+End Sub
+
+Private Sub BtnSetupSubmit_Click
+	If appScreenMode = "settings" Then
+		Wait For (LogoutPlayer) Complete (unused As Boolean)
+	Else
+		Wait For (SubmitPlayerCode) Complete (unused2 As Boolean)
+	End If
+End Sub
+
+Private Sub BtnConfirmYes_Click
+	Wait For (SubmitClaim) Complete (unused As Boolean)
+End Sub
+
+Private Sub BtnConfirmNo_Click
+	HidePin
+	ApplyStoppedState
+End Sub
+
+Private Sub txtPlayerCode_TextChanged (oldValue As String, newValue As String)
+	If appScreenMode = "settings" Then Return
+	Dim filtered As String = FilterPlayerCode(newValue)
+	If filtered <> newValue Then
+		txtPlayerCode.Text = filtered
+	End If
+End Sub
+
+Private Sub txtPlayerCode_Action
+	If appScreenMode = "settings" Then Return
+	BtnSetupSubmit_Click
+End Sub
+
+Private Sub txtPlayerCode_FocusChanged (hasFocus As Boolean)
+	isCodeInputFocused = hasFocus
+	UpdateCodeInputAppearance(hasFocus)
+End Sub
+
+Private Sub SubmitPlayerCode As ResumableSub
+	Dim nextPlayer As String = NormalizePlayerCode(txtPlayerCode.Text)
+	If nextPlayer = "" Then
+		ShowSetupScreen(MessageValue("setup_invalid"))
+		txtPlayerCode.RequestFocus
+		Return False
+	End If
+	playerCode = nextPlayer
+	SaveValue("player_code", playerCode)
+	txtPlayerCode.Text = FormatPlayerCodeForDisplay(playerCode)
+	ShowPlayerScreen(True)
+	Return True
+End Sub
+
+Private Sub LogoutPlayer As ResumableSub
+	SaveValue("player_code", "")
+	playerCode = ""
+	Wait For (StopPlayer) Complete (unused As Boolean)
+	SetStatusText("")
+	ShowSetupScreen("")
+	Return True
+End Sub
+
+Private Sub InitPlayerInfo As ResumableSub
+	If playerCode = "" Then Return False
+	Wait For (FetchJsonWithTimeout(PLAYER_BASE_URL & "?" & BuildParams(CreateMetaParams), FETCH_TIMEOUT_MS)) Complete (result As Map)
+	If result.GetDefault("Success", False) = False Then
+		RenderPlayerHead(playerCode, "")
+		Return False
+	End If
+	Dim resultData As Object = result.Get("Data")
+	If resultData Is Map Then
+		Dim data As Map = resultData
+		If data.GetDefault("ok", False) <> True Then
+			RenderPlayerHead(playerCode, "")
+			Return False
+		End If
+		RenderPlayerHead(data.GetDefault("code", playerCode), data.GetDefault("title", ""))
+		Return True
+	End If
+	RenderPlayerHead(playerCode, "")
+	Return False
+End Sub
+
+Private Sub PlaybackStartDone(unusedResult As Map)
+	If unusedResult.IsInitialized Then
+	End If
+End Sub
+
+Private Sub PreloadDone(unusedResult As Map)
+	If unusedResult.IsInitialized Then
+	End If
+End Sub
+
+Private Sub GetAudioByKey(audioKey As String) As AudioPlayer
+	If audioKey = "secondary" Then Return audioSecondary
+	Return audioPrimary
+End Sub
+
+Private Sub GetInactiveAudioKey As String
+	If activeAudioKey = "primary" Then Return "secondary"
+	Return "primary"
+End Sub
+
+Private Sub ClearPreparedState(resetPlayer As Boolean)
+	If preparedAudioKey <> "" And resetPlayer Then
+		GetAudioByKey(preparedAudioKey).Reset
+	End If
+	preparedAudioKey = ""
+	preparedItem.Initialize
+	pendingPrepareAudioKey = ""
+	pendingPrepareItem.Initialize
+End Sub
+
+Private Sub ClearPendingPlayState
+	pendingPlayAudioKey = ""
+	pendingPlayItem.Initialize
+	pendingPlayFadeInMs = 0
+End Sub
+
+Private Sub ItemsMatch(firstItem As Map, secondItem As Map) As Boolean
+	If firstItem.IsInitialized = False Or secondItem.IsInitialized = False Then Return False
+	If firstItem.GetDefault("type", "") <> secondItem.GetDefault("type", "") Then Return False
+	If firstItem.GetDefault("id", "") <> "" And firstItem.GetDefault("id", "") = secondItem.GetDefault("id", "") Then Return True
+	Return MediaUrl(firstItem) = MediaUrl(secondItem)
+End Sub
+
+Private Sub CloneMap(sourceMap As Map) As Map
+	Dim clonedMap As Map
+	clonedMap.Initialize
+	If sourceMap.IsInitialized = False Then Return clonedMap
+	For Each key As Object In sourceMap.Keys
+		clonedMap.Put(key, sourceMap.Get(key))
+	Next
+	Return clonedMap
+End Sub
+
+Private Sub ConsumePreparedQueueItem
+	If playQueue.Size = 0 Or preparedItem.IsInitialized = False Then Return
+	If playQueue.Get(0) Is Map Then
+		Dim firstQueuedItem As Map = playQueue.Get(0)
+		If ItemsMatch(firstQueuedItem, preparedItem) Then playQueue.RemoveAt(0)
+	End If
+End Sub
+
+Private Sub UpdatePlaybackMeta(item As Map)
+	Dim itemType As String = item.GetDefault("type", "")
+	If itemType = "ad" Then
+		ShowAdMeta(item)
+		ShowStream(MessageValue("ad_label"))
+	Else
+		ShowTrackMeta(item)
+		ShowStream(item.GetDefault("stream", ""))
+		SyncExactBreakState
+	End If
+End Sub
+
+Private Sub ActivateLoadedItem(audioKey As String, item As Map, fadeInMs As Int)
+	activeAudioKey = audioKey
+	activeItem = CloneMap(item)
+	currentTrackUrl = MediaUrl(item)
+	currentMediaType = item.GetDefault("type", "")
+	isCrossfadeTriggered = False
+	If preparedAudioKey = audioKey Then
+		preparedAudioKey = ""
+		preparedItem.Initialize
+	End If
+	UpdatePlaybackMeta(item)
+	GetAudioByKey(audioKey).PlayWithFade(fadeInMs)
+	ScheduleHistoryLog(item)
+	ResetRetryDelay
+	prefetchDone = False
+End Sub
+
+Private Sub StartPlaybackWithAudioKey(audioKey As String, item As Map, fadeInMs As Int) As ResumableSub
+	ClearPendingPlayState
+	pendingPlayAudioKey = audioKey
+	pendingPlayItem = item
+	pendingPlayFadeInMs = fadeInMs
+	GetAudioByKey(audioKey).LoadUrl(MediaUrl(item), CurrentVolume(item))
+	Wait For PlaybackStartDone(result As Map)
+	Return result.GetDefault("Success", False)
+End Sub
+
+Private Sub PrepareNextPlayable As ResumableSub
+	If isStarted = False Or isStoppedByUser Then Return False
+	If playQueue.Size = 0 Then Return False
+	Dim nextObject As Object = playQueue.Get(0)
+	If nextObject Is Map Then
+	Else
+		Return False
+	End If
+	Dim nextItem As Map = nextObject
+	Dim nextType As String = nextItem.GetDefault("type", "")
+	If nextType <> "track" And nextType <> "ad" Then Return False
+	If preparedItem.IsInitialized And preparedAudioKey <> "" And ItemsMatch(preparedItem, nextItem) Then Return True
+	Dim targetAudioKey As String = GetInactiveAudioKey
+	ClearPreparedState(False)
+	pendingPrepareAudioKey = targetAudioKey
+	pendingPrepareItem = CloneMap(nextItem)
+	GetAudioByKey(targetAudioKey).LoadUrl(MediaUrl(nextItem), CurrentVolume(nextItem))
+	Wait For PreloadDone(result As Map)
+	Return result.GetDefault("Success", False)
+End Sub
+
+Private Sub CanCrossfadePreparedItem As Boolean
+	If isQueueTransitioning Or isCrossfadeTriggered Then Return False
+	If currentMediaType <> "track" Then Return False
+	If preparedAudioKey = "" Or preparedItem.IsInitialized = False Then Return False
+	If preparedItem.GetDefault("type", "") <> "track" Then Return False
+	Return True
+End Sub
+
+Private Sub PromotePreparedPlayer(fadeInMs As Int, fadeOutMs As Int) As Boolean
+	If preparedAudioKey = "" Or preparedItem.IsInitialized = False Then Return False
+	Dim previousAudioKey As String = activeAudioKey
+	Dim promotedItem As Map = CloneMap(preparedItem)
+	ConsumePreparedQueueItem
+	activeAudioKey = preparedAudioKey
+	ActivateLoadedItem(activeAudioKey, promotedItem, fadeInMs)
+	ClearPreparedState(False)
+	If previousAudioKey <> "" And previousAudioKey <> activeAudioKey Then
+		GetAudioByKey(previousAudioKey).Stop(fadeOutMs)
+	End If
+	Return True
+End Sub
+
+Private Sub StartFirstTrack(mode As String) As ResumableSub
+	nextStartMode = mode
+	playQueue.Clear
+	prefetchDone = False
+	isCrossfadeTriggered = False
+	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
+	Return True
+End Sub
+
+Private Sub LoadNextAndPlay As ResumableSub
+	ClearRetryTimer
+	Wait For (FetchNext) Complete (result As Map)
+	If result.GetDefault("Success", False) = False Then
+		Wait For (HandleFetchFailure(result)) Complete (unused As Boolean)
+		Return False
+	End If
+	If isStarted = False Or isStoppedByUser Then Return False
+	ResetRetryDelay
+	Dim queue As List = NormalizeQueueResponse(result.Get("Data"))
+	If queue.IsInitialized = False Or queue.Size = 0 Then
+		HandleTemporaryState("server", "")
+		Return False
+	End If
+	playQueue = queue
+	Dim retryAfter As Int = NormalizeRetryAfter(result.Get("Data"))
+	Wait For (PlayQueueItem(ShiftQueueItem, retryAfter)) Complete (unused2 As Boolean)
+	Return True
+End Sub
+
+Private Sub PlayPreparedOrLoadNext As ResumableSub
+	ClearRetryTimer
+	If playQueue.Size > 0 Then
+		Wait For (PlayQueueItem(ShiftQueueItem, 0)) Complete (unused As Boolean)
+		Return True
+	End If
+	Wait For (LoadNextAndPlay) Complete (unused2 As Boolean)
+	Return True
+End Sub
+
+Private Sub PrefetchNext As ResumableSub
+	If playQueue.Size > 0 Then
+		Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
+		Return preparedOk
+	End If
+	If HasPendingExactBreak Then Return False
+	Wait For (FetchNext) Complete (result As Map)
+	If result.GetDefault("Success", False) = False Or isStarted = False Or isStoppedByUser Then Return False
+	Dim queue As List = NormalizeQueueResponse(result.Get("Data"))
+	If queue.IsInitialized = False Or queue.Size = 0 Then Return False
+	playQueue = queue
+	Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
+	Return preparedOk
+End Sub
+
+Private Sub FetchNext As ResumableSub
+	Wait For (FetchJsonWithTimeout(NEXT_BASE_URL & "?" & BuildParams(CreateNextParams), FETCH_TIMEOUT_MS)) Complete (result As Map)
+	nextStartMode = ""
+	Return result
+End Sub
+
+Private Sub FetchJsonWithTimeout(url As String, timeoutMs As Int) As ResumableSub
+	Dim result As Map
+	result.Initialize
+	result.Put("Success", False)
+	result.Put("Kind", "server")
+	result.Put("Data", Null)
+	result.Put("ErrorMessage", "")
+	Dim j As HttpJob
+	j.Initialize("", Me)
+	j.Download(url)
+	j.GetRequest.Timeout = timeoutMs
+	Wait For (j) JobDone(j As HttpJob)
+	If j.Success Then
+		Try
+			Dim parser As JSONParser
+			parser.Initialize(j.GetString)
+			result.Put("Data", parser.NextObject)
+			result.Put("Success", True)
+			result.Put("Kind", "")
+		Catch
+			result.Put("Kind", "server")
+			result.Put("ErrorMessage", "bad_json")
+		End Try
+	Else
+		Dim errorMessage As String = j.ErrorMessage
+		result.Put("ErrorMessage", errorMessage)
+		If errorMessage.ToLowerCase.Contains("timed out") Or errorMessage.ToLowerCase.Contains("unknownhost") Or errorMessage.ToLowerCase.Contains("refused") Then
+			result.Put("Kind", "offline")
+		Else
+			result.Put("Kind", "server")
+		End If
+	End If
+	j.Release
+	Return result
+End Sub
+
+Private Sub SubmitClaim As ResumableSub
+	btnConfirmYes.Enabled = False
+	btnConfirmNo.Enabled = False
+	Wait For (FetchJsonWithTimeout(CLAIM_BASE_URL & "?" & BuildParams(CreateClaimParams), FETCH_TIMEOUT_MS)) Complete (result As Map)
+	If result.GetDefault("Success", False) Then
+		Dim resultData As Object = result.Get("Data")
+		If resultData Is Map Then
+			Dim data As Map = resultData
+			If data.GetDefault("ok", False) = True Then
+				isStarted = True
+				isStoppedByUser = False
+				SetStopIcon
+				HideContentBlocks
+				Wait For (StartFirstTrack("manual")) Complete (unused As Boolean)
+				btnConfirmYes.Enabled = True
+				btnConfirmNo.Enabled = True
+				Return True
+			End If
+		End If
+	End If
+	ShowClaimPrompt(ResolveErrorMessage(result, MessageValue("device_busy")))
+	btnConfirmYes.Enabled = True
+	btnConfirmNo.Enabled = True
+	Return False
+End Sub
+
+Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
+	ClearExactBreakState
+	ClearHistoryLogTimer
+	isCrossfadeTriggered = False
+	If current Is Map Then
+		Dim item As Map = current
+		Dim itemType As String = item.GetDefault("type", "")
+		
+		If itemType = "message" Then
+			HandleMessageItem(item)
+			Return False
+		End If
+		If itemType = "update" Then
+			ClearPlaybackState
+			isStarted = False
+			isStoppedByUser = True
+			SetPlayIcon
+			ShowMessage(item.GetDefault("message", MessageValue("player_reloading")))
+			Return False
+		End If
+		
+		HidePin
+		If itemType = "idle" Then
+			ClearPlaybackState
+			ShowMessage(item.GetDefault("message", MessageValue("idle")))
+			If retryAfter > 0 Then
+				ScheduleRetry("server", retryAfter * 1000)
+			Else
+				ScheduleRetry("server", PAUSE_RETRY_DELAY)
+			End If
+			Return False
+		End If
+		
+		If itemType = "break" Then
+			MergeBreakItems(item)
+			Wait For (PlayPreparedOrLoadNext) Complete (unused As Boolean)
+			Return True
+		End If
+		
+		If itemType <> "track" And itemType <> "ad" Then
+			HandleTemporaryState("server", "")
+			Return False
+		End If
+		
+		Dim url As String = MediaUrl(item)
+		If url = "" Then
+			HandleTemporaryState("server", "")
+			Return False
+		End If
+		
+		If item.ContainsKey("playlist") Then playlistIndex = item.Get("playlist")
+		prefetchDone = False
+		Dim fadeInMs As Int = 0
+		If itemType = "track" And currentMediaType = "track" And activeAudioKey <> "" Then fadeInMs = TRACK_OVERLAP_MS
+		Dim targetAudioKey As String = GetInactiveAudioKey
+		If activeAudioKey = "" Then targetAudioKey = "primary"
+		Wait For (StartPlaybackWithAudioKey(targetAudioKey, item, fadeInMs)) Complete (playbackStarted As Boolean)
+		If playbackStarted = False Or isStarted = False Or isStoppedByUser Then Return False
+		Return True
+	Else
+		HandleTemporaryState("server", "")
+		Return False
+	End If
+End Sub
+
+Private Sub HandleMessageItem(item As Map)
+	Dim action As String = item.GetDefault("action", "")
+	If action = "claim" Then
+		ClearPlaybackState
+		isStarted = False
+		isStoppedByUser = True
+		SetPlayIcon
+		ShowClaimPrompt(item.GetDefault("message", MessageValue("device_busy")))
+	Else If action = "blocked" Then
+		HandleBlockedState
+	Else If action = "not_found" Then
+		StopForMissingData(item.GetDefault("message", MessageValue("not_found")))
+	Else
+		HandleTemporaryState("server", item.GetDefault("message", MessageValue("server_wait")))
+	End If
+End Sub
+
+Private Sub MergeBreakItems(item As Map)
+	Dim items As List = item.GetDefault("items", Null)
+	If items.IsInitialized = False Or items.Size = 0 Then Return
+	Dim merged As List
+	merged.Initialize
+	For Each breakItem As Object In items
+		merged.Add(breakItem)
+	Next
+	For Each existing As Object In playQueue
+		merged.Add(existing)
+	Next
+	playQueue = merged
+End Sub
+
+Private Sub HandleFetchFailure(result As Map) As ResumableSub
+	If result.GetDefault("Kind", "") = "offline" Then
+		HandleTemporaryState("offline", "")
+		Return True
+	End If
+	Wait For (CheckExternalConnectivity) Complete (hasInternet As Boolean)
+	If hasInternet Then
+		HandleTemporaryState("server", "")
+	Else
+		HandleTemporaryState("offline", "")
+	End If
+	Return True
+End Sub
+
+Private Sub CheckExternalConnectivity As ResumableSub
+	Dim j As HttpJob
+	j.Initialize("", Me)
+	j.Download(CONNECTIVITY_CHECK_URL & "?t=" & DateTime.Now)
+	j.GetRequest.Timeout = CONNECTIVITY_CHECK_TIMEOUT_MS
+	Wait For (j) JobDone(j As HttpJob)
+	Dim ok As Boolean = j.Success
+	j.Release
+	Return ok
+End Sub
+
+Private Sub HandleTemporaryState(mode As String, text As String)
+	ClearPlaybackState
+	HidePin
+	If text <> "" Then
+		ShowMessage(text)
+	Else If mode = "offline" Then
+		ShowMessage(MessageValue("offline"))
+	Else
+		ShowMessage(MessageValue("server_wait"))
+	End If
+	ScheduleRetry(mode, 0)
+End Sub
+
+Private Sub HandleBlockedState
+	ClearPlaybackState
+	HidePin
+	ShowMessage(MessageValue("blocked"))
+	ScheduleRetry("blocked", 0)
+End Sub
+
+Private Sub StopForMissingData(text As String)
+	ClearPlaybackState
+	HidePin
+	isStarted = False
+	isStoppedByUser = True
+	SetPlayIcon
+	ShowMessage(text)
+End Sub
+
+Private Sub HandleMediaError As ResumableSub
+	Wait For (CheckExternalConnectivity) Complete (hasInternet As Boolean)
+	If hasInternet Then
+		HandleTemporaryState("server", "")
+	Else
+		HandleTemporaryState("offline", "")
+	End If
+	Return True
+End Sub
+
+Private Sub ResolveRetryDelay(mode As String, delayMs As Int) As Int
+	If delayMs > 0 Then Return delayMs
+	If mode = "offline" Then
+		Dim delay As Int = offlineRetryDelay
+		offlineRetryDelay = Min(offlineRetryDelay * 2, OFFLINE_RETRY_DELAY_MAX)
+		Return delay
+	End If
+	If mode = "blocked" Then Return BLOCKED_RETRY_DELAY
+	Dim serverDelay As Int = serverRetryDelay
+	serverRetryDelay = Min(serverRetryDelay * 2, SERVER_RETRY_DELAY_MAX)
+	Return serverDelay
+End Sub
+
+Private Sub ScheduleRetry(mode As String, delayMs As Int)
+	ClearRetryTimer
+	retryTimer.Interval = ResolveRetryDelay(mode, delayMs)
+	retryTimer.Enabled = True
+End Sub
+
+Private Sub RetryTimer_Tick
+	retryTimer.Enabled = False
+	If isStarted = False Or isStoppedByUser Then Return
+	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
+End Sub
+
+Private Sub ResetRetryDelay
+	offlineRetryDelay = OFFLINE_RETRY_DELAY_INITIAL
+	serverRetryDelay = SERVER_RETRY_DELAY_INITIAL
+End Sub
+
+Private Sub ClearRetryTimer
+	retryTimer.Enabled = False
+End Sub
+
+Private Sub ResolveScheduledBreakAt
+	scheduledBreakAt = -1
+	For Each itemObj As Object In playQueue
+		If itemObj Is Map Then
+			Dim item As Map = itemObj
+			If item.GetDefault("type", "") = "break" And item.GetDefault("exactly", False) = True And item.ContainsKey("at") Then
+				scheduledBreakAt = item.Get("at")
+				Exit
+			End If
+		End If
+	Next
+End Sub
+
+Private Sub SyncExactBreakState
+	ResolveScheduledBreakAt
+	ScheduleBreakWatch
+End Sub
+
+Private Sub ScheduleBreakWatch
+	breakTimer.Enabled = False
+	If HasPendingExactBreak = False Then Return
+	Dim delay As Long = Max(1, ((scheduledBreakAt - LocalNowTimestamp) * 1000) - 250)
+	breakTimer.Interval = delay
+	breakTimer.Enabled = True
+End Sub
+
+Private Sub BreakTimer_Tick
+	breakTimer.Enabled = False
+	If isStarted = False Or isStoppedByUser Then Return
+	If ShouldTriggerBreakNow = False Then Return
+	Wait For (FadeOutAndContinue) Complete (unused As Boolean)
+End Sub
+
+Private Sub ClearExactBreakState
+	scheduledBreakAt = -1
+	breakTimer.Enabled = False
+End Sub
+
+Private Sub HasPendingExactBreak As Boolean
+	Return scheduledBreakAt > LocalNowTimestamp
+End Sub
+
+Private Sub ShouldTriggerBreakNow As Boolean
+	If scheduledBreakAt <= 0 Then Return False
+	Return LocalNowTimestamp >= scheduledBreakAt
+End Sub
+
+Private Sub EffectiveTrackRemainMs As Long
+	Dim trackRemain As Long = 0
+	If activeAudioKey <> "" Then
+		Dim activeAudio As AudioPlayer = GetAudioByKey(activeAudioKey)
+		If activeAudio.Duration > 0 Then trackRemain = activeAudio.Duration - activeAudio.Position
+	End If
+	If scheduledBreakAt <= 0 Then Return trackRemain
+	Dim breakRemain As Long = (scheduledBreakAt - LocalNowTimestamp) * 1000
+	If trackRemain <= 0 Then Return breakRemain
+	Return Min(trackRemain, breakRemain)
+End Sub
+
+Private Sub FadeOutAndContinue As ResumableSub
+	If isQueueTransitioning Then Return False
+	isQueueTransitioning = True
+	ClearExactBreakState
+	Dim fadeMs As Int
+	If currentMediaType = "track" Then
+		fadeMs = STOP_FADE_MS
+	Else
+		fadeMs = 0
+	End If
+	If activeAudioKey <> "" Then GetAudioByKey(activeAudioKey).Stop(fadeMs)
+	ClearPreparedState(False)
+	Wait For (PlayPreparedOrLoadNext) Complete (unused As Boolean)
+	isQueueTransitioning = False
+	Return True
+End Sub
+
+Private Sub ScheduleHistoryLog(item As Map)
+	If item.IsInitialized = False Then Return
+	Dim itemType As String = item.GetDefault("type", "")
+	If itemType <> "track" And itemType <> "ad" Then Return
+	If item.GetDefault("id", "") = "" Then Return
+	ClearHistoryLogTimer
+	historyItem = item
+	historyTimer.Interval = HISTORY_LOG_DELAY_MS
+	historyTimer.Enabled = True
+End Sub
+
+Private Sub HistoryTimer_Tick
+	historyTimer.Enabled = False
+	If isStarted = False Or isStoppedByUser Then Return
+	If historyItem.IsInitialized = False Then Return
+	If currentMediaType <> historyItem.GetDefault("type", "") Then Return
+	If currentTrackUrl = "" Then Return
+	Wait For (SendHistory(historyItem)) Complete (unused As Boolean)
+End Sub
+
+Private Sub SendHistory(item As Map) As ResumableSub
+	Dim params As Map
+	params.Initialize
+	params.Put("player", playerCode)
+	params.Put("device", deviceId)
+	params.Put("type", item.GetDefault("type", ""))
+	params.Put("id", item.GetDefault("id", ""))
+	params.Put("date", DateTime.Date(DateTime.Now))
+	params.Put("time", DateTime.Time(DateTime.Now))
+	Dim j As HttpJob
+	j.Initialize("", Me)
+	j.PostString(HISTORY_BASE_URL, BuildParams(params))
+	j.GetRequest.Timeout = 5000
+	j.GetRequest.SetContentType("application/x-www-form-urlencoded;charset=UTF-8")
+	Wait For (j) JobDone(j As HttpJob)
+	j.Release
+	Return True
+End Sub
+
+Private Sub ClearHistoryLogTimer
+	historyTimer.Enabled = False
+	historyItem.Initialize
+End Sub
+
+Private Sub StopPlayer As ResumableSub
+	If isStopping Then Return False
+	isStopping = True
+	isStarted = False
+	isStoppedByUser = True
+	ClearRetryTimer
+	ClearExactBreakState
+	ClearHistoryLogTimer
+	ResetRetryDelay
+	If activeAudioKey <> "" Then
+		If currentMediaType = "track" Then
+			GetAudioByKey(activeAudioKey).Stop(STOP_FADE_MS)
+		Else
+			GetAudioByKey(activeAudioKey).Stop(0)
+		End If
+	End If
+	If preparedAudioKey <> "" Then GetAudioByKey(preparedAudioKey).Stop(0)
+	currentTrackUrl = ""
+	currentMediaType = ""
+	activeAudioKey = ""
+	preparedAudioKey = ""
+	activeItem.Initialize
+	preparedItem.Initialize
+	playlistIndex = -1
+	playQueue.Clear
+	prefetchDone = False
+	isCrossfadeTriggered = False
+	SetStatusText("")
+	HidePin
+	SetPlayIcon
+	ApplyStoppedState
+	isStopping = False
+	Return True
+End Sub
+
+Private Sub ClearPlaybackState
+	audioPrimary.Reset
+	audioSecondary.Reset
+	currentTrackUrl = ""
+	currentMediaType = ""
+	activeAudioKey = ""
+	preparedAudioKey = ""
+	activeItem.Initialize
+	preparedItem.Initialize
+	ClearPendingPlayState
+	ClearPreparedState(False)
+	playQueue.Clear
+	prefetchDone = False
+	isCrossfadeTriggered = False
+	ClearRetryTimer
+	ClearExactBreakState
+	ClearHistoryLogTimer
+	SetStatusText("")
+End Sub
+
+Private Sub AudioPrimary_Ready
+	HandleAudioReady("primary")
+End Sub
+
+Private Sub AudioSecondary_Ready
+	HandleAudioReady("secondary")
+End Sub
+
+Private Sub AudioPrimary_Error(message As String)
+	HandleAudioError("primary", message)
+End Sub
+
+Private Sub AudioSecondary_Error(message As String)
+	HandleAudioError("secondary", message)
+End Sub
+
+Private Sub AudioPrimary_Complete
+	HandleAudioComplete("primary")
+End Sub
+
+Private Sub AudioSecondary_Complete
+	HandleAudioComplete("secondary")
+End Sub
+
+Private Sub AudioPrimary_Timeupdate
+	HandleAudioTimeupdate("primary")
+End Sub
+
+Private Sub AudioSecondary_Timeupdate
+	HandleAudioTimeupdate("secondary")
+End Sub
+
+Private Sub HandleAudioReady(audioKey As String)
+	If pendingPlayAudioKey = audioKey Then
+		ActivateLoadedItem(audioKey, pendingPlayItem, pendingPlayFadeInMs)
+		ClearPendingPlayState
+		CallSubDelayed2(Me, "PlaybackStartDone", CreateMap("Success": True))
+		Return
+	End If
+	If pendingPrepareAudioKey = audioKey Then
+		preparedAudioKey = audioKey
+		preparedItem = CloneMap(pendingPrepareItem)
+		pendingPrepareAudioKey = ""
+		pendingPrepareItem.Initialize
+		CallSubDelayed2(Me, "PreloadDone", CreateMap("Success": True))
+	End If
+End Sub
+
+Private Sub HandleAudioError(audioKey As String, message As String) As ResumableSub
+	If pendingPlayAudioKey = audioKey Then
+		ClearPendingPlayState
+		CallSubDelayed2(Me, "PlaybackStartDone", CreateMap("Success": False, "Message": message))
+		Return True
+	End If
+	If pendingPrepareAudioKey = audioKey Then
+		ClearPreparedState(False)
+		CallSubDelayed2(Me, "PreloadDone", CreateMap("Success": False, "Message": message))
+		Return True
+	End If
+	If audioKey <> activeAudioKey Then Return False
+	If isStoppedByUser Or isStopping Then Return False
+	Wait For (HandleMediaError) Complete (unused As Boolean)
+	Return True
+End Sub
+
+Private Sub HandleAudioComplete(audioKey As String) As ResumableSub
+	If isStoppedByUser Then Return False
+	If audioKey <> activeAudioKey Then Return False
+	If PromotePreparedPlayer(0, 0) Then Return True
+	Wait For (PlayPreparedOrLoadNext) Complete (unused As Boolean)
+	Return True
+End Sub
+
+Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
+	If audioKey <> activeAudioKey Then Return False
+	If isStarted = False Or isStoppedByUser Then Return False
+	If ShouldTriggerBreakNow Then
+		Wait For (FadeOutAndContinue) Complete (unused As Boolean)
+		Return True
+	End If
+	Dim remain As Long = EffectiveTrackRemainMs
+	If CanCrossfadePreparedItem And remain > 0 And remain <= TRACK_OVERLAP_MS Then
+		isCrossfadeTriggered = True
+		PromotePreparedPlayer(TRACK_OVERLAP_MS, TRACK_OVERLAP_MS)
+		Return True
+	End If
+	If prefetchDone Then Return False
+	If remain <= 0 Then Return False
+	If remain <= PREFETCH_SECONDS * 1000 Then
+		prefetchDone = True
+		Wait For (PrefetchNext) Complete (unused2 As Boolean)
+	End If
+	Return True
+End Sub
+
+Private Sub SetPlayIcon
+	SetLabelStyle(lblPlayIcon, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(0xFFD0FF71) & ";")
+	lblPlayIcon.Text = "▶"
+	lblPlayIcon.Font = xui.CreateDefaultBoldFont(playIconBaseSize)
+	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, 0x00D0FF71, 999dip)
+	UpdatePlayButtonAppearance(False)
+End Sub
+
+Private Sub SetStopIcon
+	SetLabelStyle(lblPlayIcon, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(0xFFD0FF71) & ";")
+	lblPlayIcon.Text = "■"
+	lblPlayIcon.Font = xui.CreateDefaultBoldFont(stopIconBaseSize)
+	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, 0x66D0FF71, 999dip)
+	UpdatePlayButtonAppearance(False)
+End Sub
+
+Private Sub UpdatePlayButtonAppearance(isHovered As Boolean)
+	Dim backgroundColor As Int
+	Dim borderColor As Int
+	Dim orbitBorderColor As Int
+	If isStarted Then
+		If isHovered Then
+			backgroundColor = 0x12FFFFFF
+			borderColor = 0x77FFFFFF
+		Else
+			backgroundColor = 0x08FFFFFF
+			borderColor = 0x55FFFFFF
+		End If
+	Else
+		If isHovered Then
+			backgroundColor = 0x12FFFFFF
+			borderColor = 0x55D0FF71
+		Else
+			backgroundColor = 0x07FFFFFF
+			borderColor = 0x40FFFFFF
+		End If
+	End If
+	If isStarted Or isHovered Then
+		orbitBorderColor = 0x66D0FF71
+	Else
+		orbitBorderColor = 0x22D0FF71
+	End If
+	playButtonPane.SetColorAndBorder(backgroundColor, 4dip, borderColor, 999dip)
+	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, orbitBorderColor, 999dip)
+End Sub
+
+Private Sub UpdateHeaderActionAppearance(isHovered As Boolean)
+	Dim fillColor As Int
+	Dim borderColor As Int
+	Dim textColor As Int
+	If isHovered Then
+		fillColor = 0x14FFFFFF
+		borderColor = 0x30FFFFFF
+		textColor = 0xFFDDE6EF
+	Else
+		fillColor = 0x08FFFFFF
+		borderColor = 0x18FFFFFF
+		textColor = 0xFFB9C0C9
+	End If
+	headerActionPane.SetColorAndBorder(fillColor, 1dip, borderColor, 999dip)
+	SetPaneStyle(headerActionPane, "-fx-cursor: hand; -fx-background-radius: 999; -fx-border-radius: 999;")
+	SetLabelStyle(lblHeaderAction, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(textColor) & ";")
+End Sub
+
+Private Sub UpdateCodeInputAppearance(isFocused As Boolean)
+	Dim fillColor As Int
+	Dim borderColor As Int
+	Dim orbitBorderColor As Int
+	If isFocused Then
+		fillColor = 0x10FFFFFF
+		borderColor = 0x77FFFFFF
+		orbitBorderColor = 0x88FFFFFF
+	Else
+		fillColor = 0x07FFFFFF
+		borderColor = 0x55FFFFFF
+		orbitBorderColor = 0x66FFFFFF
+	End If
+	accessCirclePane.SetColorAndBorder(fillColor, 4dip, borderColor, 999dip)
+	accessCorePane.SetColorAndBorder(xui.Color_Transparent, 2dip, orbitBorderColor, 999dip)
+	accessInputPane.SetColorAndBorder(xui.Color_Transparent, 0, xui.Color_Transparent, 0)
+	SetPaneStyle(accessCirclePane, "-fx-background-radius: 999; -fx-border-radius: 999;")
+	SetPaneStyle(accessCorePane, "-fx-background-radius: 999; -fx-border-radius: 999;")
+	SetPaneStyle(accessInputPane, "-fx-background-color: transparent; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0;")
+	SetPaneStyle(txtPlayerCodeView, "-fx-background-color: transparent; -fx-text-fill: " & ColorToCss(0xFFF2F7FB) & "; -fx-prompt-text-fill: " & ColorToCss(0x66FFFFFF) & "; -fx-highlight-fill: transparent; -fx-highlight-text-fill: " & ColorToCss(0xFFF2F7FB) & "; -fx-display-caret: true; -fx-alignment: center; -fx-background-insets: 0; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0; -fx-font-size: " & codeFontSize & "px; -fx-font-weight: bold; -fx-padding: 0 0 2 0;")
+End Sub
+
+Private Sub BringToFront(view As B4XView)
+	Dim jo As JavaObject = view
+	jo.RunMethod("toFront", Null)
+End Sub
+
+Private Sub ApplyStoppedState
+	ShowStream(MessageValue("idle_stream"))
+	SetStatusText("")
+End Sub
+
+Private Sub HideContentBlocks
+	HidePin
+	SetStreamText("")
+	SetStatusText("")
+	btnConfirmYes.Enabled = True
+	btnConfirmNo.Enabled = True
+End Sub
+
+Private Sub ShowStream(text As String)
+	SetStreamText(text)
+End Sub
+
+Private Sub ShowMessage(text As String)
+	HideContentBlocks
+	SetStatusText(text)
+End Sub
+
+Private Sub ShowClaimPrompt(text As String)
+	HideContentBlocks
+	isStarted = False
+	isStoppedByUser = True
+	SetPlayIcon
+	SetStatusText(text)
+	confirmPane.Visible = True
+	LayoutUi(rootView.Width, rootView.Height)
+End Sub
+
+Private Sub HidePin
+	confirmPane.Visible = False
+	btnConfirmYes.Enabled = True
+	btnConfirmNo.Enabled = True
+End Sub
+
+Private Sub ShowTrackMeta(item As Map)
+	Dim parts As List
+	parts.Initialize
+	If item.GetDefault("set", "") <> "" Then parts.Add(item.Get("set"))
+	If item.GetDefault("code", "") <> "" Then parts.Add(item.Get("code"))
+	SetStatusText(JoinList(parts, " • "))
+End Sub
+
+Private Sub ShowAdMeta(item As Map)
+	SetStatusText(item.GetDefault("title", ""))
+End Sub
+
+Private Sub SetStreamText(text As String)
+	lblStream.Text = text
+End Sub
+
+Private Sub SetStatusText(text As String)
+	lblInfo.Text = text
+End Sub
+
+Private Sub RenderPlayerHead(code As String, title As String)
+	Dim safeCode As String = FormatPlayerCodeForDisplay(code)
+	If title <> "" Then
+		lblHeader.Text = safeCode & " • " & title.ToUpperCase
+	Else
+		lblHeader.Text = safeCode
+	End If
+End Sub
+
+Private Sub MediaUrl(item As Map) As String
+	Dim id As String = item.GetDefault("id", "")
+	If id = "" Then Return ""
+	Dim first As String = id.SubString2(0, 1)
+	Dim folder As String
+	If item.GetDefault("type", "") = "ad" Then
+		folder = "ads"
+	Else
+		folder = "tracks"
+	End If
+	Return "https://cdn.fon.fm/media/" & folder & "/" & first & "/" & id & ".mp3"
+End Sub
+
+Private Sub CurrentVolume(item As Map) As Int
+	Dim volume As Double = 0.7
+	If item.ContainsKey("volume") Then volume = item.Get("volume")
+	If volume < 0 Then volume = 0
+	If volume > 1 Then volume = 1
+	Return Round(volume * 100)
+End Sub
+
+Private Sub NormalizeQueueResponse(data As Object) As List
+	If data Is Map Then
+		Dim m As Map = data
+		Dim items As List = m.GetDefault("queue", Null)
+		If items.IsInitialized = False Then Return Null
+		Dim normalized As List
+		normalized.Initialize
+		For Each item As Object In items
+			If item Is Map Then normalized.Add(item)
+		Next
+		Return normalized
+	End If
+	Return Null
+End Sub
+
+Private Sub NormalizeRetryAfter(data As Object) As Int
+	If data Is Map Then
+		Dim m As Map = data
+		If m.ContainsKey("retry_after") = False Then Return 0
+		Dim value As Int = m.Get("retry_after")
+		If value <= 0 Then Return 0
+		Return value
+	End If
+	Return 0
+End Sub
+
+Private Sub ShiftQueueItem As Object
+	If playQueue.Size = 0 Then Return Null
+	Dim item As Object = playQueue.Get(0)
+	playQueue.RemoveAt(0)
+	Return item
+End Sub
+
+Private Sub ResolveErrorMessage(result As Map, fallback As String) As String
+	If result.GetDefault("Success", False) Then
+		Dim resultData As Object = result.Get("Data")
+		If resultData Is Map Then
+			Dim m As Map = resultData
+			If m.GetDefault("message", "") <> "" Then Return m.Get("message")
+		End If
+	End If
+	Dim errorMessage As String = result.GetDefault("ErrorMessage", "")
+	If errorMessage <> "" Then Return errorMessage
+	Return fallback
+End Sub
+
+Private Sub CreateMetaParams As Map
+	Dim params As Map
+	params.Initialize
+	params.Put("player", playerCode)
+	params.Put("tz", TimezoneOffsetMinutes)
+	Return params
+End Sub
+
+Private Sub CreateNextParams As Map
+	Dim params As Map
+	params.Initialize
+	params.Put("player", playerCode)
+	params.Put("device", deviceId)
+	params.Put("tz", TimezoneOffsetMinutes)
+	params.Put("version", APP_VERSION)
+	If nextStartMode = "manual" Or nextStartMode = "auto" Then params.Put("start", nextStartMode)
+	If playlistIndex >= 0 Then params.Put("playlist", playlistIndex)
+	Return params
+End Sub
+
+Private Sub CreateClaimParams As Map
+	Dim params As Map
+	params.Initialize
+	params.Put("player", playerCode)
+	params.Put("device", deviceId)
+	params.Put("tz", TimezoneOffsetMinutes)
+	Return params
+End Sub
+
+Private Sub BuildParams(params As Map) As String
+	Dim sb As StringBuilder
+	sb.Initialize
+	For Each key As String In params.Keys
+		If sb.Length > 0 Then sb.Append("&")
+		sb.Append(UrlEncode(key)).Append("=").Append(UrlEncode(params.Get(key)))
+	Next
+	Return sb.ToString
+End Sub
+
+Private Sub UrlEncode(value As Object) As String
+	Dim jo As JavaObject
+	jo.InitializeStatic("java.net.URLEncoder")
+	Return jo.RunMethod("encode", Array As Object("" & value, "UTF-8"))
+End Sub
+
+Private Sub NormalizePlayerCode(value As String) As String
+	Dim code As String = value.Trim.ToLowerCase
+	If Regex.IsMatch("^[a-z0-9]{5}$", code) Then Return code
+	Return ""
+End Sub
+
+Private Sub FilterPlayerCode(value As String) As String
+	Dim filtered As String = Regex.Replace("[^A-Za-z0-9]", value, "")
+	If filtered.Length > 5 Then filtered = filtered.SubString2(0, 5)
+	Return filtered.ToUpperCase
+End Sub
+
+Private Sub FormatPlayerCodeForDisplay(value As String) As String
+	Return value.Trim.ToUpperCase
+End Sub
+
+Private Sub GetOrCreateDeviceId As String
+	Dim id As String = storage.GetDefault("device_id", "")
+	If id <> "" Then Return id
+	Dim jo As JavaObject
+	jo.InitializeStatic("java.util.UUID")
+	Dim uuid As JavaObject = jo.RunMethod("randomUUID", Null)
+	id = uuid.RunMethod("toString", Null)
+	SaveValue("device_id", id)
+	Return id
+End Sub
+
+Private Sub LoadStorage As Map
+	Dim m As Map
+	m.Initialize
+	If File.Exists(storageDir, storageFile) = False Then Return m
+	Try
+		Dim parser As JSONParser
+		parser.Initialize(File.ReadString(storageDir, storageFile))
+		m = parser.NextObject
+	Catch
+		m.Initialize
+	End Try
+	Return m
+End Sub
+
+Private Sub SaveValue(key As String, value As Object)
+	storage.Put(key, value)
+	Dim gen As JSONGenerator
+	gen.Initialize(storage)
+	File.WriteString(storageDir, storageFile, gen.ToString)
+End Sub
+
+Private Sub TimezoneOffsetMinutes As Int
+	Dim jo As JavaObject
+	jo.InitializeStatic("java.time.OffsetDateTime")
+	Dim nowOffset As JavaObject = jo.RunMethod("now", Null)
+	Dim zoneOffset As JavaObject = nowOffset.RunMethod("getOffset", Null)
+	Dim totalSeconds As Int = zoneOffset.RunMethod("getTotalSeconds", Null)
+	Return -Round(totalSeconds / 60)
+End Sub
+
+Private Sub LocalNowTimestamp As Long
+	Return Floor(DateTime.Now / 1000) - (TimezoneOffsetMinutes * 60)
+End Sub
+
+Private Sub JoinList(items As List, separator As String) As String
+	Dim sb As StringBuilder
+	sb.Initialize
+	For i = 0 To items.Size - 1
+		If i > 0 Then sb.Append(separator)
+		sb.Append(items.Get(i))
+	Next
+	Return sb.ToString
+End Sub
+
+Private Sub MessageValue(key As String) As String
+	Return messages.GetDefault(key, "")
+End Sub
+
+Private Sub CreateLabel(text As String, fontSize As Float, textColor As Int, bold As Boolean, wrapText As Boolean) As B4XView
+	Dim lbl As Label
+	lbl.Initialize("")
+	lbl.Text = text
+	lbl.WrapText = wrapText
+	Dim xlbl As B4XView = lbl
+	If bold Then
+		xlbl.Font = xui.CreateDefaultBoldFont(fontSize)
+	Else
+		xlbl.Font = xui.CreateDefaultFont(fontSize)
+	End If
+	xlbl.SetTextAlignment("CENTER", "CENTER")
+	SetLabelStyle(xlbl, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(textColor) & ";")
+	SetMouseTransparent(xlbl, True)
+	Return xlbl
+End Sub
+
+Private Sub CreateTextButton(text As String, eventName As String) As B4XView
+	Dim btn As Button
+	btn.Initialize(eventName)
+	Dim xbtn As B4XView = btn
+	xbtn.Text = text
+	xbtn.Font = xui.CreateDefaultFont(12)
+	SetPaneStyle(xbtn, "-fx-background-color: transparent; -fx-border-color: rgba(255,255,255,0.12); -fx-border-radius: 12; -fx-background-radius: 12; -fx-text-fill: " & ColorToCss(0xFFE0E4EA) & ";")
+	Return xbtn
+End Sub
+
+Private Sub SetPaneStyle(view As B4XView, style As String)
+	Dim jo As JavaObject = view
+	jo.RunMethod("setStyle", Array(MergeNodeStyle(jo.RunMethod("getStyle", Null), style)))
+End Sub
+
+Private Sub SetLabelStyle(view As B4XView, style As String)
+	Dim jo As JavaObject = view
+	jo.RunMethod("setStyle", Array(MergeNodeStyle(jo.RunMethod("getStyle", Null), style)))
+End Sub
+
+Private Sub MergeNodeStyle(currentStyle As String, extraStyle As String) As String
+	If currentStyle = Null Or currentStyle.Trim = "" Then Return extraStyle
+	If extraStyle = Null Or extraStyle.Trim = "" Then Return currentStyle
+	If currentStyle.EndsWith(";") Then
+		Return currentStyle & " " & extraStyle
+	Else
+		Return currentStyle & "; " & extraStyle
+	End If
+End Sub
+
+Private Sub SetMouseTransparent(view As B4XView, value As Boolean)
+	Dim jo As JavaObject = view
+	jo.RunMethod("setMouseTransparent", Array(value))
+End Sub
+
+Private Sub SetPickOnBounds(view As B4XView, value As Boolean)
+	Dim jo As JavaObject = view
+	jo.RunMethod("setPickOnBounds", Array(value))
+End Sub
+
+Private Sub ScaleValue(availableWidth As Int, smallValue As Int, mediumValue As Int, largeValue As Int) As Int
+	If availableWidth <= 420dip Then Return smallValue
+	If availableWidth <= 720dip Then Return mediumValue
+	Return largeValue
+End Sub
+
+Private Sub ColorToCss(color As Int) As String
+	Dim unsignedColor As Long = Bit.And(0xFFFFFFFF, color)
+	Dim rgb As Int = Bit.And(unsignedColor, 0xFFFFFF)
+	Return "#" & Bit.ToHexString(rgb)
+End Sub
