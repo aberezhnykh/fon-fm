@@ -207,7 +207,61 @@ function cleanArray(array $data): array {
     return $out;
 }
 
-function buildSchedulesInstruction(array $clientData, string $playerId): ?array {
+function streamPath(string $base, string $stream): string {
+    return $base . '/streams/' . $stream . '.json';
+}
+
+function playlistPath(string $base, string $playlist): string {
+    return $base . '/playlists/' . $playlist . '.json';
+}
+
+function normalizePlaylistInstruction(string $dataDir, string $playlistId): ?array {
+    $playlistId = trim($playlistId);
+    if ($playlistId === '') {
+        return null;
+    }
+
+    $playlistData = runtime_read_json(playlistPath($dataDir, $playlistId));
+    if (!is_array($playlistData)) {
+        return null;
+    }
+
+    unset($playlistData['tracks']);
+    $playlistData['id'] = $playlistId;
+
+    $playlistData = cleanArray($playlistData);
+    return $playlistData !== [] ? $playlistData : null;
+}
+
+function buildSlotPlaylists(string $dataDir, string $streamId, int $limit = 3): array {
+    if ($streamId === '' || $limit <= 0) {
+        return [];
+    }
+
+    $streamData = runtime_read_json(streamPath($dataDir, $streamId));
+    if (!is_array($streamData)) {
+        return [];
+    }
+
+    $playlists = $streamData['playlists'] ?? null;
+    if (!is_array($playlists) || !$playlists) {
+        return [];
+    }
+
+    $out = [];
+
+    foreach (array_slice($playlists, 0, $limit) as $playlistId) {
+        $playlistJson = normalizePlaylistInstruction($dataDir, (string)$playlistId);
+        if ($playlistJson === null) {
+            continue;
+        }
+        $out[] = $playlistJson;
+    }
+
+    return $out;
+}
+
+function buildSchedulesInstruction(string $dataDir, array $clientData, string $playerId): ?array {
     $schedules = $clientData['schedules'] ?? null;
     if (!is_array($schedules)) {
         return [];
@@ -232,9 +286,11 @@ function buildSchedulesInstruction(array $clientData, string $playerId): ?array 
             }
 
             $streamId = trim((string)($slot['stream'] ?? ''));
+            $slotPlaylists = buildSlotPlaylists($dataDir, $streamId, 3);
             $slotsOut[] = cleanArray([
                 'time' => $slot['time'] ?? '',
                 'stream' => $streamId,
+                'playlists' => $slotPlaylists,
             ]);
         }
 
@@ -342,7 +398,7 @@ foreach ($ads as $ad) {
     $adsOut[] = normalizeAd($ad);
 }
 
-$schedulesOut = buildSchedulesInstruction($clientData, $playerId);
+$schedulesOut = buildSchedulesInstruction($dataDir, $clientData, $playerId);
 if ($schedulesOut === null) {
     message('config_error');
 }

@@ -256,6 +256,9 @@ Private Sub BuildUi
 	btnSetupSubmit = CreateTextButton(MessageValue("setup_submit"), "BtnSetupSubmit")
 	btnConfirmYes = CreateTextButton(MessageValue("device_confirm_yes"), "BtnConfirmYes")
 	btnConfirmNo = CreateTextButton(MessageValue("device_confirm_no"), "BtnConfirmNo")
+	UpdateTextButtonAppearance(btnSetupSubmit, False)
+	UpdateTextButtonAppearance(btnConfirmYes, False)
+	UpdateTextButtonAppearance(btnConfirmNo, False)
 
 	rootView.AddView(card, 0, 0, 0, 0)
 	card.AddView(headerPane, 0, 0, 0, 0)
@@ -617,13 +620,37 @@ Private Sub BtnSetupSubmit_Click
 	End If
 End Sub
 
+Private Sub BtnSetupSubmit_MouseEntered (eventData As MouseEvent)
+	UpdateTextButtonAppearance(btnSetupSubmit, True)
+End Sub
+
+Private Sub BtnSetupSubmit_MouseExited (eventData As MouseEvent)
+	UpdateTextButtonAppearance(btnSetupSubmit, False)
+End Sub
+
 Private Sub BtnConfirmYes_Click
 	Wait For (SubmitClaim) Complete (unused As Boolean)
+End Sub
+
+Private Sub BtnConfirmYes_MouseEntered (eventData As MouseEvent)
+	UpdateTextButtonAppearance(btnConfirmYes, True)
+End Sub
+
+Private Sub BtnConfirmYes_MouseExited (eventData As MouseEvent)
+	UpdateTextButtonAppearance(btnConfirmYes, False)
 End Sub
 
 Private Sub BtnConfirmNo_Click
 	HidePin
 	ApplyStoppedState
+End Sub
+
+Private Sub BtnConfirmNo_MouseEntered (eventData As MouseEvent)
+	UpdateTextButtonAppearance(btnConfirmNo, True)
+End Sub
+
+Private Sub BtnConfirmNo_MouseExited (eventData As MouseEvent)
+	UpdateTextButtonAppearance(btnConfirmNo, False)
 End Sub
 
 Private Sub txtPlayerCode_TextChanged (oldValue As String, newValue As String)
@@ -1758,6 +1785,24 @@ Private Sub UpdateHeaderActionAppearance(isHovered As Boolean)
 	ApplyMaterialIconFont(lblHeaderAction, headerActionFontSize)
 End Sub
 
+Private Sub UpdateTextButtonAppearance(buttonView As B4XView, isHovered As Boolean)
+	Dim fillColor As Int
+	Dim borderColor As Int
+	Dim textColor As Int
+	If isHovered Then
+		fillColor = 0x12FFFFFF
+		borderColor = 0x34FFFFFF
+		textColor = 0xFFF2F7FB
+	Else
+		fillColor = 0x06FFFFFF
+		borderColor = 0x1EFFFFFF
+		textColor = 0xFFE0E4EA
+	End If
+	buttonView.SetColorAndBorder(fillColor, 1dip, borderColor, 12dip)
+	SetPaneStyle(buttonView, "-fx-cursor: hand; -fx-border-radius: 12; -fx-background-radius: 12; -fx-text-fill: " & ColorToCss(textColor) & ";")
+	buttonView.Font = xui.CreateDefaultBoldFont(13)
+End Sub
+
 Private Sub UpdateCodeInputAppearance(isFocused As Boolean)
 	Dim fillColor As Int
 	Dim borderColor As Int
@@ -2158,9 +2203,8 @@ Private Sub CreateTextButton(text As String, eventName As String) As B4XView
 	Dim btn As Button
 	btn.Initialize(eventName)
 	Dim xbtn As B4XView = btn
-	xbtn.Text = text
-	xbtn.Font = xui.CreateDefaultFont(12)
-	SetPaneStyle(xbtn, "-fx-background-color: transparent; -fx-border-color: rgba(255,255,255,0.12); -fx-border-radius: 12; -fx-background-radius: 12; -fx-text-fill: " & ColorToCss(0xFFE0E4EA) & ";")
+	xbtn.Text = text.ToUpperCase
+	UpdateTextButtonAppearance(xbtn, False)
 	Return xbtn
 End Sub
 
