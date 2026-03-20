@@ -13,78 +13,6 @@ $settingsPath = __DIR__ . '/config/settings.json';
 require_once __DIR__ . '/config/messages.php';
 require_once __DIR__ . '/config/settings.php';
 require_once __DIR__ . '/runtime.php';
-$CURRENT_PLAYER_LEVEL = null;
-
-function normalizePlayerLevel(mixed $value): ?float {
-    if ($value === null || $value === '') {
-        return null;
-    }
-
-    if (!is_numeric($value)) {
-        return null;
-    }
-
-    $level = (float)$value;
-    if ($level < 0) {
-        $level = 0;
-    }
-    if ($level > 100) {
-        $level = 100;
-    }
-
-    return $level;
-}
-
-function normalizedDb(mixed $gain, float $fallback = -3.0): float {
-    if ($gain === null || $gain === '' || !is_numeric($gain)) {
-        return $fallback;
-    }
-
-    $db = (float)$gain;
-    if (!is_finite($db)) {
-        $db = $fallback;
-    }
-
-    if ($db > 0) {
-        $db = 0;
-    }
-    if ($db < -24) {
-        $db = -24;
-    }
-
-    return $db;
-}
-
-function dbToFactor(float $db): float {
-    return $db < 0 ? pow(10, $db / 20) : 1.0;
-}
-
-function playerLevelToFactor(?float $level): float {
-    if ($level === null) {
-        return 1.0;
-    }
-
-    $normalized = max(0.0, min(1.0, $level / 100.0));
-    if ($normalized <= 0.0) {
-        return 0.0;
-    }
-
-    // Кривая ближе к "ручке громкости":
-    // середина шкалы уже даёт достаточно заметную громкость.
-    return pow($normalized, 0.7);
-}
-
-function queueVolume(string $type, mixed $gain): float {
-    global $CURRENT_PLAYER_LEVEL;
-
-    $base = $type === 'track'
-        ? playerLevelToFactor($CURRENT_PLAYER_LEVEL)
-        : 1.0;
-    $factor = dbToFactor(normalizedDb($gain, -3.0));
-    $volume = $base * $factor;
-
-    return max(0.0, min(1.0, $volume));
-}
 
 function respond(array $data, int $status = 200): never {
     http_response_code($status);
@@ -180,7 +108,6 @@ function normalizeAd(array $ad): array {
     $out = $ad;
     unset($out['players']);
     $out['type'] = 'ad';
-    $out['volume'] = queueVolume('ad', $ad['gain'] ?? null);
     return $out;
 }
 
@@ -233,7 +160,24 @@ function normalizePlaylistInstruction(string $dataDir, string $playlistId): ?arr
     return $playlistData !== [] ? $playlistData : null;
 }
 
-function buildSlotPlaylists(string $dataDir, string $streamId, int $limit = 3): array {
+function normalizeStreamInstruction(string $dataDir, string $streamId): ?array {
+    $streamId = trim($streamId);
+    if ($streamId === '') {
+        return null;
+    }
+
+    $streamData = runtime_read_json(streamPath($dataDir, $streamId));
+    if (!is_array($streamData)) {
+        return null;
+    }
+
+    $streamData['id'] = $streamId;
+    $streamData = cleanArray($streamData);
+
+    return $streamData !== [] ? $streamData : null;
+}
+
+function buildStreamPlaylists(string $dataDir, string $streamId, int $limit = 3): array {
     if ($streamId === '' || $limit <= 0) {
         return [];
     }
@@ -286,15 +230,20 @@ function buildSchedulesInstruction(string $dataDir, array $clientData, string $p
             }
 
             $streamId = trim((string)($slot['stream'] ?? ''));
-            $slotPlaylists = buildSlotPlaylists($dataDir, $streamId, 3);
+            $streamJson = normalizeStreamInstruction($dataDir, $streamId);
+            if (is_array($streamJson)) {
+                $streamJson['playlists'] = buildStreamPlaylists($dataDir, $streamId, 3);
+                $streamJson = cleanArray($streamJson);
+            }
             $slotsOut[] = cleanArray([
                 'time' => $slot['time'] ?? '',
-                'stream' => $streamId,
-                'playlists' => $slotPlaylists,
+                'stream' => $streamJson,
             ]);
         }
 
         $out[] = cleanArray([
+            'id' => $schedule['id'] ?? null,
+            'status' => $schedule['status'] ?? null,
             'updated' => $schedule['updated'] ?? null,
             'title' => $schedule['title'] ?? '',
             'start' => $schedule['start'] ?? '',
@@ -345,8 +294,6 @@ $playerId = trim((string)($context['player_id'] ?? ''));
 if ($playerId === '') {
     message('config_error');
 }
-
-$CURRENT_PLAYER_LEVEL = normalizePlayerLevel($playerData['level'] ?? null);
 
 if (isset($playerData['status']) && !isActiveStatus($playerData['status'])) {
     message('player_inactive');

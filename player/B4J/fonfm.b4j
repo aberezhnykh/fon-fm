@@ -8,12 +8,11 @@ Library4=jfx
 Library5=jokhttputils2
 Library6=jshell
 Library7=json
-Library8=jsystemtray
-Library9=keyvaluestore
+Library8=keyvaluestore
 Module1=AudioPlayer
 Module2=|relative|..\B4XMainPage
 NumberOfFiles=0
-NumberOfLibraries=9
+NumberOfLibraries=8
 NumberOfModules=2
 Version=10.5
 @EndOfDesignText@

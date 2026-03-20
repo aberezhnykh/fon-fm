@@ -210,7 +210,9 @@ Private Sub InitState
 	offlineData.Initialize
 	playQueue.Initialize
 	recentResolvedTrackIds.Initialize
-	dataSlotPlaylistCursors.Initialize
+	dataSlotPlaylistCursors = storage.GetDefault("data_slot_playlist_cursors", CreateInitializedMap)
+	If dataSlotPlaylistCursors.IsInitialized = False Then dataSlotPlaylistCursors.Initialize
+	TraceLog("Загружены курсоры playlists. count=" & dataSlotPlaylistCursors.Size)
 	deviceId = GetOrCreateDeviceId
 	retryTimer.Initialize("RetryTimer", SERVER_RETRY_DELAY_INITIAL)
 	breakTimer.Initialize("BreakTimer", 1000)
@@ -529,6 +531,12 @@ Private Sub RefreshOfflineDataNow As ResumableSub
 			isOfflineDataRefreshInProgress = False
 			Return True
 		End If
+		If data.GetDefault("type", "") = "message" Then
+			TraceLog("data.php вернул message. action=" & data.GetDefault("action", "") & ", reason=" & data.GetDefault("reason", "") & ", message=" & data.GetDefault("message", ""))
+			HandleMessageItem(data)
+			isOfflineDataRefreshInProgress = False
+			Return False
+		End If
 		TraceLog("Ответ data.php не подходит для офлайн-режима. type=" & data.GetDefault("type", "") & ", ok=" & data.GetDefault("ok", False))
 	Else
 		TraceLog("Ответ data.php не является Map.")
@@ -559,42 +567,54 @@ End Sub
 
 Private Sub EnsureDataPlaybackQueue(minItems As Int) As ResumableSub
 	If minItems <= 0 Then Return False
+	Dim workingCursors As Map = CloneMap(dataSlotPlaylistCursors)
 	Do While playQueue.Size < minItems
-		Wait For (BuildNextTrackFromDataPlayback) Complete (nextItem As Map)
-		If nextItem.IsInitialized = False Then Exit
+		Wait For (BuildNextTrackFromDataPlayback(workingCursors)) Complete (nextItem As Map)
+		If IsValidDataTrackItem(nextItem) = False Then Exit
 		playQueue.Add(nextItem)
 	Loop
 	Return playQueue.Size >= minItems
 End Sub
 
-Private Sub BuildNextTrackFromDataPlayback As ResumableSub
+Private Sub BuildNextTrackFromDataPlayback(workingCursors As Map) As ResumableSub
 	Dim emptyItem As Map
 	emptyItem.Initialize
 	Dim currentSlot As Map = ResolveCurrentDataSlot
-	If currentSlot.IsInitialized = False Then
+	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then
 		TraceLog("Не удалось определить текущий слот из data.")
 		Return emptyItem
 	End If
-	Dim playlistDescriptor As Map = ChooseNextPlaylistDescriptor(currentSlot)
-	If playlistDescriptor.IsInitialized = False Then
+	Dim playlistDescriptor As Map = ChooseNextPlaylistDescriptor(currentSlot, workingCursors)
+	If playlistDescriptor.IsInitialized = False Or playlistDescriptor.Size = 0 Then
 		TraceLog("Не удалось выбрать playlist для текущего слота.")
 		Return emptyItem
 	End If
 	Dim playlistData As Map = LoadCachedPlaylistMetadata(playlistDescriptor.GetDefault("id", ""))
-	If playlistData.IsInitialized = False Then
+	If playlistData.IsInitialized = False Or playlistData.Size = 0 Then
 		Wait For (EnsureSinglePlaylistMetadata(playlistDescriptor)) Complete (downloaded As Boolean)
 		If downloaded = False Then Return emptyItem
 		playlistData = LoadCachedPlaylistMetadata(playlistDescriptor.GetDefault("id", ""))
-		If playlistData.IsInitialized = False Then Return emptyItem
+		If playlistData.IsInitialized = False Or playlistData.Size = 0 Then Return emptyItem
 	End If
 	Dim selectedTrack As Map = ChooseRandomTrackFromPlaylist(playlistData)
-	If selectedTrack.IsInitialized = False Then
+	If selectedTrack.IsInitialized = False Or selectedTrack.Size = 0 Then
 		TraceLog("Не удалось выбрать трек из playlist. playlistId=" & playlistDescriptor.GetDefault("id", ""))
 		Return emptyItem
 	End If
 	Dim queueItem As Map = CreateQueueTrackFromPlaylist(currentSlot, playlistDescriptor, selectedTrack)
+	If IsValidDataTrackItem(queueItem) = False Then
+		TraceLog("Локальный track-item собран неполно. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & selectedTrack.GetDefault("id", ""))
+		Return emptyItem
+	End If
 	RememberResolvedTrack(queueItem.GetDefault("id", ""))
 	Return queueItem
+End Sub
+
+Private Sub IsValidDataTrackItem(item As Map) As Boolean
+	If item.IsInitialized = False Or item.Size = 0 Then Return False
+	If item.GetDefault("type", "") <> "track" Then Return False
+	If item.GetDefault("id", "") = "" Then Return False
+	Return True
 End Sub
 
 Private Sub AutoStartSavedPlayer
@@ -1241,6 +1261,7 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 		End If
 		
 		If item.ContainsKey("playlist") Then playlistIndex = item.Get("playlist")
+		CommitDataPlaylistCursor(item)
 		prefetchDone = False
 		Dim fadeInMs As Int = ResolveStartFadeInMs
 		Dim targetAudioKey As String = GetInactiveAudioKey
@@ -2356,7 +2377,8 @@ Private Sub GetOfflinePlaylistIds(data As Map) As List
 			For Each slotObject As Object In slots
 				If slotObject Is Map Then
 					Dim slot As Map = slotObject
-					Dim playlists As List = slot.GetDefault("playlists", Null)
+					Dim streamData As Map = ExtractSlotStreamData(slot)
+					Dim playlists As List = streamData.GetDefault("playlists", Null)
 					If playlists.IsInitialized = False Then Continue
 					For Each playlistObject As Object In playlists
 						If playlistObject Is Map Then
@@ -2407,8 +2429,10 @@ Private Sub BuildOfflinePlaylistDescriptors(data As Map) As List
 				If slotObject Is Map Then
 					Dim slot As Map = slotObject
 					Dim slotTime As String = slot.GetDefault("time", "")
-					Dim streamId As String = slot.GetDefault("stream", "")
-					Dim playlists As List = slot.GetDefault("playlists", Null)
+					Dim streamData As Map = ExtractSlotStreamData(slot)
+					Dim streamId As String = streamData.GetDefault("id", "")
+					Dim streamTitle As String = streamData.GetDefault("title", "")
+					Dim playlists As List = streamData.GetDefault("playlists", Null)
 					If playlists.IsInitialized = False Then Continue
 					For Each playlistObject As Object In playlists
 						If playlistObject Is Map Then
@@ -2424,6 +2448,7 @@ Private Sub BuildOfflinePlaylistDescriptors(data As Map) As List
 							descriptor.Put("schedule_title", scheduleTitle)
 							descriptor.Put("slot_time", slotTime)
 							descriptor.Put("stream_id", streamId)
+							descriptor.Put("stream_title", streamTitle)
 							uniqueDescriptors.Put(playlistId, descriptor)
 							descriptors.Add(descriptor)
 						End If
@@ -2459,13 +2484,15 @@ Private Sub ResolveCurrentDataSlot As Map
 					Dim slotTime As String = slot.GetDefault("time", "")
 					Dim slotMinutes As Int = TimeStringToMinutes(slotTime)
 					If slotMinutes < 0 Then Continue
+					Dim streamData As Map = ExtractSlotStreamData(slot)
 					Dim entry As Map
 					entry.Initialize
 					entry.Put("schedule_title", scheduleTitle)
 					entry.Put("slot_time", slotTime)
 					entry.Put("slot_minutes", slotMinutes)
-					entry.Put("stream_id", slot.GetDefault("stream", ""))
-					entry.Put("playlists", slot.GetDefault("playlists", CreateInitializedList))
+					entry.Put("stream_id", streamData.GetDefault("id", ""))
+					entry.Put("stream_title", streamData.GetDefault("title", ""))
+					entry.Put("playlists", streamData.GetDefault("playlists", CreateInitializedList))
 					matchedSlots.Add(entry)
 				End If
 			Next
@@ -2483,7 +2510,7 @@ Private Sub ResolveCurrentDataSlot As Map
 			selectedMinutes = slotMinutes
 		End If
 	Next
-	If selectedSlot.IsInitialized = False Then
+	If selectedSlot.Size = 0 Then
 		For Each slotEntryObject As Object In matchedSlots
 			Dim slotEntry As Map = slotEntryObject
 			Dim slotMinutes As Int = slotEntry.GetDefault("slot_minutes", -1)
@@ -2494,6 +2521,20 @@ Private Sub ResolveCurrentDataSlot As Map
 		Next
 	End If
 	Return selectedSlot
+End Sub
+
+Private Sub ExtractSlotStreamData(slot As Map) As Map
+	Dim streamData As Map
+	streamData.Initialize
+	If slot.IsInitialized = False Then Return streamData
+	Dim streamObject As Object = slot.Get("stream")
+	If streamObject Is Map Then
+		streamData = streamObject
+		Return streamData
+	End If
+	If streamObject <> Null Then streamData.Put("id", "" & streamObject)
+	If slot.ContainsKey("playlists") Then streamData.Put("playlists", slot.Get("playlists"))
+	Return streamData
 End Sub
 
 Private Sub ScheduleAppliesToday(schedule As Map, todayKey As String, todayWeekday As String) As Boolean
@@ -2507,21 +2548,24 @@ Private Sub ScheduleAppliesToday(schedule As Map, todayKey As String, todayWeekd
 	Return False
 End Sub
 
-Private Sub ChooseNextPlaylistDescriptor(currentSlot As Map) As Map
+Private Sub ChooseNextPlaylistDescriptor(currentSlot As Map, workingCursors As Map) As Map
 	Dim emptyDescriptor As Map
 	emptyDescriptor.Initialize
 	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
 	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return emptyDescriptor
 	Dim slotKey As String = BuildDataSlotKey(currentSlot)
-	Dim cursorValue As Int = dataSlotPlaylistCursors.GetDefault(slotKey, 0)
+	Dim cursorValue As Int = workingCursors.GetDefault(slotKey, dataSlotPlaylistCursors.GetDefault(slotKey, 0))
 	If cursorValue < 0 Then cursorValue = 0
 	Dim playlistIndexForSlot As Int = cursorValue Mod playlists.Size
-	dataSlotPlaylistCursors.Put(slotKey, playlistIndexForSlot + 1)
+	workingCursors.Put(slotKey, playlistIndexForSlot + 1)
+	TraceLog("Курсор playlists. slot=" & slotKey & ", stored=" & cursorValue & ", previewNextStored=" & workingCursors.GetDefault(slotKey, 0) & ", playlists=" & playlists.Size)
 	Dim playlistObject As Object = playlists.Get(playlistIndexForSlot)
 	If playlistObject Is Map Then
-		Dim playlist As Map = playlistObject
+		Dim playlist As Map = CloneMap(playlistObject)
+		playlist.Put("_slot_key", slotKey)
+		playlist.Put("_playlist_index", playlistIndexForSlot)
 		TraceLog("Выбран playlist для локального воспроизведения. slot=" & slotKey & ", index=" & playlistIndexForSlot & ", playlistId=" & playlist.GetDefault("id", "") & ", title=" & playlist.GetDefault("title", ""))
-		Return playlistObject
+		Return playlist
 	End If
 	Return emptyDescriptor
 End Sub
@@ -2590,21 +2634,60 @@ Private Sub CreateQueueTrackFromPlaylist(currentSlot As Map, playlistDescriptor 
 	item.Put("stream", ResolvePlaybackStreamTitle(currentSlot, playlistDescriptor))
 	item.Put("playlist_id", playlistDescriptor.GetDefault("id", ""))
 	item.Put("playlist_title", playlistDescriptor.GetDefault("title", ""))
+	item.Put("slot_key", playlistDescriptor.GetDefault("_slot_key", BuildDataSlotKey(currentSlot)))
+	item.Put("playlist_index", playlistDescriptor.GetDefault("_playlist_index", 0))
 	item.Put("schedule_title", currentSlot.GetDefault("schedule_title", ""))
 	item.Put("slot_time", currentSlot.GetDefault("slot_time", ""))
 	Return item
 End Sub
 
+Private Sub CommitDataPlaylistCursor(item As Map)
+	If item.IsInitialized = False Then Return
+	If item.GetDefault("type", "") <> "track" Then Return
+	Dim slotKey As String = item.GetDefault("slot_key", "")
+	If slotKey = "" Then Return
+	Dim nextStored As Int = item.GetDefault("playlist_index", 0) + 1
+	dataSlotPlaylistCursors.Put(slotKey, nextStored)
+	storage.Put("data_slot_playlist_cursors", dataSlotPlaylistCursors)
+	TraceLog("Зафиксирован курсор playlists. slot=" & slotKey & ", committed=" & nextStored)
+End Sub
+
 Private Sub ResolvePlaybackStreamTitle(currentSlot As Map, playlistDescriptor As Map) As String
+	Dim streamTitle As String = currentSlot.GetDefault("stream_title", "")
+	If streamTitle <> "" Then Return streamTitle
+	Dim resolvedStreamTitle As String = ResolveOfflineStreamTitle(currentSlot)
+	If resolvedStreamTitle <> "" Then Return resolvedStreamTitle
 	Dim scheduleTitle As String = currentSlot.GetDefault("schedule_title", "")
+	Dim descriptorStreamTitle As String = playlistDescriptor.GetDefault("stream_title", "")
+	If descriptorStreamTitle <> "" Then Return descriptorStreamTitle
 	If scheduleTitle <> "" Then Return scheduleTitle
 	Return playlistDescriptor.GetDefault("title", "")
 End Sub
 
-Private Sub ResolveTrackVolumeFromData(track As Map) As Double
-	Dim baseFactor As Double = ResolvePlayerLevelFactor
-	Dim gainDb As Double = NormalizeDbValue(track.GetDefault("gain", -3), -3)
-	Return Max(0, Min(1, baseFactor * DbToFactor(gainDb)))
+Private Sub ResolveOfflineStreamTitle(currentSlot As Map) As String
+	If offlineData.IsInitialized = False Then Return ""
+	Dim targetStreamId As String = currentSlot.GetDefault("stream_id", "")
+	Dim targetSlotTime As String = currentSlot.GetDefault("slot_time", "")
+	Dim schedules As List = offlineData.GetDefault("schedules", Null)
+	If schedules.IsInitialized = False Then Return ""
+	For Each scheduleObject As Object In schedules
+		If scheduleObject Is Map Then
+			Dim schedule As Map = scheduleObject
+			Dim slots As List = schedule.GetDefault("slots", Null)
+			If slots.IsInitialized = False Then Continue
+			For Each slotObject As Object In slots
+				If slotObject Is Map Then
+					Dim slot As Map = slotObject
+					If targetSlotTime <> "" And slot.GetDefault("time", "") <> targetSlotTime Then Continue
+					Dim streamData As Map = ExtractSlotStreamData(slot)
+					If targetStreamId <> "" And streamData.GetDefault("id", "") <> targetStreamId Then Continue
+					Dim streamTitle As String = streamData.GetDefault("title", "")
+					If streamTitle <> "" Then Return streamTitle
+				End If
+			Next
+		End If
+	Next
+	Return ""
 End Sub
 
 Private Sub PlayerLevelToFactor(levelValue As Double) As Double
