@@ -7,6 +7,6 @@ ModuleBreakpoints2=
 ModuleClosedNodes0=
 ModuleClosedNodes1=
 ModuleClosedNodes2=
-NavigationStack=B4XMainPage,BuildParams,1226,0,AudioPlayer,CheckTimer_Tick,149,0,AudioPlayer,TimeUpdateTimer_Tick,135,0,B4XMainPage,CreateNextParams,1223,0,B4XMainPage,ClearPlaybackState,1167,0,B4XMainPage,StopPlayer,1154,0,AudioPlayer,Ready_Event,144,0,B4XMainPage,FetchJsonWithTimeout,767,0,B4XMainPage,LoadNextAndPlay,773,0,B4XMainPage,UpdateResponsiveStyles,360,0,B4XMainPage,LayoutUi,356,0
+NavigationStack=AudioPlayer,Ready_Event,144,0,B4XMainPage,FetchJsonWithTimeout,767,0,B4XMainPage,LoadNextAndPlay,773,0,B4XMainPage,LayoutUi,356,0,B4XMainPage,CloneMap,690,0,B4XMainPage,ResolveScheduledBreakAt,1100,0,B4XMainPage,UpdateResponsiveStyles,418,0,B4XMainPage,ConfigureSetupScreen,473,0,B4XMainPage,ShowPlayerScreen,469,0,B4XMainPage,BuildUi,276,0,B4XMainPage,Class_Globals,18,0
 SelectedBuild=0
 VisibleModules=2,1

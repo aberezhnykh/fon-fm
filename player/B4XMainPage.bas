@@ -16,6 +16,10 @@ Sub Class_Globals
 	Private Const HISTORY_BASE_URL As String = "https://play.fon.fm/history"
 	Private Const CONNECTIVITY_CHECK_URL As String = "https://radiosparx.ru/img/logo-dark.svg"
 	Private Const APP_VERSION As String = "1.0.1"
+	Private Const ICON_PLAY As String = Chr(0xE037)
+	Private Const ICON_STOP As String = Chr(0xE047)
+	Private Const ICON_MORE As String = Chr(0xE5D3)
+	Private Const ICON_CLOSE As String = Chr(0xE5CD)
 	Private Const PREFETCH_SECONDS As Int = 10
 	Private Const STOP_FADE_MS As Int = 3000
 	Private Const TRACK_OVERLAP_MS As Int = 1800
@@ -211,8 +215,8 @@ Private Sub BuildUi
 	headerActionPane.SetColorAndBorder(xui.Color_Transparent, 0, xui.Color_Transparent, 999dip)
 
 	lblHeader = CreateLabel("", 12, 0xFF747B86, False, True)
-	lblHeaderAction = CreateLabel(Chr(0x22EF), 22, 0xFFB9C0C9, True, False)
-	lblPlayIcon = CreateLabel("▶", 48, 0xFFD0FF71, True, False)
+	lblHeaderAction = CreateLabel(ICON_MORE, 22, 0xFFB9C0C9, False, False)
+	lblPlayIcon = CreateLabel(ICON_PLAY, 48, 0xFFD0FF71, False, False)
 	lblStream = CreateLabel("", 36, 0xFFD0FF71, True, True)
 	lblInfo = CreateLabel("", 17, 0xFFBCC3CD, False, True)
 	lblFooter = CreateLabel("FON.FM APP " & APP_VERSION, 12, 0xFF747B86, False, True)
@@ -343,7 +347,7 @@ Private Sub LayoutUi(width As Int, height As Int)
 	Dim controlTop As Int = Max(0, (playerHeroPane.Height - controlSize) / 2)
 	orbitPane.SetLayoutAnimated(0, orbitLeft, controlTop - 10dip, orbitSize, orbitSize)
 	playButtonPane.SetLayoutAnimated(0, controlLeft, controlTop, controlSize, controlSize)
-	lblPlayIcon.SetLayoutAnimated(0, 0, 0, controlSize, controlSize)
+	lblPlayIcon.SetLayoutAnimated(0, 0, 1dip, controlSize, controlSize)
 
 	setupPrimaryPane.SetLayoutAnimated(0, 0, 0, setupDetailPane.Width, Max(56dip, setupDetailPane.Height * 0.38))
 	setupStatusPane.SetLayoutAnimated(0, 0, setupPrimaryPane.Height + contentGap, setupDetailPane.Width, setupDetailPane.Height - setupPrimaryPane.Height - contentGap)
@@ -388,7 +392,7 @@ Private Sub UpdateResponsiveStyles(availableWidth As Int)
 		streamFontSize = 28
 		infoFontSize = 16
 		playFontSize = 60
-		stopFontSize = 44
+		stopFontSize = 56
 		headerActionSize = 24
 		codeSize = 31
 		cardRadius = 16dip
@@ -396,7 +400,7 @@ Private Sub UpdateResponsiveStyles(availableWidth As Int)
 		streamFontSize = 32
 		infoFontSize = 17
 		playFontSize = 68
-		stopFontSize = 50
+		stopFontSize = 62
 		headerActionSize = 26
 		codeSize = 35
 		cardRadius = 20dip
@@ -404,7 +408,7 @@ Private Sub UpdateResponsiveStyles(availableWidth As Int)
 		streamFontSize = 38
 		infoFontSize = 17
 		playFontSize = 74
-		stopFontSize = 54
+		stopFontSize = 68
 		headerActionSize = 28
 		codeSize = 38
 		cardRadius = 24dip
@@ -418,8 +422,8 @@ Private Sub UpdateResponsiveStyles(availableWidth As Int)
 	lblInfo.Font = xui.CreateDefaultFont(infoFontSize)
 	lblHeader.Font = xui.CreateDefaultFont(12)
 	lblFooter.Font = xui.CreateDefaultFont(12)
-	lblHeaderAction.Font = xui.CreateDefaultBoldFont(headerActionFontSize)
 	card.SetColorAndBorder(0xFF1A1B1E, 1dip, 0x14FFFFFF, cardRadius)
+	UpdateHeaderActionAppearance(False)
 	UpdateCodeInputAppearance(isCodeInputFocused)
 	If isStarted Then
 		SetStopIcon
@@ -474,9 +478,9 @@ Private Sub ConfigureSetupScreen(mode As String, text As String)
 	Dim isSettingsMode As Boolean = mode = "settings"
 	headerActionPane.Visible = mode <> "setup"
 	If isSettingsMode Then
-		lblHeaderAction.Text = "×"
+		lblHeaderAction.Text = ICON_CLOSE
 	Else
-		lblHeaderAction.Text = Chr(0x22EF)
+		lblHeaderAction.Text = ICON_MORE
 	End If
 	If isSettingsMode Then
 		txtPlayerCode.Editable = False
@@ -501,7 +505,7 @@ End Sub
 
 Private Sub ConfigurePlayerHeader
 	headerActionPane.Visible = True
-	lblHeaderAction.Text = Chr(0x22EF)
+	lblHeaderAction.Text = ICON_MORE
 End Sub
 
 Private Sub UpdateVisibleMode
@@ -1373,17 +1377,17 @@ Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
 End Sub
 
 Private Sub SetPlayIcon
-	SetLabelStyle(lblPlayIcon, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(0xFFD0FF71) & ";")
-	lblPlayIcon.Text = "▶"
-	lblPlayIcon.Font = xui.CreateDefaultBoldFont(playIconBaseSize)
+	SetLabelStyle(lblPlayIcon, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(0xFFD0FF71) & "; -fx-padding: 0;")
+	lblPlayIcon.Text = ICON_PLAY
+	ApplyMaterialIconFont(lblPlayIcon, playIconBaseSize)
 	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, 0x00D0FF71, 999dip)
 	UpdatePlayButtonAppearance(False)
 End Sub
 
 Private Sub SetStopIcon
-	SetLabelStyle(lblPlayIcon, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(0xFFD0FF71) & ";")
-	lblPlayIcon.Text = "■"
-	lblPlayIcon.Font = xui.CreateDefaultBoldFont(stopIconBaseSize)
+	SetLabelStyle(lblPlayIcon, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(0xFFD0FF71) & "; -fx-padding: 0;")
+	lblPlayIcon.Text = ICON_STOP
+	ApplyMaterialIconFont(lblPlayIcon, stopIconBaseSize)
 	orbitPane.SetColorAndBorder(xui.Color_Transparent, 2dip, 0x66D0FF71, 999dip)
 	UpdatePlayButtonAppearance(False)
 End Sub
@@ -1434,6 +1438,7 @@ Private Sub UpdateHeaderActionAppearance(isHovered As Boolean)
 	headerActionPane.SetColorAndBorder(fillColor, 1dip, borderColor, 999dip)
 	SetPaneStyle(headerActionPane, "-fx-cursor: hand; -fx-background-radius: 999; -fx-border-radius: 999;")
 	SetLabelStyle(lblHeaderAction, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(textColor) & ";")
+	ApplyMaterialIconFont(lblHeaderAction, headerActionFontSize)
 End Sub
 
 Private Sub UpdateCodeInputAppearance(isFocused As Boolean)
@@ -1742,6 +1747,10 @@ Private Sub CreateTextButton(text As String, eventName As String) As B4XView
 	xbtn.Font = xui.CreateDefaultFont(12)
 	SetPaneStyle(xbtn, "-fx-background-color: transparent; -fx-border-color: rgba(255,255,255,0.12); -fx-border-radius: 12; -fx-background-radius: 12; -fx-text-fill: " & ColorToCss(0xFFE0E4EA) & ";")
 	Return xbtn
+End Sub
+
+Private Sub ApplyMaterialIconFont(view As B4XView, fontSize As Float)
+	view.Font = xui.CreateMaterialIcons(fontSize)
 End Sub
 
 Private Sub SetPaneStyle(view As B4XView, style As String)

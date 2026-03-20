@@ -695,7 +695,7 @@ __ref.getField(false,"_player" /*RemoteObject*/ ).runVoidMethod ("Stop");
        catch (Exception e14) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e14.toString()); BA.debugLineNum = 98;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(2);
-audioplayer.__c.runVoidMethod ("LogImpl","720905998",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+audioplayer.__c.runVoidMethod ("LogImpl","820905998",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  BA.debugLineNum = 100;BA.debugLine="If jo.IsInitialized Then";
 Debug.ShouldStop(8);
@@ -710,7 +710,7 @@ __ref.getField(false,"_jo" /*RemoteObject*/ ).runVoidMethod ("RunMethod",(Object
        catch (Exception e20) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e20.toString()); BA.debugLineNum = 104;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(128);
-audioplayer.__c.runVoidMethod ("LogImpl","720906004",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+audioplayer.__c.runVoidMethod ("LogImpl","820906004",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  };
  };
@@ -748,7 +748,7 @@ __ref.getField(false,"_player" /*RemoteObject*/ ).runMethod(true,"setVolume",__r
        catch (Exception e6) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e6.toString()); BA.debugLineNum = 255;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(1073741824);
-audioplayer.__c.runVoidMethod ("LogImpl","722413318",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+audioplayer.__c.runVoidMethod ("LogImpl","822413318",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  BA.debugLineNum = 257;BA.debugLine="End Sub";
 Debug.ShouldStop(1);
@@ -911,7 +911,7 @@ __ref.getField(false,"_player" /*RemoteObject*/ ).runVoidMethod ("Stop");
        catch (Exception e10) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e10.toString()); BA.debugLineNum = 269;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(4096);
-audioplayer.__c.runVoidMethod ("LogImpl","722478858",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+audioplayer.__c.runVoidMethod ("LogImpl","822478858",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  BA.debugLineNum = 271;BA.debugLine="End Sub";
 Debug.ShouldStop(16384);
