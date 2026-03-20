@@ -18,17 +18,26 @@ Debug.ShouldStop(1024);
  BA.debugLineNum = 12;BA.debugLine="mainForm = form1";
 Debug.ShouldStop(2048);
 main._mainform = _form1;
- BA.debugLineNum = 13;BA.debugLine="mainForm.Show";
+ BA.debugLineNum = 13;BA.debugLine="mainForm.SetWindowSizeLimits(520, 640, fx.Primary";
 Debug.ShouldStop(4096);
-main._mainform.runVoidMethodAndSync ("Show");
- BA.debugLineNum = 14;BA.debugLine="Dim pagesManager As B4XPagesManager";
+main._mainform.runVoidMethod ("SetWindowSizeLimits",(Object)(BA.numberCast(double.class, 520)),(Object)(BA.numberCast(double.class, 640)),(Object)(RemoteObject.solve(new RemoteObject[] {main._fx.runMethod(false,"getPrimaryScreen").runMethod(true,"getMaxX"),main._fx.runMethod(false,"getPrimaryScreen").runMethod(true,"getMinX")}, "-",1, 0)),(Object)(RemoteObject.solve(new RemoteObject[] {main._fx.runMethod(false,"getPrimaryScreen").runMethod(true,"getMaxY"),main._fx.runMethod(false,"getPrimaryScreen").runMethod(true,"getMinY")}, "-",1, 0)));
+ BA.debugLineNum = 14;BA.debugLine="mainForm.Show";
 Debug.ShouldStop(8192);
-_pagesmanager = RemoteObject.createNew ("b4j.example.b4xpagesmanager");Debug.locals.put("pagesManager", _pagesmanager);
- BA.debugLineNum = 15;BA.debugLine="pagesManager.Initialize(mainForm)";
+main._mainform.runVoidMethodAndSync ("Show");
+ BA.debugLineNum = 15;BA.debugLine="mainForm.WindowWidth = Max(mainForm.WindowWidth,";
 Debug.ShouldStop(16384);
-_pagesmanager.runClassMethod (b4j.example.b4xpagesmanager.class, "_initialize" /*RemoteObject*/ ,main.ba,(Object)(main._mainform));
- BA.debugLineNum = 16;BA.debugLine="End Sub";
+main._mainform.runMethod(true,"setWindowWidth",main.__c.runMethod(true,"Max",(Object)(main._mainform.runMethod(true,"getWindowWidth")),(Object)(BA.numberCast(double.class, 520))));
+ BA.debugLineNum = 16;BA.debugLine="mainForm.WindowHeight = Max(mainForm.WindowHeight";
 Debug.ShouldStop(32768);
+main._mainform.runMethod(true,"setWindowHeight",main.__c.runMethod(true,"Max",(Object)(main._mainform.runMethod(true,"getWindowHeight")),(Object)(BA.numberCast(double.class, 640))));
+ BA.debugLineNum = 17;BA.debugLine="Dim pagesManager As B4XPagesManager";
+Debug.ShouldStop(65536);
+_pagesmanager = RemoteObject.createNew ("b4j.example.b4xpagesmanager");Debug.locals.put("pagesManager", _pagesmanager);
+ BA.debugLineNum = 18;BA.debugLine="pagesManager.Initialize(mainForm)";
+Debug.ShouldStop(131072);
+_pagesmanager.runClassMethod (b4j.example.b4xpagesmanager.class, "_initialize" /*RemoteObject*/ ,main.ba,(Object)(main._mainform));
+ BA.debugLineNum = 19;BA.debugLine="End Sub";
+Debug.ShouldStop(262144);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -39,33 +48,16 @@ finally {
 		}}
 public static RemoteObject  _mainform_closed() throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_Closed (main) ","main",0,main.ba,main.mostCurrent,28);
+		Debug.PushSubsStack("MainForm_Closed (main) ","main",0,main.ba,main.mostCurrent,31);
 if (RapidSub.canDelegate("mainform_closed")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_closed");}
- BA.debugLineNum = 28;BA.debugLine="Sub MainForm_Closed";
-Debug.ShouldStop(134217728);
- BA.debugLineNum = 29;BA.debugLine="B4XPages.Delegate.MainForm_Closed";
-Debug.ShouldStop(268435456);
-main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_closed" /*RemoteObject*/ );
- BA.debugLineNum = 30;BA.debugLine="End Sub";
-Debug.ShouldStop(536870912);
-return RemoteObject.createImmutable("");
-}
-catch (Exception e) {
-			throw Debug.ErrorCaught(e);
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
-public static RemoteObject  _mainform_closerequest(RemoteObject _eventdata) throws Exception{
-try {
-		Debug.PushSubsStack("MainForm_CloseRequest (main) ","main",0,main.ba,main.mostCurrent,32);
-if (RapidSub.canDelegate("mainform_closerequest")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_closerequest", _eventdata);}
-Debug.locals.put("eventData", _eventdata);
- BA.debugLineNum = 32;BA.debugLine="Sub MainForm_CloseRequest (eventData As Event)";
+ BA.debugLineNum = 31;BA.debugLine="Sub MainForm_Closed";
+Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 32;BA.debugLine="B4XPages.MainPage.SaveWindowState";
 Debug.ShouldStop(-2147483648);
- BA.debugLineNum = 33;BA.debugLine="B4XPages.Delegate.MainForm_CloseRequest(eventData";
+main._b4xpages.runMethod(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_savewindowstate" /*RemoteObject*/ );
+ BA.debugLineNum = 33;BA.debugLine="B4XPages.Delegate.MainForm_Closed";
 Debug.ShouldStop(1);
-main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_closerequest" /*RemoteObject*/ ,(Object)(_eventdata));
+main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_closed" /*RemoteObject*/ );
  BA.debugLineNum = 34;BA.debugLine="End Sub";
 Debug.ShouldStop(2);
 return RemoteObject.createImmutable("");
@@ -76,36 +68,16 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
-public static RemoteObject  _mainform_focuschanged(RemoteObject _hasfocus) throws Exception{
+public static RemoteObject  _mainform_closerequest(RemoteObject _eventdata) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_FocusChanged (main) ","main",0,main.ba,main.mostCurrent,20);
-if (RapidSub.canDelegate("mainform_focuschanged")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_focuschanged", _hasfocus);}
-Debug.locals.put("hasFocus", _hasfocus);
- BA.debugLineNum = 20;BA.debugLine="Sub MainForm_FocusChanged (hasFocus As Boolean)";
-Debug.ShouldStop(524288);
- BA.debugLineNum = 21;BA.debugLine="B4XPages.Delegate.MainForm_FocusChanged(hasFocus)";
-Debug.ShouldStop(1048576);
-main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_focuschanged" /*RemoteObject*/ ,(Object)(_hasfocus));
- BA.debugLineNum = 22;BA.debugLine="End Sub";
-Debug.ShouldStop(2097152);
-return RemoteObject.createImmutable("");
-}
-catch (Exception e) {
-			throw Debug.ErrorCaught(e);
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
-public static RemoteObject  _mainform_iconifiedchanged(RemoteObject _iconified) throws Exception{
-try {
-		Debug.PushSubsStack("MainForm_IconifiedChanged (main) ","main",0,main.ba,main.mostCurrent,36);
-if (RapidSub.canDelegate("mainform_iconifiedchanged")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_iconifiedchanged", _iconified);}
-Debug.locals.put("iconified", _iconified);
- BA.debugLineNum = 36;BA.debugLine="Public Sub MainForm_IconifiedChanged (iconified As";
+		Debug.PushSubsStack("MainForm_CloseRequest (main) ","main",0,main.ba,main.mostCurrent,36);
+if (RapidSub.canDelegate("mainform_closerequest")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_closerequest", _eventdata);}
+Debug.locals.put("eventData", _eventdata);
+ BA.debugLineNum = 36;BA.debugLine="Sub MainForm_CloseRequest (eventData As Event)";
 Debug.ShouldStop(8);
- BA.debugLineNum = 37;BA.debugLine="B4XPages.Delegate.MainForm_IconifiedChanged(iconi";
+ BA.debugLineNum = 37;BA.debugLine="B4XPages.Delegate.MainForm_CloseRequest(eventData";
 Debug.ShouldStop(16);
-main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_iconifiedchanged" /*RemoteObject*/ ,(Object)(_iconified));
+main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_closerequest" /*RemoteObject*/ ,(Object)(_eventdata));
  BA.debugLineNum = 38;BA.debugLine="End Sub";
 Debug.ShouldStop(32);
 return RemoteObject.createImmutable("");
@@ -116,19 +88,59 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
+public static RemoteObject  _mainform_focuschanged(RemoteObject _hasfocus) throws Exception{
+try {
+		Debug.PushSubsStack("MainForm_FocusChanged (main) ","main",0,main.ba,main.mostCurrent,23);
+if (RapidSub.canDelegate("mainform_focuschanged")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_focuschanged", _hasfocus);}
+Debug.locals.put("hasFocus", _hasfocus);
+ BA.debugLineNum = 23;BA.debugLine="Sub MainForm_FocusChanged (hasFocus As Boolean)";
+Debug.ShouldStop(4194304);
+ BA.debugLineNum = 24;BA.debugLine="B4XPages.Delegate.MainForm_FocusChanged(hasFocus)";
+Debug.ShouldStop(8388608);
+main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_focuschanged" /*RemoteObject*/ ,(Object)(_hasfocus));
+ BA.debugLineNum = 25;BA.debugLine="End Sub";
+Debug.ShouldStop(16777216);
+return RemoteObject.createImmutable("");
+}
+catch (Exception e) {
+			throw Debug.ErrorCaught(e);
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
+public static RemoteObject  _mainform_iconifiedchanged(RemoteObject _iconified) throws Exception{
+try {
+		Debug.PushSubsStack("MainForm_IconifiedChanged (main) ","main",0,main.ba,main.mostCurrent,40);
+if (RapidSub.canDelegate("mainform_iconifiedchanged")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_iconifiedchanged", _iconified);}
+Debug.locals.put("iconified", _iconified);
+ BA.debugLineNum = 40;BA.debugLine="Public Sub MainForm_IconifiedChanged (iconified As";
+Debug.ShouldStop(128);
+ BA.debugLineNum = 41;BA.debugLine="B4XPages.Delegate.MainForm_IconifiedChanged(iconi";
+Debug.ShouldStop(256);
+main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_iconifiedchanged" /*RemoteObject*/ ,(Object)(_iconified));
+ BA.debugLineNum = 42;BA.debugLine="End Sub";
+Debug.ShouldStop(512);
+return RemoteObject.createImmutable("");
+}
+catch (Exception e) {
+			throw Debug.ErrorCaught(e);
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static RemoteObject  _mainform_resize(RemoteObject _width,RemoteObject _height) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_Resize (main) ","main",0,main.ba,main.mostCurrent,24);
+		Debug.PushSubsStack("MainForm_Resize (main) ","main",0,main.ba,main.mostCurrent,27);
 if (RapidSub.canDelegate("mainform_resize")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_resize", _width, _height);}
 Debug.locals.put("width", _width);
 Debug.locals.put("height", _height);
- BA.debugLineNum = 24;BA.debugLine="Sub MainForm_Resize (width As Double, height As Do";
-Debug.ShouldStop(8388608);
- BA.debugLineNum = 25;BA.debugLine="B4XPages.Delegate.MainForm_Resize(width, height)";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 27;BA.debugLine="Sub MainForm_Resize (width As Double, height As Do";
+Debug.ShouldStop(67108864);
+ BA.debugLineNum = 28;BA.debugLine="B4XPages.Delegate.MainForm_Resize(width, height)";
+Debug.ShouldStop(134217728);
 main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_resize" /*RemoteObject*/ ,(Object)(_width),(Object)(_height));
- BA.debugLineNum = 26;BA.debugLine="End Sub";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 29;BA.debugLine="End Sub";
+Debug.ShouldStop(268435456);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -165,6 +177,7 @@ b4xpagesdelegator.myClass = BA.getDeviceClass ("b4j.example.b4xpagesdelegator");
 b4xpagesmanager.myClass = BA.getDeviceClass ("b4j.example.b4xpagesmanager");
 httputils2service.myClass = BA.getDeviceClass ("b4j.example.httputils2service");
 httpjob.myClass = BA.getDeviceClass ("b4j.example.httpjob");
+keyvaluestore.myClass = BA.getDeviceClass ("b4j.example.keyvaluestore");
 		
         } catch (Exception e) {
 			throw new RuntimeException(e);

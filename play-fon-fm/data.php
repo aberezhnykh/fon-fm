@@ -59,14 +59,27 @@ function dbToFactor(float $db): float {
     return $db < 0 ? pow(10, $db / 20) : 1.0;
 }
 
+function playerLevelToFactor(?float $level): float {
+    if ($level === null) {
+        return 1.0;
+    }
+
+    $normalized = max(0.0, min(1.0, $level / 100.0));
+    if ($normalized <= 0.0) {
+        return 0.0;
+    }
+
+    // Кривая ближе к "ручке громкости":
+    // середина шкалы уже даёт достаточно заметную громкость.
+    return pow($normalized, 0.7);
+}
+
 function queueVolume(string $type, mixed $gain): float {
     global $CURRENT_PLAYER_LEVEL;
 
-    $basePercent = $type === 'track'
-        ? ($CURRENT_PLAYER_LEVEL ?? 100.0)
-        : 100.0;
-
-    $base = max(0.0, min(1.0, $basePercent / 100.0));
+    $base = $type === 'track'
+        ? playerLevelToFactor($CURRENT_PLAYER_LEVEL)
+        : 1.0;
     $factor = dbToFactor(normalizedDb($gain, -3.0));
     $volume = $base * $factor;
 

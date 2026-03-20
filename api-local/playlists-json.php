@@ -8,6 +8,17 @@ require __DIR__ . '/common.php';
 api_key_check($ENV);
 $lock = lock_open('playlists-json');
 
+function playlist_json_normalize_track(array $track): array {
+    if (array_key_exists('duration', $track)) $track['duration'] = json_number($track['duration']);
+    if (array_key_exists('gain', $track)) $track['gain'] = json_number($track['gain']);
+    return $track;
+}
+
+function playlist_json_normalize_playlist(array $playlist): array {
+    if (array_key_exists('duration', $playlist)) $playlist['duration'] = json_number($playlist['duration']);
+    return $playlist;
+}
+
 // Явная схема: что берем из Directus и как это называется в runtime JSON.
 $map = [
     'title' => 'title',
@@ -104,7 +115,8 @@ foreach ($ids as $id) {
             $trackId = trim((string)($t['id'] ?? ''));
             if ($trackId === '') continue;
 
-            $track = clean_array(map_fields($t, $rowMap));
+            $track = playlist_json_normalize_track(map_fields($t, $rowMap));
+            $track = clean_array($track);
             if ($track !== []) $tracks[] = $track;
         }
     }
@@ -116,7 +128,7 @@ foreach ($ids as $id) {
         continue;
     }
 
-    $json = map_fields($playlist, $map);
+    $json = playlist_json_normalize_playlist(map_fields($playlist, $map));
     $json['tracks'] = $tracks;
     // count — runtime-поле, чтобы плееру не приходилось считать длину массива самому.
     $json['count'] = count($tracks);

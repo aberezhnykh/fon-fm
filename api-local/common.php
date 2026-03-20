@@ -175,6 +175,39 @@ function clean_array(array $data): array {
     return $out;
 }
 
+function json_number(mixed $value): int|float|null {
+    if ($value === null || $value === '') return null;
+    if (!is_numeric($value)) return null;
+
+    $number = $value + 0;
+    return is_int($number) || is_float($number) ? $number : null;
+}
+
+function json_bool(mixed $value): ?bool {
+    if ($value === null || $value === '') return null;
+    if (is_bool($value)) return $value;
+    if (is_int($value) || is_float($value)) return ((int)$value) !== 0;
+
+    $normalized = strtolower(trim((string)$value));
+    if ($normalized === '1' || $normalized === 'true') return true;
+    if ($normalized === '0' || $normalized === 'false') return false;
+
+    return null;
+}
+
+function json_number_array(mixed $value): array {
+    if (!is_array($value)) return [];
+
+    $out = [];
+    foreach ($value as $item) {
+        $number = json_number($item);
+        if ($number === null) continue;
+        $out[] = $number;
+    }
+
+    return $out;
+}
+
 // Базовый HTTP-запрос с JSON body для PATCH и внутренних вызовов.
 function http_req_json(string $method, string $url, array $headers = [], ?array $body = null): array {
     $h = array_merge(['Accept: application/json'], $headers);

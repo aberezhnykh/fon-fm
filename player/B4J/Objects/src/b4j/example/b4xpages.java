@@ -29,6 +29,32 @@ public static Object _globalcontext = null;
 public static b4j.example.main _main = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
+public static b4j.example.b4xmainpage  _mainpage() throws Exception{
+RDebugUtils.currentModule="b4xpages";
+if (Debug.shouldDelegate(ba, "mainpage", true))
+	 {return ((b4j.example.b4xmainpage) Debug.delegate(ba, "mainpage", null));}
+RDebugUtils.currentLine=8060928;
+ //BA.debugLineNum = 8060928;BA.debugLine="Public Sub MainPage As B4XMainPage";
+RDebugUtils.currentLine=8060929;
+ //BA.debugLineNum = 8060929;BA.debugLine="Return GetManager.MainPage";
+if (true) return _getmanager()._mainpage /*b4j.example.b4xmainpage*/ ;
+RDebugUtils.currentLine=8060930;
+ //BA.debugLineNum = 8060930;BA.debugLine="End Sub";
+return null;
+}
+public static anywheresoftware.b4j.objects.Form  _getnativeparent(Object _b4xpage) throws Exception{
+RDebugUtils.currentModule="b4xpages";
+if (Debug.shouldDelegate(ba, "getnativeparent", true))
+	 {return ((anywheresoftware.b4j.objects.Form) Debug.delegate(ba, "getnativeparent", new Object[] {_b4xpage}));}
+RDebugUtils.currentLine=8126464;
+ //BA.debugLineNum = 8126464;BA.debugLine="Public Sub GetNativeParent (B4XPage As Object) As";
+RDebugUtils.currentLine=8126469;
+ //BA.debugLineNum = 8126469;BA.debugLine="Return GetManager.FindPIFromB4XPage(B4XPage).Pare";
+if (true) return _getmanager()._findpifromb4xpage /*b4j.example.b4xpagesmanager._b4xpageinfo*/ (null,_b4xpage).Parent /*b4j.example.b4xpagesmanager._b4xpageparent*/ .NativeType /*anywheresoftware.b4j.objects.Form*/ ;
+RDebugUtils.currentLine=8126470;
+ //BA.debugLineNum = 8126470;BA.debugLine="End Sub";
+return null;
+}
 public static String  _addpage(String _id,Object _b4xpage) throws Exception{
 RDebugUtils.currentModule="b4xpages";
 if (Debug.shouldDelegate(ba, "addpage", true))
@@ -80,19 +106,6 @@ _getmanager()._closepage /*String*/ (null,_b4xpage);
 RDebugUtils.currentLine=7929858;
  //BA.debugLineNum = 7929858;BA.debugLine="End Sub";
 return "";
-}
-public static anywheresoftware.b4j.objects.Form  _getnativeparent(Object _b4xpage) throws Exception{
-RDebugUtils.currentModule="b4xpages";
-if (Debug.shouldDelegate(ba, "getnativeparent", true))
-	 {return ((anywheresoftware.b4j.objects.Form) Debug.delegate(ba, "getnativeparent", new Object[] {_b4xpage}));}
-RDebugUtils.currentLine=8126464;
- //BA.debugLineNum = 8126464;BA.debugLine="Public Sub GetNativeParent (B4XPage As Object) As";
-RDebugUtils.currentLine=8126469;
- //BA.debugLineNum = 8126469;BA.debugLine="Return GetManager.FindPIFromB4XPage(B4XPage).Pare";
-if (true) return _getmanager()._findpifromb4xpage /*b4j.example.b4xpagesmanager._b4xpageinfo*/ (null,_b4xpage).Parent /*b4j.example.b4xpagesmanager._b4xpageparent*/ .NativeType /*anywheresoftware.b4j.objects.Form*/ ;
-RDebugUtils.currentLine=8126470;
- //BA.debugLineNum = 8126470;BA.debugLine="End Sub";
-return null;
 }
 public static Object  _getpage(String _id) throws Exception{
 RDebugUtils.currentModule="b4xpages";
@@ -148,19 +161,6 @@ if (true) return _mpm instanceof b4j.example.b4xpagesmanager;
 RDebugUtils.currentLine=7340034;
  //BA.debugLineNum = 7340034;BA.debugLine="End Sub";
 return false;
-}
-public static b4j.example.b4xmainpage  _mainpage() throws Exception{
-RDebugUtils.currentModule="b4xpages";
-if (Debug.shouldDelegate(ba, "mainpage", true))
-	 {return ((b4j.example.b4xmainpage) Debug.delegate(ba, "mainpage", null));}
-RDebugUtils.currentLine=8060928;
- //BA.debugLineNum = 8060928;BA.debugLine="Public Sub MainPage As B4XMainPage";
-RDebugUtils.currentLine=8060929;
- //BA.debugLineNum = 8060929;BA.debugLine="Return GetManager.MainPage";
-if (true) return _getmanager()._mainpage /*b4j.example.b4xmainpage*/ ;
-RDebugUtils.currentLine=8060930;
- //BA.debugLineNum = 8060930;BA.debugLine="End Sub";
-return null;
 }
 public static String  _settitle(Object _b4xpage,Object _title) throws Exception{
 RDebugUtils.currentModule="b4xpages";

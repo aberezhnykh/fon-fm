@@ -39,6 +39,25 @@ function client_json_patch_state(array $ENV, string $clientId, string $state, ?s
     directus_patch($ENV, '/items/clients/' . rawurlencode($clientId), $payload);
 }
 
+function client_json_normalize_ad(array $adJson): array {
+    if (array_key_exists('gain', $adJson)) $adJson['gain'] = json_number($adJson['gain']);
+    if (array_key_exists('exactly', $adJson)) $adJson['exactly'] = json_bool($adJson['exactly']);
+    if (array_key_exists('interval', $adJson)) $adJson['interval'] = json_number($adJson['interval']);
+    if (array_key_exists('duration', $adJson)) $adJson['duration'] = json_number($adJson['duration']);
+    if (array_key_exists('weekdays', $adJson)) $adJson['weekdays'] = json_number_array($adJson['weekdays']);
+    return $adJson;
+}
+
+function client_json_normalize_player(array $playerJson): array {
+    if (array_key_exists('level', $playerJson)) $playerJson['level'] = json_number($playerJson['level']);
+    return $playerJson;
+}
+
+function client_json_normalize_schedule(array $scheduleJson): array {
+    if (array_key_exists('weekdays', $scheduleJson)) $scheduleJson['weekdays'] = json_number_array($scheduleJson['weekdays']);
+    return $scheduleJson;
+}
+
 api_key_check($ENV);
 $lock = lock_open('clients-json');
 
@@ -173,7 +192,7 @@ foreach ($ids as $id) {
             $playerIds = client_json_ad_player_ids($row['players'] ?? null);
             if (!$playerIds) continue;
 
-            $adJson = map_fields($row, $adsMap);
+            $adJson = client_json_normalize_ad(map_fields($row, $adsMap));
             $adJson['players'] = $playerIds;
             $adJson = clean_array($adJson);
             if ($adJson !== []) $ads[] = $adJson;
@@ -206,7 +225,7 @@ foreach ($ids as $id) {
             $code = strtolower(trim((string)($row['code'] ?? '')));
             if ($code === '') continue;
 
-            $playerJson = clean_array([
+            $playerJson = client_json_normalize_player([
                 'id' => $pid,
                 'title' => (string)($row['title'] ?? ''),
                 'status' => $status,
@@ -214,6 +233,7 @@ foreach ($ids as $id) {
                 'code' => $code,
                 'level' => $row['level'] ?? null,
             ]);
+            $playerJson = clean_array($playerJson);
 
             if ($playerJson !== []) $players[] = $playerJson;
         }
@@ -300,7 +320,7 @@ foreach ($ids as $id) {
 
                     if (!$slotsOut) continue;
 
-                    $scheduleJson = clean_array([
+                    $scheduleJson = client_json_normalize_schedule([
                         'updated' => (string)($schedule['updated'] ?? ''),
                         'title' => (string)($schedule['title'] ?? ''),
                         'start' => (string)($schedule['start'] ?? ''),
@@ -308,6 +328,7 @@ foreach ($ids as $id) {
                         'slots' => $slotsOut,
                         'players' => $playersBySchedule[(string)($schedule['id'] ?? '')] ?? [],
                     ]);
+                    $scheduleJson = clean_array($scheduleJson);
                     if ($scheduleJson !== [] && !in_array($scheduleJson, $schedules, true)) $schedules[] = $scheduleJson;
                 }
             }

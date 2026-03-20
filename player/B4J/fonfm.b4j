@@ -1,25 +1,25 @@
 ﻿AppType=JavaFX
 Build1=Default,b4j.example
-File1=MainPage.bjl
-FileGroup1=New Group
 Group=Default Group
 Library1=b4xpages
 Library2=javaobject
 Library3=jcore
 Library4=jfx
 Library5=jokhttputils2
-Library6=json
-Library7=jsystemtray
+Library6=jshell
+Library7=json
+Library8=jsystemtray
+Library9=keyvaluestore
 Module1=AudioPlayer
 Module2=|relative|..\B4XMainPage
-NumberOfFiles=1
-NumberOfLibraries=7
+NumberOfFiles=0
+NumberOfLibraries=9
 NumberOfModules=2
 Version=10.5
 @EndOfDesignText@
 #Region Project Attributes 
-	#MainFormWidth: 680
-	#MainFormHeight: 760 
+	#MainFormWidth: 520
+	#MainFormHeight: 640 
 #End Region
 
 Sub Process_Globals
@@ -29,7 +29,10 @@ End Sub
 
 Sub AppStart (form1 As Form, args() As String)
 	mainForm = form1
+	mainForm.SetWindowSizeLimits(520, 640, fx.PrimaryScreen.MaxX - fx.PrimaryScreen.MinX, fx.PrimaryScreen.MaxY - fx.PrimaryScreen.MinY)
 	mainForm.Show
+	mainForm.WindowWidth = Max(mainForm.WindowWidth, 520)
+	mainForm.WindowHeight = Max(mainForm.WindowHeight, 640)
 	Dim pagesManager As B4XPagesManager
 	pagesManager.Initialize(mainForm)
 End Sub
@@ -45,6 +48,7 @@ Sub MainForm_Resize (width As Double, height As Double)
 End Sub
 
 Sub MainForm_Closed
+	B4XPages.MainPage.SaveWindowState
 	B4XPages.Delegate.MainForm_Closed
 End Sub
 

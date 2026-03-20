@@ -23,6 +23,7 @@ Sub Class_Globals
 	Private Const PREFETCH_SECONDS As Int = 10
 	Private Const STOP_FADE_MS As Int = 3000
 	Private Const ORBIT_FADE_MS As Int = 3000
+	Private Const START_FADE_MS As Int = 1500
 	Private Const TRACK_OVERLAP_MS As Int = 1800
 	Private Const AD_TAIL_OVERLAP_MS As Int = 350
 	Private Const HISTORY_LOG_DELAY_MS As Int = 15000
@@ -38,6 +39,7 @@ Sub Class_Globals
 	Private xui As XUI
 	Private storageDir As String
 	Private storageFile As String = "player_state.json"
+	Private storageDbName As String = "PlayerState"
 	Private debugResponsesDir As String
 
 	Private card As B4XView
@@ -84,7 +86,7 @@ Sub Class_Globals
 
 	Private audioPrimary As AudioPlayer
 	Private audioSecondary As AudioPlayer
-	Private storage As Map
+	Private storage As KeyValueStore
 	Private playQueue As List
 	Private messages As Map
 	Private traceLogs As List
@@ -96,6 +98,7 @@ Sub Class_Globals
 	Private breakTimer As Timer
 	Private historyTimer As Timer
 	Private orbitTimer As Timer
+	Private machineGuidShell As Shell
 
 	Private playerCode As String
 	Private deviceId As String
@@ -113,6 +116,8 @@ Sub Class_Globals
 	Private pendingPlayItem As Map
 	Private pendingPrepareItem As Map
 	Private pendingPlayFadeInMs As Int
+	Private historyStartedAtTicks As Long
+	Private initialStartFadePending As Boolean
 
 	Private isStarted As Boolean
 	Private isStoppedByUser As Boolean = True
@@ -139,6 +144,7 @@ Private Sub B4XPage_Created (root1 As B4XView)
 	InitSettings
 	InitState
 	BuildUi
+	RestoreWindowState
 	audioPrimary.Initialize("AudioPrimary", Me)
 	audioSecondary.Initialize("AudioSecondary", Me)
 	TraceLog("Приложение запущено. Версия=" & APP_VERSION & ", код плеера=" & FormatPlayerCodeForDisplay(playerCode) & ", deviceId=" & deviceId)
@@ -182,23 +188,27 @@ End Sub
 Private Sub InitState
 	storageDir = File.DirData("fonfm")
 	debugResponsesDir = File.Combine(storageDir, "debugresponses")
-	storage = LoadStorage
-	deviceId = GetOrCreateDeviceId
+	EnsureDirectory(storageDir)
+	storage.Initialize(storageDir, storageDbName)
+	MigrateLegacyStorageIfNeeded
 	playerCode = NormalizePlayerCode(storage.GetDefault("player_code", ""))
 	traceLogs.Initialize
 	serverSnapshots.Initialize
 	playQueue.Initialize
+	deviceId = GetOrCreateDeviceId
 	retryTimer.Initialize("RetryTimer", SERVER_RETRY_DELAY_INITIAL)
 	breakTimer.Initialize("BreakTimer", 1000)
 	historyTimer.Initialize("HistoryTimer", HISTORY_LOG_DELAY_MS)
 	orbitTimer.Initialize("OrbitTimer", 70)
 	historyItem.Initialize
+	historyStartedAtTicks = 0
 	activeItem.Initialize
 	preparedItem.Initialize
 	activeAudioKey = ""
 	preparedAudioKey = ""
 	pendingPlayAudioKey = ""
 	pendingPrepareAudioKey = ""
+	ResolveMachineGuidAsync
 	TraceLog("Состояние инициализировано. Папка=" & storageDir & ", сохраненный код=" & FormatPlayerCodeForDisplay(playerCode))
 End Sub
 
@@ -456,7 +466,19 @@ Private Sub ShowInitialScreen
 		ShowSetupScreen("")
 	Else
 		ShowPlayerScreen(True)
+		CallSubDelayed(Me, "AutoStartSavedPlayer")
 	End If
+End Sub
+
+Private Sub AutoStartSavedPlayer
+	If playerCode = "" Then Return
+	If isStarted Or isStopping Then Return
+	isStarted = True
+	isStoppedByUser = False
+	SetStopIcon
+	HideContentBlocks
+	TraceLog("Автозапуск воспроизведения при старте приложения.")
+	Wait For (StartFirstTrack("auto")) Complete (unused As Boolean)
 End Sub
 
 Private Sub ShowSetupScreen(text As String)
@@ -841,6 +863,7 @@ Private Sub StartFirstTrack(mode As String) As ResumableSub
 	playQueue.Clear
 	prefetchDone = False
 	isCrossfadeTriggered = False
+	initialStartFadePending = True
 	TraceLog("Запуск первого трека. Режим=" & mode)
 	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
 	Return True
@@ -1027,7 +1050,7 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 		
 		If item.ContainsKey("playlist") Then playlistIndex = item.Get("playlist")
 		prefetchDone = False
-		Dim fadeInMs As Int = 0
+		Dim fadeInMs As Int = ResolveStartFadeInMs
 		Dim targetAudioKey As String = GetInactiveAudioKey
 		If activeAudioKey = "" Then targetAudioKey = "primary"
 		Wait For (StartPlaybackWithAudioKey(targetAudioKey, item, fadeInMs)) Complete (playbackStarted As Boolean)
@@ -1264,6 +1287,7 @@ Private Sub ScheduleHistoryLog(item As Map)
 	TraceLog("ScheduleHistoryLog. item=" & DescribeItem(item) & ", delayMs=" & HISTORY_LOG_DELAY_MS)
 	ClearHistoryLogTimer
 	historyItem = item
+	historyStartedAtTicks = DateTime.Now
 	historyTimer.Interval = HISTORY_LOG_DELAY_MS
 	historyTimer.Enabled = True
 End Sub
@@ -1285,8 +1309,10 @@ Private Sub SendHistory(item As Map) As ResumableSub
 	params.Put("device", deviceId)
 	params.Put("type", item.GetDefault("type", ""))
 	params.Put("id", item.GetDefault("id", ""))
-	params.Put("date", DateTime.Date(DateTime.Now))
-	params.Put("time", DateTime.Time(DateTime.Now))
+	Dim startedAt As Long = historyStartedAtTicks
+	If startedAt <= 0 Then startedAt = DateTime.Now
+	params.Put("date", FormatHistoryDate(startedAt))
+	params.Put("time", FormatHistoryTime(startedAt))
 	Dim j As HttpJob
 	j.Initialize("", Me)
 	j.PostString(HISTORY_BASE_URL, BuildParams(params))
@@ -1306,6 +1332,23 @@ End Sub
 Private Sub ClearHistoryLogTimer
 	historyTimer.Enabled = False
 	historyItem.Initialize
+	historyStartedAtTicks = 0
+End Sub
+
+Private Sub FormatHistoryDate(ticks As Long) As String
+	Dim previousDateFormat As String = DateTime.DateFormat
+	DateTime.DateFormat = "yyyy-MM-dd"
+	Dim value As String = DateTime.Date(ticks)
+	DateTime.DateFormat = previousDateFormat
+	Return value
+End Sub
+
+Private Sub FormatHistoryTime(ticks As Long) As String
+	Dim previousTimeFormat As String = DateTime.TimeFormat
+	DateTime.TimeFormat = "HH:mm:ss"
+	Dim value As String = DateTime.Time(ticks)
+	DateTime.TimeFormat = previousTimeFormat
+	Return value
 End Sub
 
 Private Sub StopPlayer As ResumableSub
@@ -1359,10 +1402,18 @@ Private Sub ClearPlaybackState
 	playQueue.Clear
 	prefetchDone = False
 	isCrossfadeTriggered = False
+	initialStartFadePending = False
 	ClearRetryTimer
 	ClearExactBreakState
 	ClearHistoryLogTimer
 	SetStatusText("")
+End Sub
+
+Private Sub ResolveStartFadeInMs As Int
+	If initialStartFadePending = False Then Return 0
+	If activeAudioKey <> "" Then Return 0
+	initialStartFadePending = False
+	Return START_FADE_MS
 End Sub
 
 Private Sub AudioPrimary_Ready
@@ -1932,33 +1983,118 @@ End Sub
 Private Sub GetOrCreateDeviceId As String
 	Dim id As String = storage.GetDefault("device_id", "")
 	If id <> "" Then Return id
-	Dim jo As JavaObject
-	jo.InitializeStatic("java.util.UUID")
-	Dim uuid As JavaObject = jo.RunMethod("randomUUID", Null)
-	id = uuid.RunMethod("toString", Null)
+	id = CreateRandomDeviceId
 	SaveValue("device_id", id)
 	Return id
 End Sub
 
-Private Sub LoadStorage As Map
-	Dim m As Map
-	m.Initialize
-	If File.Exists(storageDir, storageFile) = False Then Return m
+Private Sub CreateRandomDeviceId As String
+	Dim jo As JavaObject
+	jo.InitializeStatic("java.util.UUID")
+	Dim uuid As JavaObject = jo.RunMethod("randomUUID", Null)
+	Return uuid.RunMethod("toString", Null)
+End Sub
+
+Private Sub ResolveMachineGuidAsync
 	Try
-		Dim parser As JSONParser
-		parser.Initialize(File.ReadString(storageDir, storageFile))
-		m = parser.NextObject
+		machineGuidShell.Initialize("MachineGuidShell", "reg", Array As String("query", "HKLM\SOFTWARE\Microsoft\Cryptography", "/v", "MachineGuid"))
+		machineGuidShell.Run(-1)
+		TraceLog("Запущено чтение MachineGuid из реестра.")
 	Catch
-		m.Initialize
+		TraceLog("Не удалось запустить чтение MachineGuid. " & LastException.Message)
 	End Try
-	Return m
+End Sub
+
+Private Sub MachineGuidShell_ProcessCompleted (success As Boolean, exitCode As Int, stdOut As String, stdErr As String)
+	If success And exitCode = 0 Then
+		Dim matcher As Matcher = Regex.Matcher("MachineGuid\s+REG_\w+\s+([^\r\n]+)", stdOut)
+		If matcher.Find Then
+			Dim machineGuid As String = matcher.Group(1).Trim.ToLowerCase
+			If machineGuid = "" Then
+				TraceLog("MachineGuid получен пустым.")
+				Return
+			End If
+			If deviceId <> machineGuid Then
+				deviceId = machineGuid
+				SaveValue("device_id", deviceId)
+				TraceLog("deviceId обновлен из MachineGuid: " & deviceId)
+			Else
+				TraceLog("MachineGuid совпадает с текущим deviceId.")
+			End If
+		Else
+			TraceLog("MachineGuid не найден в выводе reg.")
+		End If
+	Else
+		TraceLog("Ошибка чтения MachineGuid. success=" & success & ", exitCode=" & exitCode & ", stderr=" & stdErr)
+	End If
 End Sub
 
 Private Sub SaveValue(key As String, value As Object)
 	storage.Put(key, value)
-	Dim gen As JSONGenerator
-	gen.Initialize(storage)
-	File.WriteString(storageDir, storageFile, gen.ToString)
+End Sub
+
+Private Sub MigrateLegacyStorageIfNeeded
+	If File.Exists(storageDir, storageFile) = False Then Return
+	Try
+		Dim parser As JSONParser
+		parser.Initialize(File.ReadString(storageDir, storageFile))
+		Dim legacy As Map = parser.NextObject
+		If legacy.IsInitialized Then
+			For Each key As String In legacy.Keys
+				storage.Put(key, legacy.Get(key))
+			Next
+			TraceLog("Данные перенесены из legacy JSON в KVS.")
+			File.Delete(storageDir, storageFile)
+		End If
+	Catch
+		TraceLog("Не удалось перенести legacy JSON в KVS. " & LastException.Message)
+	End Try
+End Sub
+
+Public Sub SaveWindowState
+	#If B4J
+	Try
+		Dim form As Form = B4XPages.GetNativeParent(Me)
+		Dim fx As JFX
+		If form.IsInitialized = False Then Return
+		If fx.PrimaryScreen.MaxX > form.Width Then
+			storage.Put("WindowTop", form.WindowTop)
+			storage.Put("WindowLeft", form.WindowLeft)
+			storage.Put("WindowWidth", form.WindowWidth)
+			storage.Put("WindowHeight", form.WindowHeight)
+			TraceLog("Положение окна сохранено. left=" & form.WindowLeft & ", top=" & form.WindowTop & ", width=" & form.WindowWidth & ", height=" & form.WindowHeight)
+		End If
+	Catch
+		TraceLog("Не удалось сохранить положение окна. " & LastException.Message)
+	End Try
+	#End If
+End Sub
+
+Private Sub RestoreWindowState
+	#If B4J
+	Try
+		Dim form As Form = B4XPages.GetNativeParent(Me)
+		If form.IsInitialized = False Then Return
+		Dim fx As JFX
+		Dim windowTop As Double = storage.GetDefault("WindowTop", -1)
+		Dim windowLeft As Double = storage.GetDefault("WindowLeft", -1)
+		Dim windowWidth As Double = storage.GetDefault("WindowWidth", -1)
+		Dim windowHeight As Double = storage.GetDefault("WindowHeight", -1)
+		Dim maxWidth As Double = fx.PrimaryScreen.MaxX - fx.PrimaryScreen.MinX
+		Dim maxHeight As Double = fx.PrimaryScreen.MaxY - fx.PrimaryScreen.MinY
+		If windowTop > -1 Then form.WindowTop = windowTop
+		If windowLeft > -1 Then form.WindowLeft = windowLeft
+		If windowWidth > -1 Then form.WindowWidth = Min(maxWidth, Max(520, windowWidth))
+		If windowHeight > -1 Then
+			form.WindowHeight = Min(maxHeight, Max(640, windowHeight))
+		Else If maxHeight < 640 Then
+			form.WindowHeight = maxHeight
+		End If
+		TraceLog("Положение окна восстановлено. left=" & form.WindowLeft & ", top=" & form.WindowTop & ", width=" & form.WindowWidth & ", height=" & form.WindowHeight)
+	Catch
+		TraceLog("Не удалось восстановить положение окна. " & LastException.Message)
+	End Try
+	#End If
 End Sub
 
 Private Sub TimezoneOffsetMinutes As Int
