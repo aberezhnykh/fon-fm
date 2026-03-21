@@ -16,12 +16,14 @@ public static RemoteObject _targetmodule = RemoteObject.declareNull("Object");
 public static RemoteObject _tracesubname = RemoteObject.createImmutable("");
 public static RemoteObject _playlistcursors = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 public static RemoteObject _recenttrackids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
+public static RemoteObject _storageref = RemoteObject.declareNull("b4j.example.keyvaluestore");
+public static RemoteObject _lasttrackbyplaylist = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 public static b4j.example.main _main = null;
 public static b4j.example.uistyle _uistyle = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
 public static Object[] GetGlobals(RemoteObject _ref) throws Exception {
-		return new Object[] {"playlistCursors",_ref.getField(false, "_playlistcursors"),"recentTrackIds",_ref.getField(false, "_recenttrackids"),"storageDir",_ref.getField(false, "_storagedir"),"targetModule",_ref.getField(false, "_targetmodule"),"traceSubName",_ref.getField(false, "_tracesubname")};
+		return new Object[] {"lastTrackByPlaylist",_ref.getField(false, "_lasttrackbyplaylist"),"playlistCursors",_ref.getField(false, "_playlistcursors"),"recentTrackIds",_ref.getField(false, "_recenttrackids"),"storageDir",_ref.getField(false, "_storagedir"),"storageRef",_ref.getField(false, "_storageref"),"targetModule",_ref.getField(false, "_targetmodule"),"traceSubName",_ref.getField(false, "_tracesubname")};
 }
 }

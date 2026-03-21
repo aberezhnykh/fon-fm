@@ -27,6 +27,7 @@ Sub Class_Globals
 	Private cacheAuditAddedCount As Int
 	Private cacheAuditRemovedCount As Int
 	Private cacheAuditTempDeletedCount As Int
+	Private recentMediaNetworkFailure As Boolean
 End Sub
 
 Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, targetModuleValue As Object, traceSubNameValue As String)
@@ -175,6 +176,12 @@ Public Sub EnsureTracksCached(trackItems As List, maxCount As Int) As ResumableS
 	Return downloadedCount > 0
 End Sub
 
+Public Sub ConsumeRecentMediaNetworkFailure As Boolean
+	Dim value As Boolean = recentMediaNetworkFailure
+	recentMediaNetworkFailure = False
+	Return value
+End Sub
+
 Private Sub EnsureSingleAdCached(ad As Map, adIndex As Map) As ResumableSub
 	Dim adId As String = ad.GetDefault("id", "")
 	If adId = "" Then Return False
@@ -213,6 +220,7 @@ Private Sub EnsureSingleAdCached(ad As Map, adIndex As Map) As ResumableSub
 			End If
 			UpdateAdIndex(ad, adIndex)
 			SaveAdIndex
+			recentMediaNetworkFailure = False
 			Trace("Реклама сохранена в кэш. id=" & adId)
 			j.Release
 			Return True
@@ -221,6 +229,7 @@ Private Sub EnsureSingleAdCached(ad As Map, adIndex As Map) As ResumableSub
 			Trace("Не удалось сохранить рекламу в кэш. id=" & adId & ", message=" & LastException.Message)
 		End Try
 	Else
+		If IsMediaNetworkFailure(j.ErrorMessage) Then recentMediaNetworkFailure = True
 		Trace("Не удалось скачать рекламу. id=" & adId & ", message=" & j.ErrorMessage)
 	End If
 	j.Release
@@ -265,6 +274,7 @@ Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As Resumable
 			End If
 			UpdateTrackIndex(item, trackIndex)
 			SaveTrackIndex
+			recentMediaNetworkFailure = False
 			Trace("Трек сохранен в кэш. id=" & trackId)
 			j.Release
 			Return True
@@ -273,6 +283,7 @@ Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As Resumable
 			Trace("Не удалось сохранить трек в кэш. id=" & trackId & ", message=" & LastException.Message)
 		End Try
 	Else
+		If IsMediaNetworkFailure(j.ErrorMessage) Then recentMediaNetworkFailure = True
 		Trace("Не удалось скачать трек. id=" & trackId & ", message=" & j.ErrorMessage)
 	End If
 	j.Release
@@ -424,12 +435,27 @@ End Sub
 Private Sub ValidateIndexedFile(itemType As String, itemId As String) As Boolean
 	If itemId = "" Then Return False
 	Dim auditIndex As Map = GetIndexByItemType(itemType)
-	If auditIndex.ContainsKey(itemId) = False Then Return False
 	Dim auditDir As String = GetDirByItemType(itemType)
+	If auditIndex.ContainsKey(itemId) = False Then
+		If IsCachedFileUsable(auditDir, itemId) = False Then Return False
+		RestoreIndexedFileById(itemId, auditIndex)
+		SaveIndexByItemType(itemType)
+		Trace("Валидный cached " & itemType & " восстановлен в индексе по точечной проверке. id=" & itemId)
+		Return True
+	End If
 	If IsCachedFileUsable(auditDir, itemId) Then Return True
 	auditIndex.Remove(itemId)
 	SaveIndexByItemType(itemType)
 	Return False
+End Sub
+
+Private Sub RestoreIndexedFileById(itemId As String, itemIndex As Map)
+	Dim entry As Map = itemIndex.GetDefault(itemId, Null)
+	If entry.IsInitialized = False Then entry.Initialize
+	entry.Put("id", itemId)
+	If entry.ContainsKey("saved_at") = False Then entry.Put("saved_at", DateTime.Now)
+	entry.Put("last_used_at", DateTime.Now)
+	itemIndex.Put(itemId, entry)
 End Sub
 
 Private Sub TryRestoreExistingCachedMedia(itemType As String, itemId As String, item As Map, itemIndex As Map) As Boolean
@@ -466,6 +492,20 @@ Private Sub SaveIndexByItemType(itemType As String)
 	Else
 		SaveTrackIndex
 	End If
+End Sub
+
+Private Sub IsMediaNetworkFailure(errorMessage As String) As Boolean
+	Dim text As String = errorMessage.ToLowerCase
+	If text.Contains("timed out") Then Return True
+	If text.Contains("unknownhost") Then Return True
+	If text.Contains("refused") Then Return True
+	If text.Contains("sslhandshakeexception") Then Return True
+	If text.Contains("pkix path building failed") Then Return True
+	If text.Contains("unable to find valid certification path") Then Return True
+	If text.Contains("connectexception") Then Return True
+	If text.Contains("socketexception") Then Return True
+	If text.Contains("sockettimeoutexception") Then Return True
+	Return False
 End Sub
 
 Private Sub EnsureDirectory(path As String)

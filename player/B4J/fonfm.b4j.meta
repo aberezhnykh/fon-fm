@@ -25,6 +25,6 @@ ModuleClosedNodes5=
 ModuleClosedNodes6=
 ModuleClosedNodes7=
 ModuleClosedNodes8=
-NavigationStack=B4XMainPage,TimezoneOffsetMinutes,2437,0,B4XMainPage,SaveWindowState,2433,0,B4XMainPage,DbToFactor,2435,0,B4XMainPage,RestoreDownloadPlanFromStorage,686,0,B4XMainPage,BuildNextTrackFromDataPlayback,675,0,B4XMainPage,Initialize,155,0,DataPlaybackResolver,Class_Globals,6,0,DataPlaybackResolver,Initialize,9,0,MediaCache,Class_Globals,6,0,B4XMainPage,Class_Globals,150,0
+NavigationStack=B4XMainPage,DbToFactor,2435,0,B4XMainPage,RestoreDownloadPlanFromStorage,686,0,DataPlaybackResolver,Class_Globals,6,0,B4XMainPage,Class_Globals,150,0,B4XMainPage,B4XPage_Created,166,0,B4XMainPage,Initialize,165,0,B4XMainPage,IsValidDataTrackItem,803,0,B4XMainPage,BuildNextTrackFromDataPlayback,771,0,MediaCache,Class_Globals,18,0,DataPlaybackResolver,Initialize,11,0
 SelectedBuild=0
 VisibleModules=3,2,1,8,4,7,5,6

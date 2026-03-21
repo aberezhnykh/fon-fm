@@ -439,7 +439,7 @@ case 23:
 this.state = 24;
  BA.debugLineNum = 59;BA.debugLine="Log(LastException)";
 Debug.JustUpdateDeviceLine();
-parent.__c.runVoidMethod ("LogImpl","931916055",BA.ObjectToString(parent.__c.runMethod(false,"LastException",__ref.getField(false, "ba"))),0);
+parent.__c.runVoidMethod ("LogImpl","942270743",BA.ObjectToString(parent.__c.runMethod(false,"LastException",__ref.getField(false, "ba"))),0);
  if (true) break;
 
 case 24:
@@ -720,7 +720,7 @@ case 8:
 this.state = 9;
  BA.debugLineNum = 75;BA.debugLine="Log(\"Failed to serialize object: \" & Map.Get(ke";
 Debug.JustUpdateDeviceLine();
-parent.__c.runVoidMethod ("LogImpl","931981576",RemoteObject.concat(RemoteObject.createImmutable("Failed to serialize object: "),_map.runMethod(false,"Get",(Object)((_key)))),0);
+parent.__c.runVoidMethod ("LogImpl","942336264",RemoteObject.concat(RemoteObject.createImmutable("Failed to serialize object: "),_map.runMethod(false,"Get",(Object)((_key)))),0);
  if (true) break;
 
 case 9:

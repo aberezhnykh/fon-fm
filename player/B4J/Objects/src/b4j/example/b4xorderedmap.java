@@ -43,13 +43,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "containskey", true))
 	 {return ((Boolean) Debug.delegate(ba, "containskey", new Object[] {_key}));}
-RDebugUtils.currentLine=23855104;
- //BA.debugLineNum = 23855104;BA.debugLine="Public Sub ContainsKey (Key As Object) As Boolean";
-RDebugUtils.currentLine=23855105;
- //BA.debugLineNum = 23855105;BA.debugLine="Return map.ContainsKey(Key)";
+RDebugUtils.currentLine=34209792;
+ //BA.debugLineNum = 34209792;BA.debugLine="Public Sub ContainsKey (Key As Object) As Boolean";
+RDebugUtils.currentLine=34209793;
+ //BA.debugLineNum = 34209793;BA.debugLine="Return map.ContainsKey(Key)";
 if (true) return __ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .ContainsKey(_key);
-RDebugUtils.currentLine=23855106;
- //BA.debugLineNum = 23855106;BA.debugLine="End Sub";
+RDebugUtils.currentLine=34209794;
+ //BA.debugLineNum = 34209794;BA.debugLine="End Sub";
 return false;
 }
 public Object  _get(b4j.example.b4xorderedmap __ref,Object _key) throws Exception{
@@ -57,13 +57,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "get", true))
 	 {return ((Object) Debug.delegate(ba, "get", new Object[] {_key}));}
-RDebugUtils.currentLine=23724032;
- //BA.debugLineNum = 23724032;BA.debugLine="Public Sub Get (Key As Object) As Object";
-RDebugUtils.currentLine=23724033;
- //BA.debugLineNum = 23724033;BA.debugLine="Return map.Get(Key)";
+RDebugUtils.currentLine=34078720;
+ //BA.debugLineNum = 34078720;BA.debugLine="Public Sub Get (Key As Object) As Object";
+RDebugUtils.currentLine=34078721;
+ //BA.debugLineNum = 34078721;BA.debugLine="Return map.Get(Key)";
 if (true) return __ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .Get(_key);
-RDebugUtils.currentLine=23724034;
- //BA.debugLineNum = 23724034;BA.debugLine="End Sub";
+RDebugUtils.currentLine=34078722;
+ //BA.debugLineNum = 34078722;BA.debugLine="End Sub";
 return null;
 }
 public String  _initialize(b4j.example.b4xorderedmap __ref,anywheresoftware.b4a.BA _ba) throws Exception{
@@ -72,16 +72,16 @@ innerInitialize(_ba);
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "initialize", true))
 	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba}));}
-RDebugUtils.currentLine=23396352;
- //BA.debugLineNum = 23396352;BA.debugLine="Public Sub Initialize";
-RDebugUtils.currentLine=23396353;
- //BA.debugLineNum = 23396353;BA.debugLine="map.Initialize";
+RDebugUtils.currentLine=33751040;
+ //BA.debugLineNum = 33751040;BA.debugLine="Public Sub Initialize";
+RDebugUtils.currentLine=33751041;
+ //BA.debugLineNum = 33751041;BA.debugLine="map.Initialize";
 __ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();
-RDebugUtils.currentLine=23396354;
- //BA.debugLineNum = 23396354;BA.debugLine="list.Initialize";
+RDebugUtils.currentLine=33751042;
+ //BA.debugLineNum = 33751042;BA.debugLine="list.Initialize";
 __ref._list /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
-RDebugUtils.currentLine=23396355;
- //BA.debugLineNum = 23396355;BA.debugLine="End Sub";
+RDebugUtils.currentLine=33751043;
+ //BA.debugLineNum = 33751043;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.List  _getkeys(b4j.example.b4xorderedmap __ref) throws Exception{
@@ -89,13 +89,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "getkeys", true))
 	 {return ((anywheresoftware.b4a.objects.collections.List) Debug.delegate(ba, "getkeys", null));}
-RDebugUtils.currentLine=23658496;
- //BA.debugLineNum = 23658496;BA.debugLine="Public Sub getKeys As List";
-RDebugUtils.currentLine=23658497;
- //BA.debugLineNum = 23658497;BA.debugLine="Return list";
+RDebugUtils.currentLine=34013184;
+ //BA.debugLineNum = 34013184;BA.debugLine="Public Sub getKeys As List";
+RDebugUtils.currentLine=34013185;
+ //BA.debugLineNum = 34013185;BA.debugLine="Return list";
 if (true) return __ref._list /*anywheresoftware.b4a.objects.collections.List*/ ;
-RDebugUtils.currentLine=23658498;
- //BA.debugLineNum = 23658498;BA.debugLine="End Sub";
+RDebugUtils.currentLine=34013186;
+ //BA.debugLineNum = 34013186;BA.debugLine="End Sub";
 return null;
 }
 public String  _put(b4j.example.b4xorderedmap __ref,Object _key,Object _value) throws Exception{
@@ -103,20 +103,20 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "put", true))
 	 {return ((String) Debug.delegate(ba, "put", new Object[] {_key,_value}));}
-RDebugUtils.currentLine=23461888;
- //BA.debugLineNum = 23461888;BA.debugLine="Public Sub Put (Key As Object, Value As Object)";
-RDebugUtils.currentLine=23461889;
- //BA.debugLineNum = 23461889;BA.debugLine="If map.ContainsKey(Key) = False Then";
+RDebugUtils.currentLine=33816576;
+ //BA.debugLineNum = 33816576;BA.debugLine="Public Sub Put (Key As Object, Value As Object)";
+RDebugUtils.currentLine=33816577;
+ //BA.debugLineNum = 33816577;BA.debugLine="If map.ContainsKey(Key) = False Then";
 if (__ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .ContainsKey(_key)==__c.False) { 
-RDebugUtils.currentLine=23461890;
- //BA.debugLineNum = 23461890;BA.debugLine="list.Add(Key)";
+RDebugUtils.currentLine=33816578;
+ //BA.debugLineNum = 33816578;BA.debugLine="list.Add(Key)";
 __ref._list /*anywheresoftware.b4a.objects.collections.List*/ .Add(_key);
  };
-RDebugUtils.currentLine=23461892;
- //BA.debugLineNum = 23461892;BA.debugLine="map.Put(Key, Value)";
+RDebugUtils.currentLine=33816580;
+ //BA.debugLineNum = 33816580;BA.debugLine="map.Put(Key, Value)";
 __ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .Put(_key,_value);
-RDebugUtils.currentLine=23461893;
- //BA.debugLineNum = 23461893;BA.debugLine="End Sub";
+RDebugUtils.currentLine=33816581;
+ //BA.debugLineNum = 33816581;BA.debugLine="End Sub";
 return "";
 }
 public String  _remove(b4j.example.b4xorderedmap __ref,Object _key) throws Exception{
@@ -124,20 +124,20 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "remove", true))
 	 {return ((String) Debug.delegate(ba, "remove", new Object[] {_key}));}
-RDebugUtils.currentLine=23527424;
- //BA.debugLineNum = 23527424;BA.debugLine="Public Sub Remove (Key As Object)";
-RDebugUtils.currentLine=23527425;
- //BA.debugLineNum = 23527425;BA.debugLine="If map.ContainsKey(Key) = False Then Return";
+RDebugUtils.currentLine=33882112;
+ //BA.debugLineNum = 33882112;BA.debugLine="Public Sub Remove (Key As Object)";
+RDebugUtils.currentLine=33882113;
+ //BA.debugLineNum = 33882113;BA.debugLine="If map.ContainsKey(Key) = False Then Return";
 if (__ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .ContainsKey(_key)==__c.False) { 
 if (true) return "";};
-RDebugUtils.currentLine=23527426;
- //BA.debugLineNum = 23527426;BA.debugLine="list.RemoveAt(list.IndexOf(Key))";
+RDebugUtils.currentLine=33882114;
+ //BA.debugLineNum = 33882114;BA.debugLine="list.RemoveAt(list.IndexOf(Key))";
 __ref._list /*anywheresoftware.b4a.objects.collections.List*/ .RemoveAt(__ref._list /*anywheresoftware.b4a.objects.collections.List*/ .IndexOf(_key));
-RDebugUtils.currentLine=23527427;
- //BA.debugLineNum = 23527427;BA.debugLine="map.Remove(Key)";
+RDebugUtils.currentLine=33882115;
+ //BA.debugLineNum = 33882115;BA.debugLine="map.Remove(Key)";
 __ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .Remove(_key);
-RDebugUtils.currentLine=23527428;
- //BA.debugLineNum = 23527428;BA.debugLine="End Sub";
+RDebugUtils.currentLine=33882116;
+ //BA.debugLineNum = 33882116;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.List  _getvalues(b4j.example.b4xorderedmap __ref) throws Exception{
@@ -147,16 +147,16 @@ if (Debug.shouldDelegate(ba, "getvalues", true))
 	 {return ((anywheresoftware.b4a.objects.collections.List) Debug.delegate(ba, "getvalues", null));}
 anywheresoftware.b4a.objects.collections.List _res = null;
 Object _key = null;
-RDebugUtils.currentLine=23986176;
- //BA.debugLineNum = 23986176;BA.debugLine="Public Sub getValues As List";
-RDebugUtils.currentLine=23986177;
- //BA.debugLineNum = 23986177;BA.debugLine="Dim res As List";
+RDebugUtils.currentLine=34340864;
+ //BA.debugLineNum = 34340864;BA.debugLine="Public Sub getValues As List";
+RDebugUtils.currentLine=34340865;
+ //BA.debugLineNum = 34340865;BA.debugLine="Dim res As List";
 _res = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=23986178;
- //BA.debugLineNum = 23986178;BA.debugLine="res.Initialize";
+RDebugUtils.currentLine=34340866;
+ //BA.debugLineNum = 34340866;BA.debugLine="res.Initialize";
 _res.Initialize();
-RDebugUtils.currentLine=23986179;
- //BA.debugLineNum = 23986179;BA.debugLine="For Each key As Object In list";
+RDebugUtils.currentLine=34340867;
+ //BA.debugLineNum = 34340867;BA.debugLine="For Each key As Object In list";
 {
 final anywheresoftware.b4a.BA.IterableList group3 = __ref._list /*anywheresoftware.b4a.objects.collections.List*/ ;
 final int groupLen3 = group3.getSize()
@@ -164,16 +164,16 @@ final int groupLen3 = group3.getSize()
 ;
 for (; index3 < groupLen3;index3++){
 _key = group3.Get(index3);
-RDebugUtils.currentLine=23986180;
- //BA.debugLineNum = 23986180;BA.debugLine="res.Add(map.Get(key))";
+RDebugUtils.currentLine=34340868;
+ //BA.debugLineNum = 34340868;BA.debugLine="res.Add(map.Get(key))";
 _res.Add(__ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .Get(_key));
  }
 };
-RDebugUtils.currentLine=23986182;
- //BA.debugLineNum = 23986182;BA.debugLine="Return res";
+RDebugUtils.currentLine=34340870;
+ //BA.debugLineNum = 34340870;BA.debugLine="Return res";
 if (true) return _res;
-RDebugUtils.currentLine=23986183;
- //BA.debugLineNum = 23986183;BA.debugLine="End Sub";
+RDebugUtils.currentLine=34340871;
+ //BA.debugLineNum = 34340871;BA.debugLine="End Sub";
 return null;
 }
 public int  _getsize(b4j.example.b4xorderedmap __ref) throws Exception{
@@ -181,28 +181,28 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "getsize", true))
 	 {return ((Integer) Debug.delegate(ba, "getsize", null));}
-RDebugUtils.currentLine=23920640;
- //BA.debugLineNum = 23920640;BA.debugLine="Public Sub getSize As Int";
-RDebugUtils.currentLine=23920641;
- //BA.debugLineNum = 23920641;BA.debugLine="Return map.Size";
+RDebugUtils.currentLine=34275328;
+ //BA.debugLineNum = 34275328;BA.debugLine="Public Sub getSize As Int";
+RDebugUtils.currentLine=34275329;
+ //BA.debugLineNum = 34275329;BA.debugLine="Return map.Size";
 if (true) return __ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .getSize();
-RDebugUtils.currentLine=23920642;
- //BA.debugLineNum = 23920642;BA.debugLine="End Sub";
+RDebugUtils.currentLine=34275330;
+ //BA.debugLineNum = 34275330;BA.debugLine="End Sub";
 return 0;
 }
 public String  _class_globals(b4j.example.b4xorderedmap __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
-RDebugUtils.currentLine=23330816;
- //BA.debugLineNum = 23330816;BA.debugLine="Sub Class_Globals";
-RDebugUtils.currentLine=23330817;
- //BA.debugLineNum = 23330817;BA.debugLine="Private map As Map";
+RDebugUtils.currentLine=33685504;
+ //BA.debugLineNum = 33685504;BA.debugLine="Sub Class_Globals";
+RDebugUtils.currentLine=33685505;
+ //BA.debugLineNum = 33685505;BA.debugLine="Private map As Map";
 _map = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=23330818;
- //BA.debugLineNum = 23330818;BA.debugLine="Private list As List";
+RDebugUtils.currentLine=33685506;
+ //BA.debugLineNum = 33685506;BA.debugLine="Private list As List";
 _list = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=23330819;
- //BA.debugLineNum = 23330819;BA.debugLine="End Sub";
+RDebugUtils.currentLine=33685507;
+ //BA.debugLineNum = 33685507;BA.debugLine="End Sub";
 return "";
 }
 public String  _clear(b4j.example.b4xorderedmap __ref) throws Exception{
@@ -210,16 +210,16 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "clear", true))
 	 {return ((String) Debug.delegate(ba, "clear", null));}
-RDebugUtils.currentLine=23592960;
- //BA.debugLineNum = 23592960;BA.debugLine="Public Sub Clear";
-RDebugUtils.currentLine=23592961;
- //BA.debugLineNum = 23592961;BA.debugLine="list.Clear";
+RDebugUtils.currentLine=33947648;
+ //BA.debugLineNum = 33947648;BA.debugLine="Public Sub Clear";
+RDebugUtils.currentLine=33947649;
+ //BA.debugLineNum = 33947649;BA.debugLine="list.Clear";
 __ref._list /*anywheresoftware.b4a.objects.collections.List*/ .Clear();
-RDebugUtils.currentLine=23592962;
- //BA.debugLineNum = 23592962;BA.debugLine="map.Clear";
+RDebugUtils.currentLine=33947650;
+ //BA.debugLineNum = 33947650;BA.debugLine="map.Clear";
 __ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .Clear();
-RDebugUtils.currentLine=23592963;
- //BA.debugLineNum = 23592963;BA.debugLine="End Sub";
+RDebugUtils.currentLine=33947651;
+ //BA.debugLineNum = 33947651;BA.debugLine="End Sub";
 return "";
 }
 public Object  _getdataforserializator(b4j.example.b4xorderedmap __ref) throws Exception{
@@ -227,13 +227,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "getdataforserializator", true))
 	 {return ((Object) Debug.delegate(ba, "getdataforserializator", null));}
-RDebugUtils.currentLine=24051712;
- //BA.debugLineNum = 24051712;BA.debugLine="Public Sub GetDataForSerializator As Object";
-RDebugUtils.currentLine=24051713;
- //BA.debugLineNum = 24051713;BA.debugLine="Return Array(map, list)";
+RDebugUtils.currentLine=34406400;
+ //BA.debugLineNum = 34406400;BA.debugLine="Public Sub GetDataForSerializator As Object";
+RDebugUtils.currentLine=34406401;
+ //BA.debugLineNum = 34406401;BA.debugLine="Return Array(map, list)";
 if (true) return (Object)(new Object[]{(Object)(__ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()),(Object)(__ref._list /*anywheresoftware.b4a.objects.collections.List*/ .getObject())});
-RDebugUtils.currentLine=24051714;
- //BA.debugLineNum = 24051714;BA.debugLine="End Sub";
+RDebugUtils.currentLine=34406402;
+ //BA.debugLineNum = 34406402;BA.debugLine="End Sub";
 return null;
 }
 public Object  _getdefault(b4j.example.b4xorderedmap __ref,Object _key,Object _defaultvalue) throws Exception{
@@ -241,13 +241,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "getdefault", true))
 	 {return ((Object) Debug.delegate(ba, "getdefault", new Object[] {_key,_defaultvalue}));}
-RDebugUtils.currentLine=23789568;
- //BA.debugLineNum = 23789568;BA.debugLine="Public Sub GetDefault (Key As Object, DefaultValue";
-RDebugUtils.currentLine=23789569;
- //BA.debugLineNum = 23789569;BA.debugLine="Return map.GetDefault(Key, DefaultValue)";
+RDebugUtils.currentLine=34144256;
+ //BA.debugLineNum = 34144256;BA.debugLine="Public Sub GetDefault (Key As Object, DefaultValue";
+RDebugUtils.currentLine=34144257;
+ //BA.debugLineNum = 34144257;BA.debugLine="Return map.GetDefault(Key, DefaultValue)";
 if (true) return __ref._map /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault(_key,_defaultvalue);
-RDebugUtils.currentLine=23789570;
- //BA.debugLineNum = 23789570;BA.debugLine="End Sub";
+RDebugUtils.currentLine=34144258;
+ //BA.debugLineNum = 34144258;BA.debugLine="End Sub";
 return null;
 }
 public String  _setdatafromserializator(b4j.example.b4xorderedmap __ref,Object _data) throws Exception{
@@ -256,19 +256,19 @@ RDebugUtils.currentModule="b4xorderedmap";
 if (Debug.shouldDelegate(ba, "setdatafromserializator", true))
 	 {return ((String) Debug.delegate(ba, "setdatafromserializator", new Object[] {_data}));}
 Object[] _o = null;
-RDebugUtils.currentLine=24117248;
- //BA.debugLineNum = 24117248;BA.debugLine="Public Sub SetDataFromSerializator (Data As Object";
-RDebugUtils.currentLine=24117249;
- //BA.debugLineNum = 24117249;BA.debugLine="Dim o() As Object = Data";
+RDebugUtils.currentLine=34471936;
+ //BA.debugLineNum = 34471936;BA.debugLine="Public Sub SetDataFromSerializator (Data As Object";
+RDebugUtils.currentLine=34471937;
+ //BA.debugLineNum = 34471937;BA.debugLine="Dim o() As Object = Data";
 _o = (Object[])(_data);
-RDebugUtils.currentLine=24117250;
- //BA.debugLineNum = 24117250;BA.debugLine="map = o(0)";
+RDebugUtils.currentLine=34471938;
+ //BA.debugLineNum = 34471938;BA.debugLine="map = o(0)";
 __ref._map /*anywheresoftware.b4a.objects.collections.Map*/  = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_o[(int) (0)]));
-RDebugUtils.currentLine=24117251;
- //BA.debugLineNum = 24117251;BA.debugLine="list = o(1)";
+RDebugUtils.currentLine=34471939;
+ //BA.debugLineNum = 34471939;BA.debugLine="list = o(1)";
 __ref._list /*anywheresoftware.b4a.objects.collections.List*/  = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_o[(int) (1)]));
-RDebugUtils.currentLine=24117252;
- //BA.debugLineNum = 24117252;BA.debugLine="End Sub";
+RDebugUtils.currentLine=34471940;
+ //BA.debugLineNum = 34471940;BA.debugLine="End Sub";
 return "";
 }
 }

@@ -11,6 +11,8 @@ Sub Class_Globals
 	Private traceSubName As String
 	Private playlistCursors As Map
 	Private recentTrackIds As List
+	Private storageRef As KeyValueStore
+	Private lastTrackByPlaylist As Map
 End Sub
 
 Public Sub Initialize(storageDirValue As String, targetModuleValue As Object, traceSubNameValue As String)
@@ -19,11 +21,17 @@ Public Sub Initialize(storageDirValue As String, targetModuleValue As Object, tr
 	traceSubName = traceSubNameValue
 	playlistCursors.Initialize
 	recentTrackIds.Initialize
+	lastTrackByPlaylist.Initialize
 End Sub
 
 Public Sub LoadState(storage As KeyValueStore)
+	storageRef = storage
 	playlistCursors = storage.GetDefault("data_slot_playlist_cursors", CreateInitializedMap)
 	If playlistCursors.IsInitialized = False Then playlistCursors.Initialize
+	recentTrackIds = storage.GetDefault("data_recent_track_ids", CreateInitializedList)
+	If recentTrackIds.IsInitialized = False Then recentTrackIds.Initialize
+	lastTrackByPlaylist = storage.GetDefault("data_last_track_by_playlist", CreateInitializedMap)
+	If lastTrackByPlaylist.IsInitialized = False Then lastTrackByPlaylist.Initialize
 End Sub
 
 Public Sub CursorCount As Int
@@ -198,12 +206,17 @@ Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService 
 	Dim emptyTrack As Map
 	emptyTrack.Initialize
 	If playlistData.IsInitialized = False Then Return emptyTrack
+	Dim playlistId As String = playlistData.GetDefault("id", "")
+	Dim lastTrackId As String = ""
+	If playlistId <> "" Then lastTrackId = lastTrackByPlaylist.GetDefault(playlistId, "")
 	Dim tracks As List = playlistData.GetDefault("tracks", Null)
 	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return emptyTrack
 	Dim filteredTracks As List
 	filteredTracks.Initialize
 	Dim cachedTracks As List
 	cachedTracks.Initialize
+	Dim nonRepeatedTracks As List
+	nonRepeatedTracks.Initialize
 	For Each trackObject As Object In tracks
 		If trackObject Is Map Then
 			Dim track As Map = trackObject
@@ -211,6 +224,7 @@ Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService 
 			If trackId = "" Then Continue
 			If cachedOnly And mediaCacheService.IsTrackCached(trackId) = False Then Continue
 			cachedTracks.Add(track)
+			If trackId <> lastTrackId Then nonRepeatedTracks.Add(track)
 			If recentTrackIds.IndexOf(trackId) = -1 Then filteredTracks.Add(track)
 		End If
 	Next
@@ -218,9 +232,21 @@ Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService 
 	If cachedOnly Then
 		sourceTracks = cachedTracks
 		If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
+		If sourceTracks.Size > 1 And lastTrackId <> "" Then
+			Dim nonRepeatedCachedTracks As List
+			nonRepeatedCachedTracks.Initialize
+			For Each cachedTrackObject As Object In sourceTracks
+				If cachedTrackObject Is Map Then
+					Dim cachedTrack As Map = cachedTrackObject
+					If cachedTrack.GetDefault("id", "") <> lastTrackId Then nonRepeatedCachedTracks.Add(cachedTrack)
+				End If
+			Next
+			If nonRepeatedCachedTracks.Size > 0 Then sourceTracks = nonRepeatedCachedTracks
+		End If
 	Else
 		sourceTracks = tracks
 		If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
+		If sourceTracks.Size > 1 And nonRepeatedTracks.Size > 0 Then sourceTracks = nonRepeatedTracks
 	End If
 	If sourceTracks.IsInitialized = False Or sourceTracks.Size = 0 Then Return emptyTrack
 	Dim randomIndex As Int = Rnd(0, sourceTracks.Size)
@@ -259,12 +285,26 @@ Public Sub CommitPlaylistCursor(storage As KeyValueStore, item As Map)
 	Trace("Зафиксирован курсор playlists. slot=" & slotKey & ", committed=" & nextStored)
 End Sub
 
+Public Sub SavePreviewPlaylistCursors(storage As KeyValueStore, workingCursors As Map)
+	If workingCursors.IsInitialized = False Or workingCursors.Size = 0 Then Return
+	playlistCursors = CloneMap(workingCursors)
+	storage.Put("data_slot_playlist_cursors", playlistCursors)
+	Trace("Сохранен preview курсор playlists. count=" & playlistCursors.Size)
+End Sub
+
 Public Sub RememberResolvedTrack(trackId As String)
 	If trackId = "" Then Return
 	recentTrackIds.Add(trackId)
 	Do While recentTrackIds.Size > 20
 		recentTrackIds.RemoveAt(0)
 	Loop
+	If storageRef.IsInitialized Then storageRef.Put("data_recent_track_ids", recentTrackIds)
+End Sub
+
+Public Sub RememberResolvedTrackForPlaylist(playlistId As String, trackId As String)
+	If playlistId = "" Or trackId = "" Then Return
+	lastTrackByPlaylist.Put(playlistId, trackId)
+	If storageRef.IsInitialized Then storageRef.Put("data_last_track_by_playlist", lastTrackByPlaylist)
 End Sub
 
 Private Sub ResolvePlaybackStreamTitle(currentSlot As Map, playlistDescriptor As Map, offlineData As Map) As String
