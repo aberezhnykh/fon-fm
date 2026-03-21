@@ -34,6 +34,9 @@ Sub Class_Globals
 	Private Const TRACK_OVERLAP_MS As Int = 1800
 	Private Const AD_TAIL_OVERLAP_MS As Int = 350
 	Private Const TRACK_CACHE_WARMUP_DELAY_MS As Int = 7000
+	Private Const CACHE_AUDIT_START_DELAY_MS As Int = 20000
+	Private Const CACHE_AUDIT_STEP_INTERVAL_MS As Int = 2000
+	Private Const CACHE_AUDIT_RECHECK_INTERVAL_MS As Int = 30 * 60 * 1000
 	Private Const OFFLINE_DATA_REFRESH_MS As Int = 5 * 60 * 1000
 	Private Const FETCH_TIMEOUT_MS As Int = 8000
 	Private Const CONNECTIVITY_CHECK_TIMEOUT_MS As Int = 5000
@@ -117,6 +120,7 @@ Sub Class_Globals
 	Private offlineDataRefreshTimer As Timer
 	Private localAdMinuteTimer As Timer
 	Private trackCacheWarmupTimer As Timer
+	Private cacheAuditTimer As Timer
 	Private machineGuidShell As Shell
 
 	Private playerCode As String
@@ -238,6 +242,7 @@ Private Sub InitState
 	offlineDataRefreshTimer.Initialize("OfflineDataRefreshTimer", OFFLINE_DATA_REFRESH_MS)
 	localAdMinuteTimer.Initialize("LocalAdMinuteTimer", 1000)
 	trackCacheWarmupTimer.Initialize("TrackCacheWarmupTimer", TRACK_CACHE_WARMUP_DELAY_MS)
+	cacheAuditTimer.Initialize("CacheAuditTimer", CACHE_AUDIT_START_DELAY_MS)
 	historyItem.Initialize
 	historyStartedAtTicks = 0
 	isHistoryFlushInProgress = False
@@ -532,6 +537,8 @@ Private Sub StartOfflineDataRefresh
 	offlineDataRefreshTimer.Enabled = True
 	historyFlushTimer.Interval = HISTORY_FLUSH_INTERVAL_MS
 	historyFlushTimer.Enabled = True
+	cacheAuditTimer.Interval = CACHE_AUDIT_START_DELAY_MS
+	cacheAuditTimer.Enabled = True
 	TraceLog("Запущено обновление офлайн-метаданных. Интервал=" & OFFLINE_DATA_REFRESH_MS & " ms")
 End Sub
 
@@ -596,12 +603,25 @@ Private Sub TrackCacheWarmupTimer_Tick
 	CallSubDelayed(Me, "EnsureUpcomingTracksCachedAsync")
 End Sub
 
+Private Sub CacheAuditTimer_Tick
+	cacheAuditTimer.Enabled = False
+	If mediaCacheService.IsCacheAuditInProgress = False Then mediaCacheService.StartCacheAudit
+	Dim hasMore As Boolean = mediaCacheService.RunCacheAuditStep
+	If hasMore Then
+		cacheAuditTimer.Interval = CACHE_AUDIT_STEP_INTERVAL_MS
+	Else
+		cacheAuditTimer.Interval = CACHE_AUDIT_RECHECK_INTERVAL_MS
+	End If
+	cacheAuditTimer.Enabled = True
+End Sub
+
 Private Sub OfflineDataRefreshTimer_Tick
 	Wait For (RefreshOfflineDataNow) Complete (unused As Boolean)
 End Sub
 
 Private Sub LocalAdMinuteTimer_Tick
-	If CurrentSecondOfMinute <> 50 Then Return
+	If isStarted = False Or isStoppedByUser Or isStopping Then Return
+	If CurrentSecondOfMinute < 50 Then Return
 	PreScanUpcomingAdMinute(True)
 End Sub
 
@@ -830,9 +850,15 @@ Private Sub AutoStartSavedPlayer
 		TraceLog("Автозапуск: сначала пробую получить свежий data.php.")
 		Wait For (RefreshOfflineDataNow) Complete (refreshed As Boolean)
 		If refreshed = False Then
-			isOfflinePlaybackMode = True
-			UpdateConnectionIndicator("offline")
-			TraceLog("Свежий data.php недоступен. Использую сохраненные офлайн-метаданные.")
+			If HasOfflinePlaybackFallback Then
+				isOfflinePlaybackMode = True
+				UpdateConnectionIndicator("offline")
+				TraceLog("Свежий data.php недоступен. Перехожу в offline playback по валидному cache.")
+			Else
+				TraceLog("Свежий data.php недоступен, но playable offline queue отсутствует.")
+				HandleOfflineTemporaryState("")
+				Return
+			End If
 		Else
 			UpdateConnectionIndicator("online")
 		End If
@@ -1181,6 +1207,7 @@ Private Sub ActivateLoadedItem(audioKey As String, item As Map, fadeInMs As Int)
 		preparedItem.Initialize
 	End If
 	UpdatePlaybackMeta(item)
+	mediaCacheService.TouchCachedItem(item)
 	TraceLog("ActivateLoadedItem. audio=" & audioKey & ", item=" & DescribeItem(item) & ", fadeInMs=" & fadeInMs)
 	GetAudioByKey(audioKey).PlayWithFade(fadeInMs)
 	ScheduleTrackCacheWarmup
@@ -1472,7 +1499,6 @@ Private Sub SubmitClaim As ResumableSub
 End Sub
 
 Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
-	ClearExactBreakState
 	ClearHistoryLogTimer
 	isCrossfadeTriggered = False
 	If current Is Map Then
@@ -1506,6 +1532,12 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 		End If
 		
 		If itemType = "break" Then
+			If item.GetDefault("exactly", False) = True And HasPendingExactBreak And ShouldTriggerBreakNow = False Then
+				DeferFutureExactBreak(item)
+				Wait For (PlayPreparedOrLoadNext) Complete (unusedDeferred As Boolean)
+				Return True
+			End If
+			ClearExactBreakState
 			MergeBreakItems(item)
 			Wait For (PlayPreparedOrLoadNext) Complete (unused As Boolean)
 			Return True
@@ -1591,17 +1623,66 @@ Private Sub MergeBreakItems(item As Map)
 	TraceLog("В очередь добавлен break. Размер очереди=" & playQueue.Size & ", scheduledBreakAt=" & scheduledBreakAt)
 End Sub
 
+Private Sub DeferFutureExactBreak(item As Map)
+	Dim insertIndex As Int = Min(1, playQueue.Size)
+	playQueue.InsertAt(insertIndex, item)
+	SyncExactBreakState
+	TraceLog("Exact-break отложен до своей минуты. at=" & ToLongDefault(item.GetDefault("at", -1), -1) & ", queueSize=" & playQueue.Size)
+End Sub
+
 Private Sub ScanLocalAdsForTimestamp(targetMinuteTimestamp As Long, force As Boolean)
 	If localAdScheduler.ScanTargetMinute(offlineData, playQueue, targetMinuteTimestamp, force) Then
+		PruneQueuedBreakItemsByLocalCache
 		SyncExactBreakState
 	End If
+End Sub
+
+Private Sub PruneQueuedBreakItemsByLocalCache
+	If playQueue.IsInitialized = False Or playQueue.Size = 0 Then Return
+	Dim changed As Boolean = False
+	For i = playQueue.Size - 1 To 0 Step -1
+		Dim itemObject As Object = playQueue.Get(i)
+		If (itemObject Is Map) = False Then Continue
+		Dim item As Map = itemObject
+		If item.GetDefault("type", "") <> "break" Then Continue
+		Dim breakItems As List = item.GetDefault("items", Null)
+		If breakItems.IsInitialized = False Or breakItems.Size = 0 Then
+			playQueue.RemoveAt(i)
+			changed = True
+			Continue
+		End If
+		Dim filteredItems As List
+		filteredItems.Initialize
+		For Each breakItemObject As Object In breakItems
+			If breakItemObject Is Map Then
+				Dim breakItem As Map = breakItemObject
+				If breakItem.GetDefault("type", "") = "ad" Then
+					If mediaCacheService.HasValidatedLocalMedia(breakItem) = False Then Continue
+				End If
+				filteredItems.Add(breakItem)
+			End If
+		Next
+		If filteredItems.Size = 0 Then
+			TraceLog("Локальный break удален из очереди: нет playable cached ads.")
+			playQueue.RemoveAt(i)
+			changed = True
+		Else If filteredItems.Size <> breakItems.Size Then
+			item.Put("items", filteredItems)
+			item.Put("items_count", filteredItems.Size)
+			playQueue.Set(i, item)
+			changed = True
+		End If
+	Next
+	If changed Then ResolveScheduledBreakAt
 End Sub
 
 Private Sub PreScanUpcomingAdMinute(force As Boolean)
 	If CurrentSecondOfMinute < 50 Then Return
 	Dim targetTimestamp As Long = LocalNowTimestamp + (60 - CurrentSecondOfMinute)
 	If (MinuteOfHourFromTimestamp(targetTimestamp) Mod 5) <> 0 Then Return
-	TraceLog("Предскан рекламы за 10 секунд до блока. target=" & FormatTimestampForTrace(targetTimestamp))
+	If CurrentSecondOfMinute = 50 Then
+		TraceLog("Предскан рекламы за 10 секунд до блока. target=" & FormatTimestampForTrace(targetTimestamp))
+	End If
 	ScanLocalAdsForTimestamp(targetTimestamp, force)
 End Sub
 
@@ -1634,12 +1715,12 @@ End Sub
 Private Sub HandleFetchFailure(result As Map) As ResumableSub
 	TraceLog("Ошибка загрузки данных. kind=" & result.GetDefault("Kind", "") & ", message=" & result.GetDefault("ErrorMessage", ""))
 	If result.GetDefault("Kind", "") = "offline" Then
-		HandleTemporaryState("offline", "")
+		HandleOfflineTemporaryState("")
 		Return True
 	End If
 	If HasOfflinePlaybackFallback Then
 		TraceLog("Переход в offline fallback после ошибки загрузки данных.")
-		HandleTemporaryState("offline", "")
+		HandleOfflineTemporaryState("")
 		Return True
 	End If
 	Wait For (CheckServiceAvailability) Complete (serviceAvailable As Boolean)
@@ -1650,7 +1731,7 @@ Private Sub HandleFetchFailure(result As Map) As ResumableSub
 		If hasInternet Then
 			HandleTemporaryState("server", "")
 		Else
-			HandleTemporaryState("offline", "")
+			HandleOfflineTemporaryState("")
 		End If
 	End If
 	Return True
@@ -1720,7 +1801,7 @@ End Sub
 Private Sub HandleMediaError As ResumableSub
 	If HasOfflinePlaybackFallback Then
 		TraceLog("Переход в offline fallback после ошибки загрузки media.")
-		HandleTemporaryState("offline", "")
+		HandleOfflineTemporaryState("")
 		Return True
 	End If
 	Wait For (CheckServiceAvailability) Complete (serviceAvailable As Boolean)
@@ -1731,7 +1812,7 @@ Private Sub HandleMediaError As ResumableSub
 		If hasInternet Then
 			HandleTemporaryState("server", "")
 		Else
-			HandleTemporaryState("offline", "")
+			HandleOfflineTemporaryState("")
 		End If
 	End If
 	Return True
@@ -1741,6 +1822,22 @@ Private Sub HasOfflinePlaybackFallback As Boolean
 	If offlineData.IsInitialized = False Then Return False
 	If offlineData.GetDefault("ok", False) <> True Then Return False
 	Return HasPlayableOfflineTrackInCurrentSlot
+End Sub
+
+Private Sub HandleOfflineTemporaryState(text As String)
+	Dim fallbackReady As Boolean = HasOfflinePlaybackFallback
+	TraceLog("Временное offline-состояние. playableFallback=" & fallbackReady & ", text=" & text)
+	isPlaybackPausedByPolicy = False
+	isOfflinePlaybackMode = fallbackReady
+	UpdateConnectionIndicator("offline")
+	ClearPlaybackState
+	HidePin
+	If text <> "" Then
+		ShowMessage(text)
+	Else
+		ShowMessage(MessageValue("offline"))
+	End If
+	ScheduleRetry("offline", 0)
 End Sub
 
 Private Sub HasPlayableOfflineTrackInCurrentSlot As Boolean
@@ -1790,6 +1887,7 @@ Private Sub HandleShutdownMessage(text As String)
 	historyFlushTimer.Enabled = False
 	localAdMinuteTimer.Enabled = False
 	trackCacheWarmupTimer.Enabled = False
+	cacheAuditTimer.Enabled = False
 End Sub
 
 Private Sub IsPlaybackAllowedByCurrentData As Boolean
@@ -1830,12 +1928,6 @@ End Sub
 
 Private Sub ParseEndValueToTimestamp(value As Object) As Long
 	If value = Null Then Return 0
-	Try
-		Dim numericValue As Long = value
-		If numericValue > 0 Then Return numericValue
-	Catch
-		Log(LastException.Message)
-	End Try
 	Dim textValue As String = ("" & value).Trim
 	If textValue = "" Then Return 0
 	If Regex.IsMatch("^\d+$", textValue) Then Return Floor(textValue)
@@ -1864,13 +1956,14 @@ Private Sub ParseEndValueToTimestamp(value As Object) As Long
 End Sub
 
 Private Sub ParseDateOnlyEndTimestamp(textValue As String) As Long
+	Dim previousDateFormat As String = DateTime.DateFormat
 	Try
-		Dim previousDateFormat As String = DateTime.DateFormat
 		DateTime.DateFormat = "yyyy-MM-dd"
 		Dim dayStartTicks As Long = DateTime.DateParse(textValue)
 		DateTime.DateFormat = previousDateFormat
 		Return Floor((dayStartTicks + DateTime.TicksPerDay) / 1000)
 	Catch
+		DateTime.DateFormat = previousDateFormat
 		Log(LastException.Message)
 		Return 0
 	End Try
@@ -2011,7 +2104,13 @@ Private Sub ScheduleHistoryLog(item As Map)
 	Dim itemType As String = item.GetDefault("type", "")
 	If itemType <> "track" And itemType <> "ad" Then Return
 	If item.GetDefault("id", "") = "" Then Return
-	TraceLog("ScheduleHistoryLog. item=" & DescribeItem(item) & ", mode=first_timeupdate")
+	If itemType = "track" Then
+		TraceLog("История подтверждена. reason=playback_start, item=" & DescribeItem(item))
+		QueueHistoryRecordAt(item, DateTime.Now)
+		ClearHistoryLogTimer
+		Return
+	End If
+	TraceLog("ScheduleHistoryLog. item=" & DescribeItem(item) & ", mode=ad_complete")
 	ClearHistoryLogTimer
 	historyItem = item
 	historyStartedAtTicks = DateTime.Now
@@ -2057,7 +2156,7 @@ Private Sub FlushHistoryBuffer As ResumableSub
 	End Try
 	payload = NormalizeNdjsonPayload(payload)
 	If payload = "" Or batchDate = "" Then
-		DeleteHistoryFile(pendingHistoryFileName)
+		DeleteHistoryPendingFile(pendingHistoryFileName)
 		RefreshPendingHistoryState
 		isHistoryFlushInProgress = False
 		Return False
@@ -2086,7 +2185,7 @@ Private Sub FlushHistoryBuffer As ResumableSub
 		SaveServerSnapshot("POST", requestUrl, False, "", j.ErrorMessage)
 	End If
 	If success Then
-		DeleteHistoryFile(pendingHistoryFileName)
+		DeleteHistoryPendingFile(pendingHistoryFileName)
 		RefreshPendingHistoryState
 		TraceLog("Локальный буфер истории обновлен. removedFile=" & pendingHistoryFileName & ", pendingFiles=" & GetPendingHistoryFileCount)
 	End If
@@ -2225,7 +2324,7 @@ Private Sub HistoryFileNameToDate(fileName As String) As String
 	Return fileName.SubString2(0, fileName.Length - 7)
 End Sub
 
-Private Sub DeleteHistoryFile(fileName As String)
+Private Sub DeleteHistoryPendingFile(fileName As String)
 	If fileName = "" Then Return
 	If File.Exists(GetHistoryDir, fileName) Then File.Delete(GetHistoryDir, fileName)
 End Sub
@@ -2390,7 +2489,7 @@ Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
 	If audioKey <> activeAudioKey Then Return False
 	If isStarted = False Or isStoppedByUser Then Return False
 	If historyItem.IsInitialized Then
-		If currentTrackUrl <> "" And historyItem.GetDefault("id", "") = activeItem.GetDefault("id", "") And historyItem.GetDefault("type", "") = activeItem.GetDefault("type", "") Then
+		If historyItem.GetDefault("type", "") = "track" And currentTrackUrl <> "" And historyItem.GetDefault("id", "") = activeItem.GetDefault("id", "") And historyItem.GetDefault("type", "") = activeItem.GetDefault("type", "") Then
 			ConfirmPendingHistoryItem("timeupdate")
 		End If
 	End If

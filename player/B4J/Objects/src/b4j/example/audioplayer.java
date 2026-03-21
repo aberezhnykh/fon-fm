@@ -191,7 +191,7 @@ __ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .Stop();
        catch (Exception e15) {
 			ba.setLastException(e15);RDebugUtils.currentLine=16252943;
  //BA.debugLineNum = 16252943;BA.debugLine="Log(LastException.Message)";
-__c.LogImpl("416252943",__c.LastException(ba).getMessage(),0);
+__c.LogImpl("116252943",__c.LastException(ba).getMessage(),0);
  };
 RDebugUtils.currentLine=16252945;
  //BA.debugLineNum = 16252945;BA.debugLine="If jo.IsInitialized Then";
@@ -205,7 +205,7 @@ __ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .RunMethod("dispose",(Objec
        catch (Exception e21) {
 			ba.setLastException(e21);RDebugUtils.currentLine=16252949;
  //BA.debugLineNum = 16252949;BA.debugLine="Log(LastException.Message)";
-__c.LogImpl("416252949",__c.LastException(ba).getMessage(),0);
+__c.LogImpl("116252949",__c.LastException(ba).getMessage(),0);
  };
  };
  };
@@ -684,7 +684,7 @@ __ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .setVolume(__r
        catch (Exception e6) {
 			ba.setLastException(e6);RDebugUtils.currentLine=17367046;
  //BA.debugLineNum = 17367046;BA.debugLine="Log(LastException.Message)";
-__c.LogImpl("417367046",__c.LastException(ba).getMessage(),0);
+__c.LogImpl("117367046",__c.LastException(ba).getMessage(),0);
  };
 RDebugUtils.currentLine=17367048;
  //BA.debugLineNum = 17367048;BA.debugLine="End Sub";
@@ -728,7 +728,7 @@ __ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .Stop();
        catch (Exception e11) {
 			ba.setLastException(e11);RDebugUtils.currentLine=17432587;
  //BA.debugLineNum = 17432587;BA.debugLine="Log(LastException.Message)";
-__c.LogImpl("417432587",__c.LastException(ba).getMessage(),0);
+__c.LogImpl("117432587",__c.LastException(ba).getMessage(),0);
  };
 RDebugUtils.currentLine=17432589;
  //BA.debugLineNum = 17432589;BA.debugLine="End Sub";

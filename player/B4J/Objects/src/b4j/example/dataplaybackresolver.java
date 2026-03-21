@@ -1085,6 +1085,66 @@ RDebugUtils.currentLine=34471938;
  //BA.debugLineNum = 34471938;BA.debugLine="End Sub";
 return "";
 }
+public String  _isoweekdayfromticks(b4j.example.dataplaybackresolver __ref,long _ticks) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="dataplaybackresolver";
+if (Debug.shouldDelegate(ba, "isoweekdayfromticks", false))
+	 {return ((String) Debug.delegate(ba, "isoweekdayfromticks", new Object[] {_ticks}));}
+anywheresoftware.b4j.object.JavaObject _instantclass = null;
+anywheresoftware.b4j.object.JavaObject _zoneclass = null;
+anywheresoftware.b4j.object.JavaObject _zoneddatetimeclass = null;
+anywheresoftware.b4j.object.JavaObject _instant = null;
+anywheresoftware.b4j.object.JavaObject _zoneid = null;
+anywheresoftware.b4j.object.JavaObject _zoneddatetime = null;
+anywheresoftware.b4j.object.JavaObject _localdate = null;
+anywheresoftware.b4j.object.JavaObject _dayofweek = null;
+RDebugUtils.currentLine=45678592;
+ //BA.debugLineNum = 45678592;BA.debugLine="Private Sub IsoWeekdayFromTicks(ticks As Long) As";
+RDebugUtils.currentLine=45678593;
+ //BA.debugLineNum = 45678593;BA.debugLine="Dim instantClass As JavaObject";
+_instantclass = new anywheresoftware.b4j.object.JavaObject();
+RDebugUtils.currentLine=45678594;
+ //BA.debugLineNum = 45678594;BA.debugLine="instantClass.InitializeStatic(\"java.time.Instant\"";
+_instantclass.InitializeStatic("java.time.Instant");
+RDebugUtils.currentLine=45678595;
+ //BA.debugLineNum = 45678595;BA.debugLine="Dim zoneClass As JavaObject";
+_zoneclass = new anywheresoftware.b4j.object.JavaObject();
+RDebugUtils.currentLine=45678596;
+ //BA.debugLineNum = 45678596;BA.debugLine="zoneClass.InitializeStatic(\"java.time.ZoneId\")";
+_zoneclass.InitializeStatic("java.time.ZoneId");
+RDebugUtils.currentLine=45678597;
+ //BA.debugLineNum = 45678597;BA.debugLine="Dim zonedDateTimeClass As JavaObject";
+_zoneddatetimeclass = new anywheresoftware.b4j.object.JavaObject();
+RDebugUtils.currentLine=45678598;
+ //BA.debugLineNum = 45678598;BA.debugLine="zonedDateTimeClass.InitializeStatic(\"java.time.Zo";
+_zoneddatetimeclass.InitializeStatic("java.time.ZonedDateTime");
+RDebugUtils.currentLine=45678599;
+ //BA.debugLineNum = 45678599;BA.debugLine="Dim instant As JavaObject = instantClass.RunMetho";
+_instant = new anywheresoftware.b4j.object.JavaObject();
+_instant = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_instantclass.RunMethod("ofEpochMilli",new Object[]{(Object)(_ticks)})));
+RDebugUtils.currentLine=45678600;
+ //BA.debugLineNum = 45678600;BA.debugLine="Dim zoneId As JavaObject = zoneClass.RunMethod(\"s";
+_zoneid = new anywheresoftware.b4j.object.JavaObject();
+_zoneid = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_zoneclass.RunMethod("systemDefault",(Object[])(__c.Null))));
+RDebugUtils.currentLine=45678601;
+ //BA.debugLineNum = 45678601;BA.debugLine="Dim zonedDateTime As JavaObject = zonedDateTimeCl";
+_zoneddatetime = new anywheresoftware.b4j.object.JavaObject();
+_zoneddatetime = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_zoneddatetimeclass.RunMethod("ofInstant",new Object[]{(Object)(_instant.getObject()),(Object)(_zoneid.getObject())})));
+RDebugUtils.currentLine=45678602;
+ //BA.debugLineNum = 45678602;BA.debugLine="Dim localDate As JavaObject = zonedDateTime.RunMe";
+_localdate = new anywheresoftware.b4j.object.JavaObject();
+_localdate = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_zoneddatetime.RunMethod("toLocalDate",(Object[])(__c.Null))));
+RDebugUtils.currentLine=45678603;
+ //BA.debugLineNum = 45678603;BA.debugLine="Dim dayOfWeek As JavaObject = localDate.RunMethod";
+_dayofweek = new anywheresoftware.b4j.object.JavaObject();
+_dayofweek = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_localdate.RunMethod("getDayOfWeek",(Object[])(__c.Null))));
+RDebugUtils.currentLine=45678604;
+ //BA.debugLineNum = 45678604;BA.debugLine="Return \"\" & dayOfWeek.RunMethod(\"getValue\", Null)";
+if (true) return ""+BA.ObjectToString(_dayofweek.RunMethod("getValue",(Object[])(__c.Null)));
+RDebugUtils.currentLine=45678605;
+ //BA.debugLineNum = 45678605;BA.debugLine="End Sub";
+return "";
+}
 public String  _playlistmetadatafilename(b4j.example.dataplaybackresolver __ref,String _playlistid) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="dataplaybackresolver";
@@ -1104,46 +1164,13 @@ __ref = this;
 RDebugUtils.currentModule="dataplaybackresolver";
 if (Debug.shouldDelegate(ba, "scheduleappliestoday", false))
 	 {return ((Boolean) Debug.delegate(ba, "scheduleappliestoday", new Object[] {_schedule,_todaykey,_todayweekday}));}
-String _startdate = "";
-anywheresoftware.b4a.objects.collections.List _weekdays = null;
-Object _weekdayobject = null;
 RDebugUtils.currentLine=34340864;
  //BA.debugLineNum = 34340864;BA.debugLine="Private Sub ScheduleAppliesToday(schedule As Map,";
 RDebugUtils.currentLine=34340865;
- //BA.debugLineNum = 34340865;BA.debugLine="Dim startDate As String = schedule.GetDefault(\"st";
-_startdate = BA.ObjectToString(_schedule.GetDefault((Object)("start"),(Object)("")));
+ //BA.debugLineNum = 34340865;BA.debugLine="Return ScheduleAppliesOnDate(schedule, todayKey,";
+if (true) return __ref._scheduleappliesondate /*boolean*/ (null,_schedule,_todaykey,_todayweekday);
 RDebugUtils.currentLine=34340866;
- //BA.debugLineNum = 34340866;BA.debugLine="If startDate <> \"\" And startDate.CompareTo(todayK";
-if ((_startdate).equals("") == false && _startdate.compareTo(_todaykey)>0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=34340867;
- //BA.debugLineNum = 34340867;BA.debugLine="Dim weekdays As List = schedule.GetDefault(\"weekd";
-_weekdays = new anywheresoftware.b4a.objects.collections.List();
-_weekdays = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_schedule.GetDefault((Object)("weekdays"),__c.Null)));
-RDebugUtils.currentLine=34340868;
- //BA.debugLineNum = 34340868;BA.debugLine="If weekdays.IsInitialized = False Or weekdays.Siz";
-if (_weekdays.IsInitialized()==__c.False || _weekdays.getSize()==0) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=34340869;
- //BA.debugLineNum = 34340869;BA.debugLine="For Each weekdayObject As Object In weekdays";
-{
-final anywheresoftware.b4a.BA.IterableList group5 = _weekdays;
-final int groupLen5 = group5.getSize()
-;int index5 = 0;
-;
-for (; index5 < groupLen5;index5++){
-_weekdayobject = group5.Get(index5);
-RDebugUtils.currentLine=34340870;
- //BA.debugLineNum = 34340870;BA.debugLine="If (\"\" & weekdayObject).Trim = todayWeekday Then";
-if (((""+BA.ObjectToString(_weekdayobject)).trim()).equals(_todayweekday)) { 
-if (true) return __c.True;};
- }
-};
-RDebugUtils.currentLine=34340872;
- //BA.debugLineNum = 34340872;BA.debugLine="Return False";
-if (true) return __c.False;
-RDebugUtils.currentLine=34340873;
- //BA.debugLineNum = 34340873;BA.debugLine="End Sub";
+ //BA.debugLineNum = 34340866;BA.debugLine="End Sub";
 return false;
 }
 public int  _timestringtominutes(b4j.example.dataplaybackresolver __ref,String _value) throws Exception{
@@ -1195,6 +1222,268 @@ if (true) return (int) (-1);
 RDebugUtils.currentLine=34799629;
  //BA.debugLineNum = 34799629;BA.debugLine="End Sub";
 return 0;
+}
+public anywheresoftware.b4a.objects.collections.Map  _resolvenextdataslot(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="dataplaybackresolver";
+if (Debug.shouldDelegate(ba, "resolvenextdataslot", false))
+	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "resolvenextdataslot", new Object[] {_offlinedata}));}
+anywheresoftware.b4a.objects.collections.Map _nextslot = null;
+anywheresoftware.b4a.objects.collections.List _schedules = null;
+long _nowticks = 0L;
+long _bestslotticks = 0L;
+int _dayoffset = 0;
+long _dayticks = 0L;
+String _daykey = "";
+String _dayweekday = "";
+Object _scheduleobject = null;
+anywheresoftware.b4a.objects.collections.Map _schedule = null;
+String _scheduletitle = "";
+anywheresoftware.b4a.objects.collections.List _slots = null;
+Object _slotobject = null;
+anywheresoftware.b4a.objects.collections.Map _slot = null;
+String _slottime = "";
+int _slotminutes = 0;
+long _slotticks = 0L;
+anywheresoftware.b4a.objects.collections.Map _streamdata = null;
+RDebugUtils.currentLine=45547520;
+ //BA.debugLineNum = 45547520;BA.debugLine="Public Sub ResolveNextDataSlot(offlineData As Map)";
+RDebugUtils.currentLine=45547521;
+ //BA.debugLineNum = 45547521;BA.debugLine="Dim nextSlot As Map";
+_nextslot = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=45547522;
+ //BA.debugLineNum = 45547522;BA.debugLine="nextSlot.Initialize";
+_nextslot.Initialize();
+RDebugUtils.currentLine=45547523;
+ //BA.debugLineNum = 45547523;BA.debugLine="If offlineData.IsInitialized = False Then Return";
+if (_offlinedata.IsInitialized()==__c.False) { 
+if (true) return _nextslot;};
+RDebugUtils.currentLine=45547524;
+ //BA.debugLineNum = 45547524;BA.debugLine="Dim schedules As List = offlineData.GetDefault(\"s";
+_schedules = new anywheresoftware.b4a.objects.collections.List();
+_schedules = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_offlinedata.GetDefault((Object)("schedules"),__c.Null)));
+RDebugUtils.currentLine=45547525;
+ //BA.debugLineNum = 45547525;BA.debugLine="If schedules.IsInitialized = False Or schedules.S";
+if (_schedules.IsInitialized()==__c.False || _schedules.getSize()==0) { 
+if (true) return _nextslot;};
+RDebugUtils.currentLine=45547526;
+ //BA.debugLineNum = 45547526;BA.debugLine="Dim nowTicks As Long = DateTime.Now";
+_nowticks = __c.DateTime.getNow();
+RDebugUtils.currentLine=45547527;
+ //BA.debugLineNum = 45547527;BA.debugLine="Dim bestSlotTicks As Long = 0";
+_bestslotticks = (long) (0);
+RDebugUtils.currentLine=45547528;
+ //BA.debugLineNum = 45547528;BA.debugLine="For dayOffset = 0 To 7";
+{
+final int step8 = 1;
+final int limit8 = (int) (7);
+_dayoffset = (int) (0) ;
+for (;_dayoffset <= limit8 ;_dayoffset = _dayoffset + step8 ) {
+RDebugUtils.currentLine=45547529;
+ //BA.debugLineNum = 45547529;BA.debugLine="Dim dayTicks As Long = StartOfDayTicks(nowTicks";
+_dayticks = __ref._startofdayticks /*long*/ (null,(long) (_nowticks+_dayoffset*__c.DateTime.TicksPerDay));
+RDebugUtils.currentLine=45547530;
+ //BA.debugLineNum = 45547530;BA.debugLine="Dim dayKey As String = FormatIsoDate(dayTicks)";
+_daykey = __ref._formatisodate /*String*/ (null,_dayticks);
+RDebugUtils.currentLine=45547531;
+ //BA.debugLineNum = 45547531;BA.debugLine="Dim dayWeekday As String = IsoWeekdayFromTicks(d";
+_dayweekday = __ref._isoweekdayfromticks /*String*/ (null,_dayticks);
+RDebugUtils.currentLine=45547532;
+ //BA.debugLineNum = 45547532;BA.debugLine="For Each scheduleObject As Object In schedules";
+{
+final anywheresoftware.b4a.BA.IterableList group12 = _schedules;
+final int groupLen12 = group12.getSize()
+;int index12 = 0;
+;
+for (; index12 < groupLen12;index12++){
+_scheduleobject = group12.Get(index12);
+RDebugUtils.currentLine=45547533;
+ //BA.debugLineNum = 45547533;BA.debugLine="If scheduleObject Is Map Then";
+if (_scheduleobject instanceof java.util.Map) { 
+RDebugUtils.currentLine=45547534;
+ //BA.debugLineNum = 45547534;BA.debugLine="Dim schedule As Map = scheduleObject";
+_schedule = new anywheresoftware.b4a.objects.collections.Map();
+_schedule = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_scheduleobject));
+RDebugUtils.currentLine=45547535;
+ //BA.debugLineNum = 45547535;BA.debugLine="If ScheduleAppliesOnDate(schedule, dayKey, day";
+if (__ref._scheduleappliesondate /*boolean*/ (null,_schedule,_daykey,_dayweekday)==__c.False) { 
+if (true) continue;};
+RDebugUtils.currentLine=45547536;
+ //BA.debugLineNum = 45547536;BA.debugLine="Dim scheduleTitle As String = schedule.GetDefa";
+_scheduletitle = BA.ObjectToString(_schedule.GetDefault((Object)("title"),(Object)("")));
+RDebugUtils.currentLine=45547537;
+ //BA.debugLineNum = 45547537;BA.debugLine="Dim slots As List = schedule.GetDefault(\"slots";
+_slots = new anywheresoftware.b4a.objects.collections.List();
+_slots = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_schedule.GetDefault((Object)("slots"),__c.Null)));
+RDebugUtils.currentLine=45547538;
+ //BA.debugLineNum = 45547538;BA.debugLine="If slots.IsInitialized = False Then Continue";
+if (_slots.IsInitialized()==__c.False) { 
+if (true) continue;};
+RDebugUtils.currentLine=45547539;
+ //BA.debugLineNum = 45547539;BA.debugLine="For Each slotObject As Object In slots";
+{
+final anywheresoftware.b4a.BA.IterableList group19 = _slots;
+final int groupLen19 = group19.getSize()
+;int index19 = 0;
+;
+for (; index19 < groupLen19;index19++){
+_slotobject = group19.Get(index19);
+RDebugUtils.currentLine=45547540;
+ //BA.debugLineNum = 45547540;BA.debugLine="If slotObject Is Map Then";
+if (_slotobject instanceof java.util.Map) { 
+RDebugUtils.currentLine=45547541;
+ //BA.debugLineNum = 45547541;BA.debugLine="Dim slot As Map = slotObject";
+_slot = new anywheresoftware.b4a.objects.collections.Map();
+_slot = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_slotobject));
+RDebugUtils.currentLine=45547542;
+ //BA.debugLineNum = 45547542;BA.debugLine="Dim slotTime As String = slot.GetDefault(\"ti";
+_slottime = BA.ObjectToString(_slot.GetDefault((Object)("time"),(Object)("")));
+RDebugUtils.currentLine=45547543;
+ //BA.debugLineNum = 45547543;BA.debugLine="Dim slotMinutes As Int = TimeStringToMinutes";
+_slotminutes = __ref._timestringtominutes /*int*/ (null,_slottime);
+RDebugUtils.currentLine=45547544;
+ //BA.debugLineNum = 45547544;BA.debugLine="If slotMinutes < 0 Then Continue";
+if (_slotminutes<0) { 
+if (true) continue;};
+RDebugUtils.currentLine=45547545;
+ //BA.debugLineNum = 45547545;BA.debugLine="Dim slotTicks As Long = dayTicks + slotMinut";
+_slotticks = (long) (_dayticks+_slotminutes*__c.DateTime.TicksPerMinute);
+RDebugUtils.currentLine=45547546;
+ //BA.debugLineNum = 45547546;BA.debugLine="If slotTicks <= nowTicks Then Continue";
+if (_slotticks<=_nowticks) { 
+if (true) continue;};
+RDebugUtils.currentLine=45547547;
+ //BA.debugLineNum = 45547547;BA.debugLine="If bestSlotTicks > 0 And slotTicks >= bestSl";
+if (_bestslotticks>0 && _slotticks>=_bestslotticks) { 
+if (true) continue;};
+RDebugUtils.currentLine=45547548;
+ //BA.debugLineNum = 45547548;BA.debugLine="Dim streamData As Map = ExtractSlotStreamDat";
+_streamdata = new anywheresoftware.b4a.objects.collections.Map();
+_streamdata = __ref._extractslotstreamdata /*anywheresoftware.b4a.objects.collections.Map*/ (null,_slot);
+RDebugUtils.currentLine=45547549;
+ //BA.debugLineNum = 45547549;BA.debugLine="nextSlot.Initialize";
+_nextslot.Initialize();
+RDebugUtils.currentLine=45547550;
+ //BA.debugLineNum = 45547550;BA.debugLine="nextSlot.Put(\"schedule_title\", scheduleTitle";
+_nextslot.Put((Object)("schedule_title"),(Object)(_scheduletitle));
+RDebugUtils.currentLine=45547551;
+ //BA.debugLineNum = 45547551;BA.debugLine="nextSlot.Put(\"slot_time\", slotTime)";
+_nextslot.Put((Object)("slot_time"),(Object)(_slottime));
+RDebugUtils.currentLine=45547552;
+ //BA.debugLineNum = 45547552;BA.debugLine="nextSlot.Put(\"slot_minutes\", slotMinutes)";
+_nextslot.Put((Object)("slot_minutes"),(Object)(_slotminutes));
+RDebugUtils.currentLine=45547553;
+ //BA.debugLineNum = 45547553;BA.debugLine="nextSlot.Put(\"slot_ticks\", slotTicks)";
+_nextslot.Put((Object)("slot_ticks"),(Object)(_slotticks));
+RDebugUtils.currentLine=45547554;
+ //BA.debugLineNum = 45547554;BA.debugLine="nextSlot.Put(\"stream_id\", streamData.GetDefa";
+_nextslot.Put((Object)("stream_id"),_streamdata.GetDefault((Object)("id"),(Object)("")));
+RDebugUtils.currentLine=45547555;
+ //BA.debugLineNum = 45547555;BA.debugLine="nextSlot.Put(\"stream_title\", streamData.GetD";
+_nextslot.Put((Object)("stream_title"),_streamdata.GetDefault((Object)("title"),(Object)("")));
+RDebugUtils.currentLine=45547556;
+ //BA.debugLineNum = 45547556;BA.debugLine="nextSlot.Put(\"playlists\", streamData.GetDefa";
+_nextslot.Put((Object)("playlists"),_streamdata.GetDefault((Object)("playlists"),(Object)(__ref._createinitializedlist /*anywheresoftware.b4a.objects.collections.List*/ (null).getObject())));
+RDebugUtils.currentLine=45547557;
+ //BA.debugLineNum = 45547557;BA.debugLine="bestSlotTicks = slotTicks";
+_bestslotticks = _slotticks;
+ };
+ }
+};
+ };
+ }
+};
+RDebugUtils.currentLine=45547562;
+ //BA.debugLineNum = 45547562;BA.debugLine="If nextSlot.IsInitialized And nextSlot.Size > 0";
+if (_nextslot.IsInitialized() && _nextslot.getSize()>0) { 
+if (true) break;};
+ }
+};
+RDebugUtils.currentLine=45547564;
+ //BA.debugLineNum = 45547564;BA.debugLine="Return nextSlot";
+if (true) return _nextslot;
+RDebugUtils.currentLine=45547565;
+ //BA.debugLineNum = 45547565;BA.debugLine="End Sub";
+return null;
+}
+public long  _startofdayticks(b4j.example.dataplaybackresolver __ref,long _ticks) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="dataplaybackresolver";
+if (Debug.shouldDelegate(ba, "startofdayticks", false))
+	 {return ((Long) Debug.delegate(ba, "startofdayticks", new Object[] {_ticks}));}
+String _previousdateformat = "";
+String _daykey = "";
+long _dayticks = 0L;
+RDebugUtils.currentLine=45744128;
+ //BA.debugLineNum = 45744128;BA.debugLine="Private Sub StartOfDayTicks(ticks As Long) As Long";
+RDebugUtils.currentLine=45744129;
+ //BA.debugLineNum = 45744129;BA.debugLine="Dim previousDateFormat As String = DateTime.DateF";
+_previousdateformat = __c.DateTime.getDateFormat();
+RDebugUtils.currentLine=45744130;
+ //BA.debugLineNum = 45744130;BA.debugLine="DateTime.DateFormat = \"yyyy-MM-dd\"";
+__c.DateTime.setDateFormat("yyyy-MM-dd");
+RDebugUtils.currentLine=45744131;
+ //BA.debugLineNum = 45744131;BA.debugLine="Dim dayKey As String = DateTime.Date(ticks)";
+_daykey = __c.DateTime.Date(_ticks);
+RDebugUtils.currentLine=45744132;
+ //BA.debugLineNum = 45744132;BA.debugLine="Dim dayTicks As Long = DateTime.DateParse(dayKey)";
+_dayticks = __c.DateTime.DateParse(_daykey);
+RDebugUtils.currentLine=45744133;
+ //BA.debugLineNum = 45744133;BA.debugLine="DateTime.DateFormat = previousDateFormat";
+__c.DateTime.setDateFormat(_previousdateformat);
+RDebugUtils.currentLine=45744134;
+ //BA.debugLineNum = 45744134;BA.debugLine="Return dayTicks";
+if (true) return _dayticks;
+RDebugUtils.currentLine=45744135;
+ //BA.debugLineNum = 45744135;BA.debugLine="End Sub";
+return 0L;
+}
+public boolean  _scheduleappliesondate(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _schedule,String _targetdatekey,String _targetweekday) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="dataplaybackresolver";
+if (Debug.shouldDelegate(ba, "scheduleappliesondate", false))
+	 {return ((Boolean) Debug.delegate(ba, "scheduleappliesondate", new Object[] {_schedule,_targetdatekey,_targetweekday}));}
+String _startdate = "";
+anywheresoftware.b4a.objects.collections.List _weekdays = null;
+Object _weekdayobject = null;
+RDebugUtils.currentLine=45613056;
+ //BA.debugLineNum = 45613056;BA.debugLine="Private Sub ScheduleAppliesOnDate(schedule As Map,";
+RDebugUtils.currentLine=45613057;
+ //BA.debugLineNum = 45613057;BA.debugLine="Dim startDate As String = schedule.GetDefault(\"st";
+_startdate = BA.ObjectToString(_schedule.GetDefault((Object)("start"),(Object)("")));
+RDebugUtils.currentLine=45613058;
+ //BA.debugLineNum = 45613058;BA.debugLine="If startDate <> \"\" And startDate.CompareTo(target";
+if ((_startdate).equals("") == false && _startdate.compareTo(_targetdatekey)>0) { 
+if (true) return __c.False;};
+RDebugUtils.currentLine=45613059;
+ //BA.debugLineNum = 45613059;BA.debugLine="Dim weekdays As List = schedule.GetDefault(\"weekd";
+_weekdays = new anywheresoftware.b4a.objects.collections.List();
+_weekdays = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_schedule.GetDefault((Object)("weekdays"),__c.Null)));
+RDebugUtils.currentLine=45613060;
+ //BA.debugLineNum = 45613060;BA.debugLine="If weekdays.IsInitialized = False Or weekdays.Siz";
+if (_weekdays.IsInitialized()==__c.False || _weekdays.getSize()==0) { 
+if (true) return __c.True;};
+RDebugUtils.currentLine=45613061;
+ //BA.debugLineNum = 45613061;BA.debugLine="For Each weekdayObject As Object In weekdays";
+{
+final anywheresoftware.b4a.BA.IterableList group5 = _weekdays;
+final int groupLen5 = group5.getSize()
+;int index5 = 0;
+;
+for (; index5 < groupLen5;index5++){
+_weekdayobject = group5.Get(index5);
+RDebugUtils.currentLine=45613062;
+ //BA.debugLineNum = 45613062;BA.debugLine="If (\"\" & weekdayObject).Trim = targetWeekday The";
+if (((""+BA.ObjectToString(_weekdayobject)).trim()).equals(_targetweekday)) { 
+if (true) return __c.True;};
+ }
+};
+RDebugUtils.currentLine=45613064;
+ //BA.debugLineNum = 45613064;BA.debugLine="Return False";
+if (true) return __c.False;
+RDebugUtils.currentLine=45613065;
+ //BA.debugLineNum = 45613065;BA.debugLine="End Sub";
+return false;
 }
 public String  _resolveofflinestreamtitle(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _currentslot,anywheresoftware.b4a.objects.collections.Map _offlinedata) throws Exception{
 __ref = this;

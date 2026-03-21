@@ -37,7 +37,6 @@ Public Sub ScanTargetMinute(offlineData As Map, playQueue As List, targetMinuteT
 	If breakAt <= 0 Then Return False
 	If HasBreakScheduledAt(playQueue, breakAt) Then
 		lastInjectedMinuteKey = minuteKey
-		Trace("Локальный break уже есть в очереди. at=" & breakAt)
 		Return False
 	End If
 	If lastInjectedMinuteKey = minuteKey Then Return False

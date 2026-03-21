@@ -99,6 +99,53 @@ Public Sub ResolveCurrentDataSlot(offlineData As Map) As Map
 	Return selectedSlot
 End Sub
 
+Public Sub ResolveNextDataSlot(offlineData As Map) As Map
+	Dim nextSlot As Map
+	nextSlot.Initialize
+	If offlineData.IsInitialized = False Then Return nextSlot
+	Dim schedules As List = offlineData.GetDefault("schedules", Null)
+	If schedules.IsInitialized = False Or schedules.Size = 0 Then Return nextSlot
+	Dim nowTicks As Long = DateTime.Now
+	Dim bestSlotTicks As Long = 0
+	For dayOffset = 0 To 7
+		Dim dayTicks As Long = StartOfDayTicks(nowTicks + dayOffset * DateTime.TicksPerDay)
+		Dim dayKey As String = FormatIsoDate(dayTicks)
+		Dim dayWeekday As String = IsoWeekdayFromTicks(dayTicks)
+		For Each scheduleObject As Object In schedules
+			If scheduleObject Is Map Then
+				Dim schedule As Map = scheduleObject
+				If ScheduleAppliesOnDate(schedule, dayKey, dayWeekday) = False Then Continue
+				Dim scheduleTitle As String = schedule.GetDefault("title", "")
+				Dim slots As List = schedule.GetDefault("slots", Null)
+				If slots.IsInitialized = False Then Continue
+				For Each slotObject As Object In slots
+					If slotObject Is Map Then
+						Dim slot As Map = slotObject
+						Dim slotTime As String = slot.GetDefault("time", "")
+						Dim slotMinutes As Int = TimeStringToMinutes(slotTime)
+						If slotMinutes < 0 Then Continue
+						Dim slotTicks As Long = dayTicks + slotMinutes * DateTime.TicksPerMinute
+						If slotTicks <= nowTicks Then Continue
+						If bestSlotTicks > 0 And slotTicks >= bestSlotTicks Then Continue
+						Dim streamData As Map = ExtractSlotStreamData(slot)
+						nextSlot.Initialize
+						nextSlot.Put("schedule_title", scheduleTitle)
+						nextSlot.Put("slot_time", slotTime)
+						nextSlot.Put("slot_minutes", slotMinutes)
+						nextSlot.Put("slot_ticks", slotTicks)
+						nextSlot.Put("stream_id", streamData.GetDefault("id", ""))
+						nextSlot.Put("stream_title", streamData.GetDefault("title", ""))
+						nextSlot.Put("playlists", streamData.GetDefault("playlists", CreateInitializedList))
+						bestSlotTicks = slotTicks
+					End If
+				Next
+			End If
+		Next
+		If nextSlot.IsInitialized And nextSlot.Size > 0 Then Exit
+	Next
+	Return nextSlot
+End Sub
+
 Public Sub ChooseNextPlaylistDescriptor(currentSlot As Map, workingCursors As Map) As Map
 	Dim emptyDescriptor As Map
 	emptyDescriptor.Initialize
@@ -265,12 +312,16 @@ Private Sub ExtractSlotStreamData(slot As Map) As Map
 End Sub
 
 Private Sub ScheduleAppliesToday(schedule As Map, todayKey As String, todayWeekday As String) As Boolean
+	Return ScheduleAppliesOnDate(schedule, todayKey, todayWeekday)
+End Sub
+
+Private Sub ScheduleAppliesOnDate(schedule As Map, targetDateKey As String, targetWeekday As String) As Boolean
 	Dim startDate As String = schedule.GetDefault("start", "")
-	If startDate <> "" And startDate.CompareTo(todayKey) > 0 Then Return False
+	If startDate <> "" And startDate.CompareTo(targetDateKey) > 0 Then Return False
 	Dim weekdays As List = schedule.GetDefault("weekdays", Null)
 	If weekdays.IsInitialized = False Or weekdays.Size = 0 Then Return True
 	For Each weekdayObject As Object In weekdays
-		If ("" & weekdayObject).Trim = todayWeekday Then Return True
+		If ("" & weekdayObject).Trim = targetWeekday Then Return True
 	Next
 	Return False
 End Sub
@@ -313,6 +364,21 @@ Private Sub CurrentIsoWeekday As String
 	Return "" & dayOfWeek.RunMethod("getValue", Null)
 End Sub
 
+Private Sub IsoWeekdayFromTicks(ticks As Long) As String
+	Dim instantClass As JavaObject
+	instantClass.InitializeStatic("java.time.Instant")
+	Dim zoneClass As JavaObject
+	zoneClass.InitializeStatic("java.time.ZoneId")
+	Dim zonedDateTimeClass As JavaObject
+	zonedDateTimeClass.InitializeStatic("java.time.ZonedDateTime")
+	Dim instant As JavaObject = instantClass.RunMethod("ofEpochMilli", Array As Object(ticks))
+	Dim zoneId As JavaObject = zoneClass.RunMethod("systemDefault", Null)
+	Dim zonedDateTime As JavaObject = zonedDateTimeClass.RunMethod("ofInstant", Array As Object(instant, zoneId))
+	Dim localDate As JavaObject = zonedDateTime.RunMethod("toLocalDate", Null)
+	Dim dayOfWeek As JavaObject = localDate.RunMethod("getDayOfWeek", Null)
+	Return "" & dayOfWeek.RunMethod("getValue", Null)
+End Sub
+
 Private Sub TimeStringToMinutes(value As String) As Int
 	If value = "" Then Return -1
 	Dim parts() As String = Regex.Split(":", value)
@@ -326,6 +392,15 @@ Private Sub TimeStringToMinutes(value As String) As Int
 	Catch
 		Return -1
 	End Try
+End Sub
+
+Private Sub StartOfDayTicks(ticks As Long) As Long
+	Dim previousDateFormat As String = DateTime.DateFormat
+	DateTime.DateFormat = "yyyy-MM-dd"
+	Dim dayKey As String = DateTime.Date(ticks)
+	Dim dayTicks As Long = DateTime.DateParse(dayKey)
+	DateTime.DateFormat = previousDateFormat
+	Return dayTicks
 End Sub
 
 Private Sub CreateInitializedMap As Map

@@ -13,6 +13,20 @@ Sub Class_Globals
 	Private mediaDirName As String = "media"
 	Private adsDirName As String = "ads"
 	Private tracksDirName As String = "tracks"
+	Private Const CACHE_AUDIT_BATCH_SIZE As Int = 8
+	Private cachedAdIndex As Map
+	Private cachedTrackIndex As Map
+	Private cacheAuditInProgress As Boolean
+	Private cacheAuditPendingTypes As List
+	Private cacheAuditCurrentType As String
+	Private cacheAuditCurrentFileNames As List
+	Private cacheAuditCurrentPosition As Int
+	Private cacheAuditSeenIds As Map
+	Private cacheAuditAdIndexChanged As Boolean
+	Private cacheAuditTrackIndexChanged As Boolean
+	Private cacheAuditAddedCount As Int
+	Private cacheAuditRemovedCount As Int
+	Private cacheAuditTempDeletedCount As Int
 End Sub
 
 Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, targetModuleValue As Object, traceSubNameValue As String)
@@ -22,6 +36,49 @@ Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, 
 	traceSubName = traceSubNameValue
 	EnsureDirectory(GetAdsDir)
 	EnsureDirectory(GetTracksDir)
+	LoadIndexesFromStorage
+End Sub
+
+Public Sub IsCacheAuditInProgress As Boolean
+	Return cacheAuditInProgress
+End Sub
+
+Public Sub StartCacheAudit
+	If cacheAuditInProgress Then Return
+	cacheAuditPendingTypes.Initialize
+	cacheAuditPendingTypes.Add("ads")
+	cacheAuditPendingTypes.Add("tracks")
+	cacheAuditCurrentType = ""
+	cacheAuditCurrentFileNames.Initialize
+	cacheAuditCurrentPosition = 0
+	cacheAuditSeenIds.Initialize
+	cacheAuditAdIndexChanged = False
+	cacheAuditTrackIndexChanged = False
+	cacheAuditAddedCount = 0
+	cacheAuditRemovedCount = 0
+	cacheAuditTempDeletedCount = 0
+	cacheAuditInProgress = True
+	Trace("Запущен аудит кэша media.")
+End Sub
+
+Public Sub RunCacheAuditStep As Boolean
+	If cacheAuditInProgress = False Then Return False
+	If cacheAuditCurrentType = "" Then
+		If PrepareNextCacheAuditType = False Then
+			FinishCacheAudit
+			Return False
+		End If
+	End If
+	ProcessCurrentCacheAuditBatch
+	If cacheAuditCurrentPosition >= cacheAuditCurrentFileNames.Size Then
+		FinalizeCurrentCacheAuditType
+		cacheAuditCurrentType = ""
+		If cacheAuditPendingTypes.Size = 0 Then
+			FinishCacheAudit
+			Return False
+		End If
+	End If
+	Return True
 End Sub
 
 Public Sub EnsureAdsCached(offlineData As Map) As ResumableSub
@@ -43,8 +100,7 @@ Public Sub EnsureAdsCached(offlineData As Map) As ResumableSub
 			End If
 		End If
 	Next
-	storage.Put("cached_ad_index", cachedAdIndex)
-	storage.Put("cached_ad_count", cachedAdIndex.Size)
+	SaveAdIndex
 	Trace("Синхронизация кэша рекламы завершена. downloaded=" & downloadedCount & ", failed=" & failedCount & ", actual=" & cachedAdIndex.Size)
 	Return downloadedCount > 0
 End Sub
@@ -54,20 +110,25 @@ Public Sub ResolveLocalMediaUri(item As Map) As String
 	Dim itemType As String = item.GetDefault("type", "")
 	Dim itemId As String = item.GetDefault("id", "")
 	If itemId = "" Then Return ""
-	If itemType = "ad" Then
-		If IsAdCached(itemId) = False Then Return ""
-		Return File.GetUri(GetAdsDir, itemId)
-	End If
-	If itemType = "track" Then
-		If IsTrackCached(itemId) = False Then Return ""
-		Return File.GetUri(GetTracksDir, itemId)
-	End If
+	If HasValidatedLocalMedia(item) = False Then Return ""
+	If itemType = "ad" Then Return File.GetUri(GetAdsDir, itemId)
+	If itemType = "track" Then Return File.GetUri(GetTracksDir, itemId)
 	Return ""
+End Sub
+
+Public Sub HasValidatedLocalMedia(item As Map) As Boolean
+	If item.IsInitialized = False Then Return False
+	Dim itemId As String = item.GetDefault("id", "")
+	If itemId = "" Then Return False
+	Dim itemType As String = item.GetDefault("type", "")
+	If itemType = "ad" Then Return ValidateIndexedFile("ad", itemId)
+	If itemType = "track" Then Return ValidateIndexedFile("track", itemId)
+	Return False
 End Sub
 
 Public Sub IsAdCached(adId As String) As Boolean
 	If adId = "" Then Return False
-	Return IsCachedFileUsable(GetAdsDir, adId)
+	Return ValidateIndexedFile("ad", adId)
 End Sub
 
 Public Sub GetAdsDir As String
@@ -80,7 +141,7 @@ End Sub
 
 Public Sub IsTrackCached(trackId As String) As Boolean
 	If trackId = "" Then Return False
-	Return IsCachedFileUsable(GetTracksDir, trackId)
+	Return ValidateIndexedFile("track", trackId)
 End Sub
 
 Public Sub EnsureTracksCached(trackItems As List, maxCount As Int) As ResumableSub
@@ -109,17 +170,16 @@ Public Sub EnsureTracksCached(trackItems As List, maxCount As Int) As ResumableS
 			End If
 		End If
 	Next
-	storage.Put("cached_track_index", cachedTrackIndex)
-	storage.Put("cached_track_count", cachedTrackIndex.Size)
+	SaveTrackIndex
 	Trace("Синхронизация кэша треков завершена. downloaded=" & downloadedCount & ", failed=" & failedCount & ", actual=" & cachedTrackIndex.Size)
 	Return downloadedCount > 0
 End Sub
 
-Private Sub EnsureSingleAdCached(ad As Map, cachedAdIndex As Map) As ResumableSub
+Private Sub EnsureSingleAdCached(ad As Map, adIndex As Map) As ResumableSub
 	Dim adId As String = ad.GetDefault("id", "")
 	If adId = "" Then Return False
 	If IsAdCached(adId) Then
-		UpdateAdIndex(ad, cachedAdIndex)
+		UpdateAdIndex(ad, adIndex)
 		Return False
 	End If
 	Dim adUrl As String = BuildAdUrl(adId)
@@ -150,7 +210,8 @@ Private Sub EnsureSingleAdCached(ad As Map, cachedAdIndex As Map) As ResumableSu
 				j.Release
 				Return False
 			End If
-			UpdateAdIndex(ad, cachedAdIndex)
+			UpdateAdIndex(ad, adIndex)
+			SaveAdIndex
 			Trace("Реклама сохранена в кэш. id=" & adId)
 			j.Release
 			Return True
@@ -165,11 +226,11 @@ Private Sub EnsureSingleAdCached(ad As Map, cachedAdIndex As Map) As ResumableSu
 	Return False
 End Sub
 
-Private Sub EnsureSingleTrackCached(item As Map, cachedTrackIndex As Map) As ResumableSub
+Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As ResumableSub
 	Dim trackId As String = item.GetDefault("id", "")
 	If trackId = "" Then Return False
 	If IsTrackCached(trackId) Then
-		UpdateTrackIndex(item, cachedTrackIndex)
+		UpdateTrackIndex(item, trackIndex)
 		Return False
 	End If
 	Dim trackUrl As String = BuildTrackUrl(trackId)
@@ -200,7 +261,8 @@ Private Sub EnsureSingleTrackCached(item As Map, cachedTrackIndex As Map) As Res
 				j.Release
 				Return False
 			End If
-			UpdateTrackIndex(item, cachedTrackIndex)
+			UpdateTrackIndex(item, trackIndex)
+			SaveTrackIndex
 			Trace("Трек сохранен в кэш. id=" & trackId)
 			j.Release
 			Return True
@@ -215,35 +277,36 @@ Private Sub EnsureSingleTrackCached(item As Map, cachedTrackIndex As Map) As Res
 	Return False
 End Sub
 
-Private Sub UpdateAdIndex(ad As Map, cachedAdIndex As Map)
+Private Sub UpdateAdIndex(ad As Map, adIndex As Map)
 	Dim adId As String = ad.GetDefault("id", "")
 	If adId = "" Then Return
-	Dim entry As Map
-	entry.Initialize
+	Dim entry As Map = adIndex.GetDefault(adId, Null)
+	If entry.IsInitialized = False Then entry.Initialize
 	entry.Put("id", adId)
 	entry.Put("title", ad.GetDefault("title", ""))
-	entry.Put("saved_at", DateTime.Now)
+	If entry.ContainsKey("saved_at") = False Then entry.Put("saved_at", DateTime.Now)
+	entry.Put("last_used_at", DateTime.Now)
 	entry.Put("duration", ad.GetDefault("duration", 0))
 	entry.Put("gain", ad.GetDefault("gain", 0))
-	cachedAdIndex.Put(adId, entry)
+	adIndex.Put(adId, entry)
 End Sub
 
-Private Sub UpdateTrackIndex(item As Map, cachedTrackIndex As Map)
+Private Sub UpdateTrackIndex(item As Map, trackIndex As Map)
 	Dim trackId As String = item.GetDefault("id", "")
 	If trackId = "" Then Return
-	Dim entry As Map
-	entry.Initialize
+	Dim entry As Map = trackIndex.GetDefault(trackId, Null)
+	If entry.IsInitialized = False Then entry.Initialize
 	entry.Put("id", trackId)
 	entry.Put("title", item.GetDefault("title", ""))
 	entry.Put("set", item.GetDefault("set", ""))
 	entry.Put("stream", item.GetDefault("stream", ""))
-	entry.Put("saved_at", DateTime.Now)
+	If entry.ContainsKey("saved_at") = False Then entry.Put("saved_at", DateTime.Now)
+	entry.Put("last_used_at", DateTime.Now)
 	entry.Put("gain", item.GetDefault("gain", 0))
-	cachedTrackIndex.Put(trackId, entry)
+	trackIndex.Put(trackId, entry)
 End Sub
 
 Private Sub GetCachedAdIndex As Map
-	Dim cachedAdIndex As Map = storage.GetDefault("cached_ad_index", Null)
 	If cachedAdIndex.IsInitialized = False Then
 		cachedAdIndex.Initialize
 	End If
@@ -251,11 +314,43 @@ Private Sub GetCachedAdIndex As Map
 End Sub
 
 Private Sub GetCachedTrackIndex As Map
-	Dim cachedTrackIndex As Map = storage.GetDefault("cached_track_index", Null)
 	If cachedTrackIndex.IsInitialized = False Then
 		cachedTrackIndex.Initialize
 	End If
 	Return cachedTrackIndex
+End Sub
+
+Public Sub TouchCachedItem(item As Map)
+	If item.IsInitialized = False Then Return
+	Dim itemId As String = item.GetDefault("id", "")
+	If itemId = "" Then Return
+	Dim itemType As String = item.GetDefault("type", "")
+	If itemType = "ad" Then
+		If cachedAdIndex.ContainsKey(itemId) = False Then Return
+		UpdateAdIndex(item, cachedAdIndex)
+		Return
+	End If
+	If itemType = "track" Then
+		If cachedTrackIndex.ContainsKey(itemId) = False Then Return
+		UpdateTrackIndex(item, cachedTrackIndex)
+	End If
+End Sub
+
+Private Sub LoadIndexesFromStorage
+	cachedAdIndex = storage.GetDefault("cached_ad_index", Null)
+	If cachedAdIndex.IsInitialized = False Then cachedAdIndex.Initialize
+	cachedTrackIndex = storage.GetDefault("cached_track_index", Null)
+	If cachedTrackIndex.IsInitialized = False Then cachedTrackIndex.Initialize
+End Sub
+
+Private Sub SaveAdIndex
+	storage.Put("cached_ad_index", cachedAdIndex)
+	storage.Put("cached_ad_count", cachedAdIndex.Size)
+End Sub
+
+Private Sub SaveTrackIndex
+	storage.Put("cached_track_index", cachedTrackIndex)
+	storage.Put("cached_track_count", cachedTrackIndex.Size)
 End Sub
 
 Private Sub BuildAdUrl(adId As String) As String
@@ -288,12 +383,21 @@ End Sub
 
 Private Sub ReplaceCacheFile(dir As String, tempFileName As String, finalFileName As String) As Boolean
 	If IsCachedFileUsable(dir, tempFileName) = False Then Return False
+	If IsCachedFileUsable(dir, finalFileName) Then
+		DeleteFileIfExists(dir, tempFileName)
+		Return True
+	End If
 	DeleteFileIfExists(dir, finalFileName)
 	Dim tempFile As JavaObject
 	tempFile.InitializeNewInstance("java.io.File", Array As Object(File.Combine(dir, tempFileName)))
 	Dim finalFile As JavaObject
 	finalFile.InitializeNewInstance("java.io.File", Array As Object(File.Combine(dir, finalFileName)))
-	Return tempFile.RunMethod("renameTo", Array As Object(finalFile))
+	Dim renamed As Boolean = tempFile.RunMethod("renameTo", Array As Object(finalFile))
+	If renamed = False And IsCachedFileUsable(dir, finalFileName) Then
+		DeleteFileIfExists(dir, tempFileName)
+		Return True
+	End If
+	Return renamed
 End Sub
 
 Private Sub DeleteFileIfExists(dir As String, fileName As String)
@@ -305,20 +409,164 @@ Public Sub ResolveMediaSource(item As Map) As String
 	If item.IsInitialized = False Then Return "none"
 	Dim itemType As String = item.GetDefault("type", "")
 	If itemType = "ad" Then
-		If IsAdCached(item.GetDefault("id", "")) Then Return "cache"
+		If HasValidatedLocalMedia(item) Then Return "cache"
 		Return "cdn"
 	End If
 	If itemType = "track" Then
-		If IsTrackCached(item.GetDefault("id", "")) Then Return "cache"
+		If HasValidatedLocalMedia(item) Then Return "cache"
 		Return "cdn"
 	End If
 	Return "none"
+End Sub
+
+Private Sub ValidateIndexedFile(itemType As String, itemId As String) As Boolean
+	If itemId = "" Then Return False
+	Dim auditIndex As Map = GetIndexByItemType(itemType)
+	If auditIndex.ContainsKey(itemId) = False Then Return False
+	Dim auditDir As String = GetDirByItemType(itemType)
+	If IsCachedFileUsable(auditDir, itemId) Then Return True
+	auditIndex.Remove(itemId)
+	SaveIndexByItemType(itemType)
+	Return False
+End Sub
+
+Private Sub GetIndexByItemType(itemType As String) As Map
+	If itemType = "ad" Then Return cachedAdIndex
+	Return cachedTrackIndex
+End Sub
+
+Private Sub GetDirByItemType(itemType As String) As String
+	If itemType = "ad" Then Return GetAdsDir
+	Return GetTracksDir
+End Sub
+
+Private Sub SaveIndexByItemType(itemType As String)
+	If itemType = "ad" Then
+		SaveAdIndex
+	Else
+		SaveTrackIndex
+	End If
 End Sub
 
 Private Sub EnsureDirectory(path As String)
 	Dim fileObject As JavaObject
 	fileObject.InitializeNewInstance("java.io.File", Array As Object(path))
 	fileObject.RunMethod("mkdirs", Null)
+End Sub
+
+Private Sub PrepareNextCacheAuditType As Boolean
+	If cacheAuditPendingTypes.IsInitialized = False Or cacheAuditPendingTypes.Size = 0 Then Return False
+	cacheAuditCurrentType = cacheAuditPendingTypes.Get(0)
+	cacheAuditPendingTypes.RemoveAt(0)
+	cacheAuditCurrentPosition = 0
+	cacheAuditSeenIds.Initialize
+	cacheAuditCurrentFileNames.Initialize
+	Dim auditDir As String = GetAuditDirByType(cacheAuditCurrentType)
+	Try
+		If File.Exists(auditDir, "") Then
+			Dim listedFiles As List = File.ListFiles(auditDir)
+			If listedFiles.IsInitialized Then
+				For Each fileName As String In listedFiles
+					cacheAuditCurrentFileNames.Add(fileName)
+				Next
+			End If
+		End If
+	Catch
+		Trace("Не удалось получить список файлов для аудита кэша. type=" & cacheAuditCurrentType & ", message=" & LastException.Message)
+	End Try
+	Trace("Аудит кэша: подготовлен каталог. type=" & cacheAuditCurrentType & ", files=" & cacheAuditCurrentFileNames.Size)
+	Return True
+End Sub
+
+Private Sub ProcessCurrentCacheAuditBatch
+	Dim auditDir As String = GetAuditDirByType(cacheAuditCurrentType)
+	Dim auditIndex As Map = GetAuditIndexByType(cacheAuditCurrentType)
+	For i = 1 To CACHE_AUDIT_BATCH_SIZE
+		If cacheAuditCurrentPosition >= cacheAuditCurrentFileNames.Size Then Exit
+		Dim fileName As String = cacheAuditCurrentFileNames.Get(cacheAuditCurrentPosition)
+		cacheAuditCurrentPosition = cacheAuditCurrentPosition + 1
+		If fileName = "" Then Continue
+		If fileName.EndsWith(".tmp") Then
+			DeleteFileIfExists(auditDir, fileName)
+			cacheAuditTempDeletedCount = cacheAuditTempDeletedCount + 1
+			MarkAuditIndexChanged(cacheAuditCurrentType)
+			Continue
+		End If
+		If IsCachedFileUsable(auditDir, fileName) = False Then Continue
+		cacheAuditSeenIds.Put(fileName, True)
+		If auditIndex.ContainsKey(fileName) = False Then
+			AddIndexedFileFromAudit(cacheAuditCurrentType, fileName, auditIndex)
+			cacheAuditAddedCount = cacheAuditAddedCount + 1
+		End If
+	Next
+End Sub
+
+Private Sub FinalizeCurrentCacheAuditType
+	Dim auditDir As String = GetAuditDirByType(cacheAuditCurrentType)
+	Dim auditIndex As Map = GetAuditIndexByType(cacheAuditCurrentType)
+	Dim keysCopy As List
+	keysCopy.Initialize
+	For Each key As String In auditIndex.Keys
+		keysCopy.Add(key)
+	Next
+	For Each key As String In keysCopy
+		If cacheAuditSeenIds.ContainsKey(key) = False Then
+			If IsCachedFileUsable(auditDir, key) Then
+				cacheAuditSeenIds.Put(key, True)
+				Continue
+			End If
+			auditIndex.Remove(key)
+			cacheAuditRemovedCount = cacheAuditRemovedCount + 1
+			MarkAuditIndexChanged(cacheAuditCurrentType)
+		End If
+	Next
+	Trace("Аудит кэша: каталог обработан. type=" & cacheAuditCurrentType & ", seen=" & cacheAuditSeenIds.Size)
+End Sub
+
+Private Sub FinishCacheAudit
+	If cacheAuditAdIndexChanged Then SaveAdIndex
+	If cacheAuditTrackIndexChanged Then SaveTrackIndex
+	cacheAuditInProgress = False
+	cacheAuditCurrentType = ""
+	Trace("Аудит кэша завершен. added=" & cacheAuditAddedCount & ", removed=" & cacheAuditRemovedCount & ", tempDeleted=" & cacheAuditTempDeletedCount & ", ads=" & cachedAdIndex.Size & ", tracks=" & cachedTrackIndex.Size)
+End Sub
+
+Private Sub GetAuditDirByType(itemType As String) As String
+	If itemType = "ads" Then Return GetAdsDir
+	Return GetTracksDir
+End Sub
+
+Private Sub GetAuditIndexByType(itemType As String) As Map
+	If itemType = "ads" Then Return cachedAdIndex
+	Return cachedTrackIndex
+End Sub
+
+Private Sub MarkAuditIndexChanged(itemType As String)
+	If itemType = "ads" Then
+		cacheAuditAdIndexChanged = True
+	Else
+		cacheAuditTrackIndexChanged = True
+	End If
+End Sub
+
+Private Sub AddIndexedFileFromAudit(itemType As String, fileName As String, auditIndex As Map)
+	Dim entry As Map
+	entry.Initialize
+	entry.Put("id", fileName)
+	entry.Put("saved_at", DateTime.Now)
+	entry.Put("last_used_at", DateTime.Now)
+	If itemType = "ads" Then
+		entry.Put("title", "")
+		entry.Put("duration", 0)
+		entry.Put("gain", 0)
+	Else
+		entry.Put("title", "")
+		entry.Put("set", "")
+		entry.Put("stream", "")
+		entry.Put("gain", 0)
+	End If
+	auditIndex.Put(fileName, entry)
+	MarkAuditIndexChanged(itemType)
 End Sub
 
 Private Sub Trace(message As String)
