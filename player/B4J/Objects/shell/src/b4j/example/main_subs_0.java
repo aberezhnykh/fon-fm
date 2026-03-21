@@ -157,12 +157,19 @@ public static void initializeProcessGlobals() {
 	    main.processGlobalsRun = true;
 		try {
 		        main_subs_0._process_globals();
+uistyle_subs_0._process_globals();
 b4xpages_subs_0._process_globals();
 b4xcollections_subs_0._process_globals();
 httputils2service_subs_0._process_globals();
 main.myClass = BA.getDeviceClass ("b4j.example.main");
 b4xmainpage.myClass = BA.getDeviceClass ("b4j.example.b4xmainpage");
 audioplayer.myClass = BA.getDeviceClass ("b4j.example.audioplayer");
+adscheduler.myClass = BA.getDeviceClass ("b4j.example.adscheduler");
+uistyle.myClass = BA.getDeviceClass ("b4j.example.uistyle");
+dataplaybackresolver.myClass = BA.getDeviceClass ("b4j.example.dataplaybackresolver");
+traceservice.myClass = BA.getDeviceClass ("b4j.example.traceservice");
+mediacache.myClass = BA.getDeviceClass ("b4j.example.mediacache");
+offlinestore.myClass = BA.getDeviceClass ("b4j.example.offlinestore");
 b4xpages.myClass = BA.getDeviceClass ("b4j.example.b4xpages");
 b4xbitset.myClass = BA.getDeviceClass ("b4j.example.b4xbitset");
 b4xbytesbuilder.myClass = BA.getDeviceClass ("b4j.example.b4xbytesbuilder");

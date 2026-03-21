@@ -321,6 +321,8 @@ foreach ($ids as $id) {
                     if (!$slotsOut) continue;
 
                     $scheduleJson = client_json_normalize_schedule([
+                        'id' => (string)($schedule['id'] ?? ''),
+                        'status' => (string)($schedule['status'] ?? ''),
                         'updated' => (string)($schedule['updated'] ?? ''),
                         'title' => (string)($schedule['title'] ?? ''),
                         'start' => (string)($schedule['start'] ?? ''),

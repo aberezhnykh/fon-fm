@@ -58,9 +58,10 @@ public static RemoteObject _mpm = RemoteObject.declareNull("Object");
 public static RemoteObject _delegate = RemoteObject.declareNull("b4j.example.b4xpagesdelegator");
 public static RemoteObject _globalcontext = RemoteObject.declareNull("Object");
 public static b4j.example.main _main = null;
+public static b4j.example.uistyle _uistyle = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
   public Object[] GetGlobals() {
-		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"Delegate",b4xpages._delegate,"GlobalContext",b4xpages._globalcontext,"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"Main",Debug.moduleToString(b4j.example.main.class),"mPM",b4xpages._mpm};
+		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"Delegate",b4xpages._delegate,"GlobalContext",b4xpages._globalcontext,"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"Main",Debug.moduleToString(b4j.example.main.class),"mPM",b4xpages._mpm,"UiStyle",Debug.moduleToString(b4j.example.uistyle.class)};
 }
 }

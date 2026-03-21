@@ -57,6 +57,7 @@ public static void initializeProcessGlobals() {
 }public static anywheresoftware.b4a.keywords.Common __c = null;
 public static anywheresoftware.b4j.objects.JFX _fx = null;
 public static anywheresoftware.b4j.objects.Form _mainform = null;
+public static b4j.example.uistyle _uistyle = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
@@ -96,68 +97,68 @@ public static String  _mainform_closed() throws Exception{
 RDebugUtils.currentModule="main";
 if (Debug.shouldDelegate(ba, "mainform_closed", false))
 	 {return ((String) Debug.delegate(ba, "mainform_closed", null));}
-RDebugUtils.currentLine=20381696;
- //BA.debugLineNum = 20381696;BA.debugLine="Sub MainForm_Closed";
-RDebugUtils.currentLine=20381697;
- //BA.debugLineNum = 20381697;BA.debugLine="B4XPages.MainPage.SaveWindowState";
+RDebugUtils.currentLine=262144;
+ //BA.debugLineNum = 262144;BA.debugLine="Sub MainForm_Closed";
+RDebugUtils.currentLine=262145;
+ //BA.debugLineNum = 262145;BA.debugLine="B4XPages.MainPage.SaveWindowState";
 _b4xpages._mainpage /*b4j.example.b4xmainpage*/ ()._savewindowstate /*String*/ (null);
-RDebugUtils.currentLine=20381698;
- //BA.debugLineNum = 20381698;BA.debugLine="B4XPages.Delegate.MainForm_Closed";
+RDebugUtils.currentLine=262146;
+ //BA.debugLineNum = 262146;BA.debugLine="B4XPages.Delegate.MainForm_Closed";
 _b4xpages._delegate /*b4j.example.b4xpagesdelegator*/ ._mainform_closed /*String*/ (null);
-RDebugUtils.currentLine=20381699;
- //BA.debugLineNum = 20381699;BA.debugLine="End Sub";
+RDebugUtils.currentLine=262147;
+ //BA.debugLineNum = 262147;BA.debugLine="End Sub";
 return "";
 }
 public static String  _mainform_closerequest(anywheresoftware.b4j.objects.NodeWrapper.ConcreteEventWrapper _eventdata) throws Exception{
 RDebugUtils.currentModule="main";
 if (Debug.shouldDelegate(ba, "mainform_closerequest", false))
 	 {return ((String) Debug.delegate(ba, "mainform_closerequest", new Object[] {_eventdata}));}
-RDebugUtils.currentLine=20447232;
- //BA.debugLineNum = 20447232;BA.debugLine="Sub MainForm_CloseRequest (eventData As Event)";
-RDebugUtils.currentLine=20447233;
- //BA.debugLineNum = 20447233;BA.debugLine="B4XPages.Delegate.MainForm_CloseRequest(eventData";
+RDebugUtils.currentLine=327680;
+ //BA.debugLineNum = 327680;BA.debugLine="Sub MainForm_CloseRequest (eventData As Event)";
+RDebugUtils.currentLine=327681;
+ //BA.debugLineNum = 327681;BA.debugLine="B4XPages.Delegate.MainForm_CloseRequest(eventData";
 _b4xpages._delegate /*b4j.example.b4xpagesdelegator*/ ._mainform_closerequest /*String*/ (null,_eventdata);
-RDebugUtils.currentLine=20447234;
- //BA.debugLineNum = 20447234;BA.debugLine="End Sub";
+RDebugUtils.currentLine=327682;
+ //BA.debugLineNum = 327682;BA.debugLine="End Sub";
 return "";
 }
 public static String  _mainform_focuschanged(boolean _hasfocus) throws Exception{
 RDebugUtils.currentModule="main";
 if (Debug.shouldDelegate(ba, "mainform_focuschanged", false))
 	 {return ((String) Debug.delegate(ba, "mainform_focuschanged", new Object[] {_hasfocus}));}
-RDebugUtils.currentLine=20250624;
- //BA.debugLineNum = 20250624;BA.debugLine="Sub MainForm_FocusChanged (hasFocus As Boolean)";
-RDebugUtils.currentLine=20250625;
- //BA.debugLineNum = 20250625;BA.debugLine="B4XPages.Delegate.MainForm_FocusChanged(hasFocus)";
+RDebugUtils.currentLine=131072;
+ //BA.debugLineNum = 131072;BA.debugLine="Sub MainForm_FocusChanged (hasFocus As Boolean)";
+RDebugUtils.currentLine=131073;
+ //BA.debugLineNum = 131073;BA.debugLine="B4XPages.Delegate.MainForm_FocusChanged(hasFocus)";
 _b4xpages._delegate /*b4j.example.b4xpagesdelegator*/ ._mainform_focuschanged /*String*/ (null,_hasfocus);
-RDebugUtils.currentLine=20250626;
- //BA.debugLineNum = 20250626;BA.debugLine="End Sub";
+RDebugUtils.currentLine=131074;
+ //BA.debugLineNum = 131074;BA.debugLine="End Sub";
 return "";
 }
 public static String  _mainform_iconifiedchanged(boolean _iconified) throws Exception{
 RDebugUtils.currentModule="main";
 if (Debug.shouldDelegate(ba, "mainform_iconifiedchanged", false))
 	 {return ((String) Debug.delegate(ba, "mainform_iconifiedchanged", new Object[] {_iconified}));}
-RDebugUtils.currentLine=20512768;
- //BA.debugLineNum = 20512768;BA.debugLine="Public Sub MainForm_IconifiedChanged (iconified As";
-RDebugUtils.currentLine=20512769;
- //BA.debugLineNum = 20512769;BA.debugLine="B4XPages.Delegate.MainForm_IconifiedChanged(iconi";
+RDebugUtils.currentLine=393216;
+ //BA.debugLineNum = 393216;BA.debugLine="Public Sub MainForm_IconifiedChanged (iconified As";
+RDebugUtils.currentLine=393217;
+ //BA.debugLineNum = 393217;BA.debugLine="B4XPages.Delegate.MainForm_IconifiedChanged(iconi";
 _b4xpages._delegate /*b4j.example.b4xpagesdelegator*/ ._mainform_iconifiedchanged /*String*/ (null,_iconified);
-RDebugUtils.currentLine=20512770;
- //BA.debugLineNum = 20512770;BA.debugLine="End Sub";
+RDebugUtils.currentLine=393218;
+ //BA.debugLineNum = 393218;BA.debugLine="End Sub";
 return "";
 }
 public static String  _mainform_resize(double _width,double _height) throws Exception{
 RDebugUtils.currentModule="main";
 if (Debug.shouldDelegate(ba, "mainform_resize", false))
 	 {return ((String) Debug.delegate(ba, "mainform_resize", new Object[] {_width,_height}));}
-RDebugUtils.currentLine=20316160;
- //BA.debugLineNum = 20316160;BA.debugLine="Sub MainForm_Resize (width As Double, height As Do";
-RDebugUtils.currentLine=20316161;
- //BA.debugLineNum = 20316161;BA.debugLine="B4XPages.Delegate.MainForm_Resize(width, height)";
+RDebugUtils.currentLine=196608;
+ //BA.debugLineNum = 196608;BA.debugLine="Sub MainForm_Resize (width As Double, height As Do";
+RDebugUtils.currentLine=196609;
+ //BA.debugLineNum = 196609;BA.debugLine="B4XPages.Delegate.MainForm_Resize(width, height)";
 _b4xpages._delegate /*b4j.example.b4xpagesdelegator*/ ._mainform_resize /*String*/ (null,_width,_height);
-RDebugUtils.currentLine=20316162;
- //BA.debugLineNum = 20316162;BA.debugLine="End Sub";
+RDebugUtils.currentLine=196610;
+ //BA.debugLineNum = 196610;BA.debugLine="End Sub";
 return "";
 }
 }

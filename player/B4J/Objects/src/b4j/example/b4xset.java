@@ -33,6 +33,7 @@ public class b4xset extends B4AClass.ImplB4AClass implements BA.SubDelegator{
 public anywheresoftware.b4a.keywords.Common __c = null;
 public b4j.example.b4xorderedmap _map = null;
 public b4j.example.main _main = null;
+public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
 public b4j.example.b4xcollections _b4xcollections = null;
 public b4j.example.httputils2service _httputils2service = null;
@@ -42,13 +43,13 @@ innerInitialize(_ba);
 RDebugUtils.currentModule="b4xset";
 if (Debug.shouldDelegate(ba, "initialize", true))
 	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba}));}
-RDebugUtils.currentLine=12845056;
- //BA.debugLineNum = 12845056;BA.debugLine="Public Sub Initialize";
-RDebugUtils.currentLine=12845057;
- //BA.debugLineNum = 12845057;BA.debugLine="map.Initialize";
+RDebugUtils.currentLine=24248320;
+ //BA.debugLineNum = 24248320;BA.debugLine="Public Sub Initialize";
+RDebugUtils.currentLine=24248321;
+ //BA.debugLineNum = 24248321;BA.debugLine="map.Initialize";
 __ref._map /*b4j.example.b4xorderedmap*/ ._initialize /*String*/ (null,ba);
-RDebugUtils.currentLine=12845058;
- //BA.debugLineNum = 12845058;BA.debugLine="End Sub";
+RDebugUtils.currentLine=24248322;
+ //BA.debugLineNum = 24248322;BA.debugLine="End Sub";
 return "";
 }
 public String  _add(b4j.example.b4xset __ref,Object _value) throws Exception{
@@ -56,13 +57,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xset";
 if (Debug.shouldDelegate(ba, "add", true))
 	 {return ((String) Debug.delegate(ba, "add", new Object[] {_value}));}
-RDebugUtils.currentLine=12910592;
- //BA.debugLineNum = 12910592;BA.debugLine="Public Sub Add(Value As Object)";
-RDebugUtils.currentLine=12910593;
- //BA.debugLineNum = 12910593;BA.debugLine="map.Put(Value, \"\")";
+RDebugUtils.currentLine=24313856;
+ //BA.debugLineNum = 24313856;BA.debugLine="Public Sub Add(Value As Object)";
+RDebugUtils.currentLine=24313857;
+ //BA.debugLineNum = 24313857;BA.debugLine="map.Put(Value, \"\")";
 __ref._map /*b4j.example.b4xorderedmap*/ ._put /*String*/ (null,_value,(Object)(""));
-RDebugUtils.currentLine=12910594;
- //BA.debugLineNum = 12910594;BA.debugLine="End Sub";
+RDebugUtils.currentLine=24313858;
+ //BA.debugLineNum = 24313858;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.List  _aslist(b4j.example.b4xset __ref) throws Exception{
@@ -70,25 +71,25 @@ __ref = this;
 RDebugUtils.currentModule="b4xset";
 if (Debug.shouldDelegate(ba, "aslist", true))
 	 {return ((anywheresoftware.b4a.objects.collections.List) Debug.delegate(ba, "aslist", null));}
-RDebugUtils.currentLine=13238272;
- //BA.debugLineNum = 13238272;BA.debugLine="Public Sub AsList As List";
-RDebugUtils.currentLine=13238273;
- //BA.debugLineNum = 13238273;BA.debugLine="Return map.Keys";
+RDebugUtils.currentLine=24641536;
+ //BA.debugLineNum = 24641536;BA.debugLine="Public Sub AsList As List";
+RDebugUtils.currentLine=24641537;
+ //BA.debugLineNum = 24641537;BA.debugLine="Return map.Keys";
 if (true) return __ref._map /*b4j.example.b4xorderedmap*/ ._getkeys /*anywheresoftware.b4a.objects.collections.List*/ (null);
-RDebugUtils.currentLine=13238274;
- //BA.debugLineNum = 13238274;BA.debugLine="End Sub";
+RDebugUtils.currentLine=24641538;
+ //BA.debugLineNum = 24641538;BA.debugLine="End Sub";
 return null;
 }
 public String  _class_globals(b4j.example.b4xset __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xset";
-RDebugUtils.currentLine=12779520;
- //BA.debugLineNum = 12779520;BA.debugLine="Sub Class_Globals";
-RDebugUtils.currentLine=12779521;
- //BA.debugLineNum = 12779521;BA.debugLine="Private map As B4XOrderedMap";
+RDebugUtils.currentLine=24182784;
+ //BA.debugLineNum = 24182784;BA.debugLine="Sub Class_Globals";
+RDebugUtils.currentLine=24182785;
+ //BA.debugLineNum = 24182785;BA.debugLine="Private map As B4XOrderedMap";
 _map = new b4j.example.b4xorderedmap();
-RDebugUtils.currentLine=12779522;
- //BA.debugLineNum = 12779522;BA.debugLine="End Sub";
+RDebugUtils.currentLine=24182786;
+ //BA.debugLineNum = 24182786;BA.debugLine="End Sub";
 return "";
 }
 public String  _clear(b4j.example.b4xset __ref) throws Exception{
@@ -96,13 +97,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xset";
 if (Debug.shouldDelegate(ba, "clear", true))
 	 {return ((String) Debug.delegate(ba, "clear", null));}
-RDebugUtils.currentLine=13172736;
- //BA.debugLineNum = 13172736;BA.debugLine="Public Sub Clear";
-RDebugUtils.currentLine=13172737;
- //BA.debugLineNum = 13172737;BA.debugLine="map.Clear";
+RDebugUtils.currentLine=24576000;
+ //BA.debugLineNum = 24576000;BA.debugLine="Public Sub Clear";
+RDebugUtils.currentLine=24576001;
+ //BA.debugLineNum = 24576001;BA.debugLine="map.Clear";
 __ref._map /*b4j.example.b4xorderedmap*/ ._clear /*String*/ (null);
-RDebugUtils.currentLine=13172738;
- //BA.debugLineNum = 13172738;BA.debugLine="End Sub";
+RDebugUtils.currentLine=24576002;
+ //BA.debugLineNum = 24576002;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _contains(b4j.example.b4xset __ref,Object _value) throws Exception{
@@ -110,13 +111,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xset";
 if (Debug.shouldDelegate(ba, "contains", true))
 	 {return ((Boolean) Debug.delegate(ba, "contains", new Object[] {_value}));}
-RDebugUtils.currentLine=13041664;
- //BA.debugLineNum = 13041664;BA.debugLine="Public Sub Contains (Value As Object) As Boolean";
-RDebugUtils.currentLine=13041665;
- //BA.debugLineNum = 13041665;BA.debugLine="Return map.ContainsKey(Value)";
+RDebugUtils.currentLine=24444928;
+ //BA.debugLineNum = 24444928;BA.debugLine="Public Sub Contains (Value As Object) As Boolean";
+RDebugUtils.currentLine=24444929;
+ //BA.debugLineNum = 24444929;BA.debugLine="Return map.ContainsKey(Value)";
 if (true) return __ref._map /*b4j.example.b4xorderedmap*/ ._containskey /*boolean*/ (null,_value);
-RDebugUtils.currentLine=13041666;
- //BA.debugLineNum = 13041666;BA.debugLine="End Sub";
+RDebugUtils.currentLine=24444930;
+ //BA.debugLineNum = 24444930;BA.debugLine="End Sub";
 return false;
 }
 public int  _getsize(b4j.example.b4xset __ref) throws Exception{
@@ -124,13 +125,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xset";
 if (Debug.shouldDelegate(ba, "getsize", true))
 	 {return ((Integer) Debug.delegate(ba, "getsize", null));}
-RDebugUtils.currentLine=13107200;
- //BA.debugLineNum = 13107200;BA.debugLine="Public Sub getSize As Int";
-RDebugUtils.currentLine=13107201;
- //BA.debugLineNum = 13107201;BA.debugLine="Return map.Size";
+RDebugUtils.currentLine=24510464;
+ //BA.debugLineNum = 24510464;BA.debugLine="Public Sub getSize As Int";
+RDebugUtils.currentLine=24510465;
+ //BA.debugLineNum = 24510465;BA.debugLine="Return map.Size";
 if (true) return __ref._map /*b4j.example.b4xorderedmap*/ ._getsize /*int*/ (null);
-RDebugUtils.currentLine=13107202;
- //BA.debugLineNum = 13107202;BA.debugLine="End Sub";
+RDebugUtils.currentLine=24510466;
+ //BA.debugLineNum = 24510466;BA.debugLine="End Sub";
 return 0;
 }
 public String  _remove(b4j.example.b4xset __ref,Object _value) throws Exception{
@@ -138,13 +139,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xset";
 if (Debug.shouldDelegate(ba, "remove", true))
 	 {return ((String) Debug.delegate(ba, "remove", new Object[] {_value}));}
-RDebugUtils.currentLine=12976128;
- //BA.debugLineNum = 12976128;BA.debugLine="Public Sub Remove(Value As Object)";
-RDebugUtils.currentLine=12976129;
- //BA.debugLineNum = 12976129;BA.debugLine="map.Remove(Value)";
+RDebugUtils.currentLine=24379392;
+ //BA.debugLineNum = 24379392;BA.debugLine="Public Sub Remove(Value As Object)";
+RDebugUtils.currentLine=24379393;
+ //BA.debugLineNum = 24379393;BA.debugLine="map.Remove(Value)";
 __ref._map /*b4j.example.b4xorderedmap*/ ._remove /*String*/ (null,_value);
-RDebugUtils.currentLine=12976130;
- //BA.debugLineNum = 12976130;BA.debugLine="End Sub";
+RDebugUtils.currentLine=24379394;
+ //BA.debugLineNum = 24379394;BA.debugLine="End Sub";
 return "";
 }
 }

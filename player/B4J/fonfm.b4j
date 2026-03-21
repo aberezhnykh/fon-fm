@@ -9,11 +9,17 @@ Library5=jokhttputils2
 Library6=jshell
 Library7=json
 Library8=keyvaluestore
-Module1=AudioPlayer
-Module2=|relative|..\B4XMainPage
+Module1=AdScheduler
+Module2=AudioPlayer
+Module3=|relative|..\B4XMainPage
+Module4=DataPlaybackResolver
+Module5=MediaCache
+Module6=OfflineStore
+Module7=TraceService
+Module8=UiStyle
 NumberOfFiles=0
 NumberOfLibraries=8
-NumberOfModules=2
+NumberOfModules=8
 Version=10.5
 @EndOfDesignText@
 #Region Project Attributes 
