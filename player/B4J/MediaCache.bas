@@ -178,6 +178,7 @@ End Sub
 Private Sub EnsureSingleAdCached(ad As Map, adIndex As Map) As ResumableSub
 	Dim adId As String = ad.GetDefault("id", "")
 	If adId = "" Then Return False
+	If TryRestoreExistingCachedMedia("ad", adId, ad, adIndex) Then Return False
 	If IsAdCached(adId) Then
 		UpdateAdIndex(ad, adIndex)
 		Return False
@@ -229,6 +230,7 @@ End Sub
 Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As ResumableSub
 	Dim trackId As String = item.GetDefault("id", "")
 	If trackId = "" Then Return False
+	If TryRestoreExistingCachedMedia("track", trackId, item, trackIndex) Then Return False
 	If IsTrackCached(trackId) Then
 		UpdateTrackIndex(item, trackIndex)
 		Return False
@@ -427,6 +429,24 @@ Private Sub ValidateIndexedFile(itemType As String, itemId As String) As Boolean
 	If IsCachedFileUsable(auditDir, itemId) Then Return True
 	auditIndex.Remove(itemId)
 	SaveIndexByItemType(itemType)
+	Return False
+End Sub
+
+Private Sub TryRestoreExistingCachedMedia(itemType As String, itemId As String, item As Map, itemIndex As Map) As Boolean
+	If itemId = "" Then Return False
+	If IsCachedFileUsable(GetDirByItemType(itemType), itemId) = False Then Return False
+	If itemType = "ad" Then
+		UpdateAdIndex(item, itemIndex)
+		SaveAdIndex
+		Trace("Валидный cached ad восстановлен в индексе без скачивания. id=" & itemId)
+		Return True
+	End If
+	If itemType = "track" Then
+		UpdateTrackIndex(item, itemIndex)
+		SaveTrackIndex
+		Trace("Валидный cached track восстановлен в индексе без скачивания. id=" & itemId)
+		Return True
+	End If
 	Return False
 End Sub
 

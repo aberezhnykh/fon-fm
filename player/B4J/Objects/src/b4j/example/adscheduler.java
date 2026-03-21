@@ -62,11 +62,11 @@ RDebugUtils.currentLine=17629188;
  //BA.debugLineNum = 17629188;BA.debugLine="End Sub";
 return "";
 }
-public boolean  _scantargetminute(b4j.example.adscheduler __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata,anywheresoftware.b4a.objects.collections.List _playqueue,long _targetminutetimestamp,boolean _force) throws Exception{
+public boolean  _scantargetminute(b4j.example.adscheduler __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata,anywheresoftware.b4a.objects.collections.List _playqueue,long _targetminutetimestamp,boolean _force,boolean _allowregularads) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="adscheduler";
 if (Debug.shouldDelegate(ba, "scantargetminute", false))
-	 {return ((Boolean) Debug.delegate(ba, "scantargetminute", new Object[] {_offlinedata,_playqueue,_targetminutetimestamp,_force}));}
+	 {return ((Boolean) Debug.delegate(ba, "scantargetminute", new Object[] {_offlinedata,_playqueue,_targetminutetimestamp,_force,_allowregularads}));}
 String _minutekey = "";
 anywheresoftware.b4a.objects.collections.Map _breakitem = null;
 long _breakat = 0L;
@@ -97,7 +97,7 @@ __ref._lastscanminutekey /*String*/  = _minutekey;
 RDebugUtils.currentLine=38862855;
  //BA.debugLineNum = 38862855;BA.debugLine="Dim breakItem As Map = BuildBreakForMinute(offlin";
 _breakitem = new anywheresoftware.b4a.objects.collections.Map();
-_breakitem = __ref._buildbreakforminute /*anywheresoftware.b4a.objects.collections.Map*/ (null,_offlinedata,_targetminutetimestamp);
+_breakitem = __ref._buildbreakforminute /*anywheresoftware.b4a.objects.collections.Map*/ (null,_offlinedata,_targetminutetimestamp,_allowregularads);
 RDebugUtils.currentLine=38862856;
  //BA.debugLineNum = 38862856;BA.debugLine="If breakItem.IsInitialized = False Or breakItem.S";
 if (_breakitem.IsInitialized()==__c.False || _breakitem.getSize()==0) { 
@@ -116,37 +116,35 @@ RDebugUtils.currentLine=38862860;
  //BA.debugLineNum = 38862860;BA.debugLine="lastInjectedMinuteKey = minuteKey";
 __ref._lastinjectedminutekey /*String*/  = _minutekey;
 RDebugUtils.currentLine=38862861;
- //BA.debugLineNum = 38862861;BA.debugLine="Trace(\"Локальный break уже есть в очереди. at=\"";
-__ref._trace /*String*/ (null,"Локальный break уже есть в очереди. at="+BA.NumberToString(_breakat));
-RDebugUtils.currentLine=38862862;
- //BA.debugLineNum = 38862862;BA.debugLine="Return False";
+ //BA.debugLineNum = 38862861;BA.debugLine="Return False";
 if (true) return __c.False;
  };
-RDebugUtils.currentLine=38862864;
- //BA.debugLineNum = 38862864;BA.debugLine="If lastInjectedMinuteKey = minuteKey Then Return";
+RDebugUtils.currentLine=38862863;
+ //BA.debugLineNum = 38862863;BA.debugLine="If lastInjectedMinuteKey = minuteKey Then Return";
 if ((__ref._lastinjectedminutekey /*String*/ ).equals(_minutekey)) { 
 if (true) return __c.False;};
-RDebugUtils.currentLine=38862865;
- //BA.debugLineNum = 38862865;BA.debugLine="playQueue.InsertAt(0, breakItem)";
+RDebugUtils.currentLine=38862864;
+ //BA.debugLineNum = 38862864;BA.debugLine="playQueue.InsertAt(0, breakItem)";
 _playqueue.InsertAt((int) (0),(Object)(_breakitem.getObject()));
-RDebugUtils.currentLine=38862866;
- //BA.debugLineNum = 38862866;BA.debugLine="lastInjectedMinuteKey = minuteKey";
+RDebugUtils.currentLine=38862865;
+ //BA.debugLineNum = 38862865;BA.debugLine="lastInjectedMinuteKey = minuteKey";
 __ref._lastinjectedminutekey /*String*/  = _minutekey;
-RDebugUtils.currentLine=38862867;
- //BA.debugLineNum = 38862867;BA.debugLine="Trace(\"Локальный break добавлен в начало очереди.";
+RDebugUtils.currentLine=38862866;
+ //BA.debugLineNum = 38862866;BA.debugLine="Trace(\"Локальный break добавлен в начало очереди.";
 __ref._trace /*String*/ (null,"Локальный break добавлен в начало очереди. minute="+_minutekey+", items="+BA.ObjectToString(_breakitem.GetDefault((Object)("items_count"),(Object)(0)))+", queueSize="+BA.NumberToString(_playqueue.getSize()));
-RDebugUtils.currentLine=38862868;
- //BA.debugLineNum = 38862868;BA.debugLine="Return True";
+RDebugUtils.currentLine=38862867;
+ //BA.debugLineNum = 38862867;BA.debugLine="Return True";
 if (true) return __c.True;
-RDebugUtils.currentLine=38862869;
- //BA.debugLineNum = 38862869;BA.debugLine="End Sub";
+RDebugUtils.currentLine=38862868;
+ //BA.debugLineNum = 38862868;BA.debugLine="End Sub";
 return false;
 }
-public boolean  _admatchescurrentminute(b4j.example.adscheduler __ref,anywheresoftware.b4a.objects.collections.Map _ad,String _todaykey,String _todayweekday,int _currentminuteofday) throws Exception{
+public boolean  _admatchescurrentminute(b4j.example.adscheduler __ref,anywheresoftware.b4a.objects.collections.Map _ad,String _todaykey,String _todayweekday,int _currentminuteofday,boolean _allowregularads) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="adscheduler";
 if (Debug.shouldDelegate(ba, "admatchescurrentminute", false))
-	 {return ((Boolean) Debug.delegate(ba, "admatchescurrentminute", new Object[] {_ad,_todaykey,_todayweekday,_currentminuteofday}));}
+	 {return ((Boolean) Debug.delegate(ba, "admatchescurrentminute", new Object[] {_ad,_todaykey,_todayweekday,_currentminuteofday,_allowregularads}));}
+boolean _isexact = false;
 String _startdate = "";
 String _enddate = "";
 anywheresoftware.b4a.objects.collections.List _weekdays = null;
@@ -161,78 +159,85 @@ RDebugUtils.currentLine=17891329;
 if (_ad.IsInitialized()==__c.False) { 
 if (true) return __c.False;};
 RDebugUtils.currentLine=17891330;
- //BA.debugLineNum = 17891330;BA.debugLine="Dim startDate As String = ad.GetDefault(\"start\",";
-_startdate = BA.ObjectToString(_ad.GetDefault((Object)("start"),(Object)("")));
+ //BA.debugLineNum = 17891330;BA.debugLine="Dim isExact As Boolean = ad.GetDefault(\"exactly\",";
+_isexact = (_ad.GetDefault((Object)("exactly"),(Object)(__c.False))).equals((Object)(__c.True));
 RDebugUtils.currentLine=17891331;
- //BA.debugLineNum = 17891331;BA.debugLine="If startDate <> \"\" And startDate.CompareTo(todayK";
-if ((_startdate).equals("") == false && _startdate.compareTo(_todaykey)>0) { 
+ //BA.debugLineNum = 17891331;BA.debugLine="If isExact = False And allowRegularAds = False Th";
+if (_isexact==__c.False && _allowregularads==__c.False) { 
 if (true) return __c.False;};
 RDebugUtils.currentLine=17891332;
- //BA.debugLineNum = 17891332;BA.debugLine="Dim endDate As String = ad.GetDefault(\"end\", \"\")";
-_enddate = BA.ObjectToString(_ad.GetDefault((Object)("end"),(Object)("")));
+ //BA.debugLineNum = 17891332;BA.debugLine="Dim startDate As String = ad.GetDefault(\"start\",";
+_startdate = BA.ObjectToString(_ad.GetDefault((Object)("start"),(Object)("")));
 RDebugUtils.currentLine=17891333;
- //BA.debugLineNum = 17891333;BA.debugLine="If endDate <> \"\" And endDate.CompareTo(todayKey)";
-if ((_enddate).equals("") == false && _enddate.compareTo(_todaykey)<0) { 
+ //BA.debugLineNum = 17891333;BA.debugLine="If startDate <> \"\" And startDate.CompareTo(todayK";
+if ((_startdate).equals("") == false && _startdate.compareTo(_todaykey)>0) { 
 if (true) return __c.False;};
 RDebugUtils.currentLine=17891334;
- //BA.debugLineNum = 17891334;BA.debugLine="Dim weekdays As List = ad.GetDefault(\"weekdays\",";
+ //BA.debugLineNum = 17891334;BA.debugLine="Dim endDate As String = ad.GetDefault(\"end\", \"\")";
+_enddate = BA.ObjectToString(_ad.GetDefault((Object)("end"),(Object)("")));
+RDebugUtils.currentLine=17891335;
+ //BA.debugLineNum = 17891335;BA.debugLine="If endDate <> \"\" And endDate.CompareTo(todayKey)";
+if ((_enddate).equals("") == false && _enddate.compareTo(_todaykey)<0) { 
+if (true) return __c.False;};
+RDebugUtils.currentLine=17891336;
+ //BA.debugLineNum = 17891336;BA.debugLine="Dim weekdays As List = ad.GetDefault(\"weekdays\",";
 _weekdays = new anywheresoftware.b4a.objects.collections.List();
 _weekdays = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_ad.GetDefault((Object)("weekdays"),__c.Null)));
-RDebugUtils.currentLine=17891335;
- //BA.debugLineNum = 17891335;BA.debugLine="If weekdays.IsInitialized And weekdays.Size > 0 T";
-if (_weekdays.IsInitialized() && _weekdays.getSize()>0) { 
-RDebugUtils.currentLine=17891336;
- //BA.debugLineNum = 17891336;BA.debugLine="Dim weekdayMatched As Boolean = False";
-_weekdaymatched = __c.False;
 RDebugUtils.currentLine=17891337;
- //BA.debugLineNum = 17891337;BA.debugLine="For Each weekdayObject As Object In weekdays";
-{
-final anywheresoftware.b4a.BA.IterableList group9 = _weekdays;
-final int groupLen9 = group9.getSize()
-;int index9 = 0;
-;
-for (; index9 < groupLen9;index9++){
-_weekdayobject = group9.Get(index9);
+ //BA.debugLineNum = 17891337;BA.debugLine="If weekdays.IsInitialized And weekdays.Size > 0 T";
+if (_weekdays.IsInitialized() && _weekdays.getSize()>0) { 
 RDebugUtils.currentLine=17891338;
- //BA.debugLineNum = 17891338;BA.debugLine="If (\"\" & weekdayObject).Trim = todayWeekday The";
-if (((""+BA.ObjectToString(_weekdayobject)).trim()).equals(_todayweekday)) { 
+ //BA.debugLineNum = 17891338;BA.debugLine="Dim weekdayMatched As Boolean = False";
+_weekdaymatched = __c.False;
 RDebugUtils.currentLine=17891339;
- //BA.debugLineNum = 17891339;BA.debugLine="weekdayMatched = True";
-_weekdaymatched = __c.True;
+ //BA.debugLineNum = 17891339;BA.debugLine="For Each weekdayObject As Object In weekdays";
+{
+final anywheresoftware.b4a.BA.IterableList group11 = _weekdays;
+final int groupLen11 = group11.getSize()
+;int index11 = 0;
+;
+for (; index11 < groupLen11;index11++){
+_weekdayobject = group11.Get(index11);
 RDebugUtils.currentLine=17891340;
- //BA.debugLineNum = 17891340;BA.debugLine="Exit";
+ //BA.debugLineNum = 17891340;BA.debugLine="If (\"\" & weekdayObject).Trim = todayWeekday The";
+if (((""+BA.ObjectToString(_weekdayobject)).trim()).equals(_todayweekday)) { 
+RDebugUtils.currentLine=17891341;
+ //BA.debugLineNum = 17891341;BA.debugLine="weekdayMatched = True";
+_weekdaymatched = __c.True;
+RDebugUtils.currentLine=17891342;
+ //BA.debugLineNum = 17891342;BA.debugLine="Exit";
 if (true) break;
  };
  }
 };
-RDebugUtils.currentLine=17891343;
- //BA.debugLineNum = 17891343;BA.debugLine="If weekdayMatched = False Then Return False";
+RDebugUtils.currentLine=17891345;
+ //BA.debugLineNum = 17891345;BA.debugLine="If weekdayMatched = False Then Return False";
 if (_weekdaymatched==__c.False) { 
 if (true) return __c.False;};
  };
-RDebugUtils.currentLine=17891345;
- //BA.debugLineNum = 17891345;BA.debugLine="Dim baseMinute As Int = TimeStringToMinutes(ad.Ge";
+RDebugUtils.currentLine=17891347;
+ //BA.debugLineNum = 17891347;BA.debugLine="Dim baseMinute As Int = TimeStringToMinutes(ad.Ge";
 _baseminute = __ref._timestringtominutes /*int*/ (null,BA.ObjectToString(_ad.GetDefault((Object)("time"),(Object)(""))));
-RDebugUtils.currentLine=17891346;
- //BA.debugLineNum = 17891346;BA.debugLine="If baseMinute < 0 Then Return False";
+RDebugUtils.currentLine=17891348;
+ //BA.debugLineNum = 17891348;BA.debugLine="If baseMinute < 0 Then Return False";
 if (_baseminute<0) { 
 if (true) return __c.False;};
-RDebugUtils.currentLine=17891347;
- //BA.debugLineNum = 17891347;BA.debugLine="If currentMinuteOfDay < baseMinute Then Return Fa";
+RDebugUtils.currentLine=17891349;
+ //BA.debugLineNum = 17891349;BA.debugLine="If currentMinuteOfDay < baseMinute Then Return Fa";
 if (_currentminuteofday<_baseminute) { 
 if (true) return __c.False;};
-RDebugUtils.currentLine=17891348;
- //BA.debugLineNum = 17891348;BA.debugLine="Dim intervalMinutes As Int = ToLongDefault(ad.Get";
+RDebugUtils.currentLine=17891350;
+ //BA.debugLineNum = 17891350;BA.debugLine="Dim intervalMinutes As Int = ToLongDefault(ad.Get";
 _intervalminutes = (int) (__ref._tolongdefault /*long*/ (null,_ad.GetDefault((Object)("interval"),(Object)(0)),(long) (0)));
-RDebugUtils.currentLine=17891349;
- //BA.debugLineNum = 17891349;BA.debugLine="If intervalMinutes <= 0 Then Return currentMinute";
+RDebugUtils.currentLine=17891351;
+ //BA.debugLineNum = 17891351;BA.debugLine="If intervalMinutes <= 0 Then Return currentMinute";
 if (_intervalminutes<=0) { 
 if (true) return _currentminuteofday==_baseminute;};
-RDebugUtils.currentLine=17891350;
- //BA.debugLineNum = 17891350;BA.debugLine="Return ((currentMinuteOfDay - baseMinute) Mod int";
+RDebugUtils.currentLine=17891352;
+ //BA.debugLineNum = 17891352;BA.debugLine="Return ((currentMinuteOfDay - baseMinute) Mod int";
 if (true) return ((_currentminuteofday-_baseminute)%_intervalminutes)==0;
-RDebugUtils.currentLine=17891351;
- //BA.debugLineNum = 17891351;BA.debugLine="End Sub";
+RDebugUtils.currentLine=17891353;
+ //BA.debugLineNum = 17891353;BA.debugLine="End Sub";
 return false;
 }
 public int  _timestringtominutes(b4j.example.adscheduler __ref,String _value) throws Exception{
@@ -319,11 +324,11 @@ RDebugUtils.currentLine=18612235;
  //BA.debugLineNum = 18612235;BA.debugLine="End Sub";
 return 0L;
 }
-public anywheresoftware.b4a.objects.collections.Map  _buildbreakforminute(b4j.example.adscheduler __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata,long _targetminutetimestamp) throws Exception{
+public anywheresoftware.b4a.objects.collections.Map  _buildbreakforminute(b4j.example.adscheduler __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata,long _targetminutetimestamp,boolean _allowregularads) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="adscheduler";
 if (Debug.shouldDelegate(ba, "buildbreakforminute", false))
-	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "buildbreakforminute", new Object[] {_offlinedata,_targetminutetimestamp}));}
+	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "buildbreakforminute", new Object[] {_offlinedata,_targetminutetimestamp,_allowregularads}));}
 anywheresoftware.b4a.objects.collections.Map _emptybreak = null;
 anywheresoftware.b4a.objects.collections.List _ads = null;
 long _targetticks = 0L;
@@ -386,7 +391,7 @@ _ad = new anywheresoftware.b4a.objects.collections.Map();
 _ad = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_adobject));
 RDebugUtils.currentLine=38928398;
  //BA.debugLineNum = 38928398;BA.debugLine="If AdMatchesCurrentMinute(ad, todayKey, todayWe";
-if (__ref._admatchescurrentminute /*boolean*/ (null,_ad,_todaykey,_todayweekday,_currentminuteofday)) { 
+if (__ref._admatchescurrentminute /*boolean*/ (null,_ad,_todaykey,_todayweekday,_currentminuteofday,_allowregularads)) { 
 RDebugUtils.currentLine=38928399;
  //BA.debugLineNum = 38928399;BA.debugLine="dueItems.Add(CreateAdQueueItem(ad))";
 _dueitems.Add((Object)(__ref._createadqueueitem /*anywheresoftware.b4a.objects.collections.Map*/ (null,_ad).getObject()));
@@ -601,10 +606,13 @@ RDebugUtils.currentLine=17956871;
  //BA.debugLineNum = 17956871;BA.debugLine="item.Put(\"gain\", ad.GetDefault(\"gain\", -3))";
 _item.Put((Object)("gain"),_ad.GetDefault((Object)("gain"),(Object)(-3)));
 RDebugUtils.currentLine=17956872;
- //BA.debugLineNum = 17956872;BA.debugLine="Return item";
-if (true) return _item;
+ //BA.debugLineNum = 17956872;BA.debugLine="item.Put(\"exactly\", ad.GetDefault(\"exactly\", Fals";
+_item.Put((Object)("exactly"),_ad.GetDefault((Object)("exactly"),(Object)(__c.False)));
 RDebugUtils.currentLine=17956873;
- //BA.debugLineNum = 17956873;BA.debugLine="End Sub";
+ //BA.debugLineNum = 17956873;BA.debugLine="Return item";
+if (true) return _item;
+RDebugUtils.currentLine=17956874;
+ //BA.debugLineNum = 17956874;BA.debugLine="End Sub";
 return null;
 }
 public String  _class_globals(b4j.example.adscheduler __ref) throws Exception{

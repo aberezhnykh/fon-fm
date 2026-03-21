@@ -1299,252 +1299,274 @@ case 6:
 this.state = 7;
 ;
 RDebugUtils.currentLine=38207491;
- //BA.debugLineNum = 38207491;BA.debugLine="If IsAdCached(adId) Then";
+ //BA.debugLineNum = 38207491;BA.debugLine="If TryRestoreExistingCachedMedia(\"ad\", adId, ad,";
 if (true) break;
 
 case 7:
 //if
-this.state = 10;
-if (__ref._isadcached /*boolean*/ (null,_adid)) { 
+this.state = 12;
+if (__ref._tryrestoreexistingcachedmedia /*boolean*/ (null,"ad",_adid,_ad,_adindex)) { 
 this.state = 9;
-}if (true) break;
+;}if (true) break;
 
 case 9:
 //C
-this.state = 10;
+this.state = 12;
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+if (true) break;
+
+case 12:
+//C
+this.state = 13;
+;
 RDebugUtils.currentLine=38207492;
- //BA.debugLineNum = 38207492;BA.debugLine="UpdateAdIndex(ad, adIndex)";
-__ref._updateadindex /*String*/ (null,_ad,_adindex);
+ //BA.debugLineNum = 38207492;BA.debugLine="If IsAdCached(adId) Then";
+if (true) break;
+
+case 13:
+//if
+this.state = 16;
+if (__ref._isadcached /*boolean*/ (null,_adid)) { 
+this.state = 15;
+}if (true) break;
+
+case 15:
+//C
+this.state = 16;
 RDebugUtils.currentLine=38207493;
- //BA.debugLineNum = 38207493;BA.debugLine="Return False";
+ //BA.debugLineNum = 38207493;BA.debugLine="UpdateAdIndex(ad, adIndex)";
+__ref._updateadindex /*String*/ (null,_ad,_adindex);
+RDebugUtils.currentLine=38207494;
+ //BA.debugLineNum = 38207494;BA.debugLine="Return False";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
  if (true) break;
-
-case 10:
-//C
-this.state = 11;
-;
-RDebugUtils.currentLine=38207495;
- //BA.debugLineNum = 38207495;BA.debugLine="Dim adUrl As String = BuildAdUrl(adId)";
-_adurl = __ref._buildadurl /*String*/ (null,_adid);
-RDebugUtils.currentLine=38207496;
- //BA.debugLineNum = 38207496;BA.debugLine="If adUrl = \"\" Then Return False";
-if (true) break;
-
-case 11:
-//if
-this.state = 16;
-if ((_adurl).equals("")) { 
-this.state = 13;
-;}if (true) break;
-
-case 13:
-//C
-this.state = 16;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
 
 case 16:
 //C
 this.state = 17;
 ;
+RDebugUtils.currentLine=38207496;
+ //BA.debugLineNum = 38207496;BA.debugLine="Dim adUrl As String = BuildAdUrl(adId)";
+_adurl = __ref._buildadurl /*String*/ (null,_adid);
 RDebugUtils.currentLine=38207497;
- //BA.debugLineNum = 38207497;BA.debugLine="Dim j As HttpJob";
-_j = new b4j.example.httpjob();
-RDebugUtils.currentLine=38207498;
- //BA.debugLineNum = 38207498;BA.debugLine="j.Initialize(\"\", Me)";
-_j._initialize /*String*/ (null,ba,"",parent);
-RDebugUtils.currentLine=38207499;
- //BA.debugLineNum = 38207499;BA.debugLine="Trace(\"Скачивание рекламы в кэш. id=\" & adId & \",";
-__ref._trace /*String*/ (null,"Скачивание рекламы в кэш. id="+_adid+", url="+_adurl);
-RDebugUtils.currentLine=38207500;
- //BA.debugLineNum = 38207500;BA.debugLine="j.Download(adUrl)";
-_j._download /*String*/ (null,_adurl);
-RDebugUtils.currentLine=38207501;
- //BA.debugLineNum = 38207501;BA.debugLine="j.GetRequest.Timeout = 15000";
-_j._getrequest /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ (null).setTimeout((int) (15000));
-RDebugUtils.currentLine=38207502;
- //BA.debugLineNum = 38207502;BA.debugLine="Wait For (j) JobDone(j As HttpJob)";
-parent.__c.WaitFor("jobdone", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "mediacache", "ensuresingleadcached"), (Object)(_j));
-this.state = 36;
-return;
-case 36:
-//C
-this.state = 17;
-_j = (b4j.example.httpjob) result[1];
-;
-RDebugUtils.currentLine=38207503;
- //BA.debugLineNum = 38207503;BA.debugLine="If j.Success Then";
+ //BA.debugLineNum = 38207497;BA.debugLine="If adUrl = \"\" Then Return False";
 if (true) break;
 
 case 17:
 //if
-this.state = 35;
-if (_j._success /*boolean*/ ) { 
+this.state = 22;
+if ((_adurl).equals("")) { 
 this.state = 19;
-}else {
-this.state = 34;
-}if (true) break;
+;}if (true) break;
 
 case 19:
 //C
-this.state = 20;
-RDebugUtils.currentLine=38207504;
- //BA.debugLineNum = 38207504;BA.debugLine="Try";
-if (true) break;
-
-case 20:
-//try
-this.state = 32;
-this.catchState = 31;
 this.state = 22;
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
 if (true) break;
 
 case 22:
 //C
 this.state = 23;
-this.catchState = 31;
-RDebugUtils.currentLine=38207505;
- //BA.debugLineNum = 38207505;BA.debugLine="EnsureDirectory(GetAdsDir)";
-__ref._ensuredirectory /*String*/ (null,__ref._getadsdir /*String*/ (null));
-RDebugUtils.currentLine=38207506;
- //BA.debugLineNum = 38207506;BA.debugLine="Dim tempFileName As String = BuildTempCacheFile";
-_tempfilename = __ref._buildtempcachefilename /*String*/ (null,_adid);
-RDebugUtils.currentLine=38207507;
- //BA.debugLineNum = 38207507;BA.debugLine="DeleteFileIfExists(GetAdsDir, tempFileName)";
-__ref._deletefileifexists /*String*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename);
-RDebugUtils.currentLine=38207508;
- //BA.debugLineNum = 38207508;BA.debugLine="Dim outStream As OutputStream = File.OpenOutput";
-_outstream = new anywheresoftware.b4a.objects.streams.File.OutputStreamWrapper();
-_outstream = parent.__c.File.OpenOutput(__ref._getadsdir /*String*/ (null),_tempfilename,parent.__c.False);
-RDebugUtils.currentLine=38207509;
- //BA.debugLineNum = 38207509;BA.debugLine="File.Copy2(j.GetInputStream, outStream)";
-parent.__c.File.Copy2((java.io.InputStream)(_j._getinputstream /*anywheresoftware.b4a.objects.streams.File.InputStreamWrapper*/ (null).getObject()),(java.io.OutputStream)(_outstream.getObject()));
-RDebugUtils.currentLine=38207510;
- //BA.debugLineNum = 38207510;BA.debugLine="outStream.Close";
-_outstream.Close();
-RDebugUtils.currentLine=38207511;
- //BA.debugLineNum = 38207511;BA.debugLine="If IsCachedFileUsable(GetAdsDir, tempFileName)";
+;
+RDebugUtils.currentLine=38207498;
+ //BA.debugLineNum = 38207498;BA.debugLine="Dim j As HttpJob";
+_j = new b4j.example.httpjob();
+RDebugUtils.currentLine=38207499;
+ //BA.debugLineNum = 38207499;BA.debugLine="j.Initialize(\"\", Me)";
+_j._initialize /*String*/ (null,ba,"",parent);
+RDebugUtils.currentLine=38207500;
+ //BA.debugLineNum = 38207500;BA.debugLine="Trace(\"Скачивание рекламы в кэш. id=\" & adId & \",";
+__ref._trace /*String*/ (null,"Скачивание рекламы в кэш. id="+_adid+", url="+_adurl);
+RDebugUtils.currentLine=38207501;
+ //BA.debugLineNum = 38207501;BA.debugLine="j.Download(adUrl)";
+_j._download /*String*/ (null,_adurl);
+RDebugUtils.currentLine=38207502;
+ //BA.debugLineNum = 38207502;BA.debugLine="j.GetRequest.Timeout = 15000";
+_j._getrequest /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ (null).setTimeout((int) (15000));
+RDebugUtils.currentLine=38207503;
+ //BA.debugLineNum = 38207503;BA.debugLine="Wait For (j) JobDone(j As HttpJob)";
+parent.__c.WaitFor("jobdone", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "mediacache", "ensuresingleadcached"), (Object)(_j));
+this.state = 42;
+return;
+case 42:
+//C
+this.state = 23;
+_j = (b4j.example.httpjob) result[1];
+;
+RDebugUtils.currentLine=38207504;
+ //BA.debugLineNum = 38207504;BA.debugLine="If j.Success Then";
 if (true) break;
 
 case 23:
 //if
-this.state = 26;
-if (__ref._iscachedfileusable /*boolean*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename)==parent.__c.False) { 
+this.state = 41;
+if (_j._success /*boolean*/ ) { 
 this.state = 25;
+}else {
+this.state = 40;
 }if (true) break;
 
 case 25:
 //C
 this.state = 26;
-RDebugUtils.currentLine=38207512;
- //BA.debugLineNum = 38207512;BA.debugLine="DeleteFileIfExists(GetAdsDir, tempFileName)";
-__ref._deletefileifexists /*String*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename);
-RDebugUtils.currentLine=38207513;
- //BA.debugLineNum = 38207513;BA.debugLine="Trace(\"Не удалось сохранить рекламу в кэш. id=";
-__ref._trace /*String*/ (null,"Не удалось сохранить рекламу в кэш. id="+_adid+", message=empty temp file");
-RDebugUtils.currentLine=38207514;
- //BA.debugLineNum = 38207514;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=38207515;
- //BA.debugLineNum = 38207515;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-;
-RDebugUtils.currentLine=38207517;
- //BA.debugLineNum = 38207517;BA.debugLine="If ReplaceCacheFile(GetAdsDir, tempFileName, ad";
+RDebugUtils.currentLine=38207505;
+ //BA.debugLineNum = 38207505;BA.debugLine="Try";
+if (true) break;
 
 case 26:
-//if
-this.state = 29;
-if (__ref._replacecachefile /*boolean*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename,_adid)==parent.__c.False) { 
+//try
+this.state = 38;
+this.catchState = 37;
 this.state = 28;
-}if (true) break;
+if (true) break;
 
 case 28:
 //C
 this.state = 29;
-RDebugUtils.currentLine=38207518;
- //BA.debugLineNum = 38207518;BA.debugLine="DeleteFileIfExists(GetAdsDir, tempFileName)";
+this.catchState = 37;
+RDebugUtils.currentLine=38207506;
+ //BA.debugLineNum = 38207506;BA.debugLine="EnsureDirectory(GetAdsDir)";
+__ref._ensuredirectory /*String*/ (null,__ref._getadsdir /*String*/ (null));
+RDebugUtils.currentLine=38207507;
+ //BA.debugLineNum = 38207507;BA.debugLine="Dim tempFileName As String = BuildTempCacheFile";
+_tempfilename = __ref._buildtempcachefilename /*String*/ (null,_adid);
+RDebugUtils.currentLine=38207508;
+ //BA.debugLineNum = 38207508;BA.debugLine="DeleteFileIfExists(GetAdsDir, tempFileName)";
 __ref._deletefileifexists /*String*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename);
-RDebugUtils.currentLine=38207519;
- //BA.debugLineNum = 38207519;BA.debugLine="Trace(\"Не удалось сохранить рекламу в кэш. id=";
-__ref._trace /*String*/ (null,"Не удалось сохранить рекламу в кэш. id="+_adid+", message=rename failed");
-RDebugUtils.currentLine=38207520;
- //BA.debugLineNum = 38207520;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=38207521;
- //BA.debugLineNum = 38207521;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
+RDebugUtils.currentLine=38207509;
+ //BA.debugLineNum = 38207509;BA.debugLine="Dim outStream As OutputStream = File.OpenOutput";
+_outstream = new anywheresoftware.b4a.objects.streams.File.OutputStreamWrapper();
+_outstream = parent.__c.File.OpenOutput(__ref._getadsdir /*String*/ (null),_tempfilename,parent.__c.False);
+RDebugUtils.currentLine=38207510;
+ //BA.debugLineNum = 38207510;BA.debugLine="File.Copy2(j.GetInputStream, outStream)";
+parent.__c.File.Copy2((java.io.InputStream)(_j._getinputstream /*anywheresoftware.b4a.objects.streams.File.InputStreamWrapper*/ (null).getObject()),(java.io.OutputStream)(_outstream.getObject()));
+RDebugUtils.currentLine=38207511;
+ //BA.debugLineNum = 38207511;BA.debugLine="outStream.Close";
+_outstream.Close();
+RDebugUtils.currentLine=38207512;
+ //BA.debugLineNum = 38207512;BA.debugLine="If IsCachedFileUsable(GetAdsDir, tempFileName)";
+if (true) break;
 
 case 29:
-//C
+//if
 this.state = 32;
-;
-RDebugUtils.currentLine=38207523;
- //BA.debugLineNum = 38207523;BA.debugLine="UpdateAdIndex(ad, adIndex)";
-__ref._updateadindex /*String*/ (null,_ad,_adindex);
-RDebugUtils.currentLine=38207524;
- //BA.debugLineNum = 38207524;BA.debugLine="SaveAdIndex";
-__ref._saveadindex /*String*/ (null);
-RDebugUtils.currentLine=38207525;
- //BA.debugLineNum = 38207525;BA.debugLine="Trace(\"Реклама сохранена в кэш. id=\" & adId)";
-__ref._trace /*String*/ (null,"Реклама сохранена в кэш. id="+_adid);
-RDebugUtils.currentLine=38207526;
- //BA.debugLineNum = 38207526;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=38207527;
- //BA.debugLineNum = 38207527;BA.debugLine="Return True";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
- if (true) break;
+if (__ref._iscachedfileusable /*boolean*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename)==parent.__c.False) { 
+this.state = 31;
+}if (true) break;
 
 case 31:
 //C
 this.state = 32;
-this.catchState = 0;
-RDebugUtils.currentLine=38207529;
- //BA.debugLineNum = 38207529;BA.debugLine="DeleteFileIfExists(GetAdsDir, BuildTempCacheFil";
-__ref._deletefileifexists /*String*/ (null,__ref._getadsdir /*String*/ (null),__ref._buildtempcachefilename /*String*/ (null,_adid));
-RDebugUtils.currentLine=38207530;
- //BA.debugLineNum = 38207530;BA.debugLine="Trace(\"Не удалось сохранить рекламу в кэш. id=\"";
-__ref._trace /*String*/ (null,"Не удалось сохранить рекламу в кэш. id="+_adid+", message="+parent.__c.LastException(ba).getMessage());
+RDebugUtils.currentLine=38207513;
+ //BA.debugLineNum = 38207513;BA.debugLine="DeleteFileIfExists(GetAdsDir, tempFileName)";
+__ref._deletefileifexists /*String*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename);
+RDebugUtils.currentLine=38207514;
+ //BA.debugLineNum = 38207514;BA.debugLine="Trace(\"Не удалось сохранить рекламу в кэш. id=";
+__ref._trace /*String*/ (null,"Не удалось сохранить рекламу в кэш. id="+_adid+", message=empty temp file");
+RDebugUtils.currentLine=38207515;
+ //BA.debugLineNum = 38207515;BA.debugLine="j.Release";
+_j._release /*String*/ (null);
+RDebugUtils.currentLine=38207516;
+ //BA.debugLineNum = 38207516;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
  if (true) break;
-if (true) break;
+;
+RDebugUtils.currentLine=38207518;
+ //BA.debugLineNum = 38207518;BA.debugLine="If ReplaceCacheFile(GetAdsDir, tempFileName, ad";
 
 case 32:
-//C
+//if
 this.state = 35;
-this.catchState = 0;
-;
- if (true) break;
+if (__ref._replacecachefile /*boolean*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename,_adid)==parent.__c.False) { 
+this.state = 34;
+}if (true) break;
 
 case 34:
 //C
 this.state = 35;
-RDebugUtils.currentLine=38207533;
- //BA.debugLineNum = 38207533;BA.debugLine="Trace(\"Не удалось скачать рекламу. id=\" & adId &";
-__ref._trace /*String*/ (null,"Не удалось скачать рекламу. id="+_adid+", message="+_j._errormessage /*String*/ );
+RDebugUtils.currentLine=38207519;
+ //BA.debugLineNum = 38207519;BA.debugLine="DeleteFileIfExists(GetAdsDir, tempFileName)";
+__ref._deletefileifexists /*String*/ (null,__ref._getadsdir /*String*/ (null),_tempfilename);
+RDebugUtils.currentLine=38207520;
+ //BA.debugLineNum = 38207520;BA.debugLine="Trace(\"Не удалось сохранить рекламу в кэш. id=";
+__ref._trace /*String*/ (null,"Не удалось сохранить рекламу в кэш. id="+_adid+", message=rename failed");
+RDebugUtils.currentLine=38207521;
+ //BA.debugLineNum = 38207521;BA.debugLine="j.Release";
+_j._release /*String*/ (null);
+RDebugUtils.currentLine=38207522;
+ //BA.debugLineNum = 38207522;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
  if (true) break;
 
 case 35:
 //C
+this.state = 38;
+;
+RDebugUtils.currentLine=38207524;
+ //BA.debugLineNum = 38207524;BA.debugLine="UpdateAdIndex(ad, adIndex)";
+__ref._updateadindex /*String*/ (null,_ad,_adindex);
+RDebugUtils.currentLine=38207525;
+ //BA.debugLineNum = 38207525;BA.debugLine="SaveAdIndex";
+__ref._saveadindex /*String*/ (null);
+RDebugUtils.currentLine=38207526;
+ //BA.debugLineNum = 38207526;BA.debugLine="Trace(\"Реклама сохранена в кэш. id=\" & adId)";
+__ref._trace /*String*/ (null,"Реклама сохранена в кэш. id="+_adid);
+RDebugUtils.currentLine=38207527;
+ //BA.debugLineNum = 38207527;BA.debugLine="j.Release";
+_j._release /*String*/ (null);
+RDebugUtils.currentLine=38207528;
+ //BA.debugLineNum = 38207528;BA.debugLine="Return True";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
+ if (true) break;
+
+case 37:
+//C
+this.state = 38;
+this.catchState = 0;
+RDebugUtils.currentLine=38207530;
+ //BA.debugLineNum = 38207530;BA.debugLine="DeleteFileIfExists(GetAdsDir, BuildTempCacheFil";
+__ref._deletefileifexists /*String*/ (null,__ref._getadsdir /*String*/ (null),__ref._buildtempcachefilename /*String*/ (null,_adid));
+RDebugUtils.currentLine=38207531;
+ //BA.debugLineNum = 38207531;BA.debugLine="Trace(\"Не удалось сохранить рекламу в кэш. id=\"";
+__ref._trace /*String*/ (null,"Не удалось сохранить рекламу в кэш. id="+_adid+", message="+parent.__c.LastException(ba).getMessage());
+ if (true) break;
+if (true) break;
+
+case 38:
+//C
+this.state = 41;
+this.catchState = 0;
+;
+ if (true) break;
+
+case 40:
+//C
+this.state = 41;
+RDebugUtils.currentLine=38207534;
+ //BA.debugLineNum = 38207534;BA.debugLine="Trace(\"Не удалось скачать рекламу. id=\" & adId &";
+__ref._trace /*String*/ (null,"Не удалось скачать рекламу. id="+_adid+", message="+_j._errormessage /*String*/ );
+ if (true) break;
+
+case 41:
+//C
 this.state = -1;
 ;
-RDebugUtils.currentLine=38207535;
- //BA.debugLineNum = 38207535;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
 RDebugUtils.currentLine=38207536;
- //BA.debugLineNum = 38207536;BA.debugLine="Return False";
+ //BA.debugLineNum = 38207536;BA.debugLine="j.Release";
+_j._release /*String*/ (null);
+RDebugUtils.currentLine=38207537;
+ //BA.debugLineNum = 38207537;BA.debugLine="Return False";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-RDebugUtils.currentLine=38207537;
- //BA.debugLineNum = 38207537;BA.debugLine="End Sub";
+RDebugUtils.currentLine=38207538;
+ //BA.debugLineNum = 38207538;BA.debugLine="End Sub";
 if (true) break;
 }} 
        catch (Exception e0) {
@@ -1613,6 +1635,60 @@ _fileobject.RunMethod("mkdirs",(Object[])(__c.Null));
 RDebugUtils.currentLine=38469636;
  //BA.debugLineNum = 38469636;BA.debugLine="End Sub";
 return "";
+}
+public boolean  _tryrestoreexistingcachedmedia(b4j.example.mediacache __ref,String _itemtype,String _itemid,anywheresoftware.b4a.objects.collections.Map _item,anywheresoftware.b4a.objects.collections.Map _itemindex) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "tryrestoreexistingcachedmedia", false))
+	 {return ((Boolean) Debug.delegate(ba, "tryrestoreexistingcachedmedia", new Object[] {_itemtype,_itemid,_item,_itemindex}));}
+RDebugUtils.currentLine=46465024;
+ //BA.debugLineNum = 46465024;BA.debugLine="Private Sub TryRestoreExistingCachedMedia(itemType";
+RDebugUtils.currentLine=46465025;
+ //BA.debugLineNum = 46465025;BA.debugLine="If itemId = \"\" Then Return False";
+if ((_itemid).equals("")) { 
+if (true) return __c.False;};
+RDebugUtils.currentLine=46465026;
+ //BA.debugLineNum = 46465026;BA.debugLine="If IsCachedFileUsable(GetDirByItemType(itemType),";
+if (__ref._iscachedfileusable /*boolean*/ (null,__ref._getdirbyitemtype /*String*/ (null,_itemtype),_itemid)==__c.False) { 
+if (true) return __c.False;};
+RDebugUtils.currentLine=46465027;
+ //BA.debugLineNum = 46465027;BA.debugLine="If itemType = \"ad\" Then";
+if ((_itemtype).equals("ad")) { 
+RDebugUtils.currentLine=46465028;
+ //BA.debugLineNum = 46465028;BA.debugLine="UpdateAdIndex(item, itemIndex)";
+__ref._updateadindex /*String*/ (null,_item,_itemindex);
+RDebugUtils.currentLine=46465029;
+ //BA.debugLineNum = 46465029;BA.debugLine="SaveAdIndex";
+__ref._saveadindex /*String*/ (null);
+RDebugUtils.currentLine=46465030;
+ //BA.debugLineNum = 46465030;BA.debugLine="Trace(\"Валидный cached ad восстановлен в индексе";
+__ref._trace /*String*/ (null,"Валидный cached ad восстановлен в индексе без скачивания. id="+_itemid);
+RDebugUtils.currentLine=46465031;
+ //BA.debugLineNum = 46465031;BA.debugLine="Return True";
+if (true) return __c.True;
+ };
+RDebugUtils.currentLine=46465033;
+ //BA.debugLineNum = 46465033;BA.debugLine="If itemType = \"track\" Then";
+if ((_itemtype).equals("track")) { 
+RDebugUtils.currentLine=46465034;
+ //BA.debugLineNum = 46465034;BA.debugLine="UpdateTrackIndex(item, itemIndex)";
+__ref._updatetrackindex /*String*/ (null,_item,_itemindex);
+RDebugUtils.currentLine=46465035;
+ //BA.debugLineNum = 46465035;BA.debugLine="SaveTrackIndex";
+__ref._savetrackindex /*String*/ (null);
+RDebugUtils.currentLine=46465036;
+ //BA.debugLineNum = 46465036;BA.debugLine="Trace(\"Валидный cached track восстановлен в инде";
+__ref._trace /*String*/ (null,"Валидный cached track восстановлен в индексе без скачивания. id="+_itemid);
+RDebugUtils.currentLine=46465037;
+ //BA.debugLineNum = 46465037;BA.debugLine="Return True";
+if (true) return __c.True;
+ };
+RDebugUtils.currentLine=46465039;
+ //BA.debugLineNum = 46465039;BA.debugLine="Return False";
+if (true) return __c.False;
+RDebugUtils.currentLine=46465040;
+ //BA.debugLineNum = 46465040;BA.debugLine="End Sub";
+return false;
 }
 public String  _updateadindex(b4j.example.mediacache __ref,anywheresoftware.b4a.objects.collections.Map _ad,anywheresoftware.b4a.objects.collections.Map _adindex) throws Exception{
 __ref = this;
@@ -1703,7 +1779,7 @@ if (true) return __c.True;};
        catch (Exception e6) {
 			ba.setLastException(e6);RDebugUtils.currentLine=41418758;
  //BA.debugLineNum = 41418758;BA.debugLine="Log(LastException.Message)";
-__c.LogImpl("141418758",__c.LastException(ba).getMessage(),0);
+__c.LogImpl("241418758",__c.LastException(ba).getMessage(),0);
  };
 RDebugUtils.currentLine=41418760;
  //BA.debugLineNum = 41418760;BA.debugLine="DeleteFileIfExists(dir, fileName)";
@@ -1840,252 +1916,274 @@ case 6:
 this.state = 7;
 ;
 RDebugUtils.currentLine=39649283;
- //BA.debugLineNum = 39649283;BA.debugLine="If IsTrackCached(trackId) Then";
+ //BA.debugLineNum = 39649283;BA.debugLine="If TryRestoreExistingCachedMedia(\"track\", trackId";
 if (true) break;
 
 case 7:
 //if
-this.state = 10;
-if (__ref._istrackcached /*boolean*/ (null,_trackid)) { 
+this.state = 12;
+if (__ref._tryrestoreexistingcachedmedia /*boolean*/ (null,"track",_trackid,_item,_trackindex)) { 
 this.state = 9;
-}if (true) break;
+;}if (true) break;
 
 case 9:
 //C
-this.state = 10;
+this.state = 12;
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+if (true) break;
+
+case 12:
+//C
+this.state = 13;
+;
 RDebugUtils.currentLine=39649284;
- //BA.debugLineNum = 39649284;BA.debugLine="UpdateTrackIndex(item, trackIndex)";
-__ref._updatetrackindex /*String*/ (null,_item,_trackindex);
+ //BA.debugLineNum = 39649284;BA.debugLine="If IsTrackCached(trackId) Then";
+if (true) break;
+
+case 13:
+//if
+this.state = 16;
+if (__ref._istrackcached /*boolean*/ (null,_trackid)) { 
+this.state = 15;
+}if (true) break;
+
+case 15:
+//C
+this.state = 16;
 RDebugUtils.currentLine=39649285;
- //BA.debugLineNum = 39649285;BA.debugLine="Return False";
+ //BA.debugLineNum = 39649285;BA.debugLine="UpdateTrackIndex(item, trackIndex)";
+__ref._updatetrackindex /*String*/ (null,_item,_trackindex);
+RDebugUtils.currentLine=39649286;
+ //BA.debugLineNum = 39649286;BA.debugLine="Return False";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
  if (true) break;
-
-case 10:
-//C
-this.state = 11;
-;
-RDebugUtils.currentLine=39649287;
- //BA.debugLineNum = 39649287;BA.debugLine="Dim trackUrl As String = BuildTrackUrl(trackId)";
-_trackurl = __ref._buildtrackurl /*String*/ (null,_trackid);
-RDebugUtils.currentLine=39649288;
- //BA.debugLineNum = 39649288;BA.debugLine="If trackUrl = \"\" Then Return False";
-if (true) break;
-
-case 11:
-//if
-this.state = 16;
-if ((_trackurl).equals("")) { 
-this.state = 13;
-;}if (true) break;
-
-case 13:
-//C
-this.state = 16;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
 
 case 16:
 //C
 this.state = 17;
 ;
+RDebugUtils.currentLine=39649288;
+ //BA.debugLineNum = 39649288;BA.debugLine="Dim trackUrl As String = BuildTrackUrl(trackId)";
+_trackurl = __ref._buildtrackurl /*String*/ (null,_trackid);
 RDebugUtils.currentLine=39649289;
- //BA.debugLineNum = 39649289;BA.debugLine="Dim j As HttpJob";
-_j = new b4j.example.httpjob();
-RDebugUtils.currentLine=39649290;
- //BA.debugLineNum = 39649290;BA.debugLine="j.Initialize(\"\", Me)";
-_j._initialize /*String*/ (null,ba,"",parent);
-RDebugUtils.currentLine=39649291;
- //BA.debugLineNum = 39649291;BA.debugLine="Trace(\"Скачивание трека в кэш. id=\" & trackId & \"";
-__ref._trace /*String*/ (null,"Скачивание трека в кэш. id="+_trackid+", url="+_trackurl);
-RDebugUtils.currentLine=39649292;
- //BA.debugLineNum = 39649292;BA.debugLine="j.Download(trackUrl)";
-_j._download /*String*/ (null,_trackurl);
-RDebugUtils.currentLine=39649293;
- //BA.debugLineNum = 39649293;BA.debugLine="j.GetRequest.Timeout = 20000";
-_j._getrequest /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ (null).setTimeout((int) (20000));
-RDebugUtils.currentLine=39649294;
- //BA.debugLineNum = 39649294;BA.debugLine="Wait For (j) JobDone(j As HttpJob)";
-parent.__c.WaitFor("jobdone", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "mediacache", "ensuresingletrackcached"), (Object)(_j));
-this.state = 36;
-return;
-case 36:
-//C
-this.state = 17;
-_j = (b4j.example.httpjob) result[1];
-;
-RDebugUtils.currentLine=39649295;
- //BA.debugLineNum = 39649295;BA.debugLine="If j.Success Then";
+ //BA.debugLineNum = 39649289;BA.debugLine="If trackUrl = \"\" Then Return False";
 if (true) break;
 
 case 17:
 //if
-this.state = 35;
-if (_j._success /*boolean*/ ) { 
+this.state = 22;
+if ((_trackurl).equals("")) { 
 this.state = 19;
-}else {
-this.state = 34;
-}if (true) break;
+;}if (true) break;
 
 case 19:
 //C
-this.state = 20;
-RDebugUtils.currentLine=39649296;
- //BA.debugLineNum = 39649296;BA.debugLine="Try";
-if (true) break;
-
-case 20:
-//try
-this.state = 32;
-this.catchState = 31;
 this.state = 22;
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
 if (true) break;
 
 case 22:
 //C
 this.state = 23;
-this.catchState = 31;
-RDebugUtils.currentLine=39649297;
- //BA.debugLineNum = 39649297;BA.debugLine="EnsureDirectory(GetTracksDir)";
-__ref._ensuredirectory /*String*/ (null,__ref._gettracksdir /*String*/ (null));
-RDebugUtils.currentLine=39649298;
- //BA.debugLineNum = 39649298;BA.debugLine="Dim tempFileName As String = BuildTempCacheFile";
-_tempfilename = __ref._buildtempcachefilename /*String*/ (null,_trackid);
-RDebugUtils.currentLine=39649299;
- //BA.debugLineNum = 39649299;BA.debugLine="DeleteFileIfExists(GetTracksDir, tempFileName)";
-__ref._deletefileifexists /*String*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename);
-RDebugUtils.currentLine=39649300;
- //BA.debugLineNum = 39649300;BA.debugLine="Dim outStream As OutputStream = File.OpenOutput";
-_outstream = new anywheresoftware.b4a.objects.streams.File.OutputStreamWrapper();
-_outstream = parent.__c.File.OpenOutput(__ref._gettracksdir /*String*/ (null),_tempfilename,parent.__c.False);
-RDebugUtils.currentLine=39649301;
- //BA.debugLineNum = 39649301;BA.debugLine="File.Copy2(j.GetInputStream, outStream)";
-parent.__c.File.Copy2((java.io.InputStream)(_j._getinputstream /*anywheresoftware.b4a.objects.streams.File.InputStreamWrapper*/ (null).getObject()),(java.io.OutputStream)(_outstream.getObject()));
-RDebugUtils.currentLine=39649302;
- //BA.debugLineNum = 39649302;BA.debugLine="outStream.Close";
-_outstream.Close();
-RDebugUtils.currentLine=39649303;
- //BA.debugLineNum = 39649303;BA.debugLine="If IsCachedFileUsable(GetTracksDir, tempFileNam";
+;
+RDebugUtils.currentLine=39649290;
+ //BA.debugLineNum = 39649290;BA.debugLine="Dim j As HttpJob";
+_j = new b4j.example.httpjob();
+RDebugUtils.currentLine=39649291;
+ //BA.debugLineNum = 39649291;BA.debugLine="j.Initialize(\"\", Me)";
+_j._initialize /*String*/ (null,ba,"",parent);
+RDebugUtils.currentLine=39649292;
+ //BA.debugLineNum = 39649292;BA.debugLine="Trace(\"Скачивание трека в кэш. id=\" & trackId & \"";
+__ref._trace /*String*/ (null,"Скачивание трека в кэш. id="+_trackid+", url="+_trackurl);
+RDebugUtils.currentLine=39649293;
+ //BA.debugLineNum = 39649293;BA.debugLine="j.Download(trackUrl)";
+_j._download /*String*/ (null,_trackurl);
+RDebugUtils.currentLine=39649294;
+ //BA.debugLineNum = 39649294;BA.debugLine="j.GetRequest.Timeout = 20000";
+_j._getrequest /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ (null).setTimeout((int) (20000));
+RDebugUtils.currentLine=39649295;
+ //BA.debugLineNum = 39649295;BA.debugLine="Wait For (j) JobDone(j As HttpJob)";
+parent.__c.WaitFor("jobdone", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "mediacache", "ensuresingletrackcached"), (Object)(_j));
+this.state = 42;
+return;
+case 42:
+//C
+this.state = 23;
+_j = (b4j.example.httpjob) result[1];
+;
+RDebugUtils.currentLine=39649296;
+ //BA.debugLineNum = 39649296;BA.debugLine="If j.Success Then";
 if (true) break;
 
 case 23:
 //if
-this.state = 26;
-if (__ref._iscachedfileusable /*boolean*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename)==parent.__c.False) { 
+this.state = 41;
+if (_j._success /*boolean*/ ) { 
 this.state = 25;
+}else {
+this.state = 40;
 }if (true) break;
 
 case 25:
 //C
 this.state = 26;
-RDebugUtils.currentLine=39649304;
- //BA.debugLineNum = 39649304;BA.debugLine="DeleteFileIfExists(GetTracksDir, tempFileName)";
-__ref._deletefileifexists /*String*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename);
-RDebugUtils.currentLine=39649305;
- //BA.debugLineNum = 39649305;BA.debugLine="Trace(\"Не удалось сохранить трек в кэш. id=\" &";
-__ref._trace /*String*/ (null,"Не удалось сохранить трек в кэш. id="+_trackid+", message=empty temp file");
-RDebugUtils.currentLine=39649306;
- //BA.debugLineNum = 39649306;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=39649307;
- //BA.debugLineNum = 39649307;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-;
-RDebugUtils.currentLine=39649309;
- //BA.debugLineNum = 39649309;BA.debugLine="If ReplaceCacheFile(GetTracksDir, tempFileName,";
+RDebugUtils.currentLine=39649297;
+ //BA.debugLineNum = 39649297;BA.debugLine="Try";
+if (true) break;
 
 case 26:
-//if
-this.state = 29;
-if (__ref._replacecachefile /*boolean*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename,_trackid)==parent.__c.False) { 
+//try
+this.state = 38;
+this.catchState = 37;
 this.state = 28;
-}if (true) break;
+if (true) break;
 
 case 28:
 //C
 this.state = 29;
-RDebugUtils.currentLine=39649310;
- //BA.debugLineNum = 39649310;BA.debugLine="DeleteFileIfExists(GetTracksDir, tempFileName)";
+this.catchState = 37;
+RDebugUtils.currentLine=39649298;
+ //BA.debugLineNum = 39649298;BA.debugLine="EnsureDirectory(GetTracksDir)";
+__ref._ensuredirectory /*String*/ (null,__ref._gettracksdir /*String*/ (null));
+RDebugUtils.currentLine=39649299;
+ //BA.debugLineNum = 39649299;BA.debugLine="Dim tempFileName As String = BuildTempCacheFile";
+_tempfilename = __ref._buildtempcachefilename /*String*/ (null,_trackid);
+RDebugUtils.currentLine=39649300;
+ //BA.debugLineNum = 39649300;BA.debugLine="DeleteFileIfExists(GetTracksDir, tempFileName)";
 __ref._deletefileifexists /*String*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename);
-RDebugUtils.currentLine=39649311;
- //BA.debugLineNum = 39649311;BA.debugLine="Trace(\"Не удалось сохранить трек в кэш. id=\" &";
-__ref._trace /*String*/ (null,"Не удалось сохранить трек в кэш. id="+_trackid+", message=rename failed");
-RDebugUtils.currentLine=39649312;
- //BA.debugLineNum = 39649312;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=39649313;
- //BA.debugLineNum = 39649313;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
+RDebugUtils.currentLine=39649301;
+ //BA.debugLineNum = 39649301;BA.debugLine="Dim outStream As OutputStream = File.OpenOutput";
+_outstream = new anywheresoftware.b4a.objects.streams.File.OutputStreamWrapper();
+_outstream = parent.__c.File.OpenOutput(__ref._gettracksdir /*String*/ (null),_tempfilename,parent.__c.False);
+RDebugUtils.currentLine=39649302;
+ //BA.debugLineNum = 39649302;BA.debugLine="File.Copy2(j.GetInputStream, outStream)";
+parent.__c.File.Copy2((java.io.InputStream)(_j._getinputstream /*anywheresoftware.b4a.objects.streams.File.InputStreamWrapper*/ (null).getObject()),(java.io.OutputStream)(_outstream.getObject()));
+RDebugUtils.currentLine=39649303;
+ //BA.debugLineNum = 39649303;BA.debugLine="outStream.Close";
+_outstream.Close();
+RDebugUtils.currentLine=39649304;
+ //BA.debugLineNum = 39649304;BA.debugLine="If IsCachedFileUsable(GetTracksDir, tempFileNam";
+if (true) break;
 
 case 29:
-//C
+//if
 this.state = 32;
-;
-RDebugUtils.currentLine=39649315;
- //BA.debugLineNum = 39649315;BA.debugLine="UpdateTrackIndex(item, trackIndex)";
-__ref._updatetrackindex /*String*/ (null,_item,_trackindex);
-RDebugUtils.currentLine=39649316;
- //BA.debugLineNum = 39649316;BA.debugLine="SaveTrackIndex";
-__ref._savetrackindex /*String*/ (null);
-RDebugUtils.currentLine=39649317;
- //BA.debugLineNum = 39649317;BA.debugLine="Trace(\"Трек сохранен в кэш. id=\" & trackId)";
-__ref._trace /*String*/ (null,"Трек сохранен в кэш. id="+_trackid);
-RDebugUtils.currentLine=39649318;
- //BA.debugLineNum = 39649318;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=39649319;
- //BA.debugLineNum = 39649319;BA.debugLine="Return True";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
- if (true) break;
+if (__ref._iscachedfileusable /*boolean*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename)==parent.__c.False) { 
+this.state = 31;
+}if (true) break;
 
 case 31:
 //C
 this.state = 32;
-this.catchState = 0;
-RDebugUtils.currentLine=39649321;
- //BA.debugLineNum = 39649321;BA.debugLine="DeleteFileIfExists(GetTracksDir, BuildTempCache";
-__ref._deletefileifexists /*String*/ (null,__ref._gettracksdir /*String*/ (null),__ref._buildtempcachefilename /*String*/ (null,_trackid));
-RDebugUtils.currentLine=39649322;
- //BA.debugLineNum = 39649322;BA.debugLine="Trace(\"Не удалось сохранить трек в кэш. id=\" &";
-__ref._trace /*String*/ (null,"Не удалось сохранить трек в кэш. id="+_trackid+", message="+parent.__c.LastException(ba).getMessage());
+RDebugUtils.currentLine=39649305;
+ //BA.debugLineNum = 39649305;BA.debugLine="DeleteFileIfExists(GetTracksDir, tempFileName)";
+__ref._deletefileifexists /*String*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename);
+RDebugUtils.currentLine=39649306;
+ //BA.debugLineNum = 39649306;BA.debugLine="Trace(\"Не удалось сохранить трек в кэш. id=\" &";
+__ref._trace /*String*/ (null,"Не удалось сохранить трек в кэш. id="+_trackid+", message=empty temp file");
+RDebugUtils.currentLine=39649307;
+ //BA.debugLineNum = 39649307;BA.debugLine="j.Release";
+_j._release /*String*/ (null);
+RDebugUtils.currentLine=39649308;
+ //BA.debugLineNum = 39649308;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
  if (true) break;
-if (true) break;
+;
+RDebugUtils.currentLine=39649310;
+ //BA.debugLineNum = 39649310;BA.debugLine="If ReplaceCacheFile(GetTracksDir, tempFileName,";
 
 case 32:
-//C
+//if
 this.state = 35;
-this.catchState = 0;
-;
- if (true) break;
+if (__ref._replacecachefile /*boolean*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename,_trackid)==parent.__c.False) { 
+this.state = 34;
+}if (true) break;
 
 case 34:
 //C
 this.state = 35;
-RDebugUtils.currentLine=39649325;
- //BA.debugLineNum = 39649325;BA.debugLine="Trace(\"Не удалось скачать трек. id=\" & trackId &";
-__ref._trace /*String*/ (null,"Не удалось скачать трек. id="+_trackid+", message="+_j._errormessage /*String*/ );
+RDebugUtils.currentLine=39649311;
+ //BA.debugLineNum = 39649311;BA.debugLine="DeleteFileIfExists(GetTracksDir, tempFileName)";
+__ref._deletefileifexists /*String*/ (null,__ref._gettracksdir /*String*/ (null),_tempfilename);
+RDebugUtils.currentLine=39649312;
+ //BA.debugLineNum = 39649312;BA.debugLine="Trace(\"Не удалось сохранить трек в кэш. id=\" &";
+__ref._trace /*String*/ (null,"Не удалось сохранить трек в кэш. id="+_trackid+", message=rename failed");
+RDebugUtils.currentLine=39649313;
+ //BA.debugLineNum = 39649313;BA.debugLine="j.Release";
+_j._release /*String*/ (null);
+RDebugUtils.currentLine=39649314;
+ //BA.debugLineNum = 39649314;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
  if (true) break;
 
 case 35:
 //C
+this.state = 38;
+;
+RDebugUtils.currentLine=39649316;
+ //BA.debugLineNum = 39649316;BA.debugLine="UpdateTrackIndex(item, trackIndex)";
+__ref._updatetrackindex /*String*/ (null,_item,_trackindex);
+RDebugUtils.currentLine=39649317;
+ //BA.debugLineNum = 39649317;BA.debugLine="SaveTrackIndex";
+__ref._savetrackindex /*String*/ (null);
+RDebugUtils.currentLine=39649318;
+ //BA.debugLineNum = 39649318;BA.debugLine="Trace(\"Трек сохранен в кэш. id=\" & trackId)";
+__ref._trace /*String*/ (null,"Трек сохранен в кэш. id="+_trackid);
+RDebugUtils.currentLine=39649319;
+ //BA.debugLineNum = 39649319;BA.debugLine="j.Release";
+_j._release /*String*/ (null);
+RDebugUtils.currentLine=39649320;
+ //BA.debugLineNum = 39649320;BA.debugLine="Return True";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
+ if (true) break;
+
+case 37:
+//C
+this.state = 38;
+this.catchState = 0;
+RDebugUtils.currentLine=39649322;
+ //BA.debugLineNum = 39649322;BA.debugLine="DeleteFileIfExists(GetTracksDir, BuildTempCache";
+__ref._deletefileifexists /*String*/ (null,__ref._gettracksdir /*String*/ (null),__ref._buildtempcachefilename /*String*/ (null,_trackid));
+RDebugUtils.currentLine=39649323;
+ //BA.debugLineNum = 39649323;BA.debugLine="Trace(\"Не удалось сохранить трек в кэш. id=\" &";
+__ref._trace /*String*/ (null,"Не удалось сохранить трек в кэш. id="+_trackid+", message="+parent.__c.LastException(ba).getMessage());
+ if (true) break;
+if (true) break;
+
+case 38:
+//C
+this.state = 41;
+this.catchState = 0;
+;
+ if (true) break;
+
+case 40:
+//C
+this.state = 41;
+RDebugUtils.currentLine=39649326;
+ //BA.debugLineNum = 39649326;BA.debugLine="Trace(\"Не удалось скачать трек. id=\" & trackId &";
+__ref._trace /*String*/ (null,"Не удалось скачать трек. id="+_trackid+", message="+_j._errormessage /*String*/ );
+ if (true) break;
+
+case 41:
+//C
 this.state = -1;
 ;
-RDebugUtils.currentLine=39649327;
- //BA.debugLineNum = 39649327;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
 RDebugUtils.currentLine=39649328;
- //BA.debugLineNum = 39649328;BA.debugLine="Return False";
+ //BA.debugLineNum = 39649328;BA.debugLine="j.Release";
+_j._release /*String*/ (null);
+RDebugUtils.currentLine=39649329;
+ //BA.debugLineNum = 39649329;BA.debugLine="Return False";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-RDebugUtils.currentLine=39649329;
- //BA.debugLineNum = 39649329;BA.debugLine="End Sub";
+RDebugUtils.currentLine=39649330;
+ //BA.debugLineNum = 39649330;BA.debugLine="End Sub";
 if (true) break;
 }} 
        catch (Exception e0) {

@@ -24,14 +24,14 @@ Public Sub Reset
 	lastInjectedMinuteKey = ""
 End Sub
 
-Public Sub ScanTargetMinute(offlineData As Map, playQueue As List, targetMinuteTimestamp As Long, force As Boolean) As Boolean
+Public Sub ScanTargetMinute(offlineData As Map, playQueue As List, targetMinuteTimestamp As Long, force As Boolean, allowRegularAds As Boolean) As Boolean
 	If offlineData.IsInitialized = False Then Return False
 	If offlineData.GetDefault("ok", False) <> True Then Return False
 	If playQueue.IsInitialized = False Then Return False
 	Dim minuteKey As String = MinuteKeyFromTimestamp(targetMinuteTimestamp)
 	If force = False And minuteKey = lastScanMinuteKey Then Return False
 	lastScanMinuteKey = minuteKey
-	Dim breakItem As Map = BuildBreakForMinute(offlineData, targetMinuteTimestamp)
+	Dim breakItem As Map = BuildBreakForMinute(offlineData, targetMinuteTimestamp, allowRegularAds)
 	If breakItem.IsInitialized = False Or breakItem.Size = 0 Then Return False
 	Dim breakAt As Long = ToLongDefault(breakItem.GetDefault("at", -1), -1)
 	If breakAt <= 0 Then Return False
@@ -46,7 +46,7 @@ Public Sub ScanTargetMinute(offlineData As Map, playQueue As List, targetMinuteT
 	Return True
 End Sub
 
-Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Long) As Map
+Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Long, allowRegularAds As Boolean) As Map
 	Dim emptyBreak As Map
 	emptyBreak.Initialize
 	Dim ads As List = offlineData.GetDefault("ads", Null)
@@ -60,7 +60,7 @@ Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Lon
 	For Each adObject As Object In ads
 		If adObject Is Map Then
 			Dim ad As Map = adObject
-			If AdMatchesCurrentMinute(ad, todayKey, todayWeekday, currentMinuteOfDay) Then
+			If AdMatchesCurrentMinute(ad, todayKey, todayWeekday, currentMinuteOfDay, allowRegularAds) Then
 				dueItems.Add(CreateAdQueueItem(ad))
 			End If
 		End If
@@ -76,8 +76,10 @@ Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Lon
 	Return breakItem
 End Sub
 
-Private Sub AdMatchesCurrentMinute(ad As Map, todayKey As String, todayWeekday As String, currentMinuteOfDay As Int) As Boolean
+Private Sub AdMatchesCurrentMinute(ad As Map, todayKey As String, todayWeekday As String, currentMinuteOfDay As Int, allowRegularAds As Boolean) As Boolean
 	If ad.IsInitialized = False Then Return False
+	Dim isExact As Boolean = ad.GetDefault("exactly", False) = True
+	If isExact = False And allowRegularAds = False Then Return False
 	Dim startDate As String = ad.GetDefault("start", "")
 	If startDate <> "" And startDate.CompareTo(todayKey) > 0 Then Return False
 	Dim endDate As String = ad.GetDefault("end", "")
@@ -109,6 +111,7 @@ Private Sub CreateAdQueueItem(ad As Map) As Map
 	item.Put("title", ad.GetDefault("title", adLabelText))
 	item.Put("duration", ToLongDefault(ad.GetDefault("duration", 0), 0))
 	item.Put("gain", ad.GetDefault("gain", -3))
+	item.Put("exactly", ad.GetDefault("exactly", False))
 	Return item
 End Sub
 

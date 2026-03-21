@@ -51,6 +51,7 @@ Sub Class_Globals
 	Private storageDir As String
 	Private storageFile As String = "player_state.json"
 	Private storageDbName As String = "PlayerState"
+	Private trustedOnlineTimeKey As String = "trusted_online_time_ticks"
 	Private offlineDataFile As String = "offline_data.json"
 	Private offlinePlaylistRequirementsFile As String = "offline_playlist_requirements.json"
 	Private offlinePlaylistsDirName As String = "playlists"
@@ -161,6 +162,8 @@ Sub Class_Globals
 	Private isTrackCacheRefreshInProgress As Boolean
 	Private isOfflinePlaybackMode As Boolean
 	Private isPlaybackPausedByPolicy As Boolean
+	Private isStartupSequenceInProgress As Boolean
+	Private isAdWarmupDeferredAfterStartup As Boolean
 End Sub
 
 Public Sub Initialize
@@ -246,6 +249,8 @@ Private Sub InitState
 	historyItem.Initialize
 	historyStartedAtTicks = 0
 	isHistoryFlushInProgress = False
+	isStartupSequenceInProgress = False
+	isAdWarmupDeferredAfterStartup = False
 	activeItem.Initialize
 	preparedItem.Initialize
 	activeAudioKey = ""
@@ -537,8 +542,7 @@ Private Sub StartOfflineDataRefresh
 	offlineDataRefreshTimer.Enabled = True
 	historyFlushTimer.Interval = HISTORY_FLUSH_INTERVAL_MS
 	historyFlushTimer.Enabled = True
-	cacheAuditTimer.Interval = CACHE_AUDIT_START_DELAY_MS
-	cacheAuditTimer.Enabled = True
+	cacheAuditTimer.Enabled = False
 	TraceLog("Запущено обновление офлайн-метаданных. Интервал=" & OFFLINE_DATA_REFRESH_MS & " ms")
 End Sub
 
@@ -566,6 +570,15 @@ Private Sub EnsureOfflineAdsCachedAsync
 	TraceLog("Запуск прогрева кэша рекламы. ads=" & storage.GetDefault("offline_ads_count", 0))
 	Wait For (mediaCacheService.EnsureAdsCached(offlineData)) Complete (downloaded As Boolean)
 	TraceLog("Прогрев кэша рекламы завершен. downloaded=" & downloaded & ", cached=" & storage.GetDefault("cached_ad_count", 0))
+End Sub
+
+Private Sub EnsureOfflineAdsCachedNow As ResumableSub
+	If offlineData.IsInitialized = False Then Return False
+	If offlineData.GetDefault("ok", False) <> True Then Return False
+	TraceLog("Синхронный прогрев кэша рекламы на старте. ads=" & storage.GetDefault("offline_ads_count", 0))
+	Wait For (mediaCacheService.EnsureAdsCached(offlineData)) Complete (downloaded As Boolean)
+	TraceLog("Синхронный прогрев кэша рекламы завершен. downloaded=" & downloaded & ", cached=" & storage.GetDefault("cached_ad_count", 0))
+	Return downloaded
 End Sub
 
 Private Sub EnsureUpcomingTracksCachedAsync
@@ -605,6 +618,11 @@ End Sub
 
 Private Sub CacheAuditTimer_Tick
 	cacheAuditTimer.Enabled = False
+	If isStartupSequenceInProgress Then
+		cacheAuditTimer.Interval = CACHE_AUDIT_START_DELAY_MS
+		cacheAuditTimer.Enabled = True
+		Return
+	End If
 	If mediaCacheService.IsCacheAuditInProgress = False Then mediaCacheService.StartCacheAudit
 	Dim hasMore As Boolean = mediaCacheService.RunCacheAuditStep
 	If hasMore Then
@@ -613,6 +631,15 @@ Private Sub CacheAuditTimer_Tick
 		cacheAuditTimer.Interval = CACHE_AUDIT_RECHECK_INTERVAL_MS
 	End If
 	cacheAuditTimer.Enabled = True
+End Sub
+
+Private Sub CompleteStartupSequence
+	If isStartupSequenceInProgress = False Then Return
+	isStartupSequenceInProgress = False
+	isAdWarmupDeferredAfterStartup = False
+	cacheAuditTimer.Interval = CACHE_AUDIT_START_DELAY_MS
+	cacheAuditTimer.Enabled = True
+	TraceLog("Стартовая последовательность завершена.")
 End Sub
 
 Private Sub OfflineDataRefreshTimer_Tick
@@ -640,11 +667,17 @@ Private Sub RefreshOfflineDataNow As ResumableSub
 	If resultData Is Map Then
 		Dim data As Map = resultData
 		If data.GetDefault("ok", False) = True And data.GetDefault("type", "") = "data" Then
+			UpdateTrustedOnlineTimeFromData(data)
 			offlineData = offlineStoreService.SaveOfflineData(data, playerCode, deviceId)
 			isOfflinePlaybackMode = False
 			Wait For (SyncOfflinePlaylistMetadata) Complete (unused As Boolean)
-			CallSubDelayed(Me, "EnsureOfflineAdsCachedAsync")
-			TraceLog("Кэш рекламы поставлен в фоновый прогрев после обновления data.php. cached=" & storage.GetDefault("cached_ad_count", 0))
+			If isStartupSequenceInProgress Then
+				isAdWarmupDeferredAfterStartup = True
+				TraceLog("Прогрев кэша рекламы отложен до завершения стартовой последовательности. cached=" & storage.GetDefault("cached_ad_count", 0))
+			Else
+				CallSubDelayed(Me, "EnsureOfflineAdsCachedAsync")
+				TraceLog("Кэш рекламы поставлен в фоновый прогрев после обновления data.php. cached=" & storage.GetDefault("cached_ad_count", 0))
+			End If
 			If IsPlaybackAllowedByCurrentData = False Then
 				PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
 				isOfflineDataRefreshInProgress = False
@@ -726,7 +759,7 @@ End Sub
 Private Sub BuildNextTrackFromDataPlayback(workingCursors As Map) As ResumableSub
 	Dim emptyItem As Map
 	emptyItem.Initialize
-	Dim currentSlot As Map = dataResolver.ResolveCurrentDataSlot(offlineData)
+	Dim currentSlot As Map = dataResolver.ResolveDataSlotAtTicks(offlineData, EffectiveNowTicks)
 	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then
 		TraceLog("Не удалось определить текущий слот из data.")
 		Return emptyItem
@@ -818,7 +851,7 @@ End Sub
 
 Private Sub BuildDownloadPlanSignature As String
 	If CanUseDataPlaybackResolver = False Then Return ""
-	Dim currentSlot As Map = dataResolver.ResolveCurrentDataSlot(offlineData)
+	Dim currentSlot As Map = dataResolver.ResolveDataSlotAtTicks(offlineData, EffectiveNowTicks)
 	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return ""
 	Dim signatureParts As List
 	signatureParts.Initialize
@@ -844,6 +877,10 @@ End Sub
 Private Sub AutoStartSavedPlayer
 	If playerCode = "" Then Return
 	If isStarted Or isStopping Then Return
+	If isStartupSequenceInProgress Then Return
+	isStartupSequenceInProgress = True
+	isAdWarmupDeferredAfterStartup = False
+	cacheAuditTimer.Enabled = False
 	ShowMessage(MessageValue("connecting"))
 	UpdateConnectionIndicator("connecting")
 	If USE_DATA_PLAYBACK_RESOLVER Then
@@ -857,6 +894,7 @@ Private Sub AutoStartSavedPlayer
 			Else
 				TraceLog("Свежий data.php недоступен, но playable offline queue отсутствует.")
 				HandleOfflineTemporaryState("")
+				CompleteStartupSequence
 				Return
 			End If
 		Else
@@ -864,12 +902,17 @@ Private Sub AutoStartSavedPlayer
 		End If
 		If CanUseDataPlaybackResolver = False Then
 			TraceLog("Автозапуск отменен: нет ни свежих, ни сохраненных data/playlists.")
+			CompleteStartupSequence
 			Return
 		End If
 	End If
 	If IsPlaybackAllowedByCurrentData = False Then
 		PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
+		CompleteStartupSequence
 		Return
+	End If
+	If isAdWarmupDeferredAfterStartup Then
+		Wait For (EnsureOfflineAdsCachedNow) Complete (unusedWarmup As Boolean)
 	End If
 	isStarted = True
 	isStoppedByUser = False
@@ -878,6 +921,7 @@ Private Sub AutoStartSavedPlayer
 	HideContentBlocks
 	TraceLog("Автозапуск воспроизведения при старте приложения.")
 	Wait For (StartFirstTrack("auto")) Complete (unused As Boolean)
+	CompleteStartupSequence
 End Sub
 
 Private Sub ShowSetupScreen(text As String)
@@ -1348,6 +1392,11 @@ Private Sub LoadNextAndPlay As ResumableSub
 		Wait For (EnsureDataPlaybackQueue(2)) Complete (queuePrepared As Boolean)
 		If queuePrepared = False Then
 			TraceLog("Не удалось собрать очередь из data/playlists. Запуск через next.php отключен в тестовом режиме.")
+			Dim idleText As String = ResolveIdleUntilMessage
+			If idleText <> "" Then
+				HandleTemporaryState("server", idleText)
+				Return False
+			End If
 			If isOfflinePlaybackMode Then
 				HandleTemporaryState("offline", "Нет локально доступных треков")
 			Else
@@ -1631,7 +1680,8 @@ Private Sub DeferFutureExactBreak(item As Map)
 End Sub
 
 Private Sub ScanLocalAdsForTimestamp(targetMinuteTimestamp As Long, force As Boolean)
-	If localAdScheduler.ScanTargetMinute(offlineData, playQueue, targetMinuteTimestamp, force) Then
+	Dim allowRegularAds As Boolean = AllowRegularAdsAtTargetMinute(targetMinuteTimestamp)
+	If localAdScheduler.ScanTargetMinute(offlineData, playQueue, targetMinuteTimestamp, force, allowRegularAds) Then
 		PruneQueuedBreakItemsByLocalCache
 		SyncExactBreakState
 	End If
@@ -1841,7 +1891,7 @@ Private Sub HandleOfflineTemporaryState(text As String)
 End Sub
 
 Private Sub HasPlayableOfflineTrackInCurrentSlot As Boolean
-	Dim currentSlot As Map = dataResolver.ResolveCurrentDataSlot(offlineData)
+	Dim currentSlot As Map = dataResolver.ResolveDataSlotAtTicks(offlineData, EffectiveNowTicks)
 	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return False
 	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
 	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return False
@@ -1855,6 +1905,32 @@ Private Sub HasPlayableOfflineTrackInCurrentSlot As Boolean
 		End If
 	Next
 	Return False
+End Sub
+
+Private Sub ResolveIdleUntilMessage As String
+	If offlineData.IsInitialized = False Then Return ""
+	Dim currentSlot As Map = dataResolver.ResolveCurrentDataSlot(offlineData)
+	If IsIdleSlot(currentSlot) = False Then Return ""
+	Dim nextSlot As Map = dataResolver.ResolveNextDataSlotAtTicks(offlineData, EffectiveNowTicks)
+	Dim nextTime As String = nextSlot.GetDefault("slot_time", "")
+	If nextTime = "" Then Return MessageValue("idle")
+	Return MessageValue("idle_until").Replace("{time}", nextTime)
+End Sub
+
+Private Sub IsIdleSlot(slotContext As Map) As Boolean
+	If slotContext.IsInitialized = False Or slotContext.Size = 0 Then Return False
+	Dim playlists As List = slotContext.GetDefault("playlists", Null)
+	If playlists.IsInitialized And playlists.Size > 0 Then Return False
+	Dim streamId As String = slotContext.GetDefault("stream_id", "")
+	Dim streamTitle As String = slotContext.GetDefault("stream_title", "")
+	Return streamId = "" And streamTitle = ""
+End Sub
+
+Private Sub AllowRegularAdsAtTargetMinute(targetMinuteTimestamp As Long) As Boolean
+	If offlineData.IsInitialized = False Then Return False
+	Dim targetTicks As Long = targetMinuteTimestamp * 1000
+	Dim targetSlot As Map = dataResolver.ResolveDataSlotAtTicks(offlineData, targetTicks)
+	Return IsIdleSlot(targetSlot) = False
 End Sub
 
 Private Sub PausePlaybackByPolicy(reason As String, connectionMode As String)
@@ -1898,7 +1974,7 @@ Private Sub IsPlaybackAllowedByCurrentData As Boolean
 	End If
 	Dim endTimestamp As Long = ResolvePlaybackEndTimestamp(offlineData)
 	If endTimestamp <= 0 Then Return True
-	Return DateTime.Now < (endTimestamp * 1000)
+	Return EffectiveNowTicks < (endTimestamp * 1000)
 End Sub
 
 Private Sub ResolvePlaybackBlockReason(data As Map) As String
@@ -1909,7 +1985,7 @@ Private Sub ResolvePlaybackBlockReason(data As Map) As String
 		If pauseReason <> "" Then Return pauseReason
 	End If
 	Dim endTimestamp As Long = ResolvePlaybackEndTimestamp(data)
-	If endTimestamp > 0 And DateTime.Now >= (endTimestamp * 1000) Then Return MessageValue("subscription_expired")
+	If endTimestamp > 0 And EffectiveNowTicks >= (endTimestamp * 1000) Then Return MessageValue("subscription_expired")
 	If playerData.IsInitialized And playerData.ContainsKey("playback_allowed") Then
 		If playerData.GetDefault("playback_allowed", True) <> True Then Return MessageValue("playback_paused")
 	End If
@@ -1952,6 +2028,43 @@ Private Sub ParseEndValueToTimestamp(value As Object) As Long
 		Log(LastException.Message)
 	End Try
 	TraceLog("Не удалось разобрать player.end: " & textValue)
+	Return 0
+End Sub
+
+Private Sub UpdateTrustedOnlineTimeFromData(data As Map)
+	Dim candidateTicks As Long = ParseTrustedOnlineTicks(data)
+	If candidateTicks <= 0 Then candidateTicks = DateTime.Now
+	UpdateTrustedOnlineTimeTicks(candidateTicks)
+End Sub
+
+Private Sub UpdateTrustedOnlineTimeTicks(candidateTicks As Long)
+	If candidateTicks <= 0 Then Return
+	Dim storedTicks As Long = storage.GetDefault(trustedOnlineTimeKey, 0)
+	If candidateTicks <= storedTicks Then Return
+	storage.Put(trustedOnlineTimeKey, candidateTicks)
+	TraceLog("Обновлено доверенное онлайн-время. ticks=" & candidateTicks)
+End Sub
+
+Private Sub ParseTrustedOnlineTicks(data As Map) As Long
+	If data.IsInitialized = False Then Return 0
+	Dim updatedText As String = ("" & data.GetDefault("updated", "")).Trim
+	If updatedText = "" Then Return 0
+	Try
+		Dim instantClass As JavaObject
+		instantClass.InitializeStatic("java.time.Instant")
+		Dim instant As JavaObject = instantClass.RunMethod("parse", Array As Object(updatedText))
+		Return instant.RunMethod("toEpochMilli", Null)
+	Catch
+		Try
+			Dim offsetDateTimeClass As JavaObject
+			offsetDateTimeClass.InitializeStatic("java.time.OffsetDateTime")
+			Dim offsetDateTime As JavaObject = offsetDateTimeClass.RunMethod("parse", Array As Object(updatedText))
+			Dim instant As JavaObject = offsetDateTime.RunMethod("toInstant", Null)
+			Return instant.RunMethod("toEpochMilli", Null)
+		Catch
+			Log(LastException.Message)
+		End Try
+	End Try
 	Return 0
 End Sub
 
@@ -3069,7 +3182,7 @@ End Sub
 Private Sub CurrentSecondOfMinute As Int
 	Dim previousTimeFormat As String = DateTime.TimeFormat
 	DateTime.TimeFormat = "ss"
-	Dim value As Int = DateTime.Time(DateTime.Now)
+	Dim value As Int = DateTime.Time(EffectiveNowTicks)
 	DateTime.TimeFormat = previousTimeFormat
 	Return value
 End Sub
@@ -3198,7 +3311,14 @@ Private Sub TimezoneOffsetMinutes As Int
 End Sub
 
 Private Sub LocalNowTimestamp As Long
-	Return Floor(DateTime.Now / 1000) - (TimezoneOffsetMinutes * 60)
+	Return Floor(EffectiveNowTicks / 1000) - (TimezoneOffsetMinutes * 60)
+End Sub
+
+Private Sub EffectiveNowTicks As Long
+	Dim deviceNow As Long = DateTime.Now
+	Dim trustedNow As Long = storage.GetDefault(trustedOnlineTimeKey, 0)
+	If trustedNow > deviceNow Then Return trustedNow
+	Return deviceNow
 End Sub
 
 Private Sub ToLongDefault(value As Object, defaultValue As Long) As Long

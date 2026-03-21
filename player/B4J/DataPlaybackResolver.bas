@@ -36,14 +36,18 @@ Public Sub ClonePlaylistCursors As Map
 End Sub
 
 Public Sub ResolveCurrentDataSlot(offlineData As Map) As Map
+	Return ResolveDataSlotAtTicks(offlineData, DateTime.Now)
+End Sub
+
+Public Sub ResolveDataSlotAtTicks(offlineData As Map, targetTicks As Long) As Map
 	Dim slotContext As Map
 	slotContext.Initialize
 	If offlineData.IsInitialized = False Then Return slotContext
 	Dim schedules As List = offlineData.GetDefault("schedules", Null)
 	If schedules.IsInitialized = False Or schedules.Size = 0 Then Return slotContext
-	Dim todayKey As String = FormatIsoDate(DateTime.Now)
-	Dim nowMinutes As Int = CurrentMinutesOfDay
-	Dim todayWeekday As String = CurrentIsoWeekday
+	Dim todayKey As String = FormatIsoDate(targetTicks)
+	Dim nowMinutes As Int = MinutesOfDayFromTicks(targetTicks)
+	Dim todayWeekday As String = IsoWeekdayFromTicks(targetTicks)
 	Dim matchedSlots As List
 	matchedSlots.Initialize
 	For Each scheduleObject As Object In schedules
@@ -100,12 +104,16 @@ Public Sub ResolveCurrentDataSlot(offlineData As Map) As Map
 End Sub
 
 Public Sub ResolveNextDataSlot(offlineData As Map) As Map
+	Return ResolveNextDataSlotAtTicks(offlineData, DateTime.Now)
+End Sub
+
+Public Sub ResolveNextDataSlotAtTicks(offlineData As Map, referenceTicks As Long) As Map
 	Dim nextSlot As Map
 	nextSlot.Initialize
 	If offlineData.IsInitialized = False Then Return nextSlot
 	Dim schedules As List = offlineData.GetDefault("schedules", Null)
 	If schedules.IsInitialized = False Or schedules.Size = 0 Then Return nextSlot
-	Dim nowTicks As Long = DateTime.Now
+	Dim nowTicks As Long = referenceTicks
 	Dim bestSlotTicks As Long = 0
 	For dayOffset = 0 To 7
 		Dim dayTicks As Long = StartOfDayTicks(nowTicks + dayOffset * DateTime.TicksPerDay)
@@ -346,22 +354,14 @@ Private Sub FormatIsoDate(ticks As Long) As String
 	Return value
 End Sub
 
-Private Sub CurrentMinutesOfDay As Int
+Private Sub MinutesOfDayFromTicks(ticks As Long) As Int
 	Dim previousTimeFormat As String = DateTime.TimeFormat
 	DateTime.TimeFormat = "HH:mm:ss"
-	Dim timeValue As String = DateTime.Time(DateTime.Now)
+	Dim timeValue As String = DateTime.Time(ticks)
 	DateTime.TimeFormat = previousTimeFormat
 	Dim parts() As String = Regex.Split(":", timeValue)
 	If parts.Length < 2 Then Return 0
 	Return parts(0) * 60 + parts(1)
-End Sub
-
-Private Sub CurrentIsoWeekday As String
-	Dim jo As JavaObject
-	jo.InitializeStatic("java.time.LocalDate")
-	Dim today As JavaObject = jo.RunMethod("now", Null)
-	Dim dayOfWeek As JavaObject = today.RunMethod("getDayOfWeek", Null)
-	Return "" & dayOfWeek.RunMethod("getValue", Null)
 End Sub
 
 Private Sub IsoWeekdayFromTicks(ticks As Long) As String
