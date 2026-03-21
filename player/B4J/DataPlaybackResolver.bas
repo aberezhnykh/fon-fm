@@ -86,10 +86,11 @@ Public Sub ResolveCurrentDataSlot(offlineData As Map) As Map
 		End If
 	Next
 	If selectedSlot.Size = 0 Then
+		selectedMinutes = 24 * 60 + 1
 		For Each slotEntryObject As Object In matchedSlots
 			Dim slotEntry As Map = slotEntryObject
 			Dim slotMinutes As Int = slotEntry.GetDefault("slot_minutes", -1)
-			If slotMinutes > selectedMinutes Then
+			If slotMinutes > nowMinutes And slotMinutes < selectedMinutes Then
 				selectedSlot = slotEntry
 				selectedMinutes = slotMinutes
 			End If
@@ -138,7 +139,7 @@ Public Sub LoadCachedPlaylistMetadata(playlistId As String) As Map
 	Return playlistData
 End Sub
 
-Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map) As Map
+Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService As MediaCache, cachedOnly As Boolean) As Map
 	Dim emptyTrack As Map
 	emptyTrack.Initialize
 	If playlistData.IsInitialized = False Then Return emptyTrack
@@ -146,16 +147,27 @@ Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map) As Map
 	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return emptyTrack
 	Dim filteredTracks As List
 	filteredTracks.Initialize
+	Dim cachedTracks As List
+	cachedTracks.Initialize
 	For Each trackObject As Object In tracks
 		If trackObject Is Map Then
 			Dim track As Map = trackObject
 			Dim trackId As String = track.GetDefault("id", "")
 			If trackId = "" Then Continue
+			If cachedOnly And mediaCacheService.IsTrackCached(trackId) = False Then Continue
+			cachedTracks.Add(track)
 			If recentTrackIds.IndexOf(trackId) = -1 Then filteredTracks.Add(track)
 		End If
 	Next
-	Dim sourceTracks As List = tracks
-	If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
+	Dim sourceTracks As List
+	If cachedOnly Then
+		sourceTracks = cachedTracks
+		If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
+	Else
+		sourceTracks = tracks
+		If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
+	End If
+	If sourceTracks.IsInitialized = False Or sourceTracks.Size = 0 Then Return emptyTrack
 	Dim randomIndex As Int = Rnd(0, sourceTracks.Size)
 	Dim trackObject As Object = sourceTracks.Get(randomIndex)
 	If trackObject Is Map Then Return trackObject

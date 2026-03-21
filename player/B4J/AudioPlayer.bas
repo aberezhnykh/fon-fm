@@ -24,6 +24,7 @@ Sub Class_Globals
 	Private fadeTargetVolume As Double
 	Private fadeStepVolume As Double
 	Private currentVolume As Double
+	Private stalledCheckCount As Int
 End Sub
 
 Public Sub Initialize (eventNameValue As String, targetModuleValue As Object)
@@ -61,6 +62,7 @@ Public Sub PlayWithFade(fadeTimeMs As Int)
 	If playerState <> STATE_READY Then Return
 	playerState = STATE_PLAYING
 	lastPosition = 0
+	stalledCheckCount = 0
 	checkTimer.Enabled = True
 	timeUpdateTimer.Enabled = True
 	player.Play
@@ -78,6 +80,7 @@ Public Sub Stop(fadeTimeMs As Int)
 	checkTimer.Enabled = False
 	timeUpdateTimer.Enabled = False
 	lastPosition = 0
+	stalledCheckCount = 0
 	If player.IsInitialized = False Then
 		playerState = STATE_STOPPED
 		TraceAudio("Stop ignored. player not initialized.")
@@ -99,6 +102,7 @@ Public Sub Reset
 	fadeTimer.Enabled = False
 	fadeMode = FADE_NONE
 	lastPosition = 0
+	stalledCheckCount = 0
 	currentVolume = 0
 	playerState = STATE_STOPPED
 	If player.IsInitialized Then
@@ -178,6 +182,7 @@ Private Sub Player_Complete
 	fadeTimer.Enabled = False
 	fadeMode = FADE_NONE
 	currentVolume = 0
+	stalledCheckCount = 0
 	playerState = STATE_STOPPED
 	TraceAudio("Complete")
 	CallIfExists(eventName & "_Complete")
@@ -206,11 +211,16 @@ End Sub
 Private Sub CheckTimer_Tick
 	If playerState <> STATE_PLAYING Then Return
 	Dim positionNow As Long = Position
-	If positionNow = lastPosition Then
-		NotifyError("Silence detected 1")
-	Else
+	If positionNow > lastPosition Then
 		lastPosition = positionNow
+		stalledCheckCount = 0
+		Return
 	End If
+	Dim durationNow As Long = Duration
+	If durationNow > 0 And positionNow >= Max(0, durationNow - 2000) Then Return
+	stalledCheckCount = stalledCheckCount + 1
+	If stalledCheckCount < 3 Then Return
+	NotifyError("Silence detected 3")
 End Sub
 
 Private Sub LoadTimer_Tick

@@ -38,6 +38,20 @@ public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
 public b4j.example.b4xcollections _b4xcollections = null;
 public b4j.example.httputils2service _httputils2service = null;
+public String  _put(b4j.example.keyvaluestore __ref,String _key,Object _value) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="keyvaluestore";
+if (Debug.shouldDelegate(ba, "put", true))
+	 {return ((String) Debug.delegate(ba, "put", new Object[] {_key,_value}));}
+RDebugUtils.currentLine=31784960;
+ //BA.debugLineNum = 31784960;BA.debugLine="Public Sub Put(Key As String, Value As Object)";
+RDebugUtils.currentLine=31784961;
+ //BA.debugLineNum = 31784961;BA.debugLine="sql1.ExecNonQuery2(\"INSERT OR REPLACE INTO main V";
+__ref._sql1 /*anywheresoftware.b4j.objects.SQL*/ .ExecNonQuery2("INSERT OR REPLACE INTO main VALUES(?, ?)",anywheresoftware.b4a.keywords.Common.ArrayToList(new Object[]{(Object)(_key),(Object)(__ref._ser /*anywheresoftware.b4a.randomaccessfile.B4XSerializator*/ .ConvertObjectToBytes(_value))}));
+RDebugUtils.currentLine=31784962;
+ //BA.debugLineNum = 31784962;BA.debugLine="End Sub";
+return "";
+}
 public Object  _getdefault(b4j.example.keyvaluestore __ref,String _key,Object _defaultvalue) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="keyvaluestore";
@@ -80,20 +94,6 @@ RDebugUtils.currentLine=31719431;
 __ref._createtable /*String*/ (null);
 RDebugUtils.currentLine=31719432;
  //BA.debugLineNum = 31719432;BA.debugLine="End Sub";
-return "";
-}
-public String  _put(b4j.example.keyvaluestore __ref,String _key,Object _value) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="keyvaluestore";
-if (Debug.shouldDelegate(ba, "put", true))
-	 {return ((String) Debug.delegate(ba, "put", new Object[] {_key,_value}));}
-RDebugUtils.currentLine=31784960;
- //BA.debugLineNum = 31784960;BA.debugLine="Public Sub Put(Key As String, Value As Object)";
-RDebugUtils.currentLine=31784961;
- //BA.debugLineNum = 31784961;BA.debugLine="sql1.ExecNonQuery2(\"INSERT OR REPLACE INTO main V";
-__ref._sql1 /*anywheresoftware.b4j.objects.SQL*/ .ExecNonQuery2("INSERT OR REPLACE INTO main VALUES(?, ?)",anywheresoftware.b4a.keywords.Common.ArrayToList(new Object[]{(Object)(_key),(Object)(__ref._ser /*anywheresoftware.b4a.randomaccessfile.B4XSerializator*/ .ConvertObjectToBytes(_value))}));
-RDebugUtils.currentLine=31784962;
- //BA.debugLineNum = 31784962;BA.debugLine="End Sub";
 return "";
 }
 public String  _class_globals(b4j.example.keyvaluestore __ref) throws Exception{

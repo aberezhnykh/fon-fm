@@ -25,6 +25,6 @@ ModuleClosedNodes5=
 ModuleClosedNodes6=
 ModuleClosedNodes7=
 ModuleClosedNodes8=
-NavigationStack=B4XMainPage,Initialize,143,0,B4XMainPage,Class_Globals,135,0,B4XMainPage,PlayerLevelToFactor,2666,0,B4XMainPage,SetPickOnBounds,3083,0,DataPlaybackResolver,Class_Globals,6,0,B4XMainPage,ScaleValue,2752,0,B4XMainPage,ColorToCss,2470,0,B4XMainPage,ApplyMaterialIconFont,2462,0,B4XMainPage,JoinList,2451,0,B4XMainPage,MessageValue,2455,0,B4XMainPage,TimezoneOffsetMinutes,2437,0
+NavigationStack=B4XMainPage,JoinList,2451,0,B4XMainPage,MessageValue,2455,0,B4XMainPage,TimezoneOffsetMinutes,2437,0,B4XMainPage,SaveWindowState,2433,0,B4XMainPage,DbToFactor,2435,0,DataPlaybackResolver,Class_Globals,6,0,B4XMainPage,RestoreDownloadPlanFromStorage,686,0,B4XMainPage,BuildNextTrackFromDataPlayback,675,0,MediaCache,Class_Globals,6,0,B4XMainPage,Class_Globals,150,0
 SelectedBuild=0
 VisibleModules=3,2,1,8,4,7,5,6

@@ -45,14 +45,91 @@ function validType(string $value): bool {
     return $value === 'track' || $value === 'ad';
 }
 
+function validDate(string $value): bool {
+    return (bool)preg_match('/^\d{4}-\d{2}-\d{2}$/', $value);
+}
+
+function validTime(string $value): bool {
+    return (bool)preg_match('/^\d{2}:\d{2}:\d{2}$/', $value);
+}
+
+function normalizeHistoryItem(mixed $item, string $fallbackDate = ''): ?array {
+    if (!is_array($item)) {
+        return null;
+    }
+
+    $type = normalizeString($item['type'] ?? '');
+    $id = normalizeString($item['id'] ?? '');
+    $time = normalizeString($item['time'] ?? '');
+    $date = normalizeString($item['date'] ?? $fallbackDate);
+
+    if (!validType($type) || $id === '' || !validDate($date) || !validTime($time)) {
+        return null;
+    }
+
+    return [
+        'date' => $date,
+        'payload' => [
+            'time' => $time,
+            'type' => $type,
+            'id' => $id,
+        ],
+    ];
+}
+
+function requestBody(): string {
+    $body = file_get_contents('php://input');
+    return is_string($body) ? trim($body) : '';
+}
+
+function parseNdjsonItems(string $body, string $fallbackDate = ''): array {
+    if ($body === '') {
+        return [];
+    }
+
+    $out = [];
+    $lines = preg_split('/\r\n|\n|\r/', $body) ?: [];
+
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '') {
+            continue;
+        }
+
+        $decoded = json_decode($line, true);
+        if (!is_array($decoded)) {
+            $out[] = null;
+            continue;
+        }
+
+        $out[] = normalizeHistoryItem($decoded, $fallbackDate);
+    }
+
+    return $out;
+}
+
+function parseHistoryItems(string $fallbackDate = ''): array {
+    $body = requestBody();
+    if ($body !== '') {
+        return parseNdjsonItems($body, $fallbackDate);
+    }
+
+    $single = normalizeHistoryItem([
+        'type' => $_REQUEST['type'] ?? '',
+        'id' => $_REQUEST['id'] ?? '',
+        'date' => $_REQUEST['date'] ?? $fallbackDate,
+        'time' => $_REQUEST['time'] ?? '',
+    ], $fallbackDate);
+
+    return $single !== null ? [$single] : [];
+}
+
 $player = runtime_normalize_player_code($_REQUEST['player'] ?? '');
 $device = normalizeDevice($_REQUEST['device'] ?? '');
-$type = normalizeString($_REQUEST['type'] ?? '');
-$id = normalizeString($_REQUEST['id'] ?? '');
-$date = normalizeString($_REQUEST['date'] ?? '');
-$time = normalizeString($_REQUEST['time'] ?? '');
+$requestDate = normalizeString($_REQUEST['date'] ?? '');
+$items = parseHistoryItems($requestDate);
 
-if ($player === '' || $device === '' || $id === '' || !validType($type) || $date === '' || $time === '') {
+if ($player === '' || $device === '' || !$items) {
     respond(['ok' => false], 400);
 }
 
@@ -74,16 +151,44 @@ if ($storedDevice !== '' && $storedDevice !== $device) {
     respondNoContent();
 }
 
-$payload = [
-    'time' => $time,
-    'type' => $type,
-    'id' => $id,
-];
+$accepted = 0;
+$rejected = 0;
 
-$path = $historyDir . '/' . $playerId . '/' . $date . '.ndjson';
+foreach ($items as $item) {
+    if (!is_array($item)) {
+        $rejected++;
+        continue;
+    }
 
-if (!writeHistoryLine($path, $payload)) {
-    respond(['ok' => false], 500);
+    $date = $item['date'] ?? '';
+    $payload = $item['payload'] ?? null;
+    if (!is_string($date) || !is_array($payload)) {
+        $rejected++;
+        continue;
+    }
+
+    $path = $historyDir . '/' . $playerId . '/' . $date . '.ndjson';
+    if (!writeHistoryLine($path, $payload)) {
+        respond([
+            'ok' => false,
+            'accepted' => $accepted,
+            'rejected' => $rejected,
+        ], 500);
+    }
+
+    $accepted++;
 }
 
-respond(['ok' => true]);
+if ($accepted === 0) {
+    respond([
+        'ok' => false,
+        'accepted' => 0,
+        'rejected' => $rejected,
+    ], 400);
+}
+
+respond([
+    'ok' => true,
+    'accepted' => $accepted,
+    'rejected' => $rejected,
+]);

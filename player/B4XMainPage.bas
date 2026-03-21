@@ -14,22 +14,26 @@ Sub Class_Globals
 	Private Const NEXT_BASE_URL As String = "https://play.fon.fm/next"
 	Private Const CLAIM_BASE_URL As String = "https://play.fon.fm/claim"
 	Private Const HISTORY_BASE_URL As String = "https://play.fon.fm/history"
+	Private Const HISTORY_FLUSH_INTERVAL_MS As Int = 30000
 	Private Const DATA_BASE_URL As String = "https://play.fon.fm/data.php"
 	Private Const PLAYLIST_CDN_BASE_URL As String = "https://cdn.fon.fm/data/playlists/"
-	Private Const CONNECTIVITY_CHECK_URL As String = "https://radiosparx.ru/img/logo-dark.svg"
+	Private Const SERVICE_CHECK_URL As String = "https://play.fon.fm/meta"
+	Private Const EXTERNAL_CONNECTIVITY_CHECK_URL As String = "https://radiosparx.ru/img/logo-dark.svg"
 	Private Const APP_VERSION As String = "1.0.1"
 	Private Const USE_DATA_PLAYBACK_RESOLVER As Boolean = True
 	Private Const ICON_PLAY As String = Chr(0xE037)
 	Private Const ICON_STOP As String = Chr(0xE047)
 	Private Const ICON_MORE As String = Chr(0xE5D3)
 	Private Const ICON_CLOSE As String = Chr(0xE5CD)
+	Private Const ICON_CLOUD_OK As String = Chr(0xE2BF)
+	Private Const ICON_CLOUD_OFF As String = Chr(0xE2C1)
 	Private Const PREFETCH_SECONDS As Int = 10
 	Private Const STOP_FADE_MS As Int = 3000
 	Private Const ORBIT_FADE_MS As Int = 3000
 	Private Const START_FADE_MS As Int = 1500
 	Private Const TRACK_OVERLAP_MS As Int = 1800
 	Private Const AD_TAIL_OVERLAP_MS As Int = 350
-	Private Const HISTORY_LOG_DELAY_MS As Int = 15000
+	Private Const TRACK_CACHE_WARMUP_DELAY_MS As Int = 7000
 	Private Const OFFLINE_DATA_REFRESH_MS As Int = 5 * 60 * 1000
 	Private Const FETCH_TIMEOUT_MS As Int = 8000
 	Private Const CONNECTIVITY_CHECK_TIMEOUT_MS As Int = 5000
@@ -47,6 +51,7 @@ Sub Class_Globals
 	Private offlineDataFile As String = "offline_data.json"
 	Private offlinePlaylistRequirementsFile As String = "offline_playlist_requirements.json"
 	Private offlinePlaylistsDirName As String = "playlists"
+	Private historyDirName As String = "history"
 	Private debugResponsesDir As String
 
 	Private card As B4XView
@@ -77,6 +82,7 @@ Sub Class_Globals
 	Private lblStream As B4XView
 	Private lblInfo As B4XView
 	Private lblFooter As B4XView
+	Private lblConnectionIcon As B4XView
 	Private lblSetupMessage As B4XView
 
 	Private txtPlayerCode As TextField
@@ -106,10 +112,11 @@ Sub Class_Globals
 
 	Private retryTimer As Timer
 	Private breakTimer As Timer
-	Private historyTimer As Timer
+	Private historyFlushTimer As Timer
 	Private orbitTimer As Timer
 	Private offlineDataRefreshTimer As Timer
 	Private localAdMinuteTimer As Timer
+	Private trackCacheWarmupTimer As Timer
 	Private machineGuidShell As Shell
 
 	Private playerCode As String
@@ -130,6 +137,7 @@ Sub Class_Globals
 	Private pendingPlayFadeInMs As Int
 	Private historyStartedAtTicks As Long
 	Private initialStartFadePending As Boolean
+	Private isHistoryFlushInProgress As Boolean
 
 	Private isStarted As Boolean
 	Private isStoppedByUser As Boolean = True
@@ -146,6 +154,9 @@ Sub Class_Globals
 	Private orbitFadeValue As Double
 	Private orbitFadeTarget As Double
 	Private isOfflineDataRefreshInProgress As Boolean
+	Private isTrackCacheRefreshInProgress As Boolean
+	Private isOfflinePlaybackMode As Boolean
+	Private isPlaybackPausedByPolicy As Boolean
 End Sub
 
 Public Sub Initialize
@@ -174,8 +185,12 @@ Private Sub InitSettings
 	DateTime.DateFormat = "dd.MM.yyyy"
 	DateTime.TimeFormat = "HH:mm:ss"
 	messages.Initialize
-	messages.Put("offline", "Требуется интернет")
+	messages.Put("offline", "Проверьте интернет")
+	messages.Put("connecting", "Подключение...")
 	messages.Put("server_wait", "Временная остановка")
+	messages.Put("playback_paused", "Воспроизведение приостановлено")
+	messages.Put("subscription_expired", "Подписка истекла")
+	messages.Put("invalid_data_response", "Ошибка ответа сервера. Обратитесь в техподдержку")
 	messages.Put("idle", "Перерыв...")
 	messages.Put("idle_until", "Перерыв до {time}")
 	messages.Put("blocked", "Плеер заблокирован")
@@ -203,6 +218,7 @@ Private Sub InitState
 	storageDir = File.DirData("fonfm")
 	debugResponsesDir = File.Combine(storageDir, "debugresponses")
 	EnsureDirectory(storageDir)
+	EnsureDirectory(GetHistoryDir)
 	storage.Initialize(storageDir, storageDbName)
 	MigrateLegacyStorageIfNeeded
 	playerCode = NormalizePlayerCode(storage.GetDefault("player_code", ""))
@@ -217,12 +233,14 @@ Private Sub InitState
 	mediaCacheService.Initialize(storageDir, storage, Me, "TraceLog")
 	retryTimer.Initialize("RetryTimer", SERVER_RETRY_DELAY_INITIAL)
 	breakTimer.Initialize("BreakTimer", 1000)
-	historyTimer.Initialize("HistoryTimer", HISTORY_LOG_DELAY_MS)
+	historyFlushTimer.Initialize("HistoryFlushTimer", HISTORY_FLUSH_INTERVAL_MS)
 	orbitTimer.Initialize("OrbitTimer", 70)
 	offlineDataRefreshTimer.Initialize("OfflineDataRefreshTimer", OFFLINE_DATA_REFRESH_MS)
 	localAdMinuteTimer.Initialize("LocalAdMinuteTimer", 1000)
+	trackCacheWarmupTimer.Initialize("TrackCacheWarmupTimer", TRACK_CACHE_WARMUP_DELAY_MS)
 	historyItem.Initialize
 	historyStartedAtTicks = 0
+	isHistoryFlushInProgress = False
 	activeItem.Initialize
 	preparedItem.Initialize
 	activeAudioKey = ""
@@ -231,6 +249,7 @@ Private Sub InitState
 	pendingPrepareAudioKey = ""
 	offlineStoreService.Initialize(storageDir, storage, Me, "TraceLog", offlineDataFile, offlinePlaylistRequirementsFile, offlinePlaylistsDirName, PLAYLIST_CDN_BASE_URL)
 	offlineData = offlineStoreService.LoadOfflineData
+	RefreshPendingHistoryState
 	ResolveMachineGuidAsync
 	TraceLog("Состояние инициализировано. Папка=" & storageDir & ", сохраненный код=" & FormatPlayerCodeForDisplay(playerCode))
 End Sub
@@ -272,6 +291,7 @@ Private Sub BuildUi
 	lblStream = CreateLabel("", 36, 0xFFD0FF71, True, True)
 	lblInfo = CreateLabel("", 17, 0xFFBCC3CD, False, True)
 	lblFooter = CreateLabel("FON.FM APP " & APP_VERSION, 12, 0xFF747B86, False, True)
+	lblConnectionIcon = CreateLabel(ICON_CLOUD_OK, 16, 0xFF747B86, False, False)
 	lblSetupMessage = CreateLabel("", 17, 0xFFBCC3CD, False, True)
 
 	txtPlayerCode.Initialize("txtPlayerCode")
@@ -293,6 +313,7 @@ Private Sub BuildUi
 	contentPane.AddView(setupPane, 0, 0, 0, 0)
 	contentPane.AddView(playerPane, 0, 0, 0, 0)
 	footerPane.AddView(lblFooter, 0, 0, 0, 0)
+	footerPane.AddView(lblConnectionIcon, 0, 0, 0, 0)
 
 	setupPane.AddView(setupHeroPane, 0, 0, 0, 0)
 	setupPane.AddView(setupDetailPane, 0, 0, 0, 0)
@@ -423,6 +444,9 @@ Private Sub LayoutUi(width As Int, height As Int)
 	btnConfirmNo.SetLayoutAnimated(0, btnConfirmYes.Left + 124dip, 14dip, 112dip, 44dip)
 
 	lblFooter.SetLayoutAnimated(0, horizontalPad, 0, cardWidth - horizontalPad * 2, footerHeight)
+	Dim connectionIconSize As Int = ScaleValue(safeWidth, 18dip, 20dip, 20dip)
+	lblConnectionIcon.SetLayoutAnimated(0, cardWidth - horizontalPad - connectionIconSize, (footerHeight - connectionIconSize) / 2, connectionIconSize, connectionIconSize)
+	lblFooter.SetLayoutAnimated(0, horizontalPad, 0, cardWidth - horizontalPad * 2 - connectionIconSize - 8dip, footerHeight)
 	UpdateResponsiveStyles(safeWidth)
 	UpdateVisibleMode
 End Sub
@@ -477,10 +501,11 @@ Private Sub UpdateResponsiveStyles(availableWidth As Int)
 	lblInfo.Font = xui.CreateDefaultFont(infoFontSize)
 	lblHeader.Font = xui.CreateDefaultFont(12)
 	lblFooter.Font = xui.CreateDefaultFont(12)
+	ApplyMaterialIconFont(lblConnectionIcon, 16)
 	card.SetColorAndBorder(0xFF1A1B1E, 1dip, 0x14FFFFFF, cardRadius)
 	UpdateHeaderActionAppearance(False)
 	UpdateCodeInputAppearance(isCodeInputFocused)
-	If isStarted Then
+	If isStarted Or isPlaybackPausedByPolicy Then
 		SetStopIcon
 	Else
 		SetPlayIcon
@@ -492,18 +517,34 @@ Private Sub ShowInitialScreen
 		ShowSetupScreen("")
 	Else
 		ShowPlayerScreen(True)
+		UpdateConnectionIndicator("connecting")
 		CallSubDelayed(Me, "AutoStartSavedPlayer")
 	End If
 End Sub
 
 Private Sub StartOfflineDataRefresh
 	offlineDataRefreshTimer.Enabled = False
+	historyFlushTimer.Enabled = False
 	localAdMinuteTimer.Interval = 1000
 	localAdMinuteTimer.Enabled = True
 	If playerCode = "" Then Return
 	offlineDataRefreshTimer.Interval = OFFLINE_DATA_REFRESH_MS
 	offlineDataRefreshTimer.Enabled = True
+	historyFlushTimer.Interval = HISTORY_FLUSH_INTERVAL_MS
+	historyFlushTimer.Enabled = True
 	TraceLog("Запущено обновление офлайн-метаданных. Интервал=" & OFFLINE_DATA_REFRESH_MS & " ms")
+End Sub
+
+Private Sub HistoryFlushTimer_Tick
+	If playerCode = "" Then Return
+	If GetPendingHistoryFileCount <= 0 Then Return
+	If isHistoryFlushInProgress Then Return
+	TraceLog("HistoryFlushTimer_Tick. pendingFiles=" & GetPendingHistoryFileCount)
+	CallSubDelayed(Me, "FlushHistoryBufferAsync")
+End Sub
+
+Private Sub FlushHistoryBufferAsync
+	Wait For (FlushHistoryBuffer) Complete (unused As Boolean)
 End Sub
 
 Private Sub EnsureOfflineAdsCachedAsync
@@ -518,6 +559,41 @@ Private Sub EnsureOfflineAdsCachedAsync
 	TraceLog("Запуск прогрева кэша рекламы. ads=" & storage.GetDefault("offline_ads_count", 0))
 	Wait For (mediaCacheService.EnsureAdsCached(offlineData)) Complete (downloaded As Boolean)
 	TraceLog("Прогрев кэша рекламы завершен. downloaded=" & downloaded & ", cached=" & storage.GetDefault("cached_ad_count", 0))
+End Sub
+
+Private Sub EnsureUpcomingTracksCachedAsync
+	If isTrackCacheRefreshInProgress Then Return
+	Dim trackItems As List
+	trackItems.Initialize
+	If playQueue.IsInitialized Then
+		For Each itemObject As Object In playQueue
+			If itemObject Is Map Then
+				Dim item As Map = itemObject
+				If item.GetDefault("type", "") = "track" Then trackItems.Add(CloneMap(item))
+			End If
+		Next
+	End If
+	If trackItems.Size = 0 Then Return
+	isTrackCacheRefreshInProgress = True
+	TraceLog("Запуск прогрева кэша треков. items=" & trackItems.Size)
+	Wait For (mediaCacheService.EnsureTracksCached(trackItems, 5)) Complete (downloaded As Boolean)
+	TraceLog("Прогрев кэша треков завершен. downloaded=" & downloaded & ", cached=" & storage.GetDefault("cached_track_count", 0))
+	isTrackCacheRefreshInProgress = False
+End Sub
+
+Private Sub ScheduleTrackCacheWarmup
+	trackCacheWarmupTimer.Enabled = False
+	If isStarted = False Or isStoppedByUser Then Return
+	If currentMediaType <> "track" Then Return
+	If playQueue.IsInitialized = False Or playQueue.Size = 0 Then Return
+	trackCacheWarmupTimer.Interval = TRACK_CACHE_WARMUP_DELAY_MS
+	trackCacheWarmupTimer.Enabled = True
+	TraceLog("Запланирован прогрев кэша треков. delayMs=" & TRACK_CACHE_WARMUP_DELAY_MS & ", queueSize=" & playQueue.Size)
+End Sub
+
+Private Sub TrackCacheWarmupTimer_Tick
+	trackCacheWarmupTimer.Enabled = False
+	CallSubDelayed(Me, "EnsureUpcomingTracksCachedAsync")
 End Sub
 
 Private Sub OfflineDataRefreshTimer_Tick
@@ -545,9 +621,25 @@ Private Sub RefreshOfflineDataNow As ResumableSub
 		Dim data As Map = resultData
 		If data.GetDefault("ok", False) = True And data.GetDefault("type", "") = "data" Then
 			offlineData = offlineStoreService.SaveOfflineData(data, playerCode, deviceId)
+			isOfflinePlaybackMode = False
 			Wait For (SyncOfflinePlaylistMetadata) Complete (unused As Boolean)
 			CallSubDelayed(Me, "EnsureOfflineAdsCachedAsync")
 			TraceLog("Кэш рекламы поставлен в фоновый прогрев после обновления data.php. cached=" & storage.GetDefault("cached_ad_count", 0))
+			If IsPlaybackAllowedByCurrentData = False Then
+				PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
+				isOfflineDataRefreshInProgress = False
+				Return True
+			End If
+			If isPlaybackPausedByPolicy Then
+				isPlaybackPausedByPolicy = False
+				If isStoppedByUser = False And isStarted = False And isStopping = False Then
+					TraceLog("Playback снова разрешен. Возобновляю воспроизведение автоматически.")
+					isStarted = True
+					SetStopIcon
+					HideContentBlocks
+					CallSubDelayed(Me, "ResumePlaybackAfterPolicyPause")
+				End If
+			End If
 			isOfflineDataRefreshInProgress = False
 			Return True
 		End If
@@ -558,11 +650,20 @@ Private Sub RefreshOfflineDataNow As ResumableSub
 			Return False
 		End If
 		TraceLog("Ответ data.php не подходит для офлайн-режима. type=" & data.GetDefault("type", "") & ", ok=" & data.GetDefault("ok", False))
+		PausePlaybackByPolicy(MessageValue("invalid_data_response"), "server")
 	Else
 		TraceLog("Ответ data.php не является Map.")
+		PausePlaybackByPolicy(MessageValue("invalid_data_response"), "server")
 	End If
 	isOfflineDataRefreshInProgress = False
 	Return False
+End Sub
+
+Private Sub ResumePlaybackAfterPolicyPause
+	If isStoppedByUser Or isStopping Then Return
+	If isPlaybackPausedByPolicy Then Return
+	If isStarted = False Then Return
+	Wait For (StartFirstTrack("auto")) Complete (unused As Boolean)
 End Sub
 
 Private Sub EnsureDataPlaybackReady As ResumableSub
@@ -587,12 +688,18 @@ End Sub
 
 Private Sub EnsureDataPlaybackQueue(minItems As Int) As ResumableSub
 	If minItems <= 0 Then Return False
+	If playQueue.Size = 0 Then
+		If RestoreDownloadPlanFromStorage Then
+			If playQueue.Size >= minItems Then Return True
+		End If
+	End If
 	Dim workingCursors As Map = dataResolver.ClonePlaylistCursors
 	Do While playQueue.Size < minItems
 		Wait For (BuildNextTrackFromDataPlayback(workingCursors)) Complete (nextItem As Map)
 		If IsValidDataTrackItem(nextItem) = False Then Exit
 		playQueue.Add(nextItem)
 	Loop
+	SaveDownloadPlanState
 	Return playQueue.Size >= minItems
 End Sub
 
@@ -616,9 +723,13 @@ Private Sub BuildNextTrackFromDataPlayback(workingCursors As Map) As ResumableSu
 		playlistData = dataResolver.LoadCachedPlaylistMetadata(playlistDescriptor.GetDefault("id", ""))
 		If playlistData.IsInitialized = False Or playlistData.Size = 0 Then Return emptyItem
 	End If
-	Dim selectedTrack As Map = dataResolver.ChooseRandomTrackFromPlaylist(playlistData)
+	Dim selectedTrack As Map = dataResolver.ChooseRandomTrackFromPlaylist(playlistData, mediaCacheService, isOfflinePlaybackMode)
 	If selectedTrack.IsInitialized = False Or selectedTrack.Size = 0 Then
-		TraceLog("Не удалось выбрать трек из playlist. playlistId=" & playlistDescriptor.GetDefault("id", ""))
+		If isOfflinePlaybackMode Then
+			TraceLog("Не удалось выбрать cached track из playlist в offline fallback. playlistId=" & playlistDescriptor.GetDefault("id", ""))
+		Else
+			TraceLog("Не удалось выбрать трек из playlist. playlistId=" & playlistDescriptor.GetDefault("id", ""))
+		End If
 		Return emptyItem
 	End If
 	Dim queueItem As Map = dataResolver.CreateQueueTrackFromPlaylist(currentSlot, playlistDescriptor, selectedTrack, offlineData)
@@ -637,22 +748,106 @@ Private Sub IsValidDataTrackItem(item As Map) As Boolean
 	Return True
 End Sub
 
+Private Sub RestoreDownloadPlanFromStorage As Boolean
+	If CanUseDataPlaybackResolver = False Then Return False
+	Dim storedSignature As String = storage.GetDefault("download_plan_signature", "")
+	If storedSignature = "" Then Return False
+	Dim currentSignature As String = BuildDownloadPlanSignature
+	If currentSignature = "" Then Return False
+	If storedSignature <> currentSignature Then
+		TraceLog("Download plan не восстановлен: сигнатура изменилась.")
+		Return False
+	End If
+	Dim storedTracks As List = storage.GetDefault("download_plan_tracks", CreateInitializedList)
+	If storedTracks.IsInitialized = False Or storedTracks.Size = 0 Then Return False
+	Dim restoredCount As Int = 0
+	For Each itemObject As Object In storedTracks
+		If itemObject Is Map Then
+			Dim item As Map = itemObject
+			If IsValidDataTrackItem(item) = False Then Continue
+			If isOfflinePlaybackMode And mediaCacheService.IsTrackCached(item.GetDefault("id", "")) = False Then Continue
+			playQueue.Add(CloneMap(item))
+			dataResolver.RememberResolvedTrack(item.GetDefault("id", ""))
+			restoredCount = restoredCount + 1
+		End If
+	Next
+	If restoredCount = 0 Then Return False
+	TraceLog("Download plan восстановлен из KVS. tracks=" & restoredCount)
+	Return True
+End Sub
+
+Private Sub SaveDownloadPlanState
+	If CanUseDataPlaybackResolver = False Then Return
+	Dim signature As String = BuildDownloadPlanSignature
+	If signature = "" Then Return
+	Dim tracks As List
+	tracks.Initialize
+	For Each itemObject As Object In playQueue
+		If itemObject Is Map Then
+			Dim item As Map = itemObject
+			If IsValidDataTrackItem(item) = False Then Continue
+			tracks.Add(CloneMap(item))
+			If tracks.Size >= 20 Then Exit
+		End If
+	Next
+	storage.Put("download_plan_signature", signature)
+	storage.Put("download_plan_tracks", tracks)
+	storage.Put("download_plan_saved_at", DateTime.Now)
+	TraceLog("Сохранен download plan. tracks=" & tracks.Size)
+End Sub
+
+Private Sub BuildDownloadPlanSignature As String
+	If CanUseDataPlaybackResolver = False Then Return ""
+	Dim currentSlot As Map = dataResolver.ResolveCurrentDataSlot(offlineData)
+	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return ""
+	Dim signatureParts As List
+	signatureParts.Initialize
+	signatureParts.Add("v=3")
+	signatureParts.Add("slot=" & BuildDataSlotKey(currentSlot))
+	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
+	If playlists.IsInitialized Then
+		For Each playlistObject As Object In playlists
+			If playlistObject Is Map Then
+				Dim playlist As Map = playlistObject
+				signatureParts.Add("playlist=" & playlist.GetDefault("id", "") & ":" & playlist.GetDefault("updated", ""))
+			End If
+		Next
+	End If
+	signatureParts.Sort(True)
+	Return JoinList(signatureParts, "|")
+End Sub
+
+Private Sub BuildDataSlotKey(currentSlot As Map) As String
+	Return currentSlot.GetDefault("schedule_title", "") & "|" & currentSlot.GetDefault("stream_id", "") & "|" & currentSlot.GetDefault("slot_time", "")
+End Sub
+
 Private Sub AutoStartSavedPlayer
 	If playerCode = "" Then Return
 	If isStarted Or isStopping Then Return
+	ShowMessage(MessageValue("connecting"))
+	UpdateConnectionIndicator("connecting")
 	If USE_DATA_PLAYBACK_RESOLVER Then
 		TraceLog("Автозапуск: сначала пробую получить свежий data.php.")
 		Wait For (RefreshOfflineDataNow) Complete (refreshed As Boolean)
 		If refreshed = False Then
+			isOfflinePlaybackMode = True
+			UpdateConnectionIndicator("offline")
 			TraceLog("Свежий data.php недоступен. Использую сохраненные офлайн-метаданные.")
+		Else
+			UpdateConnectionIndicator("online")
 		End If
 		If CanUseDataPlaybackResolver = False Then
 			TraceLog("Автозапуск отменен: нет ни свежих, ни сохраненных data/playlists.")
 			Return
 		End If
 	End If
+	If IsPlaybackAllowedByCurrentData = False Then
+		PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
+		Return
+	End If
 	isStarted = True
 	isStoppedByUser = False
+	isPlaybackPausedByPolicy = False
 	SetStopIcon
 	HideContentBlocks
 	TraceLog("Автозапуск воспроизведения при старте приложения.")
@@ -687,7 +882,7 @@ Private Sub ShowPlayerScreen(refreshInfo As Boolean)
 	appScreenMode = "player"
 	ConfigurePlayerHeader
 	UpdateVisibleMode
-	If isStarted = False Then ApplyStoppedState
+	If isStarted = False And isPlaybackPausedByPolicy = False Then ApplyStoppedState
 	If refreshInfo = False Then Return
 	RenderPlayerHead(playerCode, "")
 	Wait For (InitPlayerInfo) Complete (unused As Boolean)
@@ -742,10 +937,15 @@ Private Sub PlayButtonPane_Click
 		ShowSetupScreen(MessageValue("player_required"))
 		Return
 	End If
-	If isStarted = False Then
+	If isStarted = False And isPlaybackPausedByPolicy = False Then
 		If isStopping Then Return
+		If IsPlaybackAllowedByCurrentData = False Then
+			PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
+			Return
+		End If
 		isStarted = True
 		isStoppedByUser = False
+		isPlaybackPausedByPolicy = False
 		SetStopIcon
 		HideContentBlocks
 		Wait For (StartFirstTrack("manual")) Complete (unused As Boolean)
@@ -983,6 +1183,7 @@ Private Sub ActivateLoadedItem(audioKey As String, item As Map, fadeInMs As Int)
 	UpdatePlaybackMeta(item)
 	TraceLog("ActivateLoadedItem. audio=" & audioKey & ", item=" & DescribeItem(item) & ", fadeInMs=" & fadeInMs)
 	GetAudioByKey(audioKey).PlayWithFade(fadeInMs)
+	ScheduleTrackCacheWarmup
 	ScheduleHistoryLog(item)
 	ResetRetryDelay
 	prefetchDone = False
@@ -993,8 +1194,9 @@ Private Sub StartPlaybackWithAudioKey(audioKey As String, item As Map, fadeInMs 
 	pendingPlayAudioKey = audioKey
 	pendingPlayItem = item
 	pendingPlayFadeInMs = fadeInMs
-	TraceLog("StartPlaybackWithAudioKey. audio=" & audioKey & ", item=" & DescribeItem(item) & ", volume=" & NumberFormat2(CurrentVolume(item), 1, 3, 3, False) & ", fadeInMs=" & fadeInMs)
-	GetAudioByKey(audioKey).LoadUrl(MediaUrl(item), CurrentVolume(item))
+	Dim itemUrl As String = MediaUrl(item)
+	TraceLog("StartPlaybackWithAudioKey. audio=" & audioKey & ", item=" & DescribeItem(item) & ", volume=" & NumberFormat2(CurrentVolume(item), 1, 3, 3, False) & ", fadeInMs=" & fadeInMs & ", source=" & mediaCacheService.ResolveMediaSource(item))
+	GetAudioByKey(audioKey).LoadUrl(itemUrl, CurrentVolume(item))
 	Wait For PlaybackStartDone(result As Map)
 	TraceLog("PlaybackStartDone. audio=" & audioKey & ", success=" & result.GetDefault("Success", False) & ", message=" & result.GetDefault("Message", ""))
 	Return result.GetDefault("Success", False)
@@ -1002,22 +1204,41 @@ End Sub
 
 Private Sub PrepareNextPlayable As ResumableSub
 	If isStarted = False Or isStoppedByUser Then Return False
+	Do While playQueue.Size > 0
+		Dim nextObject As Object = playQueue.Get(0)
+		If nextObject Is Map Then
+		Else
+			Return False
+		End If
+		Dim candidateItem As Map = nextObject
+		Dim candidateType As String = candidateItem.GetDefault("type", "")
+		If candidateType <> "track" And candidateType <> "ad" Then Return False
+		If isOfflinePlaybackMode Then
+			If candidateType = "track" And mediaCacheService.IsTrackCached(candidateItem.GetDefault("id", "")) = False Then
+				TraceLog("Удален из очереди трек без локального файла в offline fallback. item=" & DescribeItem(candidateItem))
+				playQueue.RemoveAt(0)
+				SaveDownloadPlanState
+				Continue
+			End If
+			If candidateType = "ad" And mediaCacheService.IsAdCached(candidateItem.GetDefault("id", "")) = False Then
+				TraceLog("Удален из очереди ролик без локального файла в offline fallback. item=" & DescribeItem(candidateItem))
+				playQueue.RemoveAt(0)
+				SaveDownloadPlanState
+				Continue
+			End If
+		End If
+		Exit
+	Loop
 	If playQueue.Size = 0 Then Return False
-	Dim nextObject As Object = playQueue.Get(0)
-	If nextObject Is Map Then
-	Else
-		Return False
-	End If
-	Dim nextItem As Map = nextObject
-	Dim nextType As String = nextItem.GetDefault("type", "")
-	If nextType <> "track" And nextType <> "ad" Then Return False
+	Dim nextItem As Map = playQueue.Get(0)
 	If preparedItem.IsInitialized And preparedAudioKey <> "" And ItemsMatch(preparedItem, nextItem) Then Return True
 	Dim targetAudioKey As String = GetInactiveAudioKey
 	ClearPreparedState(False)
 	pendingPrepareAudioKey = targetAudioKey
 	pendingPrepareItem = CloneMap(nextItem)
-	TraceLog("PrepareNextPlayable. targetAudio=" & targetAudioKey & ", item=" & DescribeItem(nextItem) & ", volume=" & NumberFormat2(CurrentVolume(nextItem), 1, 3, 3, False))
-	GetAudioByKey(targetAudioKey).LoadUrl(MediaUrl(nextItem), CurrentVolume(nextItem))
+	Dim nextItemUrl As String = MediaUrl(nextItem)
+	TraceLog("PrepareNextPlayable. targetAudio=" & targetAudioKey & ", item=" & DescribeItem(nextItem) & ", volume=" & NumberFormat2(CurrentVolume(nextItem), 1, 3, 3, False) & ", source=" & mediaCacheService.ResolveMediaSource(nextItem))
+	GetAudioByKey(targetAudioKey).LoadUrl(nextItemUrl, CurrentVolume(nextItem))
 	Wait For PreloadDone(result As Map)
 	TraceLog("PreloadDone. audio=" & targetAudioKey & ", success=" & result.GetDefault("Success", False) & ", message=" & result.GetDefault("Message", ""))
 	Return result.GetDefault("Success", False)
@@ -1061,6 +1282,8 @@ Private Sub PromotePreparedPlayer(fadeInMs As Int, fadeOutMs As Int) As Boolean
 	If previousAudioKey <> "" And previousAudioKey <> nextAudioKey Then
 		GetAudioByKey(previousAudioKey).Stop(fadeOutMs)
 	End If
+	dataResolver.CommitPlaylistCursor(storage, promotedItem)
+	SaveDownloadPlanState
 	activeAudioKey = nextAudioKey
 	ActivateLoadedItem(activeAudioKey, promotedItem, fadeInMs)
 	ClearPreparedState(False)
@@ -1080,6 +1303,10 @@ End Sub
 
 Private Sub LoadNextAndPlay As ResumableSub
 	ClearRetryTimer
+	If IsPlaybackAllowedByCurrentData = False Then
+		PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
+		Return False
+	End If
 	TraceLog("Запрос очереди и запуск. Режим старта=" & nextStartMode & ", размер очереди до запроса=" & playQueue.Size)
 	If USE_DATA_PLAYBACK_RESOLVER Then
 		PreScanUpcomingAdMinute(True)
@@ -1094,7 +1321,11 @@ Private Sub LoadNextAndPlay As ResumableSub
 		Wait For (EnsureDataPlaybackQueue(2)) Complete (queuePrepared As Boolean)
 		If queuePrepared = False Then
 			TraceLog("Не удалось собрать очередь из data/playlists. Запуск через next.php отключен в тестовом режиме.")
-			HandleTemporaryState("server", "")
+			If isOfflinePlaybackMode Then
+				HandleTemporaryState("offline", "Нет локально доступных треков")
+			Else
+				HandleTemporaryState("server", "")
+			End If
 			Return False
 		Else
 			SyncExactBreakState
@@ -1287,18 +1518,35 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 		
 		Dim url As String = MediaUrl(item)
 		If url = "" Then
-			HandleTemporaryState("server", "")
-			Return False
+			If isOfflinePlaybackMode Then
+				TraceLog("Пропуск элемента: в offline fallback нет локального файла. item=" & DescribeItem(item))
+				Wait For (PlayPreparedOrLoadNext) Complete (unusedSkip As Boolean)
+				Return True
+			Else
+				HandleTemporaryState("server", "")
+				Return False
+			End If
 		End If
 		
 		If item.ContainsKey("playlist") Then playlistIndex = item.Get("playlist")
 		dataResolver.CommitPlaylistCursor(storage, item)
+		SaveDownloadPlanState
 		prefetchDone = False
 		Dim fadeInMs As Int = ResolveStartFadeInMs
 		Dim targetAudioKey As String = GetInactiveAudioKey
 		If activeAudioKey = "" Then targetAudioKey = "primary"
 		Wait For (StartPlaybackWithAudioKey(targetAudioKey, item, fadeInMs)) Complete (playbackStarted As Boolean)
-		If playbackStarted = False Or isStarted = False Or isStoppedByUser Then Return False
+		If playbackStarted = False Then
+			If isStoppedByUser = False And isStarted Then
+				Wait For (HandleMediaError) Complete (unusedError As Boolean)
+				If isOfflinePlaybackMode Then
+					Wait For (PlayPreparedOrLoadNext) Complete (unusedOffline As Boolean)
+					Return True
+				End If
+			End If
+			Return False
+		End If
+		If isStarted = False Or isStoppedByUser Then Return False
 		Return True
 	Else
 		HandleTemporaryState("server", "")
@@ -1310,11 +1558,14 @@ Private Sub HandleMessageItem(item As Map)
 	Dim action As String = item.GetDefault("action", "")
 	TraceLog("HandleMessageItem. action=" & action & ", message=" & item.GetDefault("message", ""))
 	If action = "claim" Then
+		isPlaybackPausedByPolicy = False
 		ClearPlaybackState
 		isStarted = False
 		isStoppedByUser = True
 		SetPlayIcon
 		ShowClaimPrompt(item.GetDefault("message", MessageValue("device_busy")))
+	Else If action = "shutdown" Then
+		HandleShutdownMessage(item.GetDefault("message", MessageValue("server_wait")))
 	Else If action = "blocked" Then
 		HandleBlockedState
 	Else If action = "not_found" Then
@@ -1386,19 +1637,40 @@ Private Sub HandleFetchFailure(result As Map) As ResumableSub
 		HandleTemporaryState("offline", "")
 		Return True
 	End If
-	Wait For (CheckExternalConnectivity) Complete (hasInternet As Boolean)
-	If hasInternet Then
+	If HasOfflinePlaybackFallback Then
+		TraceLog("Переход в offline fallback после ошибки загрузки данных.")
+		HandleTemporaryState("offline", "")
+		Return True
+	End If
+	Wait For (CheckServiceAvailability) Complete (serviceAvailable As Boolean)
+	If serviceAvailable Then
 		HandleTemporaryState("server", "")
 	Else
-		HandleTemporaryState("offline", "")
+		Wait For (CheckExternalConnectivity) Complete (hasInternet As Boolean)
+		If hasInternet Then
+			HandleTemporaryState("server", "")
+		Else
+			HandleTemporaryState("offline", "")
+		End If
 	End If
 	Return True
+End Sub
+
+Private Sub CheckServiceAvailability As ResumableSub
+	Dim j As HttpJob
+	j.Initialize("", Me)
+	j.Download(SERVICE_CHECK_URL & "?t=" & DateTime.Now)
+	j.GetRequest.Timeout = CONNECTIVITY_CHECK_TIMEOUT_MS
+	Wait For (j) JobDone(j As HttpJob)
+	Dim ok As Boolean = j.Success
+	j.Release
+	Return ok
 End Sub
 
 Private Sub CheckExternalConnectivity As ResumableSub
 	Dim j As HttpJob
 	j.Initialize("", Me)
-	j.Download(CONNECTIVITY_CHECK_URL & "?t=" & DateTime.Now)
+	j.Download(EXTERNAL_CONNECTIVITY_CHECK_URL & "?t=" & DateTime.Now)
 	j.GetRequest.Timeout = CONNECTIVITY_CHECK_TIMEOUT_MS
 	Wait For (j) JobDone(j As HttpJob)
 	Dim ok As Boolean = j.Success
@@ -1408,6 +1680,9 @@ End Sub
 
 Private Sub HandleTemporaryState(mode As String, text As String)
 	TraceLog("Временное состояние. mode=" & mode & ", text=" & text)
+	isPlaybackPausedByPolicy = False
+	isOfflinePlaybackMode = (mode = "offline")
+	UpdateConnectionIndicator(mode)
 	ClearPlaybackState
 	HidePin
 	If text <> "" Then
@@ -1422,6 +1697,8 @@ End Sub
 
 Private Sub HandleBlockedState
 	TraceLog("Плеер заблокирован.")
+	isPlaybackPausedByPolicy = False
+	UpdateConnectionIndicator("server")
 	ClearPlaybackState
 	HidePin
 	ShowMessage(MessageValue("blocked"))
@@ -1430,6 +1707,8 @@ End Sub
 
 Private Sub StopForMissingData(text As String)
 	TraceLog("Остановка из-за отсутствующих данных. text=" & text)
+	isPlaybackPausedByPolicy = False
+	UpdateConnectionIndicator("server")
 	ClearPlaybackState
 	HidePin
 	isStarted = False
@@ -1439,13 +1718,176 @@ Private Sub StopForMissingData(text As String)
 End Sub
 
 Private Sub HandleMediaError As ResumableSub
-	Wait For (CheckExternalConnectivity) Complete (hasInternet As Boolean)
-	If hasInternet Then
+	If HasOfflinePlaybackFallback Then
+		TraceLog("Переход в offline fallback после ошибки загрузки media.")
+		HandleTemporaryState("offline", "")
+		Return True
+	End If
+	Wait For (CheckServiceAvailability) Complete (serviceAvailable As Boolean)
+	If serviceAvailable Then
 		HandleTemporaryState("server", "")
 	Else
-		HandleTemporaryState("offline", "")
+		Wait For (CheckExternalConnectivity) Complete (hasInternet As Boolean)
+		If hasInternet Then
+			HandleTemporaryState("server", "")
+		Else
+			HandleTemporaryState("offline", "")
+		End If
 	End If
 	Return True
+End Sub
+
+Private Sub HasOfflinePlaybackFallback As Boolean
+	If offlineData.IsInitialized = False Then Return False
+	If offlineData.GetDefault("ok", False) <> True Then Return False
+	Return HasPlayableOfflineTrackInCurrentSlot
+End Sub
+
+Private Sub HasPlayableOfflineTrackInCurrentSlot As Boolean
+	Dim currentSlot As Map = dataResolver.ResolveCurrentDataSlot(offlineData)
+	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return False
+	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
+	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return False
+	For Each playlistObject As Object In playlists
+		If playlistObject Is Map Then
+			Dim playlistDescriptor As Map = playlistObject
+			Dim playlistId As String = playlistDescriptor.GetDefault("id", "")
+			If playlistId = "" Then Continue
+			Dim playlistData As Map = dataResolver.LoadCachedPlaylistMetadata(playlistId)
+			If PlaylistHasCachedTrack(playlistData) Then Return True
+		End If
+	Next
+	Return False
+End Sub
+
+Private Sub PausePlaybackByPolicy(reason As String, connectionMode As String)
+	Dim safeReason As String = reason
+	If safeReason = "" Then safeReason = MessageValue("playback_paused")
+	TraceLog("Playback остановлен по политике. reason=" & safeReason & ", connectionMode=" & connectionMode)
+	isPlaybackPausedByPolicy = True
+	isOfflinePlaybackMode = False
+	UpdateConnectionIndicator(connectionMode)
+	ClearPlaybackState
+	HidePin
+	isStarted = False
+	isStoppedByUser = False
+	SetStopIcon
+	ShowMessage(safeReason)
+End Sub
+
+Private Sub HandleShutdownMessage(text As String)
+	Dim safeText As String = text
+	If safeText = "" Then safeText = MessageValue("server_wait")
+	TraceLog("Получен shutdown message. text=" & safeText)
+	isPlaybackPausedByPolicy = False
+	ClearPlaybackState
+	HidePin
+	isStarted = False
+	isStoppedByUser = True
+	SetPlayIcon
+	ShowMessage(safeText)
+	offlineDataRefreshTimer.Enabled = False
+	historyFlushTimer.Enabled = False
+	localAdMinuteTimer.Enabled = False
+	trackCacheWarmupTimer.Enabled = False
+End Sub
+
+Private Sub IsPlaybackAllowedByCurrentData As Boolean
+	If offlineData.IsInitialized = False Then Return True
+	Dim playerData As Map = offlineData.GetDefault("player", CreateInitializedMap)
+	If playerData.IsInitialized And playerData.ContainsKey("playback_allowed") Then
+		If playerData.GetDefault("playback_allowed", True) <> True Then Return False
+	End If
+	Dim endTimestamp As Long = ResolvePlaybackEndTimestamp(offlineData)
+	If endTimestamp <= 0 Then Return True
+	Return DateTime.Now < (endTimestamp * 1000)
+End Sub
+
+Private Sub ResolvePlaybackBlockReason(data As Map) As String
+	If data.IsInitialized = False Then Return MessageValue("playback_paused")
+	Dim playerData As Map = data.GetDefault("player", CreateInitializedMap)
+	If playerData.IsInitialized Then
+		Dim pauseReason As String = playerData.GetDefault("pause_reason", "")
+		If pauseReason <> "" Then Return pauseReason
+	End If
+	Dim endTimestamp As Long = ResolvePlaybackEndTimestamp(data)
+	If endTimestamp > 0 And DateTime.Now >= (endTimestamp * 1000) Then Return MessageValue("subscription_expired")
+	If playerData.IsInitialized And playerData.ContainsKey("playback_allowed") Then
+		If playerData.GetDefault("playback_allowed", True) <> True Then Return MessageValue("playback_paused")
+	End If
+	Return MessageValue("playback_paused")
+End Sub
+
+Private Sub ResolvePlaybackEndTimestamp(data As Map) As Long
+	If data.IsInitialized = False Then Return 0
+	Dim playerData As Map = data.GetDefault("player", CreateInitializedMap)
+	If playerData.IsInitialized Then
+		Dim playerEnd As Long = ParseEndValueToTimestamp(playerData.Get("end"))
+		If playerEnd > 0 Then Return playerEnd
+	End If
+	Return ParseEndValueToTimestamp(data.Get("end"))
+End Sub
+
+Private Sub ParseEndValueToTimestamp(value As Object) As Long
+	If value = Null Then Return 0
+	Try
+		Dim numericValue As Long = value
+		If numericValue > 0 Then Return numericValue
+	Catch
+		Log(LastException.Message)
+	End Try
+	Dim textValue As String = ("" & value).Trim
+	If textValue = "" Then Return 0
+	If Regex.IsMatch("^\d+$", textValue) Then Return Floor(textValue)
+	If Regex.IsMatch("^\d{4}-\d{2}-\d{2}$", textValue) Then
+		Return ParseDateOnlyEndTimestamp(textValue)
+	End If
+	Try
+		Dim instantClass As JavaObject
+		instantClass.InitializeStatic("java.time.Instant")
+		Dim instant As JavaObject = instantClass.RunMethod("parse", Array As Object(textValue))
+		Return instant.RunMethod("getEpochSecond", Null)
+	Catch
+		Log(LastException.Message)
+	End Try
+	Try
+		Dim offsetDateTimeClass As JavaObject
+		offsetDateTimeClass.InitializeStatic("java.time.OffsetDateTime")
+		Dim offsetDateTime As JavaObject = offsetDateTimeClass.RunMethod("parse", Array As Object(textValue))
+		Dim instant As JavaObject = offsetDateTime.RunMethod("toInstant", Null)
+		Return instant.RunMethod("getEpochSecond", Null)
+	Catch
+		Log(LastException.Message)
+	End Try
+	TraceLog("Не удалось разобрать player.end: " & textValue)
+	Return 0
+End Sub
+
+Private Sub ParseDateOnlyEndTimestamp(textValue As String) As Long
+	Try
+		Dim previousDateFormat As String = DateTime.DateFormat
+		DateTime.DateFormat = "yyyy-MM-dd"
+		Dim dayStartTicks As Long = DateTime.DateParse(textValue)
+		DateTime.DateFormat = previousDateFormat
+		Return Floor((dayStartTicks + DateTime.TicksPerDay) / 1000)
+	Catch
+		Log(LastException.Message)
+		Return 0
+	End Try
+End Sub
+
+Private Sub PlaylistHasCachedTrack(playlistData As Map) As Boolean
+	If playlistData.IsInitialized = False Or playlistData.Size = 0 Then Return False
+	Dim tracks As List = playlistData.GetDefault("tracks", Null)
+	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return False
+	For Each trackObject As Object In tracks
+		If trackObject Is Map Then
+			Dim track As Map = trackObject
+			Dim trackId As String = track.GetDefault("id", "")
+			If trackId <> "" And mediaCacheService.IsTrackCached(trackId) Then Return True
+		End If
+	Next
+	Return False
 End Sub
 
 Private Sub ResolveRetryDelay(mode As String, delayMs As Int) As Int
@@ -1471,6 +1913,7 @@ End Sub
 Private Sub RetryTimer_Tick
 	retryTimer.Enabled = False
 	If isStarted = False Or isStoppedByUser Then Return
+	If isPlaybackPausedByPolicy Then Return
 	TraceLog("RetryTimer_Tick. reloading next queue chunk.")
 	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
 End Sub
@@ -1568,53 +2011,92 @@ Private Sub ScheduleHistoryLog(item As Map)
 	Dim itemType As String = item.GetDefault("type", "")
 	If itemType <> "track" And itemType <> "ad" Then Return
 	If item.GetDefault("id", "") = "" Then Return
-	TraceLog("ScheduleHistoryLog. item=" & DescribeItem(item) & ", delayMs=" & HISTORY_LOG_DELAY_MS)
+	TraceLog("ScheduleHistoryLog. item=" & DescribeItem(item) & ", mode=first_timeupdate")
 	ClearHistoryLogTimer
 	historyItem = item
 	historyStartedAtTicks = DateTime.Now
-	historyTimer.Interval = HISTORY_LOG_DELAY_MS
-	historyTimer.Enabled = True
 End Sub
 
-Private Sub HistoryTimer_Tick
-	historyTimer.Enabled = False
-	If isStarted = False Or isStoppedByUser Then Return
-	If historyItem.IsInitialized = False Then Return
-	If currentMediaType <> historyItem.GetDefault("type", "") Then Return
-	If currentTrackUrl = "" Then Return
-	Wait For (SendHistory(historyItem)) Complete (unused As Boolean)
-End Sub
-
-Private Sub SendHistory(item As Map) As ResumableSub
-	TraceLog("SendHistory. item=" & DescribeItem(item))
-	Dim params As Map
-	params.Initialize
-	params.Put("player", playerCode)
-	params.Put("device", deviceId)
-	params.Put("type", item.GetDefault("type", ""))
-	params.Put("id", item.GetDefault("id", ""))
-	Dim startedAt As Long = historyStartedAtTicks
-	If startedAt <= 0 Then startedAt = DateTime.Now
-	params.Put("date", FormatHistoryDate(startedAt))
-	params.Put("time", FormatHistoryTime(startedAt))
-	Dim j As HttpJob
-	j.Initialize("", Me)
-	j.PostString(HISTORY_BASE_URL, BuildParams(params))
-	j.GetRequest.Timeout = 5000
-	j.GetRequest.SetContentType("application/x-www-form-urlencoded;charset=UTF-8")
-	Wait For (j) JobDone(j As HttpJob)
-	If j.Success Then
-		SaveServerSnapshot("POST", HISTORY_BASE_URL, True, j.GetString, "")
-	Else
-		SaveServerSnapshot("POST", HISTORY_BASE_URL, False, "", j.ErrorMessage)
-	End If
-	TraceLog("SendHistory complete. success=" & j.Success)
-	j.Release
+Private Sub ConfirmPendingHistoryItem(reason As String) As Boolean
+	If historyItem.IsInitialized = False Then Return False
+	If historyItem.GetDefault("id", "") = "" Then Return False
+	TraceLog("История подтверждена. reason=" & reason & ", item=" & DescribeItem(historyItem))
+	QueueHistoryRecordAt(historyItem, historyStartedAtTicks)
+	ClearHistoryLogTimer
 	Return True
 End Sub
 
+Private Sub QueueHistoryRecordAt(item As Map, startedAtValue As Long)
+	If item.IsInitialized = False Then Return
+	If item.GetDefault("id", "") = "" Then Return
+	Dim startedAt As Long = startedAtValue
+	If startedAt <= 0 Then startedAt = DateTime.Now
+	Dim record As Map
+	record.Initialize
+	Dim recordDate As String = FormatHistoryDate(startedAt)
+	record.Put("date", recordDate)
+	record.Put("time", FormatHistoryTime(startedAt))
+	record.Put("type", item.GetDefault("type", ""))
+	record.Put("id", item.GetDefault("id", ""))
+	AppendHistoryRecord(recordDate, record)
+	TraceLog("История добавлена в локальный буфер. date=" & record.Get("date") & ", time=" & record.Get("time") & ", type=" & record.Get("type") & ", id=" & record.Get("id") & ", pendingFiles=" & GetPendingHistoryFileCount)
+End Sub
+
+Private Sub FlushHistoryBuffer As ResumableSub
+	If isHistoryFlushInProgress Then Return False
+	If playerCode = "" Or deviceId = "" Then Return False
+	Dim pendingHistoryFileName As String = GetOldestPendingHistoryFileName
+	If pendingHistoryFileName = "" Then Return True
+	isHistoryFlushInProgress = True
+	Dim batchDate As String = HistoryFileNameToDate(pendingHistoryFileName)
+	Dim payload As String = ""
+	Try
+		payload = File.ReadString(GetHistoryDir, pendingHistoryFileName)
+	Catch
+		TraceLog("Не удалось прочитать history file. file=" & pendingHistoryFileName & ", message=" & LastException.Message)
+	End Try
+	payload = NormalizeNdjsonPayload(payload)
+	If payload = "" Or batchDate = "" Then
+		DeleteHistoryFile(pendingHistoryFileName)
+		RefreshPendingHistoryState
+		isHistoryFlushInProgress = False
+		Return False
+	End If
+	Dim recordCount As Int = CountNdjsonRecords(payload)
+	TraceLog("SendHistory batch. date=" & batchDate & ", records=" & recordCount & ", file=" & pendingHistoryFileName)
+	Dim queryParams As Map
+	queryParams.Initialize
+	queryParams.Put("player", playerCode)
+	queryParams.Put("device", deviceId)
+	queryParams.Put("date", batchDate)
+	Dim requestUrl As String = HISTORY_BASE_URL & "?" & BuildParams(queryParams)
+	TraceLog("SendHistory payload. player=" & playerCode & ", device=" & deviceId & ", date=" & batchDate & ", records=" & recordCount)
+	Dim j As HttpJob
+	j.Initialize("", Me)
+	j.PostString(requestUrl, payload)
+	j.GetRequest.Timeout = 5000
+	j.GetRequest.SetContentType("text/plain; charset=utf-8")
+	Wait For (j) JobDone(j As HttpJob)
+	Dim success As Boolean = False
+	If j.Success Then
+		Dim responseText As String = j.GetString
+		SaveServerSnapshot("POST", requestUrl, True, responseText, "")
+		success = IsHistoryBatchAccepted(responseText)
+	Else
+		SaveServerSnapshot("POST", requestUrl, False, "", j.ErrorMessage)
+	End If
+	If success Then
+		DeleteHistoryFile(pendingHistoryFileName)
+		RefreshPendingHistoryState
+		TraceLog("Локальный буфер истории обновлен. removedFile=" & pendingHistoryFileName & ", pendingFiles=" & GetPendingHistoryFileCount)
+	End If
+	TraceLog("SendHistory complete. success=" & success)
+	j.Release
+	isHistoryFlushInProgress = False
+	Return success
+End Sub
+
 Private Sub ClearHistoryLogTimer
-	historyTimer.Enabled = False
 	historyItem.Initialize
 	historyStartedAtTicks = 0
 End Sub
@@ -1635,12 +2117,130 @@ Private Sub FormatHistoryTime(ticks As Long) As String
 	Return value
 End Sub
 
+Private Sub AppendHistoryRecord(recordDate As String, record As Map)
+	If recordDate = "" Then Return
+	EnsureDirectory(GetHistoryDir)
+	Dim generator As JSONGenerator
+	generator.Initialize(record)
+	Dim outStream As OutputStream = File.OpenOutput(GetHistoryDir, HistoryFileName(recordDate), True)
+	Dim writer As TextWriter
+	writer.Initialize2(outStream, "UTF8")
+	writer.WriteLine(generator.ToString)
+	writer.Close
+	storage.Put("pending_history_count", storage.GetDefault("pending_history_count", 0) + 1)
+End Sub
+
+Private Sub RefreshPendingHistoryState
+	storage.Put("pending_history_count", CountAllPendingHistoryRecords)
+End Sub
+
+Private Sub GetPendingHistoryFileCount As Int
+	If File.Exists(GetHistoryDir, "") = False Then Return 0
+	Dim listedFiles As List = File.ListFiles(GetHistoryDir)
+	If listedFiles.IsInitialized = False Then Return 0
+	Dim count As Int = 0
+	For Each fileName As String In listedFiles
+		If IsHistoryFileName(fileName) Then count = count + 1
+	Next
+	Return count
+End Sub
+
+Private Sub CountAllPendingHistoryRecords As Int
+	If File.Exists(GetHistoryDir, "") = False Then Return 0
+	Dim listedFiles As List = File.ListFiles(GetHistoryDir)
+	If listedFiles.IsInitialized = False Then Return 0
+	Dim total As Int = 0
+	For Each fileName As String In listedFiles
+		If IsHistoryFileName(fileName) = False Then Continue
+		Try
+			total = total + CountNdjsonRecords(File.ReadString(GetHistoryDir, fileName))
+		Catch
+			Log(LastException.Message)
+		End Try
+	Next
+	Return total
+End Sub
+
+Private Sub CountNdjsonRecords(payload As String) As Int
+	Dim normalized As String = NormalizeNdjsonPayload(payload)
+	If normalized = "" Then Return 0
+	Dim rows() As String = Regex.Split(CRLF, normalized)
+	Dim count As Int = 0
+	For Each row As String In rows
+		If row.Trim <> "" Then count = count + 1
+	Next
+	Return count
+End Sub
+
+Private Sub IsHistoryBatchAccepted(responseText As String) As Boolean
+	Try
+		Dim parser As JSONParser
+		parser.Initialize(responseText)
+		Dim response As Map = parser.NextObject
+		Return response.GetDefault("ok", False) = True
+	Catch
+		TraceLog("История: не удалось разобрать ответ сервера.")
+	End Try
+	Return False
+End Sub
+
+Private Sub NormalizeNdjsonPayload(payload As String) As String
+	If payload = Null Then Return ""
+	Dim lineFeed As String = Chr(10)
+	Dim normalized As String = payload.Replace(CRLF, lineFeed).Replace(Chr(13), lineFeed)
+	Do While normalized.Contains(lineFeed & lineFeed)
+		normalized = normalized.Replace(lineFeed & lineFeed, lineFeed)
+	Loop
+	normalized = normalized.Trim
+	If normalized = "" Then Return ""
+	Return normalized.Replace(lineFeed, CRLF)
+End Sub
+
+Private Sub GetOldestPendingHistoryFileName As String
+	If File.Exists(GetHistoryDir, "") = False Then Return ""
+	Dim listedFiles As List = File.ListFiles(GetHistoryDir)
+	If listedFiles.IsInitialized = False Or listedFiles.Size = 0 Then Return ""
+	Dim historyFiles As List
+	historyFiles.Initialize
+	For Each fileName As String In listedFiles
+		If IsHistoryFileName(fileName) Then historyFiles.Add(fileName)
+	Next
+	If historyFiles.Size = 0 Then Return ""
+	historyFiles.Sort(True)
+	Return historyFiles.Get(0)
+End Sub
+
+Private Sub IsHistoryFileName(fileName As String) As Boolean
+	If fileName = "" Then Return False
+	If fileName.EndsWith(".ndjson") = False Then Return False
+	Return Regex.IsMatch("^\d{4}-\d{2}-\d{2}\.ndjson$", fileName)
+End Sub
+
+Private Sub HistoryFileName(recordDate As String) As String
+	Return recordDate & ".ndjson"
+End Sub
+
+Private Sub HistoryFileNameToDate(fileName As String) As String
+	If IsHistoryFileName(fileName) = False Then Return ""
+	Return fileName.SubString2(0, fileName.Length - 7)
+End Sub
+
+Private Sub DeleteHistoryFile(fileName As String)
+	If fileName = "" Then Return
+	If File.Exists(GetHistoryDir, fileName) Then File.Delete(GetHistoryDir, fileName)
+End Sub
+
+Private Sub GetHistoryDir As String
+	Return File.Combine(storageDir, historyDirName)
+End Sub
+
 Private Sub StopPlayer As ResumableSub
 	If isStopping Then Return False
 	isStopping = True
 	TraceLog("StopPlayer requested. currentType=" & currentMediaType & ", activeAudio=" & activeAudioKey & ", preparedAudio=" & preparedAudioKey)
 	isStarted = False
 	isStoppedByUser = True
+	isPlaybackPausedByPolicy = False
 	ClearRetryTimer
 	ClearExactBreakState
 	ClearHistoryLogTimer
@@ -1734,6 +2334,11 @@ End Sub
 
 Private Sub HandleAudioReady(audioKey As String)
 	TraceLog("Аудио готово. audio=" & audioKey)
+	If isOfflinePlaybackMode Then
+		UpdateConnectionIndicator("offline")
+	Else
+		UpdateConnectionIndicator("online")
+	End If
 	If pendingPlayAudioKey = audioKey Then
 		ActivateLoadedItem(audioKey, pendingPlayItem, pendingPlayFadeInMs)
 		ClearPendingPlayState
@@ -1771,6 +2376,11 @@ Private Sub HandleAudioComplete(audioKey As String) As ResumableSub
 	If isStoppedByUser Then Return False
 	If audioKey <> activeAudioKey Then Return False
 	TraceLog("Аудио завершилось. audio=" & audioKey & ", элемент=" & DescribeItem(activeItem))
+	If activeItem.GetDefault("type", "") = "ad" Then
+		TraceLog("История подтверждена. reason=ad_complete, item=" & DescribeItem(activeItem))
+		QueueHistoryRecordAt(activeItem, historyStartedAtTicks)
+		ClearHistoryLogTimer
+	End If
 	If PromotePreparedPlayer(0, 0) Then Return True
 	Wait For (PlayPreparedOrLoadNext) Complete (unused As Boolean)
 	Return True
@@ -1779,6 +2389,11 @@ End Sub
 Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
 	If audioKey <> activeAudioKey Then Return False
 	If isStarted = False Or isStoppedByUser Then Return False
+	If historyItem.IsInitialized Then
+		If currentTrackUrl <> "" And historyItem.GetDefault("id", "") = activeItem.GetDefault("id", "") And historyItem.GetDefault("type", "") = activeItem.GetDefault("type", "") Then
+			ConfirmPendingHistoryItem("timeupdate")
+		End If
+	End If
 	If ShouldTriggerBreakNow Then
 		TraceLog("Достигнута точка exact-break.")
 		Wait For (FadeOutAndContinue) Complete (unused As Boolean)
@@ -2064,6 +2679,32 @@ Private Sub SetStatusText(text As String)
 	lblInfo.Text = text
 End Sub
 
+Private Sub UpdateConnectionIndicator(mode As String)
+	If lblConnectionIcon.IsInitialized = False Then Return
+	Dim iconText As String = ICON_CLOUD_OK
+	Dim iconColor As Int = 0xFF747B86
+	Select mode
+		Case "online"
+			iconText = ICON_CLOUD_OK
+			iconColor = 0xFFD0FF71
+		Case "offline"
+			iconText = ICON_CLOUD_OFF
+			iconColor = 0xFFFF6B6B
+		Case "server"
+			iconText = ICON_CLOUD_OFF
+			iconColor = 0xFFFF6B6B
+		Case "connecting"
+			iconText = ICON_CLOUD_OK
+			iconColor = 0xFF8E97A3
+		Case Else
+			iconText = ICON_CLOUD_OK
+			iconColor = 0xFF747B86
+	End Select
+	lblConnectionIcon.Text = iconText
+	SetLabelStyle(lblConnectionIcon, "-fx-alignment: center; -fx-text-fill: " & ColorToCss(iconColor) & ";")
+	ApplyMaterialIconFont(lblConnectionIcon, 16)
+End Sub
+
 Private Sub RenderPlayerHead(code As String, title As String)
 	Dim safeCode As String = FormatPlayerCodeForDisplay(code)
 	If title <> "" Then
@@ -2078,6 +2719,7 @@ Private Sub MediaUrl(item As Map) As String
 	If id = "" Then Return ""
 	Dim localUri As String = mediaCacheService.ResolveLocalMediaUri(item)
 	If localUri <> "" Then Return localUri
+	If isOfflinePlaybackMode Then Return ""
 	Dim first As String = id.SubString2(0, 1)
 	Dim folder As String
 	If item.GetDefault("type", "") = "ad" Then
@@ -2393,6 +3035,12 @@ Private Sub CreateInitializedMap As Map
 	Dim m As Map
 	m.Initialize
 	Return m
+End Sub
+
+Private Sub CreateInitializedList As List
+	Dim items As List
+	items.Initialize
+	Return items
 End Sub
 
 Public Sub SaveWindowState

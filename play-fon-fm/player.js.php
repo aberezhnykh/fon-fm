@@ -93,6 +93,8 @@
     let isResettingPlayback = false;
     let historyLogTimer = null;
     let historyLogKey = "";
+    let historyPendingItems = [];
+    let historyFlushInFlight = false;
     let offlineRetryDelay = OFFLINE_RETRY_DELAY_INITIAL;
     let serverRetryDelay = SERVER_RETRY_DELAY_INITIAL;
     let playerLevel = 1;
@@ -264,6 +266,8 @@
     });
 
     window.addEventListener("online", async () => {
+      void flushHistoryQueue();
+
       if (!isStarted || isStoppedByUser || isStopping) return;
       if (!audio.paused && currentTrackUrl) return;
 
@@ -1356,16 +1360,95 @@
 
     function historyPayload(item, startedAt) {
       const started = localDateTimeParts(startedAt);
-      const payload = new URLSearchParams();
+      return {
+        date: started.date,
+        time: started.time,
+        type: String(item.type || ""),
+        id: String(item.id || "")
+      };
+    }
 
-      payload.set("player", player);
-      payload.set("device", device);
-      payload.set("type", String(item.type || ""));
-      payload.set("id", String(item.id || ""));
-      payload.set("date", started.date);
-      payload.set("time", started.time);
+    function historyNdjson(items) {
+      return items
+        .map((item) => JSON.stringify({
+          time: item.time,
+          type: item.type,
+          id: item.id
+        }))
+        .join("\n");
+    }
 
-      return payload;
+    function queueHistoryItem(item) {
+      if (!item || !item.date || !item.time || !item.type || !item.id) {
+        return;
+      }
+
+      historyPendingItems.push(item);
+      void flushHistoryQueue();
+    }
+
+    async function flushHistoryQueue() {
+      if (historyFlushInFlight) return;
+      if (!player || !device) return;
+      if (!Array.isArray(historyPendingItems) || historyPendingItems.length === 0) return;
+      if (browserOffline()) return;
+
+      historyFlushInFlight = true;
+      let currentBatch = [];
+
+      try {
+        while (historyPendingItems.length > 0) {
+          const date = historyPendingItems[0] && historyPendingItems[0].date
+            ? String(historyPendingItems[0].date)
+            : "";
+          if (!date) {
+            historyPendingItems.shift();
+            continue;
+          }
+
+          currentBatch = [];
+          while (historyPendingItems.length > 0) {
+            const current = historyPendingItems[0];
+            if (!current || String(current.date || "") !== date) {
+              break;
+            }
+
+            currentBatch.push(historyPendingItems.shift());
+          }
+
+          if (currentBatch.length === 0) {
+            continue;
+          }
+
+          const params = new URLSearchParams();
+          params.set("player", player);
+          params.set("device", device);
+          params.set("date", date);
+
+          const response = await fetch(`${HISTORY_BASE_URL}?${params.toString()}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain; charset=utf-8"
+            },
+            body: historyNdjson(currentBatch),
+            keepalive: true,
+            cache: "no-store"
+          });
+
+          if (!response.ok) {
+            historyPendingItems = currentBatch.concat(historyPendingItems);
+            break;
+          }
+
+          currentBatch = [];
+        }
+      } catch (e) {
+        if (currentBatch.length > 0) {
+          historyPendingItems = currentBatch.concat(historyPendingItems);
+        }
+      } finally {
+        historyFlushInFlight = false;
+      }
     }
 
     function scheduleHistoryLog(item) {
@@ -1387,15 +1470,7 @@
         if (historyLogKey !== key) return;
 
         try {
-          await fetch(HISTORY_BASE_URL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-            },
-            body: historyPayload(item, startedAt).toString(),
-            keepalive: true,
-            cache: "no-store"
-          });
+          queueHistoryItem(historyPayload(item, startedAt));
         } catch (e) {
         } finally {
           if (historyLogKey === key) {

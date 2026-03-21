@@ -1,0 +1,54 @@
+Waiting for debugger to connect...
+Program started.
+21.03.2026 12:23:20 | Загружены курсоры playlists. count=1
+21.03.2026 12:23:20 | Офлайн-метаданные загружены. playlists=2, ads=2, schedules=1
+21.03.2026 12:23:20 | Запущено чтение MachineGuid из реестра.
+21.03.2026 12:23:20 | Состояние инициализировано. Папка=C:\Users\Admin\AppData\Roaming\fonfm, сохраненный код=ZJX3W
+21.03.2026 12:23:21 | Положение окна восстановлено. left=305.3333435058594, top=48.44444274902344, width=520, height=703.111083984375
+21.03.2026 12:23:21 | Приложение запущено. Версия=1.0.1, код плеера=ZJX3W, deviceId=5a25fc84-02d1-4138-824b-0e844c63f4bd
+21.03.2026 12:23:21 | Запущено обновление офлайн-метаданных. Интервал=300000 ms
+21.03.2026 12:23:21 | HTTP GET. timeoutMs=8000, url=https://play.fon.fm/meta?player=zjx3w&tz=-120
+Call B4XPages.GetManager.LogEvents = True to enable logging B4XPages events.
+21.03.2026 12:23:21 | MachineGuid совпадает с текущим deviceId.
+21.03.2026 12:23:21 | [AudioPrimary] Initialize
+21.03.2026 12:23:21 | [AudioSecondary] Initialize
+21.03.2026 12:23:21 | Автозапуск: сначала пробую получить свежий data.php.
+21.03.2026 12:23:21 | Запрос офлайн-метаданных. playerCode=ZJX3W, deviceId=5a25fc84-02d1-4138-824b-0e844c63f4bd
+21.03.2026 12:23:21 | HTTP GET. timeoutMs=8000, url=https://play.fon.fm/data.php?player=zjx3w&device=5a25fc84-02d1-4138-824b-0e844c63f4bd&tz=-120&version=1.0.1
+21.03.2026 12:23:22 | HTTP OK. url=https://play.fon.fm/meta?player=zjx3w&tz=-120
+21.03.2026 12:23:22 | HTTP OK. url=https://play.fon.fm/data.php?player=zjx3w&device=5a25fc84-02d1-4138-824b-0e844c63f4bd&tz=-120&version=1.0.1
+21.03.2026 12:23:22 | Офлайн-метаданные сохранены. playlists=2, ads=2, schedules=1, missingPlaylists=0, outdatedPlaylists=0
+21.03.2026 12:23:22 | Синхронизация playlist metadata завершена. downloaded=0, updated=0, failed=0, actual=2
+21.03.2026 12:23:22 | Кэш рекламы поставлен в фоновый прогрев после обновления data.php. cached=2
+21.03.2026 12:23:22 | Запуск прогрева кэша рекламы. ads=2
+21.03.2026 12:23:22 | Автозапуск воспроизведения при старте приложения.
+21.03.2026 12:23:22 | Запуск первого трека. Режим=auto
+21.03.2026 12:23:22 | Запрос очереди и запуск. Режим старта=auto, размер очереди до запроса=0
+21.03.2026 12:23:22 | Курсор playlists. slot=Основное расписание|ea3c2f0a-6bbc-4cf4-baf9-3f0abcf78d57|00:15, stored=1, previewNextStored=2, playlists=2
+21.03.2026 12:23:22 | Выбран playlist для локального воспроизведения. slot=Основное расписание|ea3c2f0a-6bbc-4cf4-baf9-3f0abcf78d57|00:15, index=1, playlistId=97dcf093-a41e-4be7-b4dc-5fb62e4d804b, title=Deep House 1
+21.03.2026 12:23:22 | Курсор playlists. slot=Основное расписание|ea3c2f0a-6bbc-4cf4-baf9-3f0abcf78d57|00:15, stored=2, previewNextStored=1, playlists=2
+21.03.2026 12:23:22 | Выбран playlist для локального воспроизведения. slot=Основное расписание|ea3c2f0a-6bbc-4cf4-baf9-3f0abcf78d57|00:15, index=0, playlistId=4933b120-502a-4dcb-b2fe-0d80eecbb74c, title=Поп вокал 1
+21.03.2026 12:23:22 | Синхронизация кэша рекламы завершена. downloaded=0, failed=0, actual=2
+21.03.2026 12:23:22 | Сохранен download plan. tracks=2
+21.03.2026 12:23:22 | Прогрев кэша рекламы завершен. downloaded=false, cached=2
+21.03.2026 12:23:22 | Определена точка exact-break. value=-1, queueSize=2
+21.03.2026 12:23:22 | Локальная очередь из data/playlists готова. Элементов=2
+21.03.2026 12:23:22 | PlayQueueItem. type=track, retryAfter=0, item=тип=track, id=b244d46a-924e-408a-9ec8-6f56dd242ef5, поток=Хороший фон 1, сет=Organic Deep House, код=LCUT5
+21.03.2026 12:23:22 | Зафиксирован курсор playlists. slot=Основное расписание|ea3c2f0a-6bbc-4cf4-baf9-3f0abcf78d57|00:15, committed=2
+21.03.2026 12:23:22 | Сохранен download plan. tracks=1
+21.03.2026 12:23:22 | StartPlaybackWithAudioKey. audio=primary, item=тип=track, id=b244d46a-924e-408a-9ec8-6f56dd242ef5, поток=Хороший фон 1, сет=Organic Deep House, код=LCUT5, volume=0.428, fadeInMs=1500, source=cdn
+21.03.2026 12:23:22 | [AudioPrimary] LoadUrl. volume=0.428, url=https://cdn.fon.fm/media/tracks/b/b244d46a-924e-408a-9ec8-6f56dd242ef5.mp3
+21.03.2026 12:23:23 | [AudioPrimary] Ready
+21.03.2026 12:23:23 | Аудио готово. audio=primary
+21.03.2026 12:23:23 | Определена точка exact-break. value=-1, queueSize=1
+21.03.2026 12:23:23 | ActivateLoadedItem. audio=primary, item=тип=track, id=b244d46a-924e-408a-9ec8-6f56dd242ef5, поток=Хороший фон 1, сет=Organic Deep House, код=LCUT5, fadeInMs=1500
+21.03.2026 12:23:23 | Запланирован прогрев кэша треков. delayMs=7000, queueSize=1
+21.03.2026 12:23:23 | ScheduleHistoryLog. item=тип=track, id=b244d46a-924e-408a-9ec8-6f56dd242ef5, поток=Хороший фон 1, сет=Organic Deep House, код=LCUT5, delayMs=15000
+21.03.2026 12:23:23 | [AudioPrimary] PlayWithFade. fadeTimeMs=1500, maxVolume=0.428
+21.03.2026 12:23:23 | PlaybackStartDone. audio=primary, success=true, message=
+21.03.2026 12:23:30 | Запуск прогрева кэша треков. items=1
+21.03.2026 12:23:30 | Скачивание трека в кэш. id=887397c2-4bd1-44a7-b68b-8c709c163ab1, url=https://cdn.fon.fm/media/tracks/8/887397c2-4bd1-44a7-b68b-8c709c163ab1.mp3
+21.03.2026 12:23:32 | Трек сохранен в кэш. id=887397c2-4bd1-44a7-b68b-8c709c163ab1
+21.03.2026 12:23:32 | Синхронизация кэша треков завершена. downloaded=1, failed=0, actual=20
+21.03.2026 12:23:32 | Прогрев кэша треков завершен. downloaded=true, cached=20
+

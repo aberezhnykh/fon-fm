@@ -310,7 +310,7 @@ __ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .RemoveAt((in
 ;
 RDebugUtils.currentLine=35258374;
  //BA.debugLineNum = 35258374;BA.debugLine="Log(entry)";
-__c.LogImpl("735258374",_entry,0);
+__c.LogImpl("435258374",_entry,0);
 RDebugUtils.currentLine=35258375;
  //BA.debugLineNum = 35258375;BA.debugLine="End Sub";
 return "";
