@@ -423,11 +423,11 @@ Public Sub ResolveMediaSource(item As Map) As String
 	Dim itemType As String = item.GetDefault("type", "")
 	If itemType = "ad" Then
 		If HasValidatedLocalMedia(item) Then Return "cache"
-		Return "cdn"
+		Return "missing"
 	End If
 	If itemType = "track" Then
 		If HasValidatedLocalMedia(item) Then Return "cache"
-		Return "cdn"
+		Return "missing"
 	End If
 	Return "none"
 End Sub

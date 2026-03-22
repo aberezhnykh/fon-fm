@@ -2586,9 +2586,9 @@ if (RemoteObject.solveBoolean("=",_itemtype,BA.ObjectToString("ad"))) {
 Debug.ShouldStop(4);
 if (__ref.runClassMethod (b4j.example.mediacache.class, "_hasvalidatedlocalmedia" /*RemoteObject*/ ,(Object)(_item)).<Boolean>get().booleanValue()) { 
 if (true) return BA.ObjectToString("cache");};
- BA.debugLineNum = 420;BA.debugLine="Return \"cdn\"";
+ BA.debugLineNum = 420;BA.debugLine="Return \"missing\"";
 Debug.ShouldStop(8);
-if (true) return BA.ObjectToString("cdn");
+if (true) return BA.ObjectToString("missing");
  };
  BA.debugLineNum = 422;BA.debugLine="If itemType = \"track\" Then";
 Debug.ShouldStop(32);
@@ -2597,9 +2597,9 @@ if (RemoteObject.solveBoolean("=",_itemtype,BA.ObjectToString("track"))) {
 Debug.ShouldStop(64);
 if (__ref.runClassMethod (b4j.example.mediacache.class, "_hasvalidatedlocalmedia" /*RemoteObject*/ ,(Object)(_item)).<Boolean>get().booleanValue()) { 
 if (true) return BA.ObjectToString("cache");};
- BA.debugLineNum = 424;BA.debugLine="Return \"cdn\"";
+ BA.debugLineNum = 424;BA.debugLine="Return \"missing\"";
 Debug.ShouldStop(128);
-if (true) return BA.ObjectToString("cdn");
+if (true) return BA.ObjectToString("missing");
  };
  BA.debugLineNum = 426;BA.debugLine="Return \"none\"";
 Debug.ShouldStop(512);

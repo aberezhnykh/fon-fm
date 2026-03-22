@@ -211,10 +211,14 @@ Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService 
 	If playlistId <> "" Then lastTrackId = lastTrackByPlaylist.GetDefault(playlistId, "")
 	Dim tracks As List = playlistData.GetDefault("tracks", Null)
 	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return emptyTrack
-	Dim filteredTracks As List
-	filteredTracks.Initialize
 	Dim cachedTracks As List
 	cachedTracks.Initialize
+	Dim filteredCachedTracks As List
+	filteredCachedTracks.Initialize
+	Dim nonRepeatedCachedTracks As List
+	nonRepeatedCachedTracks.Initialize
+	Dim filteredTracks As List
+	filteredTracks.Initialize
 	Dim nonRepeatedTracks As List
 	nonRepeatedTracks.Initialize
 	For Each trackObject As Object In tracks
@@ -222,31 +226,31 @@ Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService 
 			Dim track As Map = trackObject
 			Dim trackId As String = track.GetDefault("id", "")
 			If trackId = "" Then Continue
-			If cachedOnly And mediaCacheService.IsTrackCached(trackId) = False Then Continue
-			cachedTracks.Add(track)
-			If trackId <> lastTrackId Then nonRepeatedTracks.Add(track)
+			Dim trackIsCached As Boolean = mediaCacheService.IsTrackCached(trackId)
+			If cachedOnly And trackIsCached = False Then Continue
+			If trackIsCached Then
+				cachedTracks.Add(track)
+				If recentTrackIds.IndexOf(trackId) = -1 Then filteredCachedTracks.Add(track)
+				If trackId <> lastTrackId Then nonRepeatedCachedTracks.Add(track)
+			End If
 			If recentTrackIds.IndexOf(trackId) = -1 Then filteredTracks.Add(track)
+			If trackId <> lastTrackId Then nonRepeatedTracks.Add(track)
 		End If
 	Next
 	Dim sourceTracks As List
 	If cachedOnly Then
 		sourceTracks = cachedTracks
-		If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
-		If sourceTracks.Size > 1 And lastTrackId <> "" Then
-			Dim nonRepeatedCachedTracks As List
-			nonRepeatedCachedTracks.Initialize
-			For Each cachedTrackObject As Object In sourceTracks
-				If cachedTrackObject Is Map Then
-					Dim cachedTrack As Map = cachedTrackObject
-					If cachedTrack.GetDefault("id", "") <> lastTrackId Then nonRepeatedCachedTracks.Add(cachedTrack)
-				End If
-			Next
-			If nonRepeatedCachedTracks.Size > 0 Then sourceTracks = nonRepeatedCachedTracks
-		End If
+		If filteredCachedTracks.Size > 0 Then sourceTracks = filteredCachedTracks
+		If sourceTracks.Size > 1 And nonRepeatedCachedTracks.Size > 0 Then sourceTracks = nonRepeatedCachedTracks
 	Else
-		sourceTracks = tracks
-		If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
-		If sourceTracks.Size > 1 And nonRepeatedTracks.Size > 0 Then sourceTracks = nonRepeatedTracks
+		sourceTracks = cachedTracks
+		If filteredCachedTracks.Size > 0 Then sourceTracks = filteredCachedTracks
+		If sourceTracks.Size > 1 And nonRepeatedCachedTracks.Size > 0 Then sourceTracks = nonRepeatedCachedTracks
+		If sourceTracks.Size = 0 Then
+			sourceTracks = tracks
+			If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
+			If sourceTracks.Size > 1 And nonRepeatedTracks.Size > 0 Then sourceTracks = nonRepeatedTracks
+		End If
 	End If
 	If sourceTracks.IsInitialized = False Or sourceTracks.Size = 0 Then Return emptyTrack
 	Dim randomIndex As Int = Rnd(0, sourceTracks.Size)

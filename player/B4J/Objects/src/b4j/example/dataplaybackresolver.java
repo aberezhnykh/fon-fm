@@ -427,16 +427,16 @@ anywheresoftware.b4a.objects.collections.Map _emptytrack = null;
 String _playlistid = "";
 String _lasttrackid = "";
 anywheresoftware.b4a.objects.collections.List _tracks = null;
-anywheresoftware.b4a.objects.collections.List _filteredtracks = null;
 anywheresoftware.b4a.objects.collections.List _cachedtracks = null;
+anywheresoftware.b4a.objects.collections.List _filteredcachedtracks = null;
+anywheresoftware.b4a.objects.collections.List _nonrepeatedcachedtracks = null;
+anywheresoftware.b4a.objects.collections.List _filteredtracks = null;
 anywheresoftware.b4a.objects.collections.List _nonrepeatedtracks = null;
 Object _trackobject = null;
 anywheresoftware.b4a.objects.collections.Map _track = null;
 String _trackid = "";
+boolean _trackiscached = false;
 anywheresoftware.b4a.objects.collections.List _sourcetracks = null;
-anywheresoftware.b4a.objects.collections.List _nonrepeatedcachedtracks = null;
-Object _cachedtrackobject = null;
-anywheresoftware.b4a.objects.collections.Map _cachedtrack = null;
 int _randomindex = 0;
 RDebugUtils.currentLine=21757952;
  //BA.debugLineNum = 21757952;BA.debugLine="Public Sub ChooseRandomTrackFromPlaylist(playlistD";
@@ -469,146 +469,155 @@ RDebugUtils.currentLine=21757960;
 if (_tracks.IsInitialized()==__c.False || _tracks.getSize()==0) { 
 if (true) return _emptytrack;};
 RDebugUtils.currentLine=21757961;
- //BA.debugLineNum = 21757961;BA.debugLine="Dim filteredTracks As List";
-_filteredtracks = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=21757962;
- //BA.debugLineNum = 21757962;BA.debugLine="filteredTracks.Initialize";
-_filteredtracks.Initialize();
-RDebugUtils.currentLine=21757963;
- //BA.debugLineNum = 21757963;BA.debugLine="Dim cachedTracks As List";
+ //BA.debugLineNum = 21757961;BA.debugLine="Dim cachedTracks As List";
 _cachedtracks = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=21757964;
- //BA.debugLineNum = 21757964;BA.debugLine="cachedTracks.Initialize";
+RDebugUtils.currentLine=21757962;
+ //BA.debugLineNum = 21757962;BA.debugLine="cachedTracks.Initialize";
 _cachedtracks.Initialize();
+RDebugUtils.currentLine=21757963;
+ //BA.debugLineNum = 21757963;BA.debugLine="Dim filteredCachedTracks As List";
+_filteredcachedtracks = new anywheresoftware.b4a.objects.collections.List();
+RDebugUtils.currentLine=21757964;
+ //BA.debugLineNum = 21757964;BA.debugLine="filteredCachedTracks.Initialize";
+_filteredcachedtracks.Initialize();
 RDebugUtils.currentLine=21757965;
- //BA.debugLineNum = 21757965;BA.debugLine="Dim nonRepeatedTracks As List";
-_nonrepeatedtracks = new anywheresoftware.b4a.objects.collections.List();
+ //BA.debugLineNum = 21757965;BA.debugLine="Dim nonRepeatedCachedTracks As List";
+_nonrepeatedcachedtracks = new anywheresoftware.b4a.objects.collections.List();
 RDebugUtils.currentLine=21757966;
- //BA.debugLineNum = 21757966;BA.debugLine="nonRepeatedTracks.Initialize";
-_nonrepeatedtracks.Initialize();
+ //BA.debugLineNum = 21757966;BA.debugLine="nonRepeatedCachedTracks.Initialize";
+_nonrepeatedcachedtracks.Initialize();
 RDebugUtils.currentLine=21757967;
- //BA.debugLineNum = 21757967;BA.debugLine="For Each trackObject As Object In tracks";
-{
-final anywheresoftware.b4a.BA.IterableList group15 = _tracks;
-final int groupLen15 = group15.getSize()
-;int index15 = 0;
-;
-for (; index15 < groupLen15;index15++){
-_trackobject = group15.Get(index15);
+ //BA.debugLineNum = 21757967;BA.debugLine="Dim filteredTracks As List";
+_filteredtracks = new anywheresoftware.b4a.objects.collections.List();
 RDebugUtils.currentLine=21757968;
- //BA.debugLineNum = 21757968;BA.debugLine="If trackObject Is Map Then";
-if (_trackobject instanceof java.util.Map) { 
+ //BA.debugLineNum = 21757968;BA.debugLine="filteredTracks.Initialize";
+_filteredtracks.Initialize();
 RDebugUtils.currentLine=21757969;
- //BA.debugLineNum = 21757969;BA.debugLine="Dim track As Map = trackObject";
+ //BA.debugLineNum = 21757969;BA.debugLine="Dim nonRepeatedTracks As List";
+_nonrepeatedtracks = new anywheresoftware.b4a.objects.collections.List();
+RDebugUtils.currentLine=21757970;
+ //BA.debugLineNum = 21757970;BA.debugLine="nonRepeatedTracks.Initialize";
+_nonrepeatedtracks.Initialize();
+RDebugUtils.currentLine=21757971;
+ //BA.debugLineNum = 21757971;BA.debugLine="For Each trackObject As Object In tracks";
+{
+final anywheresoftware.b4a.BA.IterableList group19 = _tracks;
+final int groupLen19 = group19.getSize()
+;int index19 = 0;
+;
+for (; index19 < groupLen19;index19++){
+_trackobject = group19.Get(index19);
+RDebugUtils.currentLine=21757972;
+ //BA.debugLineNum = 21757972;BA.debugLine="If trackObject Is Map Then";
+if (_trackobject instanceof java.util.Map) { 
+RDebugUtils.currentLine=21757973;
+ //BA.debugLineNum = 21757973;BA.debugLine="Dim track As Map = trackObject";
 _track = new anywheresoftware.b4a.objects.collections.Map();
 _track = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_trackobject));
-RDebugUtils.currentLine=21757970;
- //BA.debugLineNum = 21757970;BA.debugLine="Dim trackId As String = track.GetDefault(\"id\",";
+RDebugUtils.currentLine=21757974;
+ //BA.debugLineNum = 21757974;BA.debugLine="Dim trackId As String = track.GetDefault(\"id\",";
 _trackid = BA.ObjectToString(_track.GetDefault((Object)("id"),(Object)("")));
-RDebugUtils.currentLine=21757971;
- //BA.debugLineNum = 21757971;BA.debugLine="If trackId = \"\" Then Continue";
+RDebugUtils.currentLine=21757975;
+ //BA.debugLineNum = 21757975;BA.debugLine="If trackId = \"\" Then Continue";
 if ((_trackid).equals("")) { 
 if (true) continue;};
-RDebugUtils.currentLine=21757972;
- //BA.debugLineNum = 21757972;BA.debugLine="If cachedOnly And mediaCacheService.IsTrackCach";
-if (_cachedonly && _mediacacheservice._istrackcached /*boolean*/ (null,_trackid)==__c.False) { 
+RDebugUtils.currentLine=21757976;
+ //BA.debugLineNum = 21757976;BA.debugLine="Dim trackIsCached As Boolean = mediaCacheServic";
+_trackiscached = _mediacacheservice._istrackcached /*boolean*/ (null,_trackid);
+RDebugUtils.currentLine=21757977;
+ //BA.debugLineNum = 21757977;BA.debugLine="If cachedOnly And trackIsCached = False Then Co";
+if (_cachedonly && _trackiscached==__c.False) { 
 if (true) continue;};
-RDebugUtils.currentLine=21757973;
- //BA.debugLineNum = 21757973;BA.debugLine="cachedTracks.Add(track)";
+RDebugUtils.currentLine=21757978;
+ //BA.debugLineNum = 21757978;BA.debugLine="If trackIsCached Then";
+if (_trackiscached) { 
+RDebugUtils.currentLine=21757979;
+ //BA.debugLineNum = 21757979;BA.debugLine="cachedTracks.Add(track)";
 _cachedtracks.Add((Object)(_track.getObject()));
-RDebugUtils.currentLine=21757974;
- //BA.debugLineNum = 21757974;BA.debugLine="If trackId <> lastTrackId Then nonRepeatedTrack";
+RDebugUtils.currentLine=21757980;
+ //BA.debugLineNum = 21757980;BA.debugLine="If recentTrackIds.IndexOf(trackId) = -1 Then f";
+if (__ref._recenttrackids /*anywheresoftware.b4a.objects.collections.List*/ .IndexOf((Object)(_trackid))==-1) { 
+_filteredcachedtracks.Add((Object)(_track.getObject()));};
+RDebugUtils.currentLine=21757981;
+ //BA.debugLineNum = 21757981;BA.debugLine="If trackId <> lastTrackId Then nonRepeatedCach";
 if ((_trackid).equals(_lasttrackid) == false) { 
-_nonrepeatedtracks.Add((Object)(_track.getObject()));};
-RDebugUtils.currentLine=21757975;
- //BA.debugLineNum = 21757975;BA.debugLine="If recentTrackIds.IndexOf(trackId) = -1 Then fi";
+_nonrepeatedcachedtracks.Add((Object)(_track.getObject()));};
+ };
+RDebugUtils.currentLine=21757983;
+ //BA.debugLineNum = 21757983;BA.debugLine="If recentTrackIds.IndexOf(trackId) = -1 Then fi";
 if (__ref._recenttrackids /*anywheresoftware.b4a.objects.collections.List*/ .IndexOf((Object)(_trackid))==-1) { 
 _filteredtracks.Add((Object)(_track.getObject()));};
- };
- }
-};
-RDebugUtils.currentLine=21757978;
- //BA.debugLineNum = 21757978;BA.debugLine="Dim sourceTracks As List";
-_sourcetracks = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=21757979;
- //BA.debugLineNum = 21757979;BA.debugLine="If cachedOnly Then";
-if (_cachedonly) { 
-RDebugUtils.currentLine=21757980;
- //BA.debugLineNum = 21757980;BA.debugLine="sourceTracks = cachedTracks";
-_sourcetracks = _cachedtracks;
-RDebugUtils.currentLine=21757981;
- //BA.debugLineNum = 21757981;BA.debugLine="If filteredTracks.Size > 0 Then sourceTracks = f";
-if (_filteredtracks.getSize()>0) { 
-_sourcetracks = _filteredtracks;};
-RDebugUtils.currentLine=21757982;
- //BA.debugLineNum = 21757982;BA.debugLine="If sourceTracks.Size > 1 And lastTrackId <> \"\" T";
-if (_sourcetracks.getSize()>1 && (_lasttrackid).equals("") == false) { 
-RDebugUtils.currentLine=21757983;
- //BA.debugLineNum = 21757983;BA.debugLine="Dim nonRepeatedCachedTracks As List";
-_nonrepeatedcachedtracks = new anywheresoftware.b4a.objects.collections.List();
 RDebugUtils.currentLine=21757984;
- //BA.debugLineNum = 21757984;BA.debugLine="nonRepeatedCachedTracks.Initialize";
-_nonrepeatedcachedtracks.Initialize();
-RDebugUtils.currentLine=21757985;
- //BA.debugLineNum = 21757985;BA.debugLine="For Each cachedTrackObject As Object In sourceT";
-{
-final anywheresoftware.b4a.BA.IterableList group33 = _sourcetracks;
-final int groupLen33 = group33.getSize()
-;int index33 = 0;
-;
-for (; index33 < groupLen33;index33++){
-_cachedtrackobject = group33.Get(index33);
-RDebugUtils.currentLine=21757986;
- //BA.debugLineNum = 21757986;BA.debugLine="If cachedTrackObject Is Map Then";
-if (_cachedtrackobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=21757987;
- //BA.debugLineNum = 21757987;BA.debugLine="Dim cachedTrack As Map = cachedTrackObject";
-_cachedtrack = new anywheresoftware.b4a.objects.collections.Map();
-_cachedtrack = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_cachedtrackobject));
-RDebugUtils.currentLine=21757988;
- //BA.debugLineNum = 21757988;BA.debugLine="If cachedTrack.GetDefault(\"id\", \"\") <> lastTr";
-if ((_cachedtrack.GetDefault((Object)("id"),(Object)(""))).equals((Object)(_lasttrackid)) == false) { 
-_nonrepeatedcachedtracks.Add((Object)(_cachedtrack.getObject()));};
+ //BA.debugLineNum = 21757984;BA.debugLine="If trackId <> lastTrackId Then nonRepeatedTrack";
+if ((_trackid).equals(_lasttrackid) == false) { 
+_nonrepeatedtracks.Add((Object)(_track.getObject()));};
  };
  }
 };
+RDebugUtils.currentLine=21757987;
+ //BA.debugLineNum = 21757987;BA.debugLine="Dim sourceTracks As List";
+_sourcetracks = new anywheresoftware.b4a.objects.collections.List();
+RDebugUtils.currentLine=21757988;
+ //BA.debugLineNum = 21757988;BA.debugLine="If cachedOnly Then";
+if (_cachedonly) { 
+RDebugUtils.currentLine=21757989;
+ //BA.debugLineNum = 21757989;BA.debugLine="sourceTracks = cachedTracks";
+_sourcetracks = _cachedtracks;
+RDebugUtils.currentLine=21757990;
+ //BA.debugLineNum = 21757990;BA.debugLine="If filteredCachedTracks.Size > 0 Then sourceTrac";
+if (_filteredcachedtracks.getSize()>0) { 
+_sourcetracks = _filteredcachedtracks;};
 RDebugUtils.currentLine=21757991;
- //BA.debugLineNum = 21757991;BA.debugLine="If nonRepeatedCachedTracks.Size > 0 Then source";
-if (_nonrepeatedcachedtracks.getSize()>0) { 
+ //BA.debugLineNum = 21757991;BA.debugLine="If sourceTracks.Size > 1 And nonRepeatedCachedTr";
+if (_sourcetracks.getSize()>1 && _nonrepeatedcachedtracks.getSize()>0) { 
 _sourcetracks = _nonrepeatedcachedtracks;};
- };
  }else {
+RDebugUtils.currentLine=21757993;
+ //BA.debugLineNum = 21757993;BA.debugLine="sourceTracks = cachedTracks";
+_sourcetracks = _cachedtracks;
 RDebugUtils.currentLine=21757994;
- //BA.debugLineNum = 21757994;BA.debugLine="sourceTracks = tracks";
-_sourcetracks = _tracks;
+ //BA.debugLineNum = 21757994;BA.debugLine="If filteredCachedTracks.Size > 0 Then sourceTrac";
+if (_filteredcachedtracks.getSize()>0) { 
+_sourcetracks = _filteredcachedtracks;};
 RDebugUtils.currentLine=21757995;
- //BA.debugLineNum = 21757995;BA.debugLine="If filteredTracks.Size > 0 Then sourceTracks = f";
+ //BA.debugLineNum = 21757995;BA.debugLine="If sourceTracks.Size > 1 And nonRepeatedCachedTr";
+if (_sourcetracks.getSize()>1 && _nonrepeatedcachedtracks.getSize()>0) { 
+_sourcetracks = _nonrepeatedcachedtracks;};
+RDebugUtils.currentLine=21757996;
+ //BA.debugLineNum = 21757996;BA.debugLine="If sourceTracks.Size = 0 Then";
+if (_sourcetracks.getSize()==0) { 
+RDebugUtils.currentLine=21757997;
+ //BA.debugLineNum = 21757997;BA.debugLine="sourceTracks = tracks";
+_sourcetracks = _tracks;
+RDebugUtils.currentLine=21757998;
+ //BA.debugLineNum = 21757998;BA.debugLine="If filteredTracks.Size > 0 Then sourceTracks =";
 if (_filteredtracks.getSize()>0) { 
 _sourcetracks = _filteredtracks;};
-RDebugUtils.currentLine=21757996;
- //BA.debugLineNum = 21757996;BA.debugLine="If sourceTracks.Size > 1 And nonRepeatedTracks.S";
+RDebugUtils.currentLine=21757999;
+ //BA.debugLineNum = 21757999;BA.debugLine="If sourceTracks.Size > 1 And nonRepeatedTracks.";
 if (_sourcetracks.getSize()>1 && _nonrepeatedtracks.getSize()>0) { 
 _sourcetracks = _nonrepeatedtracks;};
  };
-RDebugUtils.currentLine=21757998;
- //BA.debugLineNum = 21757998;BA.debugLine="If sourceTracks.IsInitialized = False Or sourceTr";
+ };
+RDebugUtils.currentLine=21758002;
+ //BA.debugLineNum = 21758002;BA.debugLine="If sourceTracks.IsInitialized = False Or sourceTr";
 if (_sourcetracks.IsInitialized()==__c.False || _sourcetracks.getSize()==0) { 
 if (true) return _emptytrack;};
-RDebugUtils.currentLine=21757999;
- //BA.debugLineNum = 21757999;BA.debugLine="Dim randomIndex As Int = Rnd(0, sourceTracks.Size";
+RDebugUtils.currentLine=21758003;
+ //BA.debugLineNum = 21758003;BA.debugLine="Dim randomIndex As Int = Rnd(0, sourceTracks.Size";
 _randomindex = __c.Rnd((int) (0),_sourcetracks.getSize());
-RDebugUtils.currentLine=21758000;
- //BA.debugLineNum = 21758000;BA.debugLine="Dim trackObject As Object = sourceTracks.Get(rand";
+RDebugUtils.currentLine=21758004;
+ //BA.debugLineNum = 21758004;BA.debugLine="Dim trackObject As Object = sourceTracks.Get(rand";
 _trackobject = _sourcetracks.Get(_randomindex);
-RDebugUtils.currentLine=21758001;
- //BA.debugLineNum = 21758001;BA.debugLine="If trackObject Is Map Then Return trackObject";
+RDebugUtils.currentLine=21758005;
+ //BA.debugLineNum = 21758005;BA.debugLine="If trackObject Is Map Then Return trackObject";
 if (_trackobject instanceof java.util.Map) { 
 if (true) return (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_trackobject));};
-RDebugUtils.currentLine=21758002;
- //BA.debugLineNum = 21758002;BA.debugLine="Return emptyTrack";
+RDebugUtils.currentLine=21758006;
+ //BA.debugLineNum = 21758006;BA.debugLine="Return emptyTrack";
 if (true) return _emptytrack;
-RDebugUtils.currentLine=21758003;
- //BA.debugLineNum = 21758003;BA.debugLine="End Sub";
+RDebugUtils.currentLine=21758007;
+ //BA.debugLineNum = 21758007;BA.debugLine="End Sub";
 return null;
 }
 public anywheresoftware.b4a.objects.collections.Map  _createqueuetrackfromplaylist(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _currentslot,anywheresoftware.b4a.objects.collections.Map _playlistdescriptor,anywheresoftware.b4a.objects.collections.Map _track,anywheresoftware.b4a.objects.collections.Map _offlinedata) throws Exception{
@@ -699,6 +708,28 @@ if (__ref._storageref /*b4j.example.keyvaluestore*/ .IsInitialized /*boolean*/ (
 __ref._storageref /*b4j.example.keyvaluestore*/ ._put /*String*/ (null,"data_recent_track_ids",(Object)(__ref._recenttrackids /*anywheresoftware.b4a.objects.collections.List*/ .getObject()));};
 RDebugUtils.currentLine=22020103;
  //BA.debugLineNum = 22020103;BA.debugLine="End Sub";
+return "";
+}
+public String  _rememberresolvedtrackforplaylist(b4j.example.dataplaybackresolver __ref,String _playlistid,String _trackid) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="dataplaybackresolver";
+if (Debug.shouldDelegate(ba, "rememberresolvedtrackforplaylist", false))
+	 {return ((String) Debug.delegate(ba, "rememberresolvedtrackforplaylist", new Object[] {_playlistid,_trackid}));}
+RDebugUtils.currentLine=22085632;
+ //BA.debugLineNum = 22085632;BA.debugLine="Public Sub RememberResolvedTrackForPlaylist(playli";
+RDebugUtils.currentLine=22085633;
+ //BA.debugLineNum = 22085633;BA.debugLine="If playlistId = \"\" Or trackId = \"\" Then Return";
+if ((_playlistid).equals("") || (_trackid).equals("")) { 
+if (true) return "";};
+RDebugUtils.currentLine=22085634;
+ //BA.debugLineNum = 22085634;BA.debugLine="lastTrackByPlaylist.Put(playlistId, trackId)";
+__ref._lasttrackbyplaylist /*anywheresoftware.b4a.objects.collections.Map*/ .Put((Object)(_playlistid),(Object)(_trackid));
+RDebugUtils.currentLine=22085635;
+ //BA.debugLineNum = 22085635;BA.debugLine="If storageRef.IsInitialized Then storageRef.Put(\"";
+if (__ref._storageref /*b4j.example.keyvaluestore*/ .IsInitialized /*boolean*/ ()) { 
+__ref._storageref /*b4j.example.keyvaluestore*/ ._put /*String*/ (null,"data_last_track_by_playlist",(Object)(__ref._lasttrackbyplaylist /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));};
+RDebugUtils.currentLine=22085636;
+ //BA.debugLineNum = 22085636;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.Map  _cloneplaylistcursors(b4j.example.dataplaybackresolver __ref) throws Exception{
@@ -1447,28 +1478,6 @@ if (true) return (int) ((double)(Double.parseDouble(_parts[(int) (0)]))*60+(doub
 RDebugUtils.currentLine=22741000;
  //BA.debugLineNum = 22741000;BA.debugLine="End Sub";
 return 0;
-}
-public String  _rememberresolvedtrackforplaylist(b4j.example.dataplaybackresolver __ref,String _playlistid,String _trackid) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="dataplaybackresolver";
-if (Debug.shouldDelegate(ba, "rememberresolvedtrackforplaylist", false))
-	 {return ((String) Debug.delegate(ba, "rememberresolvedtrackforplaylist", new Object[] {_playlistid,_trackid}));}
-RDebugUtils.currentLine=22085632;
- //BA.debugLineNum = 22085632;BA.debugLine="Public Sub RememberResolvedTrackForPlaylist(playli";
-RDebugUtils.currentLine=22085633;
- //BA.debugLineNum = 22085633;BA.debugLine="If playlistId = \"\" Or trackId = \"\" Then Return";
-if ((_playlistid).equals("") || (_trackid).equals("")) { 
-if (true) return "";};
-RDebugUtils.currentLine=22085634;
- //BA.debugLineNum = 22085634;BA.debugLine="lastTrackByPlaylist.Put(playlistId, trackId)";
-__ref._lasttrackbyplaylist /*anywheresoftware.b4a.objects.collections.Map*/ .Put((Object)(_playlistid),(Object)(_trackid));
-RDebugUtils.currentLine=22085635;
- //BA.debugLineNum = 22085635;BA.debugLine="If storageRef.IsInitialized Then storageRef.Put(\"";
-if (__ref._storageref /*b4j.example.keyvaluestore*/ .IsInitialized /*boolean*/ ()) { 
-__ref._storageref /*b4j.example.keyvaluestore*/ ._put /*String*/ (null,"data_last_track_by_playlist",(Object)(__ref._lasttrackbyplaylist /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));};
-RDebugUtils.currentLine=22085636;
- //BA.debugLineNum = 22085636;BA.debugLine="End Sub";
-return "";
 }
 public boolean  _scheduleappliestoday(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _schedule,String _todaykey,String _todayweekday) throws Exception{
 __ref = this;
