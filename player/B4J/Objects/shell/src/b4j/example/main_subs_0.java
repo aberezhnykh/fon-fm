@@ -55,11 +55,14 @@ Debug.ShouldStop(1073741824);
  BA.debugLineNum = 32;BA.debugLine="B4XPages.MainPage.SaveWindowState";
 Debug.ShouldStop(-2147483648);
 main._b4xpages.runMethod(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_savewindowstate" /*RemoteObject*/ );
- BA.debugLineNum = 33;BA.debugLine="B4XPages.Delegate.MainForm_Closed";
+ BA.debugLineNum = 33;BA.debugLine="B4XPages.MainPage.CleanupPlaybackTempFiles";
 Debug.ShouldStop(1);
-main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_closed" /*RemoteObject*/ );
- BA.debugLineNum = 34;BA.debugLine="End Sub";
+main._b4xpages.runMethod(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_cleanupplaybacktempfiles" /*RemoteObject*/ );
+ BA.debugLineNum = 34;BA.debugLine="B4XPages.Delegate.MainForm_Closed";
 Debug.ShouldStop(2);
+main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_closed" /*RemoteObject*/ );
+ BA.debugLineNum = 35;BA.debugLine="End Sub";
+Debug.ShouldStop(4);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -70,16 +73,16 @@ finally {
 		}}
 public static RemoteObject  _mainform_closerequest(RemoteObject _eventdata) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_CloseRequest (main) ","main",0,main.ba,main.mostCurrent,36);
+		Debug.PushSubsStack("MainForm_CloseRequest (main) ","main",0,main.ba,main.mostCurrent,37);
 if (RapidSub.canDelegate("mainform_closerequest")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_closerequest", _eventdata);}
 Debug.locals.put("eventData", _eventdata);
- BA.debugLineNum = 36;BA.debugLine="Sub MainForm_CloseRequest (eventData As Event)";
-Debug.ShouldStop(8);
- BA.debugLineNum = 37;BA.debugLine="B4XPages.Delegate.MainForm_CloseRequest(eventData";
+ BA.debugLineNum = 37;BA.debugLine="Sub MainForm_CloseRequest (eventData As Event)";
 Debug.ShouldStop(16);
-main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_closerequest" /*RemoteObject*/ ,(Object)(_eventdata));
- BA.debugLineNum = 38;BA.debugLine="End Sub";
+ BA.debugLineNum = 38;BA.debugLine="B4XPages.Delegate.MainForm_CloseRequest(eventData";
 Debug.ShouldStop(32);
+main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_closerequest" /*RemoteObject*/ ,(Object)(_eventdata));
+ BA.debugLineNum = 39;BA.debugLine="End Sub";
+Debug.ShouldStop(64);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -110,16 +113,16 @@ finally {
 		}}
 public static RemoteObject  _mainform_iconifiedchanged(RemoteObject _iconified) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_IconifiedChanged (main) ","main",0,main.ba,main.mostCurrent,40);
+		Debug.PushSubsStack("MainForm_IconifiedChanged (main) ","main",0,main.ba,main.mostCurrent,41);
 if (RapidSub.canDelegate("mainform_iconifiedchanged")) { return b4j.example.main.remoteMe.runUserSub(false, "main","mainform_iconifiedchanged", _iconified);}
 Debug.locals.put("iconified", _iconified);
- BA.debugLineNum = 40;BA.debugLine="Public Sub MainForm_IconifiedChanged (iconified As";
-Debug.ShouldStop(128);
- BA.debugLineNum = 41;BA.debugLine="B4XPages.Delegate.MainForm_IconifiedChanged(iconi";
+ BA.debugLineNum = 41;BA.debugLine="Public Sub MainForm_IconifiedChanged (iconified As";
 Debug.ShouldStop(256);
-main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_iconifiedchanged" /*RemoteObject*/ ,(Object)(_iconified));
- BA.debugLineNum = 42;BA.debugLine="End Sub";
+ BA.debugLineNum = 42;BA.debugLine="B4XPages.Delegate.MainForm_IconifiedChanged(iconi";
 Debug.ShouldStop(512);
+main._b4xpages._delegate /*RemoteObject*/ .runClassMethod (b4j.example.b4xpagesdelegator.class, "_mainform_iconifiedchanged" /*RemoteObject*/ ,(Object)(_iconified));
+ BA.debugLineNum = 43;BA.debugLine="End Sub";
+Debug.ShouldStop(1024);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -163,13 +166,23 @@ b4xcollections_subs_0._process_globals();
 httputils2service_subs_0._process_globals();
 main.myClass = BA.getDeviceClass ("b4j.example.main");
 b4xmainpage.myClass = BA.getDeviceClass ("b4j.example.b4xmainpage");
-audioplayer.myClass = BA.getDeviceClass ("b4j.example.audioplayer");
-adscheduler.myClass = BA.getDeviceClass ("b4j.example.adscheduler");
-uistyle.myClass = BA.getDeviceClass ("b4j.example.uistyle");
-dataplaybackresolver.myClass = BA.getDeviceClass ("b4j.example.dataplaybackresolver");
-traceservice.myClass = BA.getDeviceClass ("b4j.example.traceservice");
 mediacache.myClass = BA.getDeviceClass ("b4j.example.mediacache");
+playbacktransitioncoordinator.myClass = BA.getDeviceClass ("b4j.example.playbacktransitioncoordinator");
+playbackqueuebuilder.myClass = BA.getDeviceClass ("b4j.example.playbackqueuebuilder");
+playbackresponseadapter.myClass = BA.getDeviceClass ("b4j.example.playbackresponseadapter");
+playbackfacade.myClass = BA.getDeviceClass ("b4j.example.playbackfacade");
+playbackqueuestate.myClass = BA.getDeviceClass ("b4j.example.playbackqueuestate");
+playbackretryfallbackstate.myClass = BA.getDeviceClass ("b4j.example.playbackretryfallbackstate");
+playbackdatapolicystate.myClass = BA.getDeviceClass ("b4j.example.playbackdatapolicystate");
+playbackorchestrationstate.myClass = BA.getDeviceClass ("b4j.example.playbackorchestrationstate");
+playbackmetastate.myClass = BA.getDeviceClass ("b4j.example.playbackmetastate");
+playbackruntimestate.myClass = BA.getDeviceClass ("b4j.example.playbackruntimestate");
 offlinestore.myClass = BA.getDeviceClass ("b4j.example.offlinestore");
+dataplaybackresolver.myClass = BA.getDeviceClass ("b4j.example.dataplaybackresolver");
+adscheduler.myClass = BA.getDeviceClass ("b4j.example.adscheduler");
+audioplayer.myClass = BA.getDeviceClass ("b4j.example.audioplayer");
+traceservice.myClass = BA.getDeviceClass ("b4j.example.traceservice");
+uistyle.myClass = BA.getDeviceClass ("b4j.example.uistyle");
 b4xpages.myClass = BA.getDeviceClass ("b4j.example.b4xpages");
 b4xbitset.myClass = BA.getDeviceClass ("b4j.example.b4xbitset");
 b4xbytesbuilder.myClass = BA.getDeviceClass ("b4j.example.b4xbytesbuilder");

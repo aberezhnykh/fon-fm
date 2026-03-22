@@ -8,7 +8,7 @@ public class uistyle_subs_0 {
 
 public static RemoteObject  _applymaterialiconfont(RemoteObject _xui,RemoteObject _view,RemoteObject _fontsize) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyMaterialIconFont (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,22);
+		Debug.PushSubsStack("ApplyMaterialIconFont (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,22);
 if (RapidSub.canDelegate("applymaterialiconfont")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","applymaterialiconfont", _xui, _view, _fontsize);}
 Debug.locals.put("xui", _xui);
 Debug.locals.put("view", _view);
@@ -30,7 +30,7 @@ finally {
 		}}
 public static RemoteObject  _colortocss(RemoteObject _color) throws Exception{
 try {
-		Debug.PushSubsStack("ColorToCss (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,52);
+		Debug.PushSubsStack("ColorToCss (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,52);
 if (RapidSub.canDelegate("colortocss")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","colortocss", _color);}
 RemoteObject _unsignedcolor = RemoteObject.createImmutable(0L);
 RemoteObject _rgb = RemoteObject.createImmutable(0);
@@ -58,7 +58,7 @@ finally {
 		}}
 public static RemoteObject  _createlabel(RemoteObject _xui,RemoteObject _text,RemoteObject _fontsize,RemoteObject _textcolor,RemoteObject _bold,RemoteObject _wraptext) throws Exception{
 try {
-		Debug.PushSubsStack("CreateLabel (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,5);
+		Debug.PushSubsStack("CreateLabel (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,5);
 if (RapidSub.canDelegate("createlabel")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","createlabel", _xui, _text, _fontsize, _textcolor, _bold, _wraptext);}
 RemoteObject _lbl = RemoteObject.declareNull("anywheresoftware.b4j.objects.LabelWrapper");
 RemoteObject _xlbl = RemoteObject.declareNull("anywheresoftware.b4a.objects.B4XViewWrapper");
@@ -121,7 +121,7 @@ finally {
 		}}
 public static RemoteObject  _mergenodestyle(RemoteObject _currentstyle,RemoteObject _extrastyle) throws Exception{
 try {
-		Debug.PushSubsStack("MergeNodeStyle (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,58);
+		Debug.PushSubsStack("MergeNodeStyle (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,58);
 if (RapidSub.canDelegate("mergenodestyle")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","mergenodestyle", _currentstyle, _extrastyle);}
 Debug.locals.put("currentStyle", _currentstyle);
 Debug.locals.put("extraStyle", _extrastyle);
@@ -163,7 +163,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _scalevalue(RemoteObject _availablewidth,RemoteObject _smallvalue,RemoteObject _mediumvalue,RemoteObject _largevalue) throws Exception{
 try {
-		Debug.PushSubsStack("ScaleValue (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,46);
+		Debug.PushSubsStack("ScaleValue (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,46);
 if (RapidSub.canDelegate("scalevalue")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","scalevalue", _availablewidth, _smallvalue, _mediumvalue, _largevalue);}
 Debug.locals.put("availableWidth", _availablewidth);
 Debug.locals.put("smallValue", _smallvalue);
@@ -194,7 +194,7 @@ finally {
 		}}
 public static RemoteObject  _setlabelstyle(RemoteObject _view,RemoteObject _style) throws Exception{
 try {
-		Debug.PushSubsStack("SetLabelStyle (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,31);
+		Debug.PushSubsStack("SetLabelStyle (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,31);
 if (RapidSub.canDelegate("setlabelstyle")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","setlabelstyle", _view, _style);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("view", _view);
@@ -220,7 +220,7 @@ finally {
 		}}
 public static RemoteObject  _setmousetransparent(RemoteObject _view,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("SetMouseTransparent (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,36);
+		Debug.PushSubsStack("SetMouseTransparent (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,36);
 if (RapidSub.canDelegate("setmousetransparent")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","setmousetransparent", _view, _value);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("view", _view);
@@ -246,7 +246,7 @@ finally {
 		}}
 public static RemoteObject  _setpanestyle(RemoteObject _view,RemoteObject _style) throws Exception{
 try {
-		Debug.PushSubsStack("SetPaneStyle (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,26);
+		Debug.PushSubsStack("SetPaneStyle (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,26);
 if (RapidSub.canDelegate("setpanestyle")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","setpanestyle", _view, _style);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("view", _view);
@@ -272,7 +272,7 @@ finally {
 		}}
 public static RemoteObject  _setpickonbounds(RemoteObject _view,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("SetPickOnBounds (uistyle) ","uistyle",4,uistyle.ba,uistyle.mostCurrent,41);
+		Debug.PushSubsStack("SetPickOnBounds (uistyle) ","uistyle",18,uistyle.ba,uistyle.mostCurrent,41);
 if (RapidSub.canDelegate("setpickonbounds")) { return b4j.example.uistyle.remoteMe.runUserSub(false, "uistyle","setpickonbounds", _view, _value);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("view", _view);

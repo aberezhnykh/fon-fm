@@ -25,7 +25,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _cleanupserversnapshotfiles(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CleanupServerSnapshotFiles (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,101);
+		Debug.PushSubsStack("CleanupServerSnapshotFiles (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,101);
 if (RapidSub.canDelegate("cleanupserversnapshotfiles")) { return __ref.runUserSub(false, "traceservice","cleanupserversnapshotfiles", __ref);}
 RemoteObject _listedfiles = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _files = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -104,7 +104,7 @@ finally {
 		}}
 public static RemoteObject  _clonemap(RemoteObject __ref,RemoteObject _source) throws Exception{
 try {
-		Debug.PushSubsStack("CloneMap (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,138);
+		Debug.PushSubsStack("CloneMap (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,138);
 if (RapidSub.canDelegate("clonemap")) { return __ref.runUserSub(false, "traceservice","clonemap", __ref, _source);}
 RemoteObject _copy = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
@@ -152,7 +152,7 @@ finally {
 		}}
 public static RemoteObject  _ensuredirectory(RemoteObject __ref,RemoteObject _path) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureDirectory (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,122);
+		Debug.PushSubsStack("EnsureDirectory (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,122);
 if (RapidSub.canDelegate("ensuredirectory")) { return __ref.runUserSub(false, "traceservice","ensuredirectory", __ref, _path);}
 RemoteObject _jofile = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("path", _path);
@@ -179,7 +179,7 @@ finally {
 		}}
 public static RemoteObject  _getservertracelist(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetServerTraceList (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,56);
+		Debug.PushSubsStack("GetServerTraceList (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,56);
 if (RapidSub.canDelegate("getservertracelist")) { return __ref.runUserSub(false, "traceservice","getservertracelist", __ref);}
 RemoteObject _copy = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _entry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -227,7 +227,7 @@ finally {
 		}}
 public static RemoteObject  _getservertracetext(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetServerTraceText (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,44);
+		Debug.PushSubsStack("GetServerTraceText (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,44);
 if (RapidSub.canDelegate("getservertracetext")) { return __ref.runUserSub(false, "traceservice","getservertracetext", __ref);}
 RemoteObject _lines = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _entry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -281,7 +281,7 @@ finally {
 		}}
 public static RemoteObject  _gettracelist(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetTraceList (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,34);
+		Debug.PushSubsStack("GetTraceList (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,34);
 if (RapidSub.canDelegate("gettracelist")) { return __ref.runUserSub(false, "traceservice","gettracelist", __ref);}
 RemoteObject _copy = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _entry = RemoteObject.createImmutable("");
@@ -328,7 +328,7 @@ finally {
 		}}
 public static RemoteObject  _gettracetext(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetTraceText (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,29);
+		Debug.PushSubsStack("GetTraceText (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,29);
 if (RapidSub.canDelegate("gettracetext")) { return __ref.runUserSub(false, "traceservice","gettracetext", __ref);}
  BA.debugLineNum = 29;BA.debugLine="Public Sub GetTraceText As String";
 Debug.ShouldStop(268435456);
@@ -351,7 +351,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _storagedirvalue,RemoteObject _debugresponsesdirvalue,RemoteObject _traceloglimitvalue,RemoteObject _serversnapshotlimitvalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,11);
+		Debug.PushSubsStack("Initialize (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,11);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "traceservice","initialize", __ref, _ba, _storagedirvalue, _debugresponsesdirvalue, _traceloglimitvalue, _serversnapshotlimitvalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -391,7 +391,7 @@ finally {
 		}}
 public static RemoteObject  _joinlist(RemoteObject __ref,RemoteObject _items,RemoteObject _separator) throws Exception{
 try {
-		Debug.PushSubsStack("JoinList (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,128);
+		Debug.PushSubsStack("JoinList (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,128);
 if (RapidSub.canDelegate("joinlist")) { return __ref.runUserSub(false, "traceservice","joinlist", __ref, _items, _separator);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 int _i = 0;
@@ -438,7 +438,7 @@ finally {
 		}}
 public static RemoteObject  _saveserversnapshot(RemoteObject __ref,RemoteObject _method,RemoteObject _url,RemoteObject _success,RemoteObject _body,RemoteObject _errormessage) throws Exception{
 try {
-		Debug.PushSubsStack("SaveServerSnapshot (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,66);
+		Debug.PushSubsStack("SaveServerSnapshot (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,66);
 if (RapidSub.canDelegate("saveserversnapshot")) { return __ref.runUserSub(false, "traceservice","saveserversnapshot", __ref, _method, _url, _success, _body, _errormessage);}
 RemoteObject _timestamp = RemoteObject.createImmutable("");
 RemoteObject _header = RemoteObject.createImmutable("");
@@ -516,7 +516,7 @@ finally {
 		}}
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,20);
+		Debug.PushSubsStack("Trace (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,20);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "traceservice","trace", __ref, _message);}
 RemoteObject _entry = RemoteObject.createImmutable("");
 Debug.locals.put("message", _message);
@@ -538,7 +538,7 @@ __ref.getField(false,"_tracelogs" /*RemoteObject*/ ).runVoidMethod ("RemoveAt",(
 ;
  BA.debugLineNum = 26;BA.debugLine="Log(entry)";
 Debug.ShouldStop(33554432);
-traceservice.__c.runVoidMethod ("LogImpl","523396358",_entry,0);
+traceservice.__c.runVoidMethod ("LogImpl","430343174",_entry,0);
  BA.debugLineNum = 27;BA.debugLine="End Sub";
 Debug.ShouldStop(67108864);
 return RemoteObject.createImmutable("");
@@ -551,7 +551,7 @@ finally {
 		}}
 public static RemoteObject  _writeserversnapshotfile(RemoteObject __ref,RemoteObject _entry) throws Exception{
 try {
-		Debug.PushSubsStack("WriteServerSnapshotFile (traceservice) ","traceservice",6,__ref.getField(false, "ba"),__ref,87);
+		Debug.PushSubsStack("WriteServerSnapshotFile (traceservice) ","traceservice",17,__ref.getField(false, "ba"),__ref,87);
 if (RapidSub.canDelegate("writeserversnapshotfile")) { return __ref.runUserSub(false, "traceservice","writeserversnapshotfile", __ref, _entry);}
 RemoteObject _stamp = RemoteObject.createImmutable("");
 RemoteObject _name = RemoteObject.createImmutable("");

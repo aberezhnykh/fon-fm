@@ -10,38 +10,38 @@ Sub Class_Globals
 	Private storage As KeyValueStore
 	Private targetModule As Object
 	Private traceSubName As String
-	Private offlineDataFileName As String
-	Private offlinePlaylistRequirementsFileName As String
-	Private offlinePlaylistsDirName As String
+	Private playerDataFileName As String
+	Private playlistRequirementsFileName As String
+	Private playlistsDirName As String
 	Private playlistCdnBaseUrl As String
 End Sub
 
-Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, targetModuleValue As Object, traceSubNameValue As String, offlineDataFileNameValue As String, offlinePlaylistRequirementsFileNameValue As String, offlinePlaylistsDirNameValue As String, playlistCdnBaseUrlValue As String)
+Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, targetModuleValue As Object, traceSubNameValue As String, playerDataFileNameValue As String, playlistRequirementsFileNameValue As String, playlistsDirNameValue As String, playlistCdnBaseUrlValue As String)
 	storageDir = storageDirValue
 	storage = storageValue
 	targetModule = targetModuleValue
 	traceSubName = traceSubNameValue
-	offlineDataFileName = offlineDataFileNameValue
-	offlinePlaylistRequirementsFileName = offlinePlaylistRequirementsFileNameValue
-	offlinePlaylistsDirName = offlinePlaylistsDirNameValue
+	playerDataFileName = playerDataFileNameValue
+	playlistRequirementsFileName = playlistRequirementsFileNameValue
+	playlistsDirName = playlistsDirNameValue
 	playlistCdnBaseUrl = playlistCdnBaseUrlValue
 End Sub
 
 Public Sub LoadOfflineData As Map
 	Dim data As Map
 	data.Initialize
-	If File.Exists(storageDir, offlineDataFileName) = False Then Return data
+	If File.Exists(storageDir, playerDataFileName) = False Then Return data
 	Try
 		Dim parser As JSONParser
-		parser.Initialize(File.ReadString(storageDir, offlineDataFileName))
+		parser.Initialize(File.ReadString(storageDir, playerDataFileName))
 		Dim parsed As Map = parser.NextObject
 		If parsed.IsInitialized Then
 			data = parsed
-			Trace("Офлайн-метаданные загружены. playlists=" & GetOfflinePlaylistIds(data).Size & ", ads=" & GetOfflineAdsCount(data) & ", schedules=" & GetOfflineSchedulesCount(data))
+		Trace("Данные плеера загружены. playlists=" & GetOfflinePlaylistIds(data).Size & ", ads=" & GetOfflineAdsCount(data) & ", schedules=" & GetOfflineSchedulesCount(data))
 		End If
 	Catch
 		data.Initialize
-		Trace("Не удалось загрузить offline_data.json. " & LastException.Message)
+		Trace("Не удалось загрузить player_data.json. " & LastException.Message)
 	End Try
 	Return data
 End Sub
@@ -49,29 +49,29 @@ End Sub
 Public Sub SaveOfflineData(sourceData As Map, playerCode As String, deviceId As String) As Map
 	Dim normalizedData As Map = NormalizeOfflineData(sourceData, playerCode, deviceId)
 	Dim offlineDataUpdatedAt As Long = DateTime.Now
-	storage.Put("offline_data_updated_at", offlineDataUpdatedAt)
-	storage.Put("offline_data_source_updated", normalizedData.GetDefault("updated", ""))
+	storage.Put("player_data_updated_at", offlineDataUpdatedAt)
+	storage.Put("player_data_source_updated", normalizedData.GetDefault("updated", ""))
 	Dim playlistIds As List = GetOfflinePlaylistIds(normalizedData)
 	Dim playlistDescriptors As List = BuildOfflinePlaylistDescriptors(normalizedData)
 	Dim playlistCacheStatus As Map = CompareOfflinePlaylistsWithCache(playlistDescriptors)
-	storage.Put("offline_playlist_ids", playlistIds)
-	storage.Put("offline_playlist_descriptors", playlistDescriptors)
-	storage.Put("offline_playlist_download_ids", playlistCacheStatus.GetDefault("DownloadIds", CreateInitializedList))
-	storage.Put("offline_playlist_missing_count", playlistCacheStatus.GetDefault("MissingCount", 0))
-	storage.Put("offline_playlist_outdated_count", playlistCacheStatus.GetDefault("OutdatedCount", 0))
-	storage.Put("offline_playlist_actual_count", playlistCacheStatus.GetDefault("ActualCount", 0))
-	storage.Put("offline_ads_count", GetOfflineAdsCount(normalizedData))
-	storage.Put("offline_schedules_count", GetOfflineSchedulesCount(normalizedData))
+	storage.Put("playlist_ids", playlistIds)
+	storage.Put("playlist_descriptors", playlistDescriptors)
+	storage.Put("playlist_download_ids", playlistCacheStatus.GetDefault("DownloadIds", CreateInitializedList))
+	storage.Put("playlist_missing_count", playlistCacheStatus.GetDefault("MissingCount", 0))
+	storage.Put("playlist_outdated_count", playlistCacheStatus.GetDefault("OutdatedCount", 0))
+	storage.Put("playlist_actual_count", playlistCacheStatus.GetDefault("ActualCount", 0))
+	storage.Put("ad_count", GetOfflineAdsCount(normalizedData))
+	storage.Put("schedule_count", GetOfflineSchedulesCount(normalizedData))
 	Dim generator As JSONGenerator
 	generator.Initialize(normalizedData)
-	File.WriteString(storageDir, offlineDataFileName, generator.ToString)
+	File.WriteString(storageDir, playerDataFileName, generator.ToString)
 	WriteOfflinePlaylistRequirementsFile(playlistDescriptors, playerCode)
-	Trace("Офлайн-метаданные сохранены. playlists=" & playlistIds.Size & ", ads=" & GetOfflineAdsCount(normalizedData) & ", schedules=" & GetOfflineSchedulesCount(normalizedData) & ", missingPlaylists=" & playlistCacheStatus.GetDefault("MissingCount", 0) & ", outdatedPlaylists=" & playlistCacheStatus.GetDefault("OutdatedCount", 0))
+	Trace("Данные плеера сохранены. playlists=" & playlistIds.Size & ", ads=" & GetOfflineAdsCount(normalizedData) & ", schedules=" & GetOfflineSchedulesCount(normalizedData) & ", missingPlaylists=" & playlistCacheStatus.GetDefault("MissingCount", 0) & ", outdatedPlaylists=" & playlistCacheStatus.GetDefault("OutdatedCount", 0))
 	Return normalizedData
 End Sub
 
 Public Sub GetStoredPlaylistDescriptors As List
-	Return storage.GetDefault("offline_playlist_descriptors", CreateInitializedList)
+	Return storage.GetDefault("playlist_descriptors", CreateInitializedList)
 End Sub
 
 Public Sub GetCachedPlaylistIndex As Map
@@ -84,10 +84,10 @@ End Sub
 
 Public Sub RefreshPlaylistCacheStatus(playlistDescriptors As List)
 	Dim refreshedCacheStatus As Map = CompareOfflinePlaylistsWithCache(playlistDescriptors)
-	storage.Put("offline_playlist_download_ids", refreshedCacheStatus.GetDefault("DownloadIds", CreateInitializedList))
-	storage.Put("offline_playlist_missing_count", refreshedCacheStatus.GetDefault("MissingCount", 0))
-	storage.Put("offline_playlist_outdated_count", refreshedCacheStatus.GetDefault("OutdatedCount", 0))
-	storage.Put("offline_playlist_actual_count", refreshedCacheStatus.GetDefault("ActualCount", 0))
+	storage.Put("playlist_download_ids", refreshedCacheStatus.GetDefault("DownloadIds", CreateInitializedList))
+	storage.Put("playlist_missing_count", refreshedCacheStatus.GetDefault("MissingCount", 0))
+	storage.Put("playlist_outdated_count", refreshedCacheStatus.GetDefault("OutdatedCount", 0))
+	storage.Put("playlist_actual_count", refreshedCacheStatus.GetDefault("ActualCount", 0))
 End Sub
 
 Public Sub ResolvePlaylistSyncAction(descriptor As Map, cachedPlaylistIndex As Map) As String
@@ -123,7 +123,7 @@ Public Sub SavePlaylistMetadata(descriptor As Map, playlistData As Map, cachedPl
 End Sub
 
 Public Sub GetOfflinePlaylistsDir As String
-	Return File.Combine(storageDir, offlinePlaylistsDirName)
+	Return File.Combine(storageDir, playlistsDirName)
 End Sub
 
 Public Sub PlaylistMetadataFileName(playlistId As String) As String
@@ -297,7 +297,7 @@ Private Sub WriteOfflinePlaylistRequirementsFile(descriptors As List, playerCode
 	payload.Put("descriptors", descriptors)
 	Dim generator As JSONGenerator
 	generator.Initialize(payload)
-	File.WriteString(storageDir, offlinePlaylistRequirementsFileName, generator.ToString)
+	File.WriteString(storageDir, playlistRequirementsFileName, generator.ToString)
 End Sub
 
 Private Sub NormalizeOfflinePlaylistData(descriptor As Map, playlistData As Map) As Map

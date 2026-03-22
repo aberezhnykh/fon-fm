@@ -15,12 +15,19 @@ public static RemoteObject _storagedir = RemoteObject.createImmutable("");
 public static RemoteObject _storage = RemoteObject.declareNull("b4j.example.keyvaluestore");
 public static RemoteObject _targetmodule = RemoteObject.declareNull("Object");
 public static RemoteObject _tracesubname = RemoteObject.createImmutable("");
+public static RemoteObject _devicekeyseed = RemoteObject.createImmutable("");
 public static RemoteObject _mediadirname = RemoteObject.createImmutable("");
 public static RemoteObject _adsdirname = RemoteObject.createImmutable("");
 public static RemoteObject _tracksdirname = RemoteObject.createImmutable("");
 public static RemoteObject _cache_audit_batch_size = RemoteObject.createImmutable(0);
+public static RemoteObject _ad_download_timeout_ms = RemoteObject.createImmutable(0);
+public static RemoteObject _track_download_timeout_ms = RemoteObject.createImmutable(0);
+public static RemoteObject _stream_xor_buffer_size = RemoteObject.createImmutable(0);
+public static RemoteObject _primary_temp_track_file = RemoteObject.createImmutable("");
+public static RemoteObject _secondary_temp_track_file = RemoteObject.createImmutable("");
 public static RemoteObject _cachedadindex = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 public static RemoteObject _cachedtrackindex = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+public static RemoteObject _playbacktemptrackids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 public static RemoteObject _cacheauditinprogress = RemoteObject.createImmutable(false);
 public static RemoteObject _cacheauditpendingtypes = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 public static RemoteObject _cacheauditcurrenttype = RemoteObject.createImmutable("");
@@ -39,6 +46,6 @@ public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
 public static Object[] GetGlobals(RemoteObject _ref) throws Exception {
-		return new Object[] {"adsDirName",_ref.getField(false, "_adsdirname"),"CACHE_AUDIT_BATCH_SIZE",_ref.getField(false, "_cache_audit_batch_size"),"cacheAuditAddedCount",_ref.getField(false, "_cacheauditaddedcount"),"cacheAuditAdIndexChanged",_ref.getField(false, "_cacheauditadindexchanged"),"cacheAuditCurrentFileNames",_ref.getField(false, "_cacheauditcurrentfilenames"),"cacheAuditCurrentPosition",_ref.getField(false, "_cacheauditcurrentposition"),"cacheAuditCurrentType",_ref.getField(false, "_cacheauditcurrenttype"),"cacheAuditInProgress",_ref.getField(false, "_cacheauditinprogress"),"cacheAuditPendingTypes",_ref.getField(false, "_cacheauditpendingtypes"),"cacheAuditRemovedCount",_ref.getField(false, "_cacheauditremovedcount"),"cacheAuditSeenIds",_ref.getField(false, "_cacheauditseenids"),"cacheAuditTempDeletedCount",_ref.getField(false, "_cacheaudittempdeletedcount"),"cacheAuditTrackIndexChanged",_ref.getField(false, "_cacheaudittrackindexchanged"),"cachedAdIndex",_ref.getField(false, "_cachedadindex"),"cachedTrackIndex",_ref.getField(false, "_cachedtrackindex"),"mediaDirName",_ref.getField(false, "_mediadirname"),"recentMediaNetworkFailure",_ref.getField(false, "_recentmedianetworkfailure"),"storage",_ref.getField(false, "_storage"),"storageDir",_ref.getField(false, "_storagedir"),"targetModule",_ref.getField(false, "_targetmodule"),"traceSubName",_ref.getField(false, "_tracesubname"),"tracksDirName",_ref.getField(false, "_tracksdirname")};
+		return new Object[] {"AD_DOWNLOAD_TIMEOUT_MS",_ref.getField(false, "_ad_download_timeout_ms"),"adsDirName",_ref.getField(false, "_adsdirname"),"CACHE_AUDIT_BATCH_SIZE",_ref.getField(false, "_cache_audit_batch_size"),"cacheAuditAddedCount",_ref.getField(false, "_cacheauditaddedcount"),"cacheAuditAdIndexChanged",_ref.getField(false, "_cacheauditadindexchanged"),"cacheAuditCurrentFileNames",_ref.getField(false, "_cacheauditcurrentfilenames"),"cacheAuditCurrentPosition",_ref.getField(false, "_cacheauditcurrentposition"),"cacheAuditCurrentType",_ref.getField(false, "_cacheauditcurrenttype"),"cacheAuditInProgress",_ref.getField(false, "_cacheauditinprogress"),"cacheAuditPendingTypes",_ref.getField(false, "_cacheauditpendingtypes"),"cacheAuditRemovedCount",_ref.getField(false, "_cacheauditremovedcount"),"cacheAuditSeenIds",_ref.getField(false, "_cacheauditseenids"),"cacheAuditTempDeletedCount",_ref.getField(false, "_cacheaudittempdeletedcount"),"cacheAuditTrackIndexChanged",_ref.getField(false, "_cacheaudittrackindexchanged"),"cachedAdIndex",_ref.getField(false, "_cachedadindex"),"cachedTrackIndex",_ref.getField(false, "_cachedtrackindex"),"deviceKeySeed",_ref.getField(false, "_devicekeyseed"),"mediaDirName",_ref.getField(false, "_mediadirname"),"playbackTempTrackIds",_ref.getField(false, "_playbacktemptrackids"),"PRIMARY_TEMP_TRACK_FILE",_ref.getField(false, "_primary_temp_track_file"),"recentMediaNetworkFailure",_ref.getField(false, "_recentmedianetworkfailure"),"SECONDARY_TEMP_TRACK_FILE",_ref.getField(false, "_secondary_temp_track_file"),"storage",_ref.getField(false, "_storage"),"storageDir",_ref.getField(false, "_storagedir"),"STREAM_XOR_BUFFER_SIZE",_ref.getField(false, "_stream_xor_buffer_size"),"targetModule",_ref.getField(false, "_targetmodule"),"traceSubName",_ref.getField(false, "_tracesubname"),"TRACK_DOWNLOAD_TIMEOUT_MS",_ref.getField(false, "_track_download_timeout_ms"),"tracksDirName",_ref.getField(false, "_tracksdirname")};
 }
 }

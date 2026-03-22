@@ -10,16 +10,26 @@ Library6=jshell
 Library7=json
 Library8=keyvaluestore
 Module1=AdScheduler
+Module10=PlaybackOrchestrationState
+Module11=PlaybackQueueBuilder
+Module12=PlaybackQueueState
+Module13=PlaybackResponseAdapter
+Module14=PlaybackRetryFallbackState
+Module15=PlaybackRuntimeState
+Module16=PlaybackTransitionCoordinator
+Module17=TraceService
+Module18=UiStyle
 Module2=AudioPlayer
 Module3=|relative|..\B4XMainPage
 Module4=DataPlaybackResolver
 Module5=MediaCache
 Module6=OfflineStore
-Module7=TraceService
-Module8=UiStyle
+Module7=PlaybackDataPolicyState
+Module8=PlaybackFacade
+Module9=PlaybackMetaState
 NumberOfFiles=0
 NumberOfLibraries=8
-NumberOfModules=8
+NumberOfModules=18
 Version=10.5
 @EndOfDesignText@
 #Region Project Attributes 
@@ -54,6 +64,7 @@ End Sub
 
 Sub MainForm_Closed
 	B4XPages.MainPage.SaveWindowState
+	B4XPages.MainPage.CleanupPlaybackTempFiles
 	B4XPages.Delegate.MainForm_Closed
 End Sub
 

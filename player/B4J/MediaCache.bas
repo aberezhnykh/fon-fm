@@ -10,12 +10,19 @@ Sub Class_Globals
 	Private storage As KeyValueStore
 	Private targetModule As Object
 	Private traceSubName As String
+	Private deviceKeySeed As String
 	Private mediaDirName As String = "media"
 	Private adsDirName As String = "ads"
 	Private tracksDirName As String = "tracks"
 	Private Const CACHE_AUDIT_BATCH_SIZE As Int = 8
+	Private Const AD_DOWNLOAD_TIMEOUT_MS As Int = 15000
+	Private Const TRACK_DOWNLOAD_TIMEOUT_MS As Int = 10000
+	Private Const STREAM_XOR_BUFFER_SIZE As Int = 32768
+	Private Const PRIMARY_TEMP_TRACK_FILE As String = "2f7f5f2f-91a0-4f4c-9f5f-70d7b94fd101.tmp"
+	Private Const SECONDARY_TEMP_TRACK_FILE As String = "92c2df6a-7f22-4b75-8c09-d5a6f4f40a21.tmp"
 	Private cachedAdIndex As Map
 	Private cachedTrackIndex As Map
+	Private playbackTempTrackIds As Map
 	Private cacheAuditInProgress As Boolean
 	Private cacheAuditPendingTypes As List
 	Private cacheAuditCurrentType As String
@@ -30,11 +37,13 @@ Sub Class_Globals
 	Private recentMediaNetworkFailure As Boolean
 End Sub
 
-Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, targetModuleValue As Object, traceSubNameValue As String)
+Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, targetModuleValue As Object, traceSubNameValue As String, deviceIdValue As String)
 	storageDir = storageDirValue
 	storage = storageValue
 	targetModule = targetModuleValue
 	traceSubName = traceSubNameValue
+	deviceKeySeed = deviceIdValue
+	playbackTempTrackIds.Initialize
 	EnsureDirectory(GetAdsDir)
 	EnsureDirectory(GetTracksDir)
 	LoadIndexesFromStorage
@@ -86,24 +95,31 @@ Public Sub EnsureAdsCached(offlineData As Map) As ResumableSub
 	If offlineData.IsInitialized = False Then Return False
 	If offlineData.GetDefault("ok", False) <> True Then Return False
 	Dim ads As List = offlineData.GetDefault("ads", Null)
-	If ads.IsInitialized = False Or ads.Size = 0 Then Return False
 	Dim cachedAdIndex As Map = GetCachedAdIndex
+	Dim actualAdIds As Map
+	actualAdIds.Initialize
 	Dim downloadedCount As Int = 0
 	Dim failedCount As Int = 0
-	For Each adObject As Object In ads
-		If adObject Is Map Then
-			Dim ad As Map = adObject
-			Wait For (EnsureSingleAdCached(ad, cachedAdIndex)) Complete (downloaded As Boolean)
-			If downloaded Then
-				downloadedCount = downloadedCount + 1
-			Else If IsAdCached(ad.GetDefault("id", "")) = False Then
-				failedCount = failedCount + 1
+	If ads.IsInitialized Then
+		For Each adObject As Object In ads
+			If adObject Is Map Then
+				Dim ad As Map = adObject
+				Dim adId As String = ad.GetDefault("id", "")
+				If adId = "" Then Continue
+				actualAdIds.Put(adId, True)
+				Wait For (EnsureSingleAdCached(ad, cachedAdIndex)) Complete (downloaded As Boolean)
+				If downloaded Then
+					downloadedCount = downloadedCount + 1
+				Else If IsAdCached(adId) = False Then
+					failedCount = failedCount + 1
+				End If
 			End If
-		End If
-	Next
+		Next
+	End If
+	Dim removedCount As Int = PruneMissingAds(cachedAdIndex, actualAdIds)
 	SaveAdIndex
-	Trace("Синхронизация кэша рекламы завершена. downloaded=" & downloadedCount & ", failed=" & failedCount & ", actual=" & cachedAdIndex.Size)
-	Return downloadedCount > 0
+	Trace("Синхронизация кэша рекламы завершена. downloaded=" & downloadedCount & ", failed=" & failedCount & ", removed=" & removedCount & ", actual=" & cachedAdIndex.Size)
+	Return downloadedCount > 0 Or removedCount > 0
 End Sub
 
 Public Sub ResolveLocalMediaUri(item As Map) As String
@@ -113,8 +129,26 @@ Public Sub ResolveLocalMediaUri(item As Map) As String
 	If itemId = "" Then Return ""
 	If HasValidatedLocalMedia(item) = False Then Return ""
 	If itemType = "ad" Then Return File.GetUri(GetAdsDir, itemId)
-	If itemType = "track" Then Return File.GetUri(GetTracksDir, itemId)
+	If itemType = "track" Then Return File.GetUri(GetTracksDir, ResolveTrackCacheFileName(itemId, cachedTrackIndex))
 	Return ""
+End Sub
+
+Public Sub ResolvePlaybackMediaUri(audioKey As String, item As Map) As String
+	If item.IsInitialized = False Then Return ""
+	Dim itemType As String = item.GetDefault("type", "")
+	If itemType = "ad" Then Return ResolveLocalMediaUri(item)
+	If itemType <> "track" Then Return ""
+	Dim trackId As String = item.GetDefault("id", "")
+	If trackId = "" Then Return ""
+	If HasValidatedLocalMedia(item) = False Then Return ""
+	If EnsureTrackPlaybackTemp(audioKey, trackId) = False Then Return ""
+	Return File.GetUri(File.DirTemp, BuildPlaybackTempTrackFileName(audioKey))
+End Sub
+
+Public Sub CleanupPlaybackTempFiles
+	DeleteFileIfExists(File.DirTemp, PRIMARY_TEMP_TRACK_FILE)
+	DeleteFileIfExists(File.DirTemp, SECONDARY_TEMP_TRACK_FILE)
+	playbackTempTrackIds.Clear
 End Sub
 
 Public Sub HasValidatedLocalMedia(item As Map) As Boolean
@@ -192,36 +226,42 @@ Private Sub EnsureSingleAdCached(ad As Map, adIndex As Map) As ResumableSub
 	End If
 	Dim adUrl As String = BuildAdUrl(adId)
 	If adUrl = "" Then Return False
+	Dim downloadStartedAt As Long = DateTime.Now
 	Dim j As HttpJob
 	j.Initialize("", Me)
 	Trace("Скачивание рекламы в кэш. id=" & adId & ", url=" & adUrl)
 	j.Download(adUrl)
-	j.GetRequest.Timeout = 15000
+	j.GetRequest.Timeout = AD_DOWNLOAD_TIMEOUT_MS
 	Wait For (j) JobDone(j As HttpJob)
 	If j.Success Then
 		Try
+			Trace("Скачивание рекламы завершено. id=" & adId & ", elapsedMs=" & ElapsedMs(downloadStartedAt))
 			EnsureDirectory(GetAdsDir)
 			Dim tempFileName As String = BuildTempCacheFileName(adId)
 			DeleteFileIfExists(GetAdsDir, tempFileName)
+			Dim copyStartedAt As Long = DateTime.Now
 			Dim outStream As OutputStream = File.OpenOutput(GetAdsDir, tempFileName, False)
 			File.Copy2(j.GetInputStream, outStream)
 			outStream.Close
+			Trace("Запись временного файла рекламы завершена. id=" & adId & ", elapsedMs=" & ElapsedMs(copyStartedAt))
 			If IsCachedFileUsable(GetAdsDir, tempFileName) = False Then
 				DeleteFileIfExists(GetAdsDir, tempFileName)
 				Trace("Не удалось сохранить рекламу в кэш. id=" & adId & ", message=empty temp file")
 				j.Release
 				Return False
 			End If
+			Dim replaceStartedAt As Long = DateTime.Now
 			If ReplaceCacheFile(GetAdsDir, tempFileName, adId) = False Then
 				DeleteFileIfExists(GetAdsDir, tempFileName)
 				Trace("Не удалось сохранить рекламу в кэш. id=" & adId & ", message=rename failed")
 				j.Release
 				Return False
 			End If
+			Trace("Финализация файла рекламы завершена. id=" & adId & ", elapsedMs=" & ElapsedMs(replaceStartedAt))
 			UpdateAdIndex(ad, adIndex)
 			SaveAdIndex
 			recentMediaNetworkFailure = False
-			Trace("Реклама сохранена в кэш. id=" & adId)
+			Trace("Реклама сохранена в кэш. id=" & adId & ", totalElapsedMs=" & ElapsedMs(downloadStartedAt))
 			j.Release
 			Return True
 		Catch
@@ -246,36 +286,42 @@ Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As Resumable
 	End If
 	Dim trackUrl As String = BuildTrackUrl(trackId)
 	If trackUrl = "" Then Return False
+	Dim downloadStartedAt As Long = DateTime.Now
 	Dim j As HttpJob
 	j.Initialize("", Me)
 	Trace("Скачивание трека в кэш. id=" & trackId & ", url=" & trackUrl)
 	j.Download(trackUrl)
-	j.GetRequest.Timeout = 20000
+	j.GetRequest.Timeout = TRACK_DOWNLOAD_TIMEOUT_MS
 	Wait For (j) JobDone(j As HttpJob)
 	If j.Success Then
 		Try
-			EnsureDirectory(GetTracksDir)
-			Dim tempFileName As String = BuildTempCacheFileName(trackId)
-			DeleteFileIfExists(GetTracksDir, tempFileName)
-			Dim outStream As OutputStream = File.OpenOutput(GetTracksDir, tempFileName, False)
-			File.Copy2(j.GetInputStream, outStream)
-			outStream.Close
-			If IsCachedFileUsable(GetTracksDir, tempFileName) = False Then
+				Trace("Скачивание трека завершено. id=" & trackId & ", elapsedMs=" & ElapsedMs(downloadStartedAt))
+				EnsureDirectory(GetTracksDir)
+				Dim tempFileName As String = BuildTempCacheFileName(trackId)
 				DeleteFileIfExists(GetTracksDir, tempFileName)
-				Trace("Не удалось сохранить трек в кэш. id=" & trackId & ", message=empty temp file")
-				j.Release
-				Return False
-			End If
-			If ReplaceCacheFile(GetTracksDir, tempFileName, trackId) = False Then
+				Dim copyStartedAt As Long = DateTime.Now
+				Dim outStream As OutputStream = File.OpenOutput(GetTracksDir, tempFileName, False)
+				TransformStreamWithXor(j.GetInputStream, outStream, BuildTrackObfuscationKey(trackId))
+				outStream.Close
+				Trace("Запись временного файла трека завершена. id=" & trackId & ", elapsedMs=" & ElapsedMs(copyStartedAt))
+				If IsCachedFileUsable(GetTracksDir, tempFileName) = False Then
+					DeleteFileIfExists(GetTracksDir, tempFileName)
+					Trace("Не удалось сохранить трек в кэш. id=" & trackId & ", message=empty temp file")
+					j.Release
+					Return False
+				End If
+				Dim replaceStartedAt As Long = DateTime.Now
+			If ReplaceCacheFile(GetTracksDir, tempFileName, BuildTrackCacheFileName(trackId)) = False Then
 				DeleteFileIfExists(GetTracksDir, tempFileName)
 				Trace("Не удалось сохранить трек в кэш. id=" & trackId & ", message=rename failed")
 				j.Release
 				Return False
 			End If
+			Trace("Финализация файла трека завершена. id=" & trackId & ", elapsedMs=" & ElapsedMs(replaceStartedAt))
 			UpdateTrackIndex(item, trackIndex)
 			SaveTrackIndex
 			recentMediaNetworkFailure = False
-			Trace("Трек сохранен в кэш. id=" & trackId)
+			Trace("Трек сохранен в кэш. id=" & trackId & ", totalElapsedMs=" & ElapsedMs(downloadStartedAt))
 			j.Release
 			Return True
 		Catch
@@ -304,12 +350,29 @@ Private Sub UpdateAdIndex(ad As Map, adIndex As Map)
 	adIndex.Put(adId, entry)
 End Sub
 
+Private Sub PruneMissingAds(adIndex As Map, actualAdIds As Map) As Int
+	Dim removedCount As Int = 0
+	Dim idsToRemove As List
+	idsToRemove.Initialize
+	For Each adId As String In adIndex.Keys
+		If actualAdIds.ContainsKey(adId) = False Then idsToRemove.Add(adId)
+	Next
+	For Each adId As String In idsToRemove
+		DeleteFileIfExists(GetAdsDir, adId)
+		adIndex.Remove(adId)
+		removedCount = removedCount + 1
+		Trace("Удален cached ad, отсутствующий в актуальном data. id=" & adId)
+	Next
+	Return removedCount
+End Sub
+
 Private Sub UpdateTrackIndex(item As Map, trackIndex As Map)
 	Dim trackId As String = item.GetDefault("id", "")
 	If trackId = "" Then Return
 	Dim entry As Map = trackIndex.GetDefault(trackId, Null)
 	If entry.IsInitialized = False Then entry.Initialize
 	entry.Put("id", trackId)
+	entry.Put("file_name", BuildTrackCacheFileName(trackId))
 	entry.Put("title", item.GetDefault("title", ""))
 	entry.Put("set", item.GetDefault("set", ""))
 	entry.Put("stream", item.GetDefault("stream", ""))
@@ -378,6 +441,15 @@ Private Sub BuildTrackUrl(trackId As String) As String
 	Return "https://cdn.fon.fm/media/tracks/" & first & "/" & trackId & ".mp3"
 End Sub
 
+Private Sub BuildTrackCacheFileName(trackId As String) As String
+	Dim sourceBytes() As Byte = GetBytesFromString("fonfm-track|" & deviceKeySeed & "|" & trackId)
+	Dim jo As JavaObject
+	jo.InitializeStatic("java.util.UUID")
+	Dim uuid As JavaObject = jo.RunMethod("nameUUIDFromBytes", Array As Object(sourceBytes))
+	Dim fileName As String = uuid.RunMethod("toString", Null)
+	Return fileName.Replace("-", "")
+End Sub
+
 Private Sub IsCachedFileUsable(dir As String, fileName As String) As Boolean
 	If fileName = "" Then Return False
 	If File.Exists(dir, fileName) = False Then Return False
@@ -392,6 +464,11 @@ End Sub
 
 Private Sub BuildTempCacheFileName(itemId As String) As String
 	Return itemId & ".tmp"
+End Sub
+
+Private Sub BuildPlaybackTempTrackFileName(audioKey As String) As String
+	If audioKey = "secondary" Then Return SECONDARY_TEMP_TRACK_FILE
+	Return PRIMARY_TEMP_TRACK_FILE
 End Sub
 
 Private Sub ReplaceCacheFile(dir As String, tempFileName As String, finalFileName As String) As Boolean
@@ -413,9 +490,69 @@ Private Sub ReplaceCacheFile(dir As String, tempFileName As String, finalFileNam
 	Return renamed
 End Sub
 
+Private Sub EnsureTrackPlaybackTemp(audioKey As String, trackId As String) As Boolean
+	Dim tempFileName As String = BuildPlaybackTempTrackFileName(audioKey)
+	If playbackTempTrackIds.GetDefault(audioKey, "") = trackId And IsCachedFileUsable(File.DirTemp, tempFileName) Then Return True
+	DeleteFileIfExists(File.DirTemp, tempFileName)
+	Try
+		Dim inputStream As InputStream = File.OpenInput(GetTracksDir, ResolveTrackCacheFileName(trackId, cachedTrackIndex))
+		Dim outputStream As OutputStream = File.OpenOutput(File.DirTemp, tempFileName, False)
+		TransformStreamWithXor(inputStream, outputStream, BuildTrackObfuscationKey(trackId))
+		outputStream.Close
+		inputStream.Close
+		playbackTempTrackIds.Put(audioKey, trackId)
+		Return IsCachedFileUsable(File.DirTemp, tempFileName)
+	Catch
+		DeleteFileIfExists(File.DirTemp, tempFileName)
+		Trace("Не удалось подготовить временный файл трека. id=" & trackId & ", message=" & LastException.Message)
+	End Try
+	playbackTempTrackIds.Remove(audioKey)
+	Return False
+End Sub
+
+Private Sub BuildTrackObfuscationKey(trackId As String) As Byte()
+	Return GetBytesFromString("fonfm-track-key|" & deviceKeySeed & "|" & trackId)
+End Sub
+
+Private Sub GetBytesFromString(value As String) As Byte()
+	Dim jo As JavaObject
+	jo.InitializeNewInstance("java.lang.String", Array As Object(value))
+	Return jo.RunMethod("getBytes", Array As Object("UTF-8"))
+End Sub
+
+Private Sub TransformStreamWithXor(inputStream As InputStream, outputStream As OutputStream, keyBytes() As Byte)
+	If keyBytes.Length = 0 Then
+		File.Copy2(inputStream, outputStream)
+		outputStream.Flush
+		Return
+	End If
+	Dim buffer(STREAM_XOR_BUFFER_SIZE) As Byte
+	Dim totalProcessed As Long = 0
+	Do While True
+		Dim count As Int = inputStream.ReadBytes(buffer, 0, buffer.Length)
+		If count <= 0 Then Exit
+		ApplyXorToBuffer(buffer, count, keyBytes, totalProcessed)
+		outputStream.WriteBytes(buffer, 0, count)
+		totalProcessed = totalProcessed + count
+	Loop
+	outputStream.Flush
+End Sub
+
+Private Sub ApplyXorToBuffer(buffer() As Byte, count As Int, keyBytes() As Byte, keyOffset As Long)
+	If count <= 0 Or keyBytes.Length = 0 Then Return
+	For i = 0 To count - 1
+		Dim keyIndex As Int = (keyOffset + i) Mod keyBytes.Length
+		buffer(i) = Bit.Xor(buffer(i), keyBytes(keyIndex))
+	Next
+End Sub
+
 Private Sub DeleteFileIfExists(dir As String, fileName As String)
 	If fileName = "" Then Return
-	If File.Exists(dir, fileName) Then File.Delete(dir, fileName)
+	Try
+		If File.Exists(dir, fileName) Then File.Delete(dir, fileName)
+	Catch
+		Log(LastException.Message)
+	End Try
 End Sub
 
 Public Sub ResolveMediaSource(item As Map) As String
@@ -436,14 +573,14 @@ Private Sub ValidateIndexedFile(itemType As String, itemId As String) As Boolean
 	If itemId = "" Then Return False
 	Dim auditIndex As Map = GetIndexByItemType(itemType)
 	Dim auditDir As String = GetDirByItemType(itemType)
+	Dim fileName As String = ResolveIndexedFileName(itemType, itemId, auditIndex)
 	If auditIndex.ContainsKey(itemId) = False Then
-		If IsCachedFileUsable(auditDir, itemId) = False Then Return False
+		If IsCachedFileUsable(auditDir, fileName) = False Then Return False
 		RestoreIndexedFileById(itemId, auditIndex)
 		SaveIndexByItemType(itemType)
-		Trace("Валидный cached " & itemType & " восстановлен в индексе по точечной проверке. id=" & itemId)
 		Return True
 	End If
-	If IsCachedFileUsable(auditDir, itemId) Then Return True
+	If IsCachedFileUsable(auditDir, fileName) Then Return True
 	auditIndex.Remove(itemId)
 	SaveIndexByItemType(itemType)
 	Return False
@@ -453,6 +590,7 @@ Private Sub RestoreIndexedFileById(itemId As String, itemIndex As Map)
 	Dim entry As Map = itemIndex.GetDefault(itemId, Null)
 	If entry.IsInitialized = False Then entry.Initialize
 	entry.Put("id", itemId)
+	entry.Put("file_name", BuildTrackCacheFileName(itemId))
 	If entry.ContainsKey("saved_at") = False Then entry.Put("saved_at", DateTime.Now)
 	entry.Put("last_used_at", DateTime.Now)
 	itemIndex.Put(itemId, entry)
@@ -460,7 +598,7 @@ End Sub
 
 Private Sub TryRestoreExistingCachedMedia(itemType As String, itemId As String, item As Map, itemIndex As Map) As Boolean
 	If itemId = "" Then Return False
-	If IsCachedFileUsable(GetDirByItemType(itemType), itemId) = False Then Return False
+	If IsCachedFileUsable(GetDirByItemType(itemType), ResolveIndexedFileName(itemType, itemId, itemIndex)) = False Then Return False
 	If itemType = "ad" Then
 		UpdateAdIndex(item, itemIndex)
 		SaveAdIndex
@@ -494,6 +632,20 @@ Private Sub SaveIndexByItemType(itemType As String)
 	End If
 End Sub
 
+Private Sub ResolveIndexedFileName(itemType As String, itemId As String, itemIndex As Map) As String
+	If itemType = "ad" Then Return itemId
+	Return ResolveTrackCacheFileName(itemId, itemIndex)
+End Sub
+
+Private Sub ResolveTrackCacheFileName(trackId As String, trackIndex As Map) As String
+	Dim entry As Map = trackIndex.GetDefault(trackId, Null)
+	If entry.IsInitialized Then
+		Dim fileName As String = entry.GetDefault("file_name", "")
+		If fileName <> "" Then Return fileName
+	End If
+	Return BuildTrackCacheFileName(trackId)
+End Sub
+
 Private Sub IsMediaNetworkFailure(errorMessage As String) As Boolean
 	Dim text As String = errorMessage.ToLowerCase
 	If text.Contains("timed out") Then Return True
@@ -506,6 +658,10 @@ Private Sub IsMediaNetworkFailure(errorMessage As String) As Boolean
 	If text.Contains("socketexception") Then Return True
 	If text.Contains("sockettimeoutexception") Then Return True
 	Return False
+End Sub
+
+Private Sub ElapsedMs(startedAt As Long) As Long
+	Return Max(0, DateTime.Now - startedAt)
 End Sub
 
 Private Sub EnsureDirectory(path As String)
@@ -553,10 +709,21 @@ Private Sub ProcessCurrentCacheAuditBatch
 			Continue
 		End If
 		If IsCachedFileUsable(auditDir, fileName) = False Then Continue
-		cacheAuditSeenIds.Put(fileName, True)
-		If auditIndex.ContainsKey(fileName) = False Then
-			AddIndexedFileFromAudit(cacheAuditCurrentType, fileName, auditIndex)
-			cacheAuditAddedCount = cacheAuditAddedCount + 1
+		If cacheAuditCurrentType = "tracks" Then
+			Dim trackId As String = FindTrackIdByFileName(fileName, auditIndex)
+			If trackId = "" Then
+				DeleteFileIfExists(auditDir, fileName)
+				cacheAuditRemovedCount = cacheAuditRemovedCount + 1
+				MarkAuditIndexChanged(cacheAuditCurrentType)
+				Continue
+			End If
+			cacheAuditSeenIds.Put(trackId, True)
+		Else
+			cacheAuditSeenIds.Put(fileName, True)
+			If auditIndex.ContainsKey(fileName) = False Then
+				AddIndexedFileFromAudit(cacheAuditCurrentType, fileName, auditIndex)
+				cacheAuditAddedCount = cacheAuditAddedCount + 1
+			End If
 		End If
 	Next
 End Sub
@@ -571,7 +738,8 @@ Private Sub FinalizeCurrentCacheAuditType
 	Next
 	For Each key As String In keysCopy
 		If cacheAuditSeenIds.ContainsKey(key) = False Then
-			If IsCachedFileUsable(auditDir, key) Then
+			Dim fileName As String = ResolveIndexedAuditFileName(cacheAuditCurrentType, key, auditIndex)
+			If IsCachedFileUsable(auditDir, fileName) Then
 				cacheAuditSeenIds.Put(key, True)
 				Continue
 			End If
@@ -627,6 +795,18 @@ Private Sub AddIndexedFileFromAudit(itemType As String, fileName As String, audi
 	End If
 	auditIndex.Put(fileName, entry)
 	MarkAuditIndexChanged(itemType)
+End Sub
+
+Private Sub ResolveIndexedAuditFileName(auditType As String, itemId As String, auditIndex As Map) As String
+	If auditType = "ads" Then Return itemId
+	Return ResolveTrackCacheFileName(itemId, auditIndex)
+End Sub
+
+Private Sub FindTrackIdByFileName(fileName As String, trackIndex As Map) As String
+	For Each key As String In trackIndex.Keys
+		If ResolveTrackCacheFileName(key, trackIndex) = fileName Then Return key
+	Next
+	Return ""
 End Sub
 
 Private Sub Trace(message As String)

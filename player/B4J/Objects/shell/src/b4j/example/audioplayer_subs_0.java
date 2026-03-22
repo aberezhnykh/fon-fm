@@ -8,7 +8,7 @@ public class audioplayer_subs_0 {
 
 public static RemoteObject  _callifexists(RemoteObject __ref,RemoteObject _subname) throws Exception{
 try {
-		Debug.PushSubsStack("CallIfExists (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,194);
+		Debug.PushSubsStack("CallIfExists (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,194);
 if (RapidSub.canDelegate("callifexists")) { return __ref.runUserSub(false, "audioplayer","callifexists", __ref, _subname);}
 Debug.locals.put("subName", _subname);
  BA.debugLineNum = 194;BA.debugLine="Private Sub CallIfExists(subName As String)";
@@ -32,7 +32,7 @@ finally {
 		}}
 public static RemoteObject  _checktimer_tick(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CheckTimer_Tick (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,205);
+		Debug.PushSubsStack("CheckTimer_Tick (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,205);
 if (RapidSub.canDelegate("checktimer_tick")) { return __ref.runUserSub(false, "audioplayer","checktimer_tick", __ref);}
 RemoteObject _positionnow = RemoteObject.createImmutable(0L);
 RemoteObject _durationnow = RemoteObject.createImmutable(0L);
@@ -133,7 +133,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _duration(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Duration (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,144);
+		Debug.PushSubsStack("Duration (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,144);
 if (RapidSub.canDelegate("duration")) { return __ref.runUserSub(false, "audioplayer","duration", __ref);}
  BA.debugLineNum = 144;BA.debugLine="Public Sub Duration As Long";
 Debug.ShouldStop(32768);
@@ -165,7 +165,7 @@ finally {
 		}}
 public static RemoteObject  _error_event(RemoteObject __ref,RemoteObject _methodname,RemoteObject _args) throws Exception{
 try {
-		Debug.PushSubsStack("Error_Event (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,160);
+		Debug.PushSubsStack("Error_Event (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,160);
 if (RapidSub.canDelegate("error_event")) { return __ref.runUserSub(false, "audioplayer","error_event", __ref, _methodname, _args);}
 RemoteObject _msg = RemoteObject.createImmutable("");
 Debug.locals.put("methodName", _methodname);
@@ -205,7 +205,7 @@ finally {
 		}}
 public static RemoteObject  _fadetimer_tick(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("FadeTimer_Tick (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,226);
+		Debug.PushSubsStack("FadeTimer_Tick (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,226);
 if (RapidSub.canDelegate("fadetimer_tick")) { return __ref.runUserSub(false, "audioplayer","fadetimer_tick", __ref);}
 RemoteObject _nextvolume = RemoteObject.createImmutable(0);
  BA.debugLineNum = 226;BA.debugLine="Private Sub FadeTimer_Tick";
@@ -283,7 +283,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _eventnamevalue,RemoteObject _targetmodulevalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,24);
+		Debug.PushSubsStack("Initialize (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,24);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "audioplayer","initialize", __ref, _ba, _eventnamevalue, _targetmodulevalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -324,7 +324,7 @@ finally {
 		}}
 public static RemoteObject  _isloading(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsLoading (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,123);
+		Debug.PushSubsStack("IsLoading (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,123);
 if (RapidSub.canDelegate("isloading")) { return __ref.runUserSub(false, "audioplayer","isloading", __ref);}
  BA.debugLineNum = 123;BA.debugLine="Public Sub IsLoading As Boolean";
 Debug.ShouldStop(67108864);
@@ -343,7 +343,7 @@ finally {
 		}}
 public static RemoteObject  _isplaying(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsPlaying (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,131);
+		Debug.PushSubsStack("IsPlaying (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,131);
 if (RapidSub.canDelegate("isplaying")) { return __ref.runUserSub(false, "audioplayer","isplaying", __ref);}
  BA.debugLineNum = 131;BA.debugLine="Public Sub IsPlaying As Boolean";
 Debug.ShouldStop(4);
@@ -362,7 +362,7 @@ finally {
 		}}
 public static RemoteObject  _isready(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsReady (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,127);
+		Debug.PushSubsStack("IsReady (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,127);
 if (RapidSub.canDelegate("isready")) { return __ref.runUserSub(false, "audioplayer","isready", __ref);}
  BA.debugLineNum = 127;BA.debugLine="Public Sub IsReady As Boolean";
 Debug.ShouldStop(1073741824);
@@ -381,7 +381,7 @@ finally {
 		}}
 public static RemoteObject  _isstopped(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsStopped (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,119);
+		Debug.PushSubsStack("IsStopped (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,119);
 if (RapidSub.canDelegate("isstopped")) { return __ref.runUserSub(false, "audioplayer","isstopped", __ref);}
  BA.debugLineNum = 119;BA.debugLine="Public Sub IsStopped As Boolean";
 Debug.ShouldStop(4194304);
@@ -400,7 +400,7 @@ finally {
 		}}
 public static RemoteObject  _loadtimer_tick(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("LoadTimer_Tick (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,220);
+		Debug.PushSubsStack("LoadTimer_Tick (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,220);
 if (RapidSub.canDelegate("loadtimer_tick")) { return __ref.runUserSub(false, "audioplayer","loadtimer_tick", __ref);}
  BA.debugLineNum = 220;BA.debugLine="Private Sub LoadTimer_Tick";
 Debug.ShouldStop(134217728);
@@ -425,7 +425,7 @@ finally {
 		}}
 public static RemoteObject  _loadurl(RemoteObject __ref,RemoteObject _url,RemoteObject _volume) throws Exception{
 try {
-		Debug.PushSubsStack("LoadUrl (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,34);
+		Debug.PushSubsStack("LoadUrl (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,34);
 if (RapidSub.canDelegate("loadurl")) { return __ref.runUserSub(false, "audioplayer","loadurl", __ref, _url, _volume);}
 Debug.locals.put("url", _url);
 Debug.locals.put("volume", _volume);
@@ -482,7 +482,7 @@ finally {
 		}}
 public static RemoteObject  _notifyerror(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("NotifyError (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,185);
+		Debug.PushSubsStack("NotifyError (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,185);
 if (RapidSub.canDelegate("notifyerror")) { return __ref.runUserSub(false, "audioplayer","notifyerror", __ref, _message);}
 RemoteObject _subname = RemoteObject.createImmutable("");
 Debug.locals.put("message", _message);
@@ -516,7 +516,7 @@ finally {
 		}}
 public static RemoteObject  _play(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Play (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,51);
+		Debug.PushSubsStack("Play (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,51);
 if (RapidSub.canDelegate("play")) { return __ref.runUserSub(false, "audioplayer","play", __ref);}
  BA.debugLineNum = 51;BA.debugLine="Public Sub Play";
 Debug.ShouldStop(262144);
@@ -535,7 +535,7 @@ finally {
 		}}
 public static RemoteObject  _player_complete(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Player_Complete (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,171);
+		Debug.PushSubsStack("Player_Complete (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,171);
 if (RapidSub.canDelegate("player_complete")) { return __ref.runUserSub(false, "audioplayer","player_complete", __ref);}
  BA.debugLineNum = 171;BA.debugLine="Private Sub Player_Complete";
 Debug.ShouldStop(1024);
@@ -585,7 +585,7 @@ finally {
 		}}
 public static RemoteObject  _playwithfade(RemoteObject __ref,RemoteObject _fadetimems) throws Exception{
 try {
-		Debug.PushSubsStack("PlayWithFade (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,55);
+		Debug.PushSubsStack("PlayWithFade (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,55);
 if (RapidSub.canDelegate("playwithfade")) { return __ref.runUserSub(false, "audioplayer","playwithfade", __ref, _fadetimems);}
 Debug.locals.put("fadeTimeMs", _fadetimems);
  BA.debugLineNum = 55;BA.debugLine="Public Sub PlayWithFade(fadeTimeMs As Int)";
@@ -641,7 +641,7 @@ finally {
 		}}
 public static RemoteObject  _position(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Position (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,135);
+		Debug.PushSubsStack("Position (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,135);
 if (RapidSub.canDelegate("position")) { return __ref.runUserSub(false, "audioplayer","position", __ref);}
  BA.debugLineNum = 135;BA.debugLine="Public Sub Position As Long";
 Debug.ShouldStop(64);
@@ -673,7 +673,7 @@ finally {
 		}}
 public static RemoteObject  _ready_event(RemoteObject __ref,RemoteObject _methodname,RemoteObject _args) throws Exception{
 try {
-		Debug.PushSubsStack("Ready_Event (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,153);
+		Debug.PushSubsStack("Ready_Event (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,153);
 if (RapidSub.canDelegate("ready_event")) { return __ref.runUserSub(false, "audioplayer","ready_event", __ref, _methodname, _args);}
 Debug.locals.put("methodName", _methodname);
 Debug.locals.put("args", _args);
@@ -703,7 +703,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,92);
+		Debug.PushSubsStack("Reset (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,92);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "audioplayer","reset", __ref);}
  BA.debugLineNum = 92;BA.debugLine="Public Sub Reset";
 Debug.ShouldStop(134217728);
@@ -750,7 +750,7 @@ __ref.getField(false,"_player" /*RemoteObject*/ ).runVoidMethod ("Stop");
        catch (Exception e15) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e15.toString()); BA.debugLineNum = 107;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(1024);
-audioplayer.__c.runVoidMethod ("LogImpl","517956879",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+audioplayer.__c.runVoidMethod ("LogImpl","420381711",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  BA.debugLineNum = 109;BA.debugLine="If jo.IsInitialized Then";
 Debug.ShouldStop(4096);
@@ -765,7 +765,7 @@ __ref.getField(false,"_jo" /*RemoteObject*/ ).runVoidMethod ("RunMethod",(Object
        catch (Exception e21) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e21.toString()); BA.debugLineNum = 113;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(65536);
-audioplayer.__c.runVoidMethod ("LogImpl","517956885",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+audioplayer.__c.runVoidMethod ("LogImpl","420381717",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  };
  };
@@ -781,7 +781,7 @@ finally {
 		}}
 public static RemoteObject  _setplayervolume(RemoteObject __ref,RemoteObject _volumevalue) throws Exception{
 try {
-		Debug.PushSubsStack("SetPlayerVolume (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,269);
+		Debug.PushSubsStack("SetPlayerVolume (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,269);
 if (RapidSub.canDelegate("setplayervolume")) { return __ref.runUserSub(false, "audioplayer","setplayervolume", __ref, _volumevalue);}
 Debug.locals.put("volumeValue", _volumevalue);
  BA.debugLineNum = 269;BA.debugLine="Private Sub SetPlayerVolume(volumeValue As Double)";
@@ -803,7 +803,7 @@ __ref.getField(false,"_player" /*RemoteObject*/ ).runMethod(true,"setVolume",__r
        catch (Exception e6) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e6.toString()); BA.debugLineNum = 275;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(262144);
-audioplayer.__c.runVoidMethod ("LogImpl","519070982",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+audioplayer.__c.runVoidMethod ("LogImpl","421495814",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  BA.debugLineNum = 277;BA.debugLine="End Sub";
 Debug.ShouldStop(1048576);
@@ -817,7 +817,7 @@ finally {
 		}}
 public static RemoteObject  _startfade(RemoteObject __ref,RemoteObject _mode,RemoteObject _targetvolume,RemoteObject _fadetimems) throws Exception{
 try {
-		Debug.PushSubsStack("StartFade (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,252);
+		Debug.PushSubsStack("StartFade (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,252);
 if (RapidSub.canDelegate("startfade")) { return __ref.runUserSub(false, "audioplayer","startfade", __ref, _mode, _targetvolume, _fadetimems);}
 RemoteObject _intervalms = RemoteObject.createImmutable(0);
 RemoteObject _steps = RemoteObject.createImmutable(0);
@@ -880,7 +880,7 @@ finally {
 		}}
 public static RemoteObject  _stop(RemoteObject __ref,RemoteObject _fadetimems) throws Exception{
 try {
-		Debug.PushSubsStack("Stop (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,72);
+		Debug.PushSubsStack("Stop (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,72);
 if (RapidSub.canDelegate("stop")) { return __ref.runUserSub(false, "audioplayer","stop", __ref, _fadetimems);}
 Debug.locals.put("fadeTimeMs", _fadetimems);
  BA.debugLineNum = 72;BA.debugLine="Public Sub Stop(fadeTimeMs As Int)";
@@ -942,7 +942,7 @@ finally {
 		}}
 public static RemoteObject  _stopimmediately(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StopImmediately (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,279);
+		Debug.PushSubsStack("StopImmediately (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,279);
 if (RapidSub.canDelegate("stopimmediately")) { return __ref.runUserSub(false, "audioplayer","stopimmediately", __ref);}
  BA.debugLineNum = 279;BA.debugLine="Private Sub StopImmediately";
 Debug.ShouldStop(4194304);
@@ -978,7 +978,7 @@ __ref.getField(false,"_player" /*RemoteObject*/ ).runVoidMethod ("Stop");
        catch (Exception e11) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e11.toString()); BA.debugLineNum = 290;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(2);
-audioplayer.__c.runVoidMethod ("LogImpl","519136523",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+audioplayer.__c.runVoidMethod ("LogImpl","421561355",audioplayer.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  BA.debugLineNum = 292;BA.debugLine="End Sub";
 Debug.ShouldStop(8);
@@ -992,7 +992,7 @@ finally {
 		}}
 public static RemoteObject  _timeupdatetimer_tick(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("TimeUpdateTimer_Tick (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,200);
+		Debug.PushSubsStack("TimeUpdateTimer_Tick (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,200);
 if (RapidSub.canDelegate("timeupdatetimer_tick")) { return __ref.runUserSub(false, "audioplayer","timeupdatetimer_tick", __ref);}
  BA.debugLineNum = 200;BA.debugLine="Private Sub TimeUpdateTimer_Tick";
 Debug.ShouldStop(128);
@@ -1015,7 +1015,7 @@ finally {
 		}}
 public static RemoteObject  _traceaudio(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("TraceAudio (audioplayer) ","audioplayer",2,__ref.getField(false, "ba"),__ref,294);
+		Debug.PushSubsStack("TraceAudio (audioplayer) ","audioplayer",16,__ref.getField(false, "ba"),__ref,294);
 if (RapidSub.canDelegate("traceaudio")) { return __ref.runUserSub(false, "audioplayer","traceaudio", __ref, _message);}
 RemoteObject _subname = RemoteObject.createImmutable("");
 Debug.locals.put("message", _message);

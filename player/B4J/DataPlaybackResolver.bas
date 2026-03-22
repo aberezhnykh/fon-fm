@@ -243,14 +243,9 @@ Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService 
 		If filteredCachedTracks.Size > 0 Then sourceTracks = filteredCachedTracks
 		If sourceTracks.Size > 1 And nonRepeatedCachedTracks.Size > 0 Then sourceTracks = nonRepeatedCachedTracks
 	Else
-		sourceTracks = cachedTracks
-		If filteredCachedTracks.Size > 0 Then sourceTracks = filteredCachedTracks
-		If sourceTracks.Size > 1 And nonRepeatedCachedTracks.Size > 0 Then sourceTracks = nonRepeatedCachedTracks
-		If sourceTracks.Size = 0 Then
-			sourceTracks = tracks
-			If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
-			If sourceTracks.Size > 1 And nonRepeatedTracks.Size > 0 Then sourceTracks = nonRepeatedTracks
-		End If
+		sourceTracks = tracks
+		If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
+		If sourceTracks.Size > 1 And nonRepeatedTracks.Size > 0 Then sourceTracks = nonRepeatedTracks
 	End If
 	If sourceTracks.IsInitialized = False Or sourceTracks.Size = 0 Then Return emptyTrack
 	Dim randomIndex As Int = Rnd(0, sourceTracks.Size)
