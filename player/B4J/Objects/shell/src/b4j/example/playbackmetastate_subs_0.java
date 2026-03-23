@@ -21,7 +21,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clearhistorystage(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearHistoryStage (playbackmetastate) ","playbackmetastate",17,__ref.getField(false, "ba"),__ref,35);
+		Debug.PushSubsStack("ClearHistoryStage (playbackmetastate) ","playbackmetastate",12,__ref.getField(false, "ba"),__ref,35);
 if (RapidSub.canDelegate("clearhistorystage")) { return __ref.runUserSub(false, "playbackmetastate","clearhistorystage", __ref);}
  BA.debugLineNum = 35;BA.debugLine="Public Sub ClearHistoryStage";
 Debug.ShouldStop(4);
@@ -43,7 +43,7 @@ finally {
 		}}
 public static RemoteObject  _clonestatemap(RemoteObject __ref,RemoteObject _source) throws Exception{
 try {
-		Debug.PushSubsStack("CloneStateMap (playbackmetastate) ","playbackmetastate",17,__ref.getField(false, "ba"),__ref,40);
+		Debug.PushSubsStack("CloneStateMap (playbackmetastate) ","playbackmetastate",12,__ref.getField(false, "ba"),__ref,40);
 if (RapidSub.canDelegate("clonestatemap")) { return __ref.runUserSub(false, "playbackmetastate","clonestatemap", __ref, _source);}
 RemoteObject _cloned = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
@@ -91,7 +91,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackmetastate) ","playbackmetastate",17,__ref.getField(false, "ba"),__ref,12);
+		Debug.PushSubsStack("Initialize (playbackmetastate) ","playbackmetastate",12,__ref.getField(false, "ba"),__ref,12);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackmetastate","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -112,7 +112,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (playbackmetastate) ","playbackmetastate",17,__ref.getField(false, "ba"),__ref,17);
+		Debug.PushSubsStack("Reset (playbackmetastate) ","playbackmetastate",12,__ref.getField(false, "ba"),__ref,17);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "playbackmetastate","reset", __ref);}
  BA.debugLineNum = 17;BA.debugLine="Public Sub Reset";
 Debug.ShouldStop(65536);
@@ -140,7 +140,7 @@ finally {
 		}}
 public static RemoteObject  _setcurrentmedia(RemoteObject __ref,RemoteObject _mediaurl,RemoteObject _mediatype) throws Exception{
 try {
-		Debug.PushSubsStack("SetCurrentMedia (playbackmetastate) ","playbackmetastate",17,__ref.getField(false, "ba"),__ref,24);
+		Debug.PushSubsStack("SetCurrentMedia (playbackmetastate) ","playbackmetastate",12,__ref.getField(false, "ba"),__ref,24);
 if (RapidSub.canDelegate("setcurrentmedia")) { return __ref.runUserSub(false, "playbackmetastate","setcurrentmedia", __ref, _mediaurl, _mediatype);}
 Debug.locals.put("mediaUrl", _mediaurl);
 Debug.locals.put("mediaType", _mediatype);
@@ -164,7 +164,7 @@ finally {
 		}}
 public static RemoteObject  _stagehistoryitem(RemoteObject __ref,RemoteObject _item,RemoteObject _startedatticks) throws Exception{
 try {
-		Debug.PushSubsStack("StageHistoryItem (playbackmetastate) ","playbackmetastate",17,__ref.getField(false, "ba"),__ref,30);
+		Debug.PushSubsStack("StageHistoryItem (playbackmetastate) ","playbackmetastate",12,__ref.getField(false, "ba"),__ref,30);
 if (RapidSub.canDelegate("stagehistoryitem")) { return __ref.runUserSub(false, "playbackmetastate","stagehistoryitem", __ref, _item, _startedatticks);}
 Debug.locals.put("item", _item);
 Debug.locals.put("startedAtTicks", _startedatticks);

@@ -8,7 +8,7 @@ public class playbackfacade_subs_0 {
 
 public static RemoteObject  _advanceaftercomplete(RemoteObject __ref,RemoteObject _audiokey) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceAfterComplete (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,42);
+		Debug.PushSubsStack("AdvanceAfterComplete (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,42);
 if (RapidSub.canDelegate("advanceaftercomplete")) { return __ref.runUserSub(false, "playbackfacade","advanceaftercomplete", __ref, _audiokey);}
 ResumableSub_AdvanceAfterComplete rsub = new ResumableSub_AdvanceAfterComplete(null,__ref,_audiokey);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -36,7 +36,7 @@ RemoteObject _advanced = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceAfterComplete (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,42);
+		Debug.PushSubsStack("AdvanceAfterComplete (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,42);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -84,7 +84,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _advanced) throws 
 }
 public static RemoteObject  _advanceaftererror(RemoteObject __ref,RemoteObject _audiokey) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceAfterError (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,48);
+		Debug.PushSubsStack("AdvanceAfterError (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,48);
 if (RapidSub.canDelegate("advanceaftererror")) { return __ref.runUserSub(false, "playbackfacade","advanceaftererror", __ref, _audiokey);}
 ResumableSub_AdvanceAfterError rsub = new ResumableSub_AdvanceAfterError(null,__ref,_audiokey);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -112,7 +112,7 @@ RemoteObject _advanced = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceAfterError (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,48);
+		Debug.PushSubsStack("AdvanceAfterError (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,48);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -165,7 +165,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _completestartupsequence(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CompleteStartupSequence (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,71);
+		Debug.PushSubsStack("CompleteStartupSequence (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,71);
 if (RapidSub.canDelegate("completestartupsequence")) { return __ref.runUserSub(false, "playbackfacade","completestartupsequence", __ref);}
  BA.debugLineNum = 71;BA.debugLine="Public Sub CompleteStartupSequence";
 Debug.ShouldStop(64);
@@ -184,7 +184,7 @@ finally {
 		}}
 public static RemoteObject  _dispatchplaybackadvance(RemoteObject __ref,RemoteObject _initiator,RemoteObject _allowload) throws Exception{
 try {
-		Debug.PushSubsStack("DispatchPlaybackAdvance (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,31);
+		Debug.PushSubsStack("DispatchPlaybackAdvance (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,31);
 if (RapidSub.canDelegate("dispatchplaybackadvance")) { return __ref.runUserSub(false, "playbackfacade","dispatchplaybackadvance", __ref, _initiator, _allowload);}
 ResumableSub_DispatchPlaybackAdvance rsub = new ResumableSub_DispatchPlaybackAdvance(null,__ref,_initiator,_allowload);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -214,7 +214,7 @@ RemoteObject _advanced = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("DispatchPlaybackAdvance (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,31);
+		Debug.PushSubsStack("DispatchPlaybackAdvance (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,31);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -261,7 +261,7 @@ finally {
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _target) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,9);
+		Debug.PushSubsStack("Initialize (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,9);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackfacade","initialize", __ref, _ba, _target);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -283,7 +283,7 @@ finally {
 		}}
 public static RemoteObject  _loadnextandplay(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("LoadNextAndPlay (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,24);
+		Debug.PushSubsStack("LoadNextAndPlay (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,24);
 if (RapidSub.canDelegate("loadnextandplay")) { return __ref.runUserSub(false, "playbackfacade","loadnextandplay", __ref);}
 ResumableSub_LoadNextAndPlay rsub = new ResumableSub_LoadNextAndPlay(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -309,7 +309,7 @@ RemoteObject _advanced = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("LoadNextAndPlay (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,24);
+		Debug.PushSubsStack("LoadNextAndPlay (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,24);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -354,7 +354,7 @@ finally {
 }
 public static RemoteObject  _pauseplayback(RemoteObject __ref,RemoteObject _reason,RemoteObject _connectionmode) throws Exception{
 try {
-		Debug.PushSubsStack("PausePlayback (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,60);
+		Debug.PushSubsStack("PausePlayback (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,60);
 if (RapidSub.canDelegate("pauseplayback")) { return __ref.runUserSub(false, "playbackfacade","pauseplayback", __ref, _reason, _connectionmode);}
 Debug.locals.put("reason", _reason);
 Debug.locals.put("connectionMode", _connectionmode);
@@ -378,7 +378,7 @@ finally {
 		}}
 public static RemoteObject  _preparenextplayable(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareNextPlayable (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,37);
+		Debug.PushSubsStack("PrepareNextPlayable (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,37);
 if (RapidSub.canDelegate("preparenextplayable")) { return __ref.runUserSub(false, "playbackfacade","preparenextplayable", __ref);}
 ResumableSub_PrepareNextPlayable rsub = new ResumableSub_PrepareNextPlayable(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -404,7 +404,7 @@ RemoteObject _prepared = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareNextPlayable (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,37);
+		Debug.PushSubsStack("PrepareNextPlayable (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,37);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -446,7 +446,7 @@ finally {
 }
 public static RemoteObject  _resumeplaybackafterpolicypause(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ResumePlaybackAfterPolicyPause (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,65);
+		Debug.PushSubsStack("ResumePlaybackAfterPolicyPause (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,65);
 if (RapidSub.canDelegate("resumeplaybackafterpolicypause")) { return __ref.runUserSub(false, "playbackfacade","resumeplaybackafterpolicypause", __ref);}
 ResumableSub_ResumePlaybackAfterPolicyPause rsub = new ResumableSub_ResumePlaybackAfterPolicyPause(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -472,7 +472,7 @@ RemoteObject _resumed = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("ResumePlaybackAfterPolicyPause (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,65);
+		Debug.PushSubsStack("ResumePlaybackAfterPolicyPause (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,65);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -517,7 +517,7 @@ finally {
 }
 public static RemoteObject  _startfirsttrack(RemoteObject __ref,RemoteObject _mode) throws Exception{
 try {
-		Debug.PushSubsStack("StartFirstTrack (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,18);
+		Debug.PushSubsStack("StartFirstTrack (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,18);
 if (RapidSub.canDelegate("startfirsttrack")) { return __ref.runUserSub(false, "playbackfacade","startfirsttrack", __ref, _mode);}
 ResumableSub_StartFirstTrack rsub = new ResumableSub_StartFirstTrack(null,__ref,_mode);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -545,7 +545,7 @@ RemoteObject _started = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("StartFirstTrack (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,18);
+		Debug.PushSubsStack("StartFirstTrack (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,18);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -591,7 +591,7 @@ finally {
 }
 public static RemoteObject  _stopplayback(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StopPlayback (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,54);
+		Debug.PushSubsStack("StopPlayback (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,54);
 if (RapidSub.canDelegate("stopplayback")) { return __ref.runUserSub(false, "playbackfacade","stopplayback", __ref);}
 ResumableSub_StopPlayback rsub = new ResumableSub_StopPlayback(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -617,7 +617,7 @@ RemoteObject _stopped = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("StopPlayback (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,54);
+		Debug.PushSubsStack("StopPlayback (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,54);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -662,7 +662,7 @@ finally {
 }
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (playbackfacade) ","playbackfacade",12,__ref.getField(false, "ba"),__ref,13);
+		Debug.PushSubsStack("Trace (playbackfacade) ","playbackfacade",11,__ref.getField(false, "ba"),__ref,13);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "playbackfacade","trace", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 13;BA.debugLine="Private Sub Trace(message As String)";

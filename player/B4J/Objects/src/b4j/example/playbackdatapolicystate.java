@@ -56,6 +56,77 @@ RDebugUtils.currentLine=47579138;
  //BA.debugLineNum = 47579138;BA.debugLine="End Sub";
 return "";
 }
+public String  _applytemporarymode(b4j.example.playbackdatapolicystate __ref,String _mode) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackdatapolicystate";
+if (Debug.shouldDelegate(ba, "applytemporarymode", false))
+	 {return ((String) Debug.delegate(ba, "applytemporarymode", new Object[] {_mode}));}
+RDebugUtils.currentLine=47775744;
+ //BA.debugLineNum = 47775744;BA.debugLine="Public Sub ApplyTemporaryMode(mode As String)";
+RDebugUtils.currentLine=47775745;
+ //BA.debugLineNum = 47775745;BA.debugLine="IsPlaybackPausedByPolicy = False";
+__ref._isplaybackpausedbypolicy /*boolean*/  = __c.False;
+RDebugUtils.currentLine=47775746;
+ //BA.debugLineNum = 47775746;BA.debugLine="ResumePlaybackWhenServerAllows = False";
+__ref._resumeplaybackwhenserverallows /*boolean*/  = __c.False;
+RDebugUtils.currentLine=47775747;
+ //BA.debugLineNum = 47775747;BA.debugLine="IsLocalPlaybackMode = (mode = \"offline\")";
+__ref._islocalplaybackmode /*boolean*/  = ((_mode).equals("offline"));
+RDebugUtils.currentLine=47775748;
+ //BA.debugLineNum = 47775748;BA.debugLine="End Sub";
+return "";
+}
+public String  _clearpolicypauseandresumerequest(b4j.example.playbackdatapolicystate __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackdatapolicystate";
+if (Debug.shouldDelegate(ba, "clearpolicypauseandresumerequest", false))
+	 {return ((String) Debug.delegate(ba, "clearpolicypauseandresumerequest", null));}
+RDebugUtils.currentLine=47644672;
+ //BA.debugLineNum = 47644672;BA.debugLine="Public Sub ClearPolicyPauseAndResumeRequest";
+RDebugUtils.currentLine=47644673;
+ //BA.debugLineNum = 47644673;BA.debugLine="IsPlaybackPausedByPolicy = False";
+__ref._isplaybackpausedbypolicy /*boolean*/  = __c.False;
+RDebugUtils.currentLine=47644674;
+ //BA.debugLineNum = 47644674;BA.debugLine="ResumePlaybackWhenServerAllows = False";
+__ref._resumeplaybackwhenserverallows /*boolean*/  = __c.False;
+RDebugUtils.currentLine=47644675;
+ //BA.debugLineNum = 47644675;BA.debugLine="End Sub";
+return "";
+}
+public String  _enterlocalplayback(b4j.example.playbackdatapolicystate __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackdatapolicystate";
+if (Debug.shouldDelegate(ba, "enterlocalplayback", false))
+	 {return ((String) Debug.delegate(ba, "enterlocalplayback", null));}
+RDebugUtils.currentLine=47710208;
+ //BA.debugLineNum = 47710208;BA.debugLine="Public Sub EnterLocalPlayback";
+RDebugUtils.currentLine=47710209;
+ //BA.debugLineNum = 47710209;BA.debugLine="IsPlaybackPausedByPolicy = False";
+__ref._isplaybackpausedbypolicy /*boolean*/  = __c.False;
+RDebugUtils.currentLine=47710210;
+ //BA.debugLineNum = 47710210;BA.debugLine="IsLocalPlaybackMode = True";
+__ref._islocalplaybackmode /*boolean*/  = __c.True;
+RDebugUtils.currentLine=47710211;
+ //BA.debugLineNum = 47710211;BA.debugLine="End Sub";
+return "";
+}
+public String  _setlocalfallbackready(b4j.example.playbackdatapolicystate __ref,boolean _fallbackready) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackdatapolicystate";
+if (Debug.shouldDelegate(ba, "setlocalfallbackready", false))
+	 {return ((String) Debug.delegate(ba, "setlocalfallbackready", new Object[] {_fallbackready}));}
+RDebugUtils.currentLine=47841280;
+ //BA.debugLineNum = 47841280;BA.debugLine="Public Sub SetLocalFallbackReady(fallbackReady As";
+RDebugUtils.currentLine=47841281;
+ //BA.debugLineNum = 47841281;BA.debugLine="IsPlaybackPausedByPolicy = False";
+__ref._isplaybackpausedbypolicy /*boolean*/  = __c.False;
+RDebugUtils.currentLine=47841282;
+ //BA.debugLineNum = 47841282;BA.debugLine="IsLocalPlaybackMode = fallbackReady";
+__ref._islocalplaybackmode /*boolean*/  = _fallbackready;
+RDebugUtils.currentLine=47841283;
+ //BA.debugLineNum = 47841283;BA.debugLine="End Sub";
+return "";
+}
 public boolean  _begintrackcacherefresh(b4j.example.playbackdatapolicystate __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackdatapolicystate";
@@ -109,60 +180,6 @@ RDebugUtils.currentLine=47513603;
 __ref._islocalplaybackmode /*boolean*/  = ((_connectionmode).equals("offline"));
 RDebugUtils.currentLine=47513604;
  //BA.debugLineNum = 47513604;BA.debugLine="End Sub";
-return "";
-}
-public String  _clearpolicypauseandresumerequest(b4j.example.playbackdatapolicystate __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackdatapolicystate";
-if (Debug.shouldDelegate(ba, "clearpolicypauseandresumerequest", false))
-	 {return ((String) Debug.delegate(ba, "clearpolicypauseandresumerequest", null));}
-RDebugUtils.currentLine=47644672;
- //BA.debugLineNum = 47644672;BA.debugLine="Public Sub ClearPolicyPauseAndResumeRequest";
-RDebugUtils.currentLine=47644673;
- //BA.debugLineNum = 47644673;BA.debugLine="IsPlaybackPausedByPolicy = False";
-__ref._isplaybackpausedbypolicy /*boolean*/  = __c.False;
-RDebugUtils.currentLine=47644674;
- //BA.debugLineNum = 47644674;BA.debugLine="ResumePlaybackWhenServerAllows = False";
-__ref._resumeplaybackwhenserverallows /*boolean*/  = __c.False;
-RDebugUtils.currentLine=47644675;
- //BA.debugLineNum = 47644675;BA.debugLine="End Sub";
-return "";
-}
-public String  _setlocalfallbackready(b4j.example.playbackdatapolicystate __ref,boolean _fallbackready) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackdatapolicystate";
-if (Debug.shouldDelegate(ba, "setlocalfallbackready", false))
-	 {return ((String) Debug.delegate(ba, "setlocalfallbackready", new Object[] {_fallbackready}));}
-RDebugUtils.currentLine=47841280;
- //BA.debugLineNum = 47841280;BA.debugLine="Public Sub SetLocalFallbackReady(fallbackReady As";
-RDebugUtils.currentLine=47841281;
- //BA.debugLineNum = 47841281;BA.debugLine="IsPlaybackPausedByPolicy = False";
-__ref._isplaybackpausedbypolicy /*boolean*/  = __c.False;
-RDebugUtils.currentLine=47841282;
- //BA.debugLineNum = 47841282;BA.debugLine="IsLocalPlaybackMode = fallbackReady";
-__ref._islocalplaybackmode /*boolean*/  = _fallbackready;
-RDebugUtils.currentLine=47841283;
- //BA.debugLineNum = 47841283;BA.debugLine="End Sub";
-return "";
-}
-public String  _applytemporarymode(b4j.example.playbackdatapolicystate __ref,String _mode) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackdatapolicystate";
-if (Debug.shouldDelegate(ba, "applytemporarymode", false))
-	 {return ((String) Debug.delegate(ba, "applytemporarymode", new Object[] {_mode}));}
-RDebugUtils.currentLine=47775744;
- //BA.debugLineNum = 47775744;BA.debugLine="Public Sub ApplyTemporaryMode(mode As String)";
-RDebugUtils.currentLine=47775745;
- //BA.debugLineNum = 47775745;BA.debugLine="IsPlaybackPausedByPolicy = False";
-__ref._isplaybackpausedbypolicy /*boolean*/  = __c.False;
-RDebugUtils.currentLine=47775746;
- //BA.debugLineNum = 47775746;BA.debugLine="ResumePlaybackWhenServerAllows = False";
-__ref._resumeplaybackwhenserverallows /*boolean*/  = __c.False;
-RDebugUtils.currentLine=47775747;
- //BA.debugLineNum = 47775747;BA.debugLine="IsLocalPlaybackMode = (mode = \"offline\")";
-__ref._islocalplaybackmode /*boolean*/  = ((_mode).equals("offline"));
-RDebugUtils.currentLine=47775748;
- //BA.debugLineNum = 47775748;BA.debugLine="End Sub";
 return "";
 }
 public String  _initialize(b4j.example.playbackdatapolicystate __ref,anywheresoftware.b4a.BA _ba) throws Exception{
@@ -233,23 +250,6 @@ RDebugUtils.currentLine=47906817;
 __ref._islocalplaybackmode /*boolean*/  = __c.False;
 RDebugUtils.currentLine=47906818;
  //BA.debugLineNum = 47906818;BA.debugLine="End Sub";
-return "";
-}
-public String  _enterlocalplayback(b4j.example.playbackdatapolicystate __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackdatapolicystate";
-if (Debug.shouldDelegate(ba, "enterlocalplayback", false))
-	 {return ((String) Debug.delegate(ba, "enterlocalplayback", null));}
-RDebugUtils.currentLine=47710208;
- //BA.debugLineNum = 47710208;BA.debugLine="Public Sub EnterLocalPlayback";
-RDebugUtils.currentLine=47710209;
- //BA.debugLineNum = 47710209;BA.debugLine="IsPlaybackPausedByPolicy = False";
-__ref._isplaybackpausedbypolicy /*boolean*/  = __c.False;
-RDebugUtils.currentLine=47710210;
- //BA.debugLineNum = 47710210;BA.debugLine="IsLocalPlaybackMode = True";
-__ref._islocalplaybackmode /*boolean*/  = __c.True;
-RDebugUtils.currentLine=47710211;
- //BA.debugLineNum = 47710211;BA.debugLine="End Sub";
 return "";
 }
 public String  _class_globals(b4j.example.playbackdatapolicystate __ref) throws Exception{

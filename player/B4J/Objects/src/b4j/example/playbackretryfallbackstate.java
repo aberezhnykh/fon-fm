@@ -40,6 +40,62 @@ public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
 public b4j.example.b4xcollections _b4xcollections = null;
 public b4j.example.httputils2service _httputils2service = null;
+public String  _initialize(b4j.example.playbackretryfallbackstate __ref,anywheresoftware.b4a.BA _ba,int _localretryinitial,int _serverretryinitial) throws Exception{
+__ref = this;
+innerInitialize(_ba);
+RDebugUtils.currentModule="playbackretryfallbackstate";
+if (Debug.shouldDelegate(ba, "initialize", false))
+	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba,_localretryinitial,_serverretryinitial}));}
+RDebugUtils.currentLine=48365568;
+ //BA.debugLineNum = 48365568;BA.debugLine="Public Sub Initialize(localRetryInitial As Int, se";
+RDebugUtils.currentLine=48365569;
+ //BA.debugLineNum = 48365569;BA.debugLine="Reset(localRetryInitial, serverRetryInitial)";
+__ref._reset /*String*/ (null,_localretryinitial,_serverretryinitial);
+RDebugUtils.currentLine=48365570;
+ //BA.debugLineNum = 48365570;BA.debugLine="End Sub";
+return "";
+}
+public String  _updatemediapathdegradedfromcachesync(b4j.example.playbackretryfallbackstate __ref,boolean _downloaded,boolean _networkfailure) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackretryfallbackstate";
+if (Debug.shouldDelegate(ba, "updatemediapathdegradedfromcachesync", false))
+	 {return ((String) Debug.delegate(ba, "updatemediapathdegradedfromcachesync", new Object[] {_downloaded,_networkfailure}));}
+boolean _previous = false;
+RDebugUtils.currentLine=49086464;
+ //BA.debugLineNum = 49086464;BA.debugLine="Public Sub UpdateMediaPathDegradedFromCacheSync(do";
+RDebugUtils.currentLine=49086465;
+ //BA.debugLineNum = 49086465;BA.debugLine="Dim previous As Boolean = IsMediaPathDegraded";
+_previous = __ref._ismediapathdegraded /*boolean*/ ;
+RDebugUtils.currentLine=49086466;
+ //BA.debugLineNum = 49086466;BA.debugLine="If downloaded Then";
+if (_downloaded) { 
+RDebugUtils.currentLine=49086467;
+ //BA.debugLineNum = 49086467;BA.debugLine="IsMediaPathDegraded = False";
+__ref._ismediapathdegraded /*boolean*/  = __c.False;
+ }else 
+{RDebugUtils.currentLine=49086468;
+ //BA.debugLineNum = 49086468;BA.debugLine="Else If networkFailure Then";
+if (_networkfailure) { 
+RDebugUtils.currentLine=49086469;
+ //BA.debugLineNum = 49086469;BA.debugLine="IsMediaPathDegraded = True";
+__ref._ismediapathdegraded /*boolean*/  = __c.True;
+ }}
+;
+RDebugUtils.currentLine=49086471;
+ //BA.debugLineNum = 49086471;BA.debugLine="If previous = False And IsMediaPathDegraded Then";
+if (_previous==__c.False && __ref._ismediapathdegraded /*boolean*/ ) { 
+if (true) return "entered";};
+RDebugUtils.currentLine=49086472;
+ //BA.debugLineNum = 49086472;BA.debugLine="If previous = True And IsMediaPathDegraded = Fals";
+if (_previous==__c.True && __ref._ismediapathdegraded /*boolean*/ ==__c.False) { 
+if (true) return "recovered";};
+RDebugUtils.currentLine=49086473;
+ //BA.debugLineNum = 49086473;BA.debugLine="Return \"\"";
+if (true) return "";
+RDebugUtils.currentLine=49086474;
+ //BA.debugLineNum = 49086474;BA.debugLine="End Sub";
+return "";
+}
 public String  _cleardispatchretryafter(b4j.example.playbackretryfallbackstate __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackretryfallbackstate";
@@ -74,35 +130,6 @@ if (true) return _value;
 RDebugUtils.currentLine=48758788;
  //BA.debugLineNum = 48758788;BA.debugLine="End Sub";
 return 0;
-}
-public String  _initialize(b4j.example.playbackretryfallbackstate __ref,anywheresoftware.b4a.BA _ba,int _localretryinitial,int _serverretryinitial) throws Exception{
-__ref = this;
-innerInitialize(_ba);
-RDebugUtils.currentModule="playbackretryfallbackstate";
-if (Debug.shouldDelegate(ba, "initialize", false))
-	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba,_localretryinitial,_serverretryinitial}));}
-RDebugUtils.currentLine=48365568;
- //BA.debugLineNum = 48365568;BA.debugLine="Public Sub Initialize(localRetryInitial As Int, se";
-RDebugUtils.currentLine=48365569;
- //BA.debugLineNum = 48365569;BA.debugLine="Reset(localRetryInitial, serverRetryInitial)";
-__ref._reset /*String*/ (null,_localretryinitial,_serverretryinitial);
-RDebugUtils.currentLine=48365570;
- //BA.debugLineNum = 48365570;BA.debugLine="End Sub";
-return "";
-}
-public String  _setdispatchretryafter(b4j.example.playbackretryfallbackstate __ref,int _value) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackretryfallbackstate";
-if (Debug.shouldDelegate(ba, "setdispatchretryafter", false))
-	 {return ((String) Debug.delegate(ba, "setdispatchretryafter", new Object[] {_value}));}
-RDebugUtils.currentLine=48693248;
- //BA.debugLineNum = 48693248;BA.debugLine="Public Sub SetDispatchRetryAfter(value As Int)";
-RDebugUtils.currentLine=48693249;
- //BA.debugLineNum = 48693249;BA.debugLine="DispatchRetryAfter = Max(0, value)";
-__ref._dispatchretryafter /*int*/  = (int) (__c.Max(0,_value));
-RDebugUtils.currentLine=48693250;
- //BA.debugLineNum = 48693250;BA.debugLine="End Sub";
-return "";
 }
 public String  _resetretrydelays(b4j.example.playbackretryfallbackstate __ref,int _localretryinitial,int _serverretryinitial) throws Exception{
 __ref = this;
@@ -164,6 +191,20 @@ RDebugUtils.currentLine=48496651;
  //BA.debugLineNum = 48496651;BA.debugLine="End Sub";
 return 0;
 }
+public String  _setdispatchretryafter(b4j.example.playbackretryfallbackstate __ref,int _value) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackretryfallbackstate";
+if (Debug.shouldDelegate(ba, "setdispatchretryafter", false))
+	 {return ((String) Debug.delegate(ba, "setdispatchretryafter", new Object[] {_value}));}
+RDebugUtils.currentLine=48693248;
+ //BA.debugLineNum = 48693248;BA.debugLine="Public Sub SetDispatchRetryAfter(value As Int)";
+RDebugUtils.currentLine=48693249;
+ //BA.debugLineNum = 48693249;BA.debugLine="DispatchRetryAfter = Max(0, value)";
+__ref._dispatchretryafter /*int*/  = (int) (__c.Max(0,_value));
+RDebugUtils.currentLine=48693250;
+ //BA.debugLineNum = 48693250;BA.debugLine="End Sub";
+return "";
+}
 public String  _setmediapathdegraded(b4j.example.playbackretryfallbackstate __ref,boolean _value) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackretryfallbackstate";
@@ -176,47 +217,6 @@ RDebugUtils.currentLine=49020929;
 __ref._ismediapathdegraded /*boolean*/  = _value;
 RDebugUtils.currentLine=49020930;
  //BA.debugLineNum = 49020930;BA.debugLine="End Sub";
-return "";
-}
-public String  _updatemediapathdegradedfromcachesync(b4j.example.playbackretryfallbackstate __ref,boolean _downloaded,boolean _networkfailure) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackretryfallbackstate";
-if (Debug.shouldDelegate(ba, "updatemediapathdegradedfromcachesync", false))
-	 {return ((String) Debug.delegate(ba, "updatemediapathdegradedfromcachesync", new Object[] {_downloaded,_networkfailure}));}
-boolean _previous = false;
-RDebugUtils.currentLine=49086464;
- //BA.debugLineNum = 49086464;BA.debugLine="Public Sub UpdateMediaPathDegradedFromCacheSync(do";
-RDebugUtils.currentLine=49086465;
- //BA.debugLineNum = 49086465;BA.debugLine="Dim previous As Boolean = IsMediaPathDegraded";
-_previous = __ref._ismediapathdegraded /*boolean*/ ;
-RDebugUtils.currentLine=49086466;
- //BA.debugLineNum = 49086466;BA.debugLine="If downloaded Then";
-if (_downloaded) { 
-RDebugUtils.currentLine=49086467;
- //BA.debugLineNum = 49086467;BA.debugLine="IsMediaPathDegraded = False";
-__ref._ismediapathdegraded /*boolean*/  = __c.False;
- }else 
-{RDebugUtils.currentLine=49086468;
- //BA.debugLineNum = 49086468;BA.debugLine="Else If networkFailure Then";
-if (_networkfailure) { 
-RDebugUtils.currentLine=49086469;
- //BA.debugLineNum = 49086469;BA.debugLine="IsMediaPathDegraded = True";
-__ref._ismediapathdegraded /*boolean*/  = __c.True;
- }}
-;
-RDebugUtils.currentLine=49086471;
- //BA.debugLineNum = 49086471;BA.debugLine="If previous = False And IsMediaPathDegraded Then";
-if (_previous==__c.False && __ref._ismediapathdegraded /*boolean*/ ) { 
-if (true) return "entered";};
-RDebugUtils.currentLine=49086472;
- //BA.debugLineNum = 49086472;BA.debugLine="If previous = True And IsMediaPathDegraded = Fals";
-if (_previous==__c.True && __ref._ismediapathdegraded /*boolean*/ ==__c.False) { 
-if (true) return "recovered";};
-RDebugUtils.currentLine=49086473;
- //BA.debugLineNum = 49086473;BA.debugLine="Return \"\"";
-if (true) return "";
-RDebugUtils.currentLine=49086474;
- //BA.debugLineNum = 49086474;BA.debugLine="End Sub";
 return "";
 }
 public String  _class_globals(b4j.example.playbackretryfallbackstate __ref) throws Exception{

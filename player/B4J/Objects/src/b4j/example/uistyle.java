@@ -27,19 +27,6 @@ public static b4j.example.main _main = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
-public static String  _applymaterialiconfont(anywheresoftware.b4a.objects.B4XViewWrapper.XUI _xui,anywheresoftware.b4a.objects.B4XViewWrapper _view,float _fontsize) throws Exception{
-RDebugUtils.currentModule="uistyle";
-if (Debug.shouldDelegate(ba, "applymaterialiconfont", false))
-	 {return ((String) Debug.delegate(ba, "applymaterialiconfont", new Object[] {_xui,_view,_fontsize}));}
-RDebugUtils.currentLine=31195136;
- //BA.debugLineNum = 31195136;BA.debugLine="Public Sub ApplyMaterialIconFont(xui As XUI, view";
-RDebugUtils.currentLine=31195137;
- //BA.debugLineNum = 31195137;BA.debugLine="view.Font = xui.CreateMaterialIcons(fontSize)";
-_view.setFont(_xui.CreateMaterialIcons(_fontsize));
-RDebugUtils.currentLine=31195138;
- //BA.debugLineNum = 31195138;BA.debugLine="End Sub";
-return "";
-}
 public static String  _colortocss(int _color) throws Exception{
 RDebugUtils.currentModule="uistyle";
 if (Debug.shouldDelegate(ba, "colortocss", false))
@@ -133,24 +120,6 @@ RDebugUtils.currentLine=31522820;
  //BA.debugLineNum = 31522820;BA.debugLine="End Sub";
 return 0;
 }
-public static String  _setlabelstyle(anywheresoftware.b4a.objects.B4XViewWrapper _view,String _style) throws Exception{
-RDebugUtils.currentModule="uistyle";
-if (Debug.shouldDelegate(ba, "setlabelstyle", false))
-	 {return ((String) Debug.delegate(ba, "setlabelstyle", new Object[] {_view,_style}));}
-anywheresoftware.b4j.object.JavaObject _jo = null;
-RDebugUtils.currentLine=31326208;
- //BA.debugLineNum = 31326208;BA.debugLine="Public Sub SetLabelStyle(view As B4XView, style As";
-RDebugUtils.currentLine=31326209;
- //BA.debugLineNum = 31326209;BA.debugLine="Dim jo As JavaObject = view";
-_jo = new anywheresoftware.b4j.object.JavaObject();
-_jo = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_view.getObject()));
-RDebugUtils.currentLine=31326210;
- //BA.debugLineNum = 31326210;BA.debugLine="jo.RunMethod(\"setStyle\", Array(MergeNodeStyle(jo.";
-_jo.RunMethod("setStyle",new Object[]{(Object)(_mergenodestyle(BA.ObjectToString(_jo.RunMethod("getStyle",(Object[])(anywheresoftware.b4a.keywords.Common.Null))),_style))});
-RDebugUtils.currentLine=31326211;
- //BA.debugLineNum = 31326211;BA.debugLine="End Sub";
-return "";
-}
 public static String  _setpanestyle(anywheresoftware.b4a.objects.B4XViewWrapper _view,String _style) throws Exception{
 RDebugUtils.currentModule="uistyle";
 if (Debug.shouldDelegate(ba, "setpanestyle", false))
@@ -185,6 +154,37 @@ RDebugUtils.currentLine=31457282;
 _jo.RunMethod("setPickOnBounds",new Object[]{(Object)(_value)});
 RDebugUtils.currentLine=31457283;
  //BA.debugLineNum = 31457283;BA.debugLine="End Sub";
+return "";
+}
+public static String  _setlabelstyle(anywheresoftware.b4a.objects.B4XViewWrapper _view,String _style) throws Exception{
+RDebugUtils.currentModule="uistyle";
+if (Debug.shouldDelegate(ba, "setlabelstyle", false))
+	 {return ((String) Debug.delegate(ba, "setlabelstyle", new Object[] {_view,_style}));}
+anywheresoftware.b4j.object.JavaObject _jo = null;
+RDebugUtils.currentLine=31326208;
+ //BA.debugLineNum = 31326208;BA.debugLine="Public Sub SetLabelStyle(view As B4XView, style As";
+RDebugUtils.currentLine=31326209;
+ //BA.debugLineNum = 31326209;BA.debugLine="Dim jo As JavaObject = view";
+_jo = new anywheresoftware.b4j.object.JavaObject();
+_jo = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_view.getObject()));
+RDebugUtils.currentLine=31326210;
+ //BA.debugLineNum = 31326210;BA.debugLine="jo.RunMethod(\"setStyle\", Array(MergeNodeStyle(jo.";
+_jo.RunMethod("setStyle",new Object[]{(Object)(_mergenodestyle(BA.ObjectToString(_jo.RunMethod("getStyle",(Object[])(anywheresoftware.b4a.keywords.Common.Null))),_style))});
+RDebugUtils.currentLine=31326211;
+ //BA.debugLineNum = 31326211;BA.debugLine="End Sub";
+return "";
+}
+public static String  _applymaterialiconfont(anywheresoftware.b4a.objects.B4XViewWrapper.XUI _xui,anywheresoftware.b4a.objects.B4XViewWrapper _view,float _fontsize) throws Exception{
+RDebugUtils.currentModule="uistyle";
+if (Debug.shouldDelegate(ba, "applymaterialiconfont", false))
+	 {return ((String) Debug.delegate(ba, "applymaterialiconfont", new Object[] {_xui,_view,_fontsize}));}
+RDebugUtils.currentLine=31195136;
+ //BA.debugLineNum = 31195136;BA.debugLine="Public Sub ApplyMaterialIconFont(xui As XUI, view";
+RDebugUtils.currentLine=31195137;
+ //BA.debugLineNum = 31195137;BA.debugLine="view.Font = xui.CreateMaterialIcons(fontSize)";
+_view.setFont(_xui.CreateMaterialIcons(_fontsize));
+RDebugUtils.currentLine=31195138;
+ //BA.debugLineNum = 31195138;BA.debugLine="End Sub";
 return "";
 }
 public static String  _setmousetransparent(anywheresoftware.b4a.objects.B4XViewWrapper _view,boolean _value) throws Exception{

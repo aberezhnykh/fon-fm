@@ -245,24 +245,6 @@ RDebugUtils.currentLine=24182802;
  //BA.debugLineNum = 24182802;BA.debugLine="End Sub";
 return false;
 }
-public boolean  _istrackcached(b4j.example.mediacache __ref,String _trackid) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="mediacache";
-if (Debug.shouldDelegate(ba, "istrackcached", false))
-	 {return ((Boolean) Debug.delegate(ba, "istrackcached", new Object[] {_trackid}));}
-RDebugUtils.currentLine=24641536;
- //BA.debugLineNum = 24641536;BA.debugLine="Public Sub IsTrackCached(trackId As String) As Boo";
-RDebugUtils.currentLine=24641537;
- //BA.debugLineNum = 24641537;BA.debugLine="If trackId = \"\" Then Return False";
-if ((_trackid).equals("")) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=24641538;
- //BA.debugLineNum = 24641538;BA.debugLine="Return ValidateIndexedFile(\"track\", trackId)";
-if (true) return __ref._validateindexedfile /*boolean*/ (null,"track",_trackid);
-RDebugUtils.currentLine=24641539;
- //BA.debugLineNum = 24641539;BA.debugLine="End Sub";
-return false;
-}
 public String  _flushpendingindexsaves(b4j.example.mediacache __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="mediacache";
@@ -1308,6 +1290,24 @@ RDebugUtils.currentLine=24772611;
 if (true) return _value;
 RDebugUtils.currentLine=24772612;
  //BA.debugLineNum = 24772612;BA.debugLine="End Sub";
+return false;
+}
+public boolean  _istrackcached(b4j.example.mediacache __ref,String _trackid) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "istrackcached", false))
+	 {return ((Boolean) Debug.delegate(ba, "istrackcached", new Object[] {_trackid}));}
+RDebugUtils.currentLine=24641536;
+ //BA.debugLineNum = 24641536;BA.debugLine="Public Sub IsTrackCached(trackId As String) As Boo";
+RDebugUtils.currentLine=24641537;
+ //BA.debugLineNum = 24641537;BA.debugLine="If trackId = \"\" Then Return False";
+if ((_trackid).equals("")) { 
+if (true) return __c.False;};
+RDebugUtils.currentLine=24641538;
+ //BA.debugLineNum = 24641538;BA.debugLine="Return ValidateIndexedFile(\"track\", trackId)";
+if (true) return __ref._validateindexedfile /*boolean*/ (null,"track",_trackid);
+RDebugUtils.currentLine=24641539;
+ //BA.debugLineNum = 24641539;BA.debugLine="End Sub";
 return false;
 }
 public boolean  _isadcached(b4j.example.mediacache __ref,String _adid) throws Exception{

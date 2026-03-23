@@ -37,80 +37,19 @@ public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
 public b4j.example.b4xcollections _b4xcollections = null;
 public b4j.example.httputils2service _httputils2service = null;
-public String  _buildqueuesignature(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata,long _nowticks,b4j.example.dataplaybackresolver _dataresolver) throws Exception{
+public String  _initialize(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.BA _ba,b4j.example.b4xmainpage _targetpagevalue) throws Exception{
 __ref = this;
+innerInitialize(_ba);
 RDebugUtils.currentModule="playbackqueuebuilder";
-if (Debug.shouldDelegate(ba, "buildqueuesignature", false))
-	 {return ((String) Debug.delegate(ba, "buildqueuesignature", new Object[] {_offlinedata,_nowticks,_dataresolver}));}
-anywheresoftware.b4a.objects.collections.Map _currentslot = null;
-anywheresoftware.b4a.objects.collections.List _signatureparts = null;
-anywheresoftware.b4a.objects.collections.List _playlists = null;
-Object _playlistobject = null;
-anywheresoftware.b4a.objects.collections.Map _playlist = null;
-RDebugUtils.currentLine=51249152;
- //BA.debugLineNum = 51249152;BA.debugLine="Public Sub BuildQueueSignature(offlineData As Map,";
-RDebugUtils.currentLine=51249153;
- //BA.debugLineNum = 51249153;BA.debugLine="If CanUseDataPlaybackResolver(offlineData) = Fals";
-if (__ref._canusedataplaybackresolver /*boolean*/ (null,_offlinedata)==__c.False) { 
-if (true) return "";};
-RDebugUtils.currentLine=51249154;
- //BA.debugLineNum = 51249154;BA.debugLine="Dim currentSlot As Map = dataResolver.ResolveData";
-_currentslot = new anywheresoftware.b4a.objects.collections.Map();
-_currentslot = _dataresolver._resolvedataslotatticks /*anywheresoftware.b4a.objects.collections.Map*/ (null,_offlinedata,_nowticks);
-RDebugUtils.currentLine=51249155;
- //BA.debugLineNum = 51249155;BA.debugLine="If currentSlot.IsInitialized = False Or currentSl";
-if (_currentslot.IsInitialized()==__c.False || _currentslot.getSize()==0) { 
-if (true) return "";};
-RDebugUtils.currentLine=51249156;
- //BA.debugLineNum = 51249156;BA.debugLine="Dim signatureParts As List";
-_signatureparts = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=51249157;
- //BA.debugLineNum = 51249157;BA.debugLine="signatureParts.Initialize";
-_signatureparts.Initialize();
-RDebugUtils.currentLine=51249158;
- //BA.debugLineNum = 51249158;BA.debugLine="signatureParts.Add(\"v=4\")";
-_signatureparts.Add((Object)("v=4"));
-RDebugUtils.currentLine=51249159;
- //BA.debugLineNum = 51249159;BA.debugLine="signatureParts.Add(\"slot=\" & BuildDataSlotKey(cur";
-_signatureparts.Add((Object)("slot="+__ref._builddataslotkey /*String*/ (null,_currentslot)));
-RDebugUtils.currentLine=51249160;
- //BA.debugLineNum = 51249160;BA.debugLine="Dim playlists As List = currentSlot.GetDefault(\"p";
-_playlists = new anywheresoftware.b4a.objects.collections.List();
-_playlists = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_currentslot.GetDefault((Object)("playlists"),__c.Null)));
-RDebugUtils.currentLine=51249161;
- //BA.debugLineNum = 51249161;BA.debugLine="If playlists.IsInitialized Then";
-if (_playlists.IsInitialized()) { 
-RDebugUtils.currentLine=51249162;
- //BA.debugLineNum = 51249162;BA.debugLine="For Each playlistObject As Object In playlists";
-{
-final anywheresoftware.b4a.BA.IterableList group10 = _playlists;
-final int groupLen10 = group10.getSize()
-;int index10 = 0;
-;
-for (; index10 < groupLen10;index10++){
-_playlistobject = group10.Get(index10);
-RDebugUtils.currentLine=51249163;
- //BA.debugLineNum = 51249163;BA.debugLine="If playlistObject Is Map Then";
-if (_playlistobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=51249164;
- //BA.debugLineNum = 51249164;BA.debugLine="Dim playlist As Map = playlistObject";
-_playlist = new anywheresoftware.b4a.objects.collections.Map();
-_playlist = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_playlistobject));
-RDebugUtils.currentLine=51249165;
- //BA.debugLineNum = 51249165;BA.debugLine="signatureParts.Add(\"playlist=\" & playlist.GetD";
-_signatureparts.Add((Object)("playlist="+BA.ObjectToString(_playlist.GetDefault((Object)("id"),(Object)("")))+":"+BA.ObjectToString(_playlist.GetDefault((Object)("updated"),(Object)("")))));
- };
- }
-};
- };
-RDebugUtils.currentLine=51249169;
- //BA.debugLineNum = 51249169;BA.debugLine="signatureParts.Sort(True)";
-_signatureparts.Sort(__c.True);
-RDebugUtils.currentLine=51249170;
- //BA.debugLineNum = 51249170;BA.debugLine="Return JoinList(signatureParts, \"|\")";
-if (true) return __ref._joinlist /*String*/ (null,_signatureparts,"|");
-RDebugUtils.currentLine=51249171;
- //BA.debugLineNum = 51249171;BA.debugLine="End Sub";
+if (Debug.shouldDelegate(ba, "initialize", false))
+	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba,_targetpagevalue}));}
+RDebugUtils.currentLine=50790400;
+ //BA.debugLineNum = 50790400;BA.debugLine="Public Sub Initialize(targetPageValue As B4XMainPa";
+RDebugUtils.currentLine=50790401;
+ //BA.debugLineNum = 50790401;BA.debugLine="targetPage = targetPageValue";
+__ref._targetpage /*b4j.example.b4xmainpage*/  = _targetpagevalue;
+RDebugUtils.currentLine=50790402;
+ //BA.debugLineNum = 50790402;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _canusedataplaybackresolver(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata) throws Exception{
@@ -501,86 +440,6 @@ if (true) break;
             }
         }
     }
-}
-public String  _initialize(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.BA _ba,b4j.example.b4xmainpage _targetpagevalue) throws Exception{
-__ref = this;
-innerInitialize(_ba);
-RDebugUtils.currentModule="playbackqueuebuilder";
-if (Debug.shouldDelegate(ba, "initialize", false))
-	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba,_targetpagevalue}));}
-RDebugUtils.currentLine=50790400;
- //BA.debugLineNum = 50790400;BA.debugLine="Public Sub Initialize(targetPageValue As B4XMainPa";
-RDebugUtils.currentLine=50790401;
- //BA.debugLineNum = 50790401;BA.debugLine="targetPage = targetPageValue";
-__ref._targetpage /*b4j.example.b4xmainpage*/  = _targetpagevalue;
-RDebugUtils.currentLine=50790402;
- //BA.debugLineNum = 50790402;BA.debugLine="End Sub";
-return "";
-}
-public String  _savequeuesnapshotstate(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.objects.collections.List _playqueue,anywheresoftware.b4a.objects.collections.Map _offlinedata,long _nowticks,b4j.example.keyvaluestore _storage,b4j.example.playbackqueuestate _queuestate,b4j.example.dataplaybackresolver _dataresolver) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackqueuebuilder";
-if (Debug.shouldDelegate(ba, "savequeuesnapshotstate", false))
-	 {return ((String) Debug.delegate(ba, "savequeuesnapshotstate", new Object[] {_playqueue,_offlinedata,_nowticks,_storage,_queuestate,_dataresolver}));}
-String _signature = "";
-anywheresoftware.b4a.objects.collections.List _snapshottracks = null;
-Object _itemobject = null;
-anywheresoftware.b4a.objects.collections.Map _item = null;
-RDebugUtils.currentLine=51183616;
- //BA.debugLineNum = 51183616;BA.debugLine="Public Sub SaveQueueSnapshotState(playQueue As Lis";
-RDebugUtils.currentLine=51183617;
- //BA.debugLineNum = 51183617;BA.debugLine="If CanUseDataPlaybackResolver(offlineData) = Fals";
-if (__ref._canusedataplaybackresolver /*boolean*/ (null,_offlinedata)==__c.False) { 
-if (true) return "";};
-RDebugUtils.currentLine=51183618;
- //BA.debugLineNum = 51183618;BA.debugLine="Dim signature As String = BuildQueueSignature(off";
-_signature = __ref._buildqueuesignature /*String*/ (null,_offlinedata,_nowticks,_dataresolver);
-RDebugUtils.currentLine=51183619;
- //BA.debugLineNum = 51183619;BA.debugLine="If signature = \"\" Then Return";
-if ((_signature).equals("")) { 
-if (true) return "";};
-RDebugUtils.currentLine=51183620;
- //BA.debugLineNum = 51183620;BA.debugLine="Dim snapshotTracks As List";
-_snapshottracks = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=51183621;
- //BA.debugLineNum = 51183621;BA.debugLine="snapshotTracks.Initialize";
-_snapshottracks.Initialize();
-RDebugUtils.currentLine=51183622;
- //BA.debugLineNum = 51183622;BA.debugLine="For Each itemObject As Object In playQueue";
-{
-final anywheresoftware.b4a.BA.IterableList group6 = _playqueue;
-final int groupLen6 = group6.getSize()
-;int index6 = 0;
-;
-for (; index6 < groupLen6;index6++){
-_itemobject = group6.Get(index6);
-RDebugUtils.currentLine=51183623;
- //BA.debugLineNum = 51183623;BA.debugLine="If itemObject Is Map Then";
-if (_itemobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=51183624;
- //BA.debugLineNum = 51183624;BA.debugLine="Dim item As Map = itemObject";
-_item = new anywheresoftware.b4a.objects.collections.Map();
-_item = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_itemobject));
-RDebugUtils.currentLine=51183625;
- //BA.debugLineNum = 51183625;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
-if (__ref._isvaliddatatrackitem /*boolean*/ (null,_item)==__c.False) { 
-if (true) continue;};
-RDebugUtils.currentLine=51183626;
- //BA.debugLineNum = 51183626;BA.debugLine="snapshotTracks.Add(CloneMap(item))";
-_snapshottracks.Add((Object)(__ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_item).getObject()));
-RDebugUtils.currentLine=51183627;
- //BA.debugLineNum = 51183627;BA.debugLine="If snapshotTracks.Size >= 20 Then Exit";
-if (_snapshottracks.getSize()>=20) { 
-if (true) break;};
- };
- }
-};
-RDebugUtils.currentLine=51183630;
- //BA.debugLineNum = 51183630;BA.debugLine="queueState.SaveQueueSnapshot(storage, signature,";
-_queuestate._savequeuesnapshot /*String*/ (null,_storage,_signature,_snapshottracks,(int) (20));
-RDebugUtils.currentLine=51183631;
- //BA.debugLineNum = 51183631;BA.debugLine="End Sub";
-return "";
 }
 public String  _applyexistingqueuetoworkingcursors(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.objects.collections.Map _workingcursors,anywheresoftware.b4a.objects.collections.List _playqueue) throws Exception{
 __ref = this;
@@ -1169,6 +1028,82 @@ RDebugUtils.currentLine=51642370;
  //BA.debugLineNum = 51642370;BA.debugLine="End Sub";
 return "";
 }
+public String  _buildqueuesignature(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata,long _nowticks,b4j.example.dataplaybackresolver _dataresolver) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackqueuebuilder";
+if (Debug.shouldDelegate(ba, "buildqueuesignature", false))
+	 {return ((String) Debug.delegate(ba, "buildqueuesignature", new Object[] {_offlinedata,_nowticks,_dataresolver}));}
+anywheresoftware.b4a.objects.collections.Map _currentslot = null;
+anywheresoftware.b4a.objects.collections.List _signatureparts = null;
+anywheresoftware.b4a.objects.collections.List _playlists = null;
+Object _playlistobject = null;
+anywheresoftware.b4a.objects.collections.Map _playlist = null;
+RDebugUtils.currentLine=51249152;
+ //BA.debugLineNum = 51249152;BA.debugLine="Public Sub BuildQueueSignature(offlineData As Map,";
+RDebugUtils.currentLine=51249153;
+ //BA.debugLineNum = 51249153;BA.debugLine="If CanUseDataPlaybackResolver(offlineData) = Fals";
+if (__ref._canusedataplaybackresolver /*boolean*/ (null,_offlinedata)==__c.False) { 
+if (true) return "";};
+RDebugUtils.currentLine=51249154;
+ //BA.debugLineNum = 51249154;BA.debugLine="Dim currentSlot As Map = dataResolver.ResolveData";
+_currentslot = new anywheresoftware.b4a.objects.collections.Map();
+_currentslot = _dataresolver._resolvedataslotatticks /*anywheresoftware.b4a.objects.collections.Map*/ (null,_offlinedata,_nowticks);
+RDebugUtils.currentLine=51249155;
+ //BA.debugLineNum = 51249155;BA.debugLine="If currentSlot.IsInitialized = False Or currentSl";
+if (_currentslot.IsInitialized()==__c.False || _currentslot.getSize()==0) { 
+if (true) return "";};
+RDebugUtils.currentLine=51249156;
+ //BA.debugLineNum = 51249156;BA.debugLine="Dim signatureParts As List";
+_signatureparts = new anywheresoftware.b4a.objects.collections.List();
+RDebugUtils.currentLine=51249157;
+ //BA.debugLineNum = 51249157;BA.debugLine="signatureParts.Initialize";
+_signatureparts.Initialize();
+RDebugUtils.currentLine=51249158;
+ //BA.debugLineNum = 51249158;BA.debugLine="signatureParts.Add(\"v=4\")";
+_signatureparts.Add((Object)("v=4"));
+RDebugUtils.currentLine=51249159;
+ //BA.debugLineNum = 51249159;BA.debugLine="signatureParts.Add(\"slot=\" & BuildDataSlotKey(cur";
+_signatureparts.Add((Object)("slot="+__ref._builddataslotkey /*String*/ (null,_currentslot)));
+RDebugUtils.currentLine=51249160;
+ //BA.debugLineNum = 51249160;BA.debugLine="Dim playlists As List = currentSlot.GetDefault(\"p";
+_playlists = new anywheresoftware.b4a.objects.collections.List();
+_playlists = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_currentslot.GetDefault((Object)("playlists"),__c.Null)));
+RDebugUtils.currentLine=51249161;
+ //BA.debugLineNum = 51249161;BA.debugLine="If playlists.IsInitialized Then";
+if (_playlists.IsInitialized()) { 
+RDebugUtils.currentLine=51249162;
+ //BA.debugLineNum = 51249162;BA.debugLine="For Each playlistObject As Object In playlists";
+{
+final anywheresoftware.b4a.BA.IterableList group10 = _playlists;
+final int groupLen10 = group10.getSize()
+;int index10 = 0;
+;
+for (; index10 < groupLen10;index10++){
+_playlistobject = group10.Get(index10);
+RDebugUtils.currentLine=51249163;
+ //BA.debugLineNum = 51249163;BA.debugLine="If playlistObject Is Map Then";
+if (_playlistobject instanceof java.util.Map) { 
+RDebugUtils.currentLine=51249164;
+ //BA.debugLineNum = 51249164;BA.debugLine="Dim playlist As Map = playlistObject";
+_playlist = new anywheresoftware.b4a.objects.collections.Map();
+_playlist = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_playlistobject));
+RDebugUtils.currentLine=51249165;
+ //BA.debugLineNum = 51249165;BA.debugLine="signatureParts.Add(\"playlist=\" & playlist.GetD";
+_signatureparts.Add((Object)("playlist="+BA.ObjectToString(_playlist.GetDefault((Object)("id"),(Object)("")))+":"+BA.ObjectToString(_playlist.GetDefault((Object)("updated"),(Object)("")))));
+ };
+ }
+};
+ };
+RDebugUtils.currentLine=51249169;
+ //BA.debugLineNum = 51249169;BA.debugLine="signatureParts.Sort(True)";
+_signatureparts.Sort(__c.True);
+RDebugUtils.currentLine=51249170;
+ //BA.debugLineNum = 51249170;BA.debugLine="Return JoinList(signatureParts, \"|\")";
+if (true) return __ref._joinlist /*String*/ (null,_signatureparts,"|");
+RDebugUtils.currentLine=51249171;
+ //BA.debugLineNum = 51249171;BA.debugLine="End Sub";
+return "";
+}
 public String  _joinlist(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.objects.collections.List _items,String _separator) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackqueuebuilder";
@@ -1386,5 +1321,70 @@ if (true) return __c.True;
 RDebugUtils.currentLine=51118107;
  //BA.debugLineNum = 51118107;BA.debugLine="End Sub";
 return false;
+}
+public String  _savequeuesnapshotstate(b4j.example.playbackqueuebuilder __ref,anywheresoftware.b4a.objects.collections.List _playqueue,anywheresoftware.b4a.objects.collections.Map _offlinedata,long _nowticks,b4j.example.keyvaluestore _storage,b4j.example.playbackqueuestate _queuestate,b4j.example.dataplaybackresolver _dataresolver) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackqueuebuilder";
+if (Debug.shouldDelegate(ba, "savequeuesnapshotstate", false))
+	 {return ((String) Debug.delegate(ba, "savequeuesnapshotstate", new Object[] {_playqueue,_offlinedata,_nowticks,_storage,_queuestate,_dataresolver}));}
+String _signature = "";
+anywheresoftware.b4a.objects.collections.List _snapshottracks = null;
+Object _itemobject = null;
+anywheresoftware.b4a.objects.collections.Map _item = null;
+RDebugUtils.currentLine=51183616;
+ //BA.debugLineNum = 51183616;BA.debugLine="Public Sub SaveQueueSnapshotState(playQueue As Lis";
+RDebugUtils.currentLine=51183617;
+ //BA.debugLineNum = 51183617;BA.debugLine="If CanUseDataPlaybackResolver(offlineData) = Fals";
+if (__ref._canusedataplaybackresolver /*boolean*/ (null,_offlinedata)==__c.False) { 
+if (true) return "";};
+RDebugUtils.currentLine=51183618;
+ //BA.debugLineNum = 51183618;BA.debugLine="Dim signature As String = BuildQueueSignature(off";
+_signature = __ref._buildqueuesignature /*String*/ (null,_offlinedata,_nowticks,_dataresolver);
+RDebugUtils.currentLine=51183619;
+ //BA.debugLineNum = 51183619;BA.debugLine="If signature = \"\" Then Return";
+if ((_signature).equals("")) { 
+if (true) return "";};
+RDebugUtils.currentLine=51183620;
+ //BA.debugLineNum = 51183620;BA.debugLine="Dim snapshotTracks As List";
+_snapshottracks = new anywheresoftware.b4a.objects.collections.List();
+RDebugUtils.currentLine=51183621;
+ //BA.debugLineNum = 51183621;BA.debugLine="snapshotTracks.Initialize";
+_snapshottracks.Initialize();
+RDebugUtils.currentLine=51183622;
+ //BA.debugLineNum = 51183622;BA.debugLine="For Each itemObject As Object In playQueue";
+{
+final anywheresoftware.b4a.BA.IterableList group6 = _playqueue;
+final int groupLen6 = group6.getSize()
+;int index6 = 0;
+;
+for (; index6 < groupLen6;index6++){
+_itemobject = group6.Get(index6);
+RDebugUtils.currentLine=51183623;
+ //BA.debugLineNum = 51183623;BA.debugLine="If itemObject Is Map Then";
+if (_itemobject instanceof java.util.Map) { 
+RDebugUtils.currentLine=51183624;
+ //BA.debugLineNum = 51183624;BA.debugLine="Dim item As Map = itemObject";
+_item = new anywheresoftware.b4a.objects.collections.Map();
+_item = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_itemobject));
+RDebugUtils.currentLine=51183625;
+ //BA.debugLineNum = 51183625;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
+if (__ref._isvaliddatatrackitem /*boolean*/ (null,_item)==__c.False) { 
+if (true) continue;};
+RDebugUtils.currentLine=51183626;
+ //BA.debugLineNum = 51183626;BA.debugLine="snapshotTracks.Add(CloneMap(item))";
+_snapshottracks.Add((Object)(__ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_item).getObject()));
+RDebugUtils.currentLine=51183627;
+ //BA.debugLineNum = 51183627;BA.debugLine="If snapshotTracks.Size >= 20 Then Exit";
+if (_snapshottracks.getSize()>=20) { 
+if (true) break;};
+ };
+ }
+};
+RDebugUtils.currentLine=51183630;
+ //BA.debugLineNum = 51183630;BA.debugLine="queueState.SaveQueueSnapshot(storage, signature,";
+_queuestate._savequeuesnapshot /*String*/ (null,_storage,_signature,_snapshottracks,(int) (20));
+RDebugUtils.currentLine=51183631;
+ //BA.debugLineNum = 51183631;BA.debugLine="End Sub";
+return "";
 }
 }

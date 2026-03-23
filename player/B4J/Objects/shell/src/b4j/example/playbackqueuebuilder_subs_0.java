@@ -8,7 +8,7 @@ public class playbackqueuebuilder_subs_0 {
 
 public static RemoteObject  _applyexistingqueuetoworkingcursors(RemoteObject __ref,RemoteObject _workingcursors,RemoteObject _playqueue) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyExistingQueueToWorkingCursors (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,56);
+		Debug.PushSubsStack("ApplyExistingQueueToWorkingCursors (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,56);
 if (RapidSub.canDelegate("applyexistingqueuetoworkingcursors")) { return __ref.runUserSub(false, "playbackqueuebuilder","applyexistingqueuetoworkingcursors", __ref, _workingcursors, _playqueue);}
 RemoteObject _itemobject = RemoteObject.declareNull("Object");
 RemoteObject _item = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -76,7 +76,7 @@ finally {
 		}}
 public static RemoteObject  _builddataslotkey(RemoteObject __ref,RemoteObject _currentslot) throws Exception{
 try {
-		Debug.PushSubsStack("BuildDataSlotKey (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,213);
+		Debug.PushSubsStack("BuildDataSlotKey (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,213);
 if (RapidSub.canDelegate("builddataslotkey")) { return __ref.runUserSub(false, "playbackqueuebuilder","builddataslotkey", __ref, _currentslot);}
 Debug.locals.put("currentSlot", _currentslot);
  BA.debugLineNum = 213;BA.debugLine="Private Sub BuildDataSlotKey(currentSlot As Map) A";
@@ -96,7 +96,7 @@ finally {
 		}}
 public static RemoteObject  _buildnexttrackfromdataplayback(RemoteObject __ref,RemoteObject _workingcursors,RemoteObject _offlinedata,RemoteObject _nowticks,RemoteObject _dataresolver,RemoteObject _mediacacheservice) throws Exception{
 try {
-		Debug.PushSubsStack("BuildNextTrackFromDataPlayback (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,72);
+		Debug.PushSubsStack("BuildNextTrackFromDataPlayback (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,72);
 if (RapidSub.canDelegate("buildnexttrackfromdataplayback")) { return __ref.runUserSub(false, "playbackqueuebuilder","buildnexttrackfromdataplayback", __ref, _workingcursors, _offlinedata, _nowticks, _dataresolver, _mediacacheservice);}
 ResumableSub_BuildNextTrackFromDataPlayback rsub = new ResumableSub_BuildNextTrackFromDataPlayback(null,__ref,_workingcursors,_offlinedata,_nowticks,_dataresolver,_mediacacheservice);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -147,7 +147,7 @@ int limit13;
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("BuildNextTrackFromDataPlayback (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,72);
+		Debug.PushSubsStack("BuildNextTrackFromDataPlayback (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,72);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -596,7 +596,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _downloaded) throw
 }
 public static RemoteObject  _buildqueuesignature(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _nowticks,RemoteObject _dataresolver) throws Exception{
 try {
-		Debug.PushSubsStack("BuildQueueSignature (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,185);
+		Debug.PushSubsStack("BuildQueueSignature (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,185);
 if (RapidSub.canDelegate("buildqueuesignature")) { return __ref.runUserSub(false, "playbackqueuebuilder","buildqueuesignature", __ref, _offlinedata, _nowticks, _dataresolver);}
 RemoteObject _currentslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _signatureparts = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -682,7 +682,7 @@ finally {
 		}}
 public static RemoteObject  _canusedataplaybackresolver(RemoteObject __ref,RemoteObject _offlinedata) throws Exception{
 try {
-		Debug.PushSubsStack("CanUseDataPlaybackResolver (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,14);
+		Debug.PushSubsStack("CanUseDataPlaybackResolver (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,14);
 if (RapidSub.canDelegate("canusedataplaybackresolver")) { return __ref.runUserSub(false, "playbackqueuebuilder","canusedataplaybackresolver", __ref, _offlinedata);}
 RemoteObject _schedules = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 Debug.locals.put("offlineData", _offlinedata);
@@ -726,7 +726,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clonemap(RemoteObject __ref,RemoteObject _sourcemap) throws Exception{
 try {
-		Debug.PushSubsStack("CloneMap (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,217);
+		Debug.PushSubsStack("CloneMap (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,217);
 if (RapidSub.canDelegate("clonemap")) { return __ref.runUserSub(false, "playbackqueuebuilder","clonemap", __ref, _sourcemap);}
 RemoteObject _clonedmap = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
@@ -774,7 +774,7 @@ finally {
 		}}
 public static RemoteObject  _createinitializedlist(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CreateInitializedList (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,227);
+		Debug.PushSubsStack("CreateInitializedList (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,227);
 if (RapidSub.canDelegate("createinitializedlist")) { return __ref.runUserSub(false, "playbackqueuebuilder","createinitializedlist", __ref);}
 RemoteObject _items = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
  BA.debugLineNum = 227;BA.debugLine="Private Sub CreateInitializedList As List";
@@ -800,7 +800,7 @@ finally {
 		}}
 public static RemoteObject  _ensuredataplaybackqueue(RemoteObject __ref,RemoteObject _playqueue,RemoteObject _minitems,RemoteObject _offlinedata,RemoteObject _nowticks,RemoteObject _storage,RemoteObject _queuestate,RemoteObject _dataresolver,RemoteObject _mediacacheservice) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureDataPlaybackQueue (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,32);
+		Debug.PushSubsStack("EnsureDataPlaybackQueue (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,32);
 if (RapidSub.canDelegate("ensuredataplaybackqueue")) { return __ref.runUserSub(false, "playbackqueuebuilder","ensuredataplaybackqueue", __ref, _playqueue, _minitems, _offlinedata, _nowticks, _storage, _queuestate, _dataresolver, _mediacacheservice);}
 ResumableSub_EnsureDataPlaybackQueue rsub = new ResumableSub_EnsureDataPlaybackQueue(null,__ref,_playqueue,_minitems,_offlinedata,_nowticks,_storage,_queuestate,_dataresolver,_mediacacheservice);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -843,7 +843,7 @@ RemoteObject _nextitem = RemoteObject.declareNull("anywheresoftware.b4a.objects.
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureDataPlaybackQueue (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,32);
+		Debug.PushSubsStack("EnsureDataPlaybackQueue (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,32);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -1079,7 +1079,7 @@ finally {
 }
 public static RemoteObject  _ensuredataplaybackready(RemoteObject __ref,RemoteObject _offlinedata) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureDataPlaybackReady (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,23);
+		Debug.PushSubsStack("EnsureDataPlaybackReady (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,23);
 if (RapidSub.canDelegate("ensuredataplaybackready")) { return __ref.runUserSub(false, "playbackqueuebuilder","ensuredataplaybackready", __ref, _offlinedata);}
 ResumableSub_EnsureDataPlaybackReady rsub = new ResumableSub_EnsureDataPlaybackReady(null,__ref,_offlinedata);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -1108,7 +1108,7 @@ RemoteObject _refreshedofflinedata = RemoteObject.declareNull("anywheresoftware.
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureDataPlaybackReady (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,23);
+		Debug.PushSubsStack("EnsureDataPlaybackReady (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,23);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -1199,7 +1199,7 @@ finally {
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _targetpagevalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,9);
+		Debug.PushSubsStack("Initialize (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,9);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackqueuebuilder","initialize", __ref, _ba, _targetpagevalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -1221,7 +1221,7 @@ finally {
 		}}
 public static RemoteObject  _isvaliddatatrackitem(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("IsValidDataTrackItem (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,206);
+		Debug.PushSubsStack("IsValidDataTrackItem (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,206);
 if (RapidSub.canDelegate("isvaliddatatrackitem")) { return __ref.runUserSub(false, "playbackqueuebuilder","isvaliddatatrackitem", __ref, _item);}
 Debug.locals.put("item", _item);
  BA.debugLineNum = 206;BA.debugLine="Private Sub IsValidDataTrackItem(item As Map) As B";
@@ -1253,7 +1253,7 @@ finally {
 		}}
 public static RemoteObject  _joinlist(RemoteObject __ref,RemoteObject _items,RemoteObject _separator) throws Exception{
 try {
-		Debug.PushSubsStack("JoinList (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,233);
+		Debug.PushSubsStack("JoinList (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,233);
 if (RapidSub.canDelegate("joinlist")) { return __ref.runUserSub(false, "playbackqueuebuilder","joinlist", __ref, _items, _separator);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 int _i = 0;
@@ -1300,7 +1300,7 @@ finally {
 		}}
 public static RemoteObject  _restorequeuesnapshotfromstorage(RemoteObject __ref,RemoteObject _playqueue,RemoteObject _offlinedata,RemoteObject _nowticks,RemoteObject _storage,RemoteObject _queuestate,RemoteObject _dataresolver,RemoteObject _mediacacheservice) throws Exception{
 try {
-		Debug.PushSubsStack("RestoreQueueSnapshotFromStorage (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,139);
+		Debug.PushSubsStack("RestoreQueueSnapshotFromStorage (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,139);
 if (RapidSub.canDelegate("restorequeuesnapshotfromstorage")) { return __ref.runUserSub(false, "playbackqueuebuilder","restorequeuesnapshotfromstorage", __ref, _playqueue, _offlinedata, _nowticks, _storage, _queuestate, _dataresolver, _mediacacheservice);}
 RemoteObject _snapshot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _storedsignature = RemoteObject.createImmutable("");
@@ -1421,7 +1421,7 @@ finally {
 		}}
 public static RemoteObject  _savequeuesnapshotstate(RemoteObject __ref,RemoteObject _playqueue,RemoteObject _offlinedata,RemoteObject _nowticks,RemoteObject _storage,RemoteObject _queuestate,RemoteObject _dataresolver) throws Exception{
 try {
-		Debug.PushSubsStack("SaveQueueSnapshotState (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,168);
+		Debug.PushSubsStack("SaveQueueSnapshotState (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,168);
 if (RapidSub.canDelegate("savequeuesnapshotstate")) { return __ref.runUserSub(false, "playbackqueuebuilder","savequeuesnapshotstate", __ref, _playqueue, _offlinedata, _nowticks, _storage, _queuestate, _dataresolver);}
 RemoteObject _signature = RemoteObject.createImmutable("");
 RemoteObject _snapshottracks = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -1499,7 +1499,7 @@ finally {
 		}}
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (playbackqueuebuilder) ","playbackqueuebuilder",8,__ref.getField(false, "ba"),__ref,243);
+		Debug.PushSubsStack("Trace (playbackqueuebuilder) ","playbackqueuebuilder",15,__ref.getField(false, "ba"),__ref,243);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "playbackqueuebuilder","trace", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 243;BA.debugLine="Private Sub Trace(message As String)";

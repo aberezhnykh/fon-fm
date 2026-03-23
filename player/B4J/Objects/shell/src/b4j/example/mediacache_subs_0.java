@@ -8,7 +8,7 @@ public class mediacache_subs_0 {
 
 public static RemoteObject  _addindexedfilefromaudit(RemoteObject __ref,RemoteObject _itemtype,RemoteObject _filename,RemoteObject _auditindex) throws Exception{
 try {
-		Debug.PushSubsStack("AddIndexedFileFromAudit (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,836);
+		Debug.PushSubsStack("AddIndexedFileFromAudit (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,836);
 if (RapidSub.canDelegate("addindexedfilefromaudit")) { return __ref.runUserSub(false, "mediacache","addindexedfilefromaudit", __ref, _itemtype, _filename, _auditindex);}
 RemoteObject _entry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("itemType", _itemtype);
@@ -81,7 +81,7 @@ finally {
 		}}
 public static RemoteObject  _applyxortobuffer(RemoteObject __ref,RemoteObject _buffer,RemoteObject _count,RemoteObject _keybytes,RemoteObject _keyoffset) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyXorToBuffer (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,600);
+		Debug.PushSubsStack("ApplyXorToBuffer (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,600);
 if (RapidSub.canDelegate("applyxortobuffer")) { return __ref.runUserSub(false, "mediacache","applyxortobuffer", __ref, _buffer, _count, _keybytes, _keyoffset);}
 int _i = 0;
 RemoteObject _keyindex = RemoteObject.createImmutable(0);
@@ -124,7 +124,7 @@ finally {
 		}}
 public static RemoteObject  _backfilltrackindexfromfiles(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("BackfillTrackIndexFromFiles (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,894);
+		Debug.PushSubsStack("BackfillTrackIndexFromFiles (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,894);
 if (RapidSub.canDelegate("backfilltrackindexfromfiles")) { return __ref.runUserSub(false, "mediacache","backfilltrackindexfromfiles", __ref);}
 RemoteObject _changed = RemoteObject.createImmutable(false);
 RemoteObject _listedfiles = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -278,7 +278,7 @@ finally {
 		}}
 public static RemoteObject  _buildadurl(RemoteObject __ref,RemoteObject _adid) throws Exception{
 try {
-		Debug.PushSubsStack("BuildAdUrl (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,487);
+		Debug.PushSubsStack("BuildAdUrl (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,487);
 if (RapidSub.canDelegate("buildadurl")) { return __ref.runUserSub(false, "mediacache","buildadurl", __ref, _adid);}
 RemoteObject _first = RemoteObject.createImmutable("");
 Debug.locals.put("adId", _adid);
@@ -306,7 +306,7 @@ finally {
 		}}
 public static RemoteObject  _buildplaybacktemptrackfilename(RemoteObject __ref,RemoteObject _audiokey) throws Exception{
 try {
-		Debug.PushSubsStack("BuildPlaybackTempTrackFileName (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,524);
+		Debug.PushSubsStack("BuildPlaybackTempTrackFileName (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,524);
 if (RapidSub.canDelegate("buildplaybacktemptrackfilename")) { return __ref.runUserSub(false, "mediacache","buildplaybacktemptrackfilename", __ref, _audiokey);}
 Debug.locals.put("audioKey", _audiokey);
  BA.debugLineNum = 524;BA.debugLine="Private Sub BuildPlaybackTempTrackFileName(audioKe";
@@ -330,7 +330,7 @@ finally {
 		}}
 public static RemoteObject  _buildtempcachefilename(RemoteObject __ref,RemoteObject _itemid) throws Exception{
 try {
-		Debug.PushSubsStack("BuildTempCacheFileName (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,520);
+		Debug.PushSubsStack("BuildTempCacheFileName (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,520);
 if (RapidSub.canDelegate("buildtempcachefilename")) { return __ref.runUserSub(false, "mediacache","buildtempcachefilename", __ref, _itemid);}
 Debug.locals.put("itemId", _itemid);
  BA.debugLineNum = 520;BA.debugLine="Private Sub BuildTempCacheFileName(itemId As Strin";
@@ -350,7 +350,7 @@ finally {
 		}}
 public static RemoteObject  _buildtrackcachefilename(RemoteObject __ref,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("BuildTrackCacheFileName (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,499);
+		Debug.PushSubsStack("BuildTrackCacheFileName (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,499);
 if (RapidSub.canDelegate("buildtrackcachefilename")) { return __ref.runUserSub(false, "mediacache","buildtrackcachefilename", __ref, _trackid);}
 RemoteObject _sourcebytes = null;
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
@@ -390,7 +390,7 @@ finally {
 		}}
 public static RemoteObject  _buildtrackcachesummary(RemoteObject __ref,RemoteObject _protectedids,RemoteObject _relevantids) throws Exception{
 try {
-		Debug.PushSubsStack("BuildTrackCacheSummary (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,939);
+		Debug.PushSubsStack("BuildTrackCacheSummary (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,939);
 if (RapidSub.canDelegate("buildtrackcachesummary")) { return __ref.runUserSub(false, "mediacache","buildtrackcachesummary", __ref, _protectedids, _relevantids);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _candidates = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -547,7 +547,7 @@ finally {
 		}}
 public static RemoteObject  _buildtrackobfuscationkey(RemoteObject __ref,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("BuildTrackObfuscationKey (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,568);
+		Debug.PushSubsStack("BuildTrackObfuscationKey (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,568);
 if (RapidSub.canDelegate("buildtrackobfuscationkey")) { return __ref.runUserSub(false, "mediacache","buildtrackobfuscationkey", __ref, _trackid);}
 Debug.locals.put("trackId", _trackid);
  BA.debugLineNum = 568;BA.debugLine="Private Sub BuildTrackObfuscationKey(trackId As St";
@@ -567,7 +567,7 @@ finally {
 		}}
 public static RemoteObject  _buildtrackobfuscationseed(RemoteObject __ref,RemoteObject _purpose,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("BuildTrackObfuscationSeed (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,572);
+		Debug.PushSubsStack("BuildTrackObfuscationSeed (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,572);
 if (RapidSub.canDelegate("buildtrackobfuscationseed")) { return __ref.runUserSub(false, "mediacache","buildtrackobfuscationseed", __ref, _purpose, _trackid);}
 Debug.locals.put("purpose", _purpose);
 Debug.locals.put("trackId", _trackid);
@@ -588,7 +588,7 @@ finally {
 		}}
 public static RemoteObject  _buildtrackurl(RemoteObject __ref,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("BuildTrackUrl (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,493);
+		Debug.PushSubsStack("BuildTrackUrl (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,493);
 if (RapidSub.canDelegate("buildtrackurl")) { return __ref.runUserSub(false, "mediacache","buildtrackurl", __ref, _trackid);}
 RemoteObject _first = RemoteObject.createImmutable("");
 Debug.locals.put("trackId", _trackid);
@@ -616,7 +616,7 @@ finally {
 		}}
 public static RemoteObject  _bytestomb(RemoteObject __ref,RemoteObject _valuebytes) throws Exception{
 try {
-		Debug.PushSubsStack("BytesToMb (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1070);
+		Debug.PushSubsStack("BytesToMb (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1070);
 if (RapidSub.canDelegate("bytestomb")) { return __ref.runUserSub(false, "mediacache","bytestomb", __ref, _valuebytes);}
 Debug.locals.put("valueBytes", _valuebytes);
  BA.debugLineNum = 1070;BA.debugLine="Private Sub BytesToMb(valueBytes As Long) As Long";
@@ -709,7 +709,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _cleanupplaybacktempfiles(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CleanupPlaybackTempFiles (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,155);
+		Debug.PushSubsStack("CleanupPlaybackTempFiles (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,155);
 if (RapidSub.canDelegate("cleanupplaybacktempfiles")) { return __ref.runUserSub(false, "mediacache","cleanupplaybacktempfiles", __ref);}
  BA.debugLineNum = 155;BA.debugLine="Public Sub CleanupPlaybackTempFiles";
 Debug.ShouldStop(67108864);
@@ -734,7 +734,7 @@ finally {
 		}}
 public static RemoteObject  _comparetrackprunecandidates(RemoteObject __ref,RemoteObject _leftitem,RemoteObject _rightitem) throws Exception{
 try {
-		Debug.PushSubsStack("CompareTrackPruneCandidates (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,994);
+		Debug.PushSubsStack("CompareTrackPruneCandidates (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,994);
 if (RapidSub.canDelegate("comparetrackprunecandidates")) { return __ref.runUserSub(false, "mediacache","comparetrackprunecandidates", __ref, _leftitem, _rightitem);}
 RemoteObject _leftrelevant = RemoteObject.createImmutable(false);
 RemoteObject _rightrelevant = RemoteObject.createImmutable(false);
@@ -809,7 +809,7 @@ finally {
 		}}
 public static RemoteObject  _consumerecentmedianetworkfailure(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ConsumeRecentMediaNetworkFailure (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,221);
+		Debug.PushSubsStack("ConsumeRecentMediaNetworkFailure (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,221);
 if (RapidSub.canDelegate("consumerecentmedianetworkfailure")) { return __ref.runUserSub(false, "mediacache","consumerecentmedianetworkfailure", __ref);}
 RemoteObject _value = RemoteObject.createImmutable(false);
  BA.debugLineNum = 221;BA.debugLine="Public Sub ConsumeRecentMediaNetworkFailure As Boo";
@@ -835,7 +835,7 @@ finally {
 		}}
 public static RemoteObject  _createinitializedlist(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CreateInitializedList (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1074);
+		Debug.PushSubsStack("CreateInitializedList (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1074);
 if (RapidSub.canDelegate("createinitializedlist")) { return __ref.runUserSub(false, "mediacache","createinitializedlist", __ref);}
 RemoteObject _items = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
  BA.debugLineNum = 1074;BA.debugLine="Private Sub CreateInitializedList As List";
@@ -861,7 +861,7 @@ finally {
 		}}
 public static RemoteObject  _createtrackidset(RemoteObject __ref,RemoteObject _trackids) throws Exception{
 try {
-		Debug.PushSubsStack("CreateTrackIdSet (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1013);
+		Debug.PushSubsStack("CreateTrackIdSet (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1013);
 if (RapidSub.canDelegate("createtrackidset")) { return __ref.runUserSub(false, "mediacache","createtrackidset", __ref, _trackids);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _trackid = RemoteObject.createImmutable("");
@@ -910,7 +910,7 @@ finally {
 		}}
 public static RemoteObject  _deletefileifexists(RemoteObject __ref,RemoteObject _dir,RemoteObject _filename) throws Exception{
 try {
-		Debug.PushSubsStack("DeleteFileIfExists (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,608);
+		Debug.PushSubsStack("DeleteFileIfExists (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,608);
 if (RapidSub.canDelegate("deletefileifexists")) { return __ref.runUserSub(false, "mediacache","deletefileifexists", __ref, _dir, _filename);}
 Debug.locals.put("dir", _dir);
 Debug.locals.put("fileName", _filename);
@@ -945,7 +945,7 @@ finally {
 		}}
 public static RemoteObject  _elapsedms(RemoteObject __ref,RemoteObject _startedat) throws Exception{
 try {
-		Debug.PushSubsStack("ElapsedMs (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,720);
+		Debug.PushSubsStack("ElapsedMs (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,720);
 if (RapidSub.canDelegate("elapsedms")) { return __ref.runUserSub(false, "mediacache","elapsedms", __ref, _startedat);}
 Debug.locals.put("startedAt", _startedat);
  BA.debugLineNum = 720;BA.debugLine="Private Sub ElapsedMs(startedAt As Long) As Long";
@@ -965,7 +965,7 @@ finally {
 		}}
 public static RemoteObject  _ensureadscached(RemoteObject __ref,RemoteObject _offlinedata) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureAdsCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,98);
+		Debug.PushSubsStack("EnsureAdsCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,98);
 if (RapidSub.canDelegate("ensureadscached")) { return __ref.runUserSub(false, "mediacache","ensureadscached", __ref, _offlinedata);}
 ResumableSub_EnsureAdsCached rsub = new ResumableSub_EnsureAdsCached(null,__ref,_offlinedata);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -1004,7 +1004,7 @@ int groupLen11;
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureAdsCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,98);
+		Debug.PushSubsStack("EnsureAdsCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,98);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -1274,7 +1274,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _downloaded) throw
 }
 public static RemoteObject  _ensuredirectory(RemoteObject __ref,RemoteObject _path) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureDirectory (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,724);
+		Debug.PushSubsStack("EnsureDirectory (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,724);
 if (RapidSub.canDelegate("ensuredirectory")) { return __ref.runUserSub(false, "mediacache","ensuredirectory", __ref, _path);}
 RemoteObject _fileobject = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("path", _path);
@@ -1301,7 +1301,7 @@ finally {
 		}}
 public static RemoteObject  _ensuresingleadcached(RemoteObject __ref,RemoteObject _ad,RemoteObject _adindex) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureSingleAdCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,275);
+		Debug.PushSubsStack("EnsureSingleAdCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,275);
 if (RapidSub.canDelegate("ensuresingleadcached")) { return __ref.runUserSub(false, "mediacache","ensuresingleadcached", __ref, _ad, _adindex);}
 ResumableSub_EnsureSingleAdCached rsub = new ResumableSub_EnsureSingleAdCached(null,__ref,_ad,_adindex);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -1336,7 +1336,7 @@ RemoteObject _outstream = RemoteObject.declareNull("anywheresoftware.b4a.objects
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureSingleAdCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,275);
+		Debug.PushSubsStack("EnsureSingleAdCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,275);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -1697,7 +1697,7 @@ public static void  _jobdone(RemoteObject __ref,RemoteObject _j) throws Exceptio
 }
 public static RemoteObject  _ensuresingletrackcached(RemoteObject __ref,RemoteObject _item,RemoteObject _trackindex) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureSingleTrackCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,330);
+		Debug.PushSubsStack("EnsureSingleTrackCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,330);
 if (RapidSub.canDelegate("ensuresingletrackcached")) { return __ref.runUserSub(false, "mediacache","ensuresingletrackcached", __ref, _item, _trackindex);}
 ResumableSub_EnsureSingleTrackCached rsub = new ResumableSub_EnsureSingleTrackCached(null,__ref,_item,_trackindex);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -1732,7 +1732,7 @@ RemoteObject _outstream = RemoteObject.declareNull("anywheresoftware.b4a.objects
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureSingleTrackCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,330);
+		Debug.PushSubsStack("EnsureSingleTrackCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,330);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -2091,7 +2091,7 @@ finally {
 }
 public static RemoteObject  _ensuretrackplaybacktemp(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureTrackPlaybackTemp (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,548);
+		Debug.PushSubsStack("EnsureTrackPlaybackTemp (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,548);
 if (RapidSub.canDelegate("ensuretrackplaybacktemp")) { return __ref.runUserSub(false, "mediacache","ensuretrackplaybacktemp", __ref, _audiokey, _trackid);}
 RemoteObject _tempfilename = RemoteObject.createImmutable("");
 RemoteObject _inputstream = RemoteObject.declareNull("anywheresoftware.b4a.objects.streams.File.InputStreamWrapper");
@@ -2163,7 +2163,7 @@ finally {
 		}}
 public static RemoteObject  _ensuretrackscached(RemoteObject __ref,RemoteObject _trackitems,RemoteObject _maxcount) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureTracksCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,189);
+		Debug.PushSubsStack("EnsureTracksCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,189);
 if (RapidSub.canDelegate("ensuretrackscached")) { return __ref.runUserSub(false, "mediacache","ensuretrackscached", __ref, _trackitems, _maxcount);}
 ResumableSub_EnsureTracksCached rsub = new ResumableSub_EnsureTracksCached(null,__ref,_trackitems,_maxcount);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -2203,7 +2203,7 @@ int groupLen9;
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureTracksCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,189);
+		Debug.PushSubsStack("EnsureTracksCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,189);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -2495,7 +2495,7 @@ finally {
 }
 public static RemoteObject  _finalizecurrentcacheaudittype(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("FinalizeCurrentCacheAuditType (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,786);
+		Debug.PushSubsStack("FinalizeCurrentCacheAuditType (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,786);
 if (RapidSub.canDelegate("finalizecurrentcacheaudittype")) { return __ref.runUserSub(false, "mediacache","finalizecurrentcacheaudittype", __ref);}
 RemoteObject _auditdir = RemoteObject.createImmutable("");
 RemoteObject _auditindex = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -2584,7 +2584,7 @@ finally {
 		}}
 public static RemoteObject  _findtrackidbyfilename(RemoteObject __ref,RemoteObject _filename,RemoteObject _trackindex) throws Exception{
 try {
-		Debug.PushSubsStack("FindTrackIdByFileName (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,863);
+		Debug.PushSubsStack("FindTrackIdByFileName (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,863);
 if (RapidSub.canDelegate("findtrackidbyfilename")) { return __ref.runUserSub(false, "mediacache","findtrackidbyfilename", __ref, _filename, _trackindex);}
 RemoteObject _key = RemoteObject.createImmutable("");
 RemoteObject _entry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -2640,7 +2640,7 @@ finally {
 		}}
 public static RemoteObject  _finishcacheaudit(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("FinishCacheAudit (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,808);
+		Debug.PushSubsStack("FinishCacheAudit (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,808);
 if (RapidSub.canDelegate("finishcacheaudit")) { return __ref.runUserSub(false, "mediacache","finishcacheaudit", __ref);}
  BA.debugLineNum = 808;BA.debugLine="Private Sub FinishCacheAudit";
 Debug.ShouldStop(128);
@@ -2673,7 +2673,7 @@ finally {
 		}}
 public static RemoteObject  _flushpendingindexsaves(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("FlushPendingIndexSaves (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,227);
+		Debug.PushSubsStack("FlushPendingIndexSaves (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,227);
 if (RapidSub.canDelegate("flushpendingindexsaves")) { return __ref.runUserSub(false, "mediacache","flushpendingindexsaves", __ref);}
  BA.debugLineNum = 227;BA.debugLine="Public Sub FlushPendingIndexSaves";
 Debug.ShouldStop(4);
@@ -2697,7 +2697,7 @@ finally {
 		}}
 public static RemoteObject  _getadsdir(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetAdsDir (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,176);
+		Debug.PushSubsStack("GetAdsDir (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,176);
 if (RapidSub.canDelegate("getadsdir")) { return __ref.runUserSub(false, "mediacache","getadsdir", __ref);}
  BA.debugLineNum = 176;BA.debugLine="Public Sub GetAdsDir As String";
 Debug.ShouldStop(32768);
@@ -2716,7 +2716,7 @@ finally {
 		}}
 public static RemoteObject  _getauditdirbytype(RemoteObject __ref,RemoteObject _itemtype) throws Exception{
 try {
-		Debug.PushSubsStack("GetAuditDirByType (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,816);
+		Debug.PushSubsStack("GetAuditDirByType (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,816);
 if (RapidSub.canDelegate("getauditdirbytype")) { return __ref.runUserSub(false, "mediacache","getauditdirbytype", __ref, _itemtype);}
 Debug.locals.put("itemType", _itemtype);
  BA.debugLineNum = 816;BA.debugLine="Private Sub GetAuditDirByType(itemType As String)";
@@ -2740,7 +2740,7 @@ finally {
 		}}
 public static RemoteObject  _getauditindexbytype(RemoteObject __ref,RemoteObject _itemtype) throws Exception{
 try {
-		Debug.PushSubsStack("GetAuditIndexByType (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,821);
+		Debug.PushSubsStack("GetAuditIndexByType (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,821);
 if (RapidSub.canDelegate("getauditindexbytype")) { return __ref.runUserSub(false, "mediacache","getauditindexbytype", __ref, _itemtype);}
 Debug.locals.put("itemType", _itemtype);
  BA.debugLineNum = 821;BA.debugLine="Private Sub GetAuditIndexByType(itemType As String";
@@ -2764,7 +2764,7 @@ finally {
 		}}
 public static RemoteObject  _getbytesfromstring(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("GetBytesFromString (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,576);
+		Debug.PushSubsStack("GetBytesFromString (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,576);
 if (RapidSub.canDelegate("getbytesfromstring")) { return __ref.runUserSub(false, "mediacache","getbytesfromstring", __ref, _value);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("value", _value);
@@ -2791,7 +2791,7 @@ finally {
 		}}
 public static RemoteObject  _getcachedadindex(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetCachedAdIndex (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,436);
+		Debug.PushSubsStack("GetCachedAdIndex (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,436);
 if (RapidSub.canDelegate("getcachedadindex")) { return __ref.runUserSub(false, "mediacache","getcachedadindex", __ref);}
  BA.debugLineNum = 436;BA.debugLine="Private Sub GetCachedAdIndex As Map";
 Debug.ShouldStop(524288);
@@ -2817,7 +2817,7 @@ finally {
 		}}
 public static RemoteObject  _getcachedtrackindex(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetCachedTrackIndex (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,443);
+		Debug.PushSubsStack("GetCachedTrackIndex (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,443);
 if (RapidSub.canDelegate("getcachedtrackindex")) { return __ref.runUserSub(false, "mediacache","getcachedtrackindex", __ref);}
  BA.debugLineNum = 443;BA.debugLine="Private Sub GetCachedTrackIndex As Map";
 Debug.ShouldStop(67108864);
@@ -2843,7 +2843,7 @@ finally {
 		}}
 public static RemoteObject  _getdirbyitemtype(RemoteObject __ref,RemoteObject _itemtype) throws Exception{
 try {
-		Debug.PushSubsStack("GetDirByItemType (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,679);
+		Debug.PushSubsStack("GetDirByItemType (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,679);
 if (RapidSub.canDelegate("getdirbyitemtype")) { return __ref.runUserSub(false, "mediacache","getdirbyitemtype", __ref, _itemtype);}
 Debug.locals.put("itemType", _itemtype);
  BA.debugLineNum = 679;BA.debugLine="Private Sub GetDirByItemType(itemType As String) A";
@@ -2867,7 +2867,7 @@ finally {
 		}}
 public static RemoteObject  _getdrivetotalspace(RemoteObject __ref,RemoteObject _path) throws Exception{
 try {
-		Debug.PushSubsStack("GetDriveTotalSpace (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1056);
+		Debug.PushSubsStack("GetDriveTotalSpace (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1056);
 if (RapidSub.canDelegate("getdrivetotalspace")) { return __ref.runUserSub(false, "mediacache","getdrivetotalspace", __ref, _path);}
 RemoteObject _fileobject = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("path", _path);
@@ -2903,7 +2903,7 @@ finally {
 		}}
 public static RemoteObject  _getdriveusablespace(RemoteObject __ref,RemoteObject _path) throws Exception{
 try {
-		Debug.PushSubsStack("GetDriveUsableSpace (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1046);
+		Debug.PushSubsStack("GetDriveUsableSpace (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1046);
 if (RapidSub.canDelegate("getdriveusablespace")) { return __ref.runUserSub(false, "mediacache","getdriveusablespace", __ref, _path);}
 RemoteObject _fileobject = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("path", _path);
@@ -2939,7 +2939,7 @@ finally {
 		}}
 public static RemoteObject  _getfilesizesafe(RemoteObject __ref,RemoteObject _dir,RemoteObject _filename) throws Exception{
 try {
-		Debug.PushSubsStack("GetFileSizeSafe (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1023);
+		Debug.PushSubsStack("GetFileSizeSafe (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1023);
 if (RapidSub.canDelegate("getfilesizesafe")) { return __ref.runUserSub(false, "mediacache","getfilesizesafe", __ref, _dir, _filename);}
 Debug.locals.put("dir", _dir);
 Debug.locals.put("fileName", _filename);
@@ -2969,7 +2969,7 @@ finally {
 		}}
 public static RemoteObject  _getindexbyitemtype(RemoteObject __ref,RemoteObject _itemtype) throws Exception{
 try {
-		Debug.PushSubsStack("GetIndexByItemType (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,674);
+		Debug.PushSubsStack("GetIndexByItemType (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,674);
 if (RapidSub.canDelegate("getindexbyitemtype")) { return __ref.runUserSub(false, "mediacache","getindexbyitemtype", __ref, _itemtype);}
 Debug.locals.put("itemType", _itemtype);
  BA.debugLineNum = 674;BA.debugLine="Private Sub GetIndexByItemType(itemType As String)";
@@ -2993,7 +2993,7 @@ finally {
 		}}
 public static RemoteObject  _gettracksdir(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetTracksDir (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,180);
+		Debug.PushSubsStack("GetTracksDir (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,180);
 if (RapidSub.canDelegate("gettracksdir")) { return __ref.runUserSub(false, "mediacache","gettracksdir", __ref);}
  BA.debugLineNum = 180;BA.debugLine="Public Sub GetTracksDir As String";
 Debug.ShouldStop(524288);
@@ -3012,7 +3012,7 @@ finally {
 		}}
 public static RemoteObject  _hasvalidatedlocalmedia(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("HasValidatedLocalMedia (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,161);
+		Debug.PushSubsStack("HasValidatedLocalMedia (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,161);
 if (RapidSub.canDelegate("hasvalidatedlocalmedia")) { return __ref.runUserSub(false, "mediacache","hasvalidatedlocalmedia", __ref, _item);}
 RemoteObject _itemid = RemoteObject.createImmutable("");
 RemoteObject _itemtype = RemoteObject.createImmutable("");
@@ -3056,7 +3056,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _storagedirvalue,RemoteObject _storagevalue,RemoteObject _targetmodulevalue,RemoteObject _tracesubnamevalue,RemoteObject _deviceidvalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,42);
+		Debug.PushSubsStack("Initialize (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,42);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "mediacache","initialize", __ref, _ba, _storagedirvalue, _storagevalue, _targetmodulevalue, _tracesubnamevalue, _deviceidvalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -3109,7 +3109,7 @@ finally {
 		}}
 public static RemoteObject  _isadcached(RemoteObject __ref,RemoteObject _adid) throws Exception{
 try {
-		Debug.PushSubsStack("IsAdCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,171);
+		Debug.PushSubsStack("IsAdCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,171);
 if (RapidSub.canDelegate("isadcached")) { return __ref.runUserSub(false, "mediacache","isadcached", __ref, _adid);}
 Debug.locals.put("adId", _adid);
  BA.debugLineNum = 171;BA.debugLine="Public Sub IsAdCached(adId As String) As Boolean";
@@ -3133,7 +3133,7 @@ finally {
 		}}
 public static RemoteObject  _iscacheauditinprogress(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsCacheAuditInProgress (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,55);
+		Debug.PushSubsStack("IsCacheAuditInProgress (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,55);
 if (RapidSub.canDelegate("iscacheauditinprogress")) { return __ref.runUserSub(false, "mediacache","iscacheauditinprogress", __ref);}
  BA.debugLineNum = 55;BA.debugLine="Public Sub IsCacheAuditInProgress As Boolean";
 Debug.ShouldStop(4194304);
@@ -3152,7 +3152,7 @@ finally {
 		}}
 public static RemoteObject  _iscachedfileusable(RemoteObject __ref,RemoteObject _dir,RemoteObject _filename) throws Exception{
 try {
-		Debug.PushSubsStack("IsCachedFileUsable (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,508);
+		Debug.PushSubsStack("IsCachedFileUsable (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,508);
 if (RapidSub.canDelegate("iscachedfileusable")) { return __ref.runUserSub(false, "mediacache","iscachedfileusable", __ref, _dir, _filename);}
 Debug.locals.put("dir", _dir);
 Debug.locals.put("fileName", _filename);
@@ -3197,7 +3197,7 @@ finally {
 		}}
 public static RemoteObject  _ismedianetworkfailure(RemoteObject __ref,RemoteObject _errormessage) throws Exception{
 try {
-		Debug.PushSubsStack("IsMediaNetworkFailure (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,706);
+		Debug.PushSubsStack("IsMediaNetworkFailure (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,706);
 if (RapidSub.canDelegate("ismedianetworkfailure")) { return __ref.runUserSub(false, "mediacache","ismedianetworkfailure", __ref, _errormessage);}
 RemoteObject _text = RemoteObject.createImmutable("");
 Debug.locals.put("errorMessage", _errormessage);
@@ -3257,7 +3257,7 @@ finally {
 		}}
 public static RemoteObject  _istrackcached(RemoteObject __ref,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("IsTrackCached (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,184);
+		Debug.PushSubsStack("IsTrackCached (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,184);
 if (RapidSub.canDelegate("istrackcached")) { return __ref.runUserSub(false, "mediacache","istrackcached", __ref, _trackid);}
 Debug.locals.put("trackId", _trackid);
  BA.debugLineNum = 184;BA.debugLine="Public Sub IsTrackCached(trackId As String) As Boo";
@@ -3281,7 +3281,7 @@ finally {
 		}}
 public static RemoteObject  _loadindexesfromstorage(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("LoadIndexesFromStorage (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,466);
+		Debug.PushSubsStack("LoadIndexesFromStorage (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,466);
 if (RapidSub.canDelegate("loadindexesfromstorage")) { return __ref.runUserSub(false, "mediacache","loadindexesfromstorage", __ref);}
  BA.debugLineNum = 466;BA.debugLine="Private Sub LoadIndexesFromStorage";
 Debug.ShouldStop(131072);
@@ -3317,7 +3317,7 @@ finally {
 		}}
 public static RemoteObject  _markauditindexchanged(RemoteObject __ref,RemoteObject _itemtype) throws Exception{
 try {
-		Debug.PushSubsStack("MarkAuditIndexChanged (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,826);
+		Debug.PushSubsStack("MarkAuditIndexChanged (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,826);
 if (RapidSub.canDelegate("markauditindexchanged")) { return __ref.runUserSub(false, "mediacache","markauditindexchanged", __ref, _itemtype);}
 Debug.locals.put("itemType", _itemtype);
  BA.debugLineNum = 826;BA.debugLine="Private Sub MarkAuditIndexChanged(itemType As Stri";
@@ -3351,7 +3351,7 @@ finally {
 		}}
 public static RemoteObject  _mbtobytes(RemoteObject __ref,RemoteObject _valuemb) throws Exception{
 try {
-		Debug.PushSubsStack("MbToBytes (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1066);
+		Debug.PushSubsStack("MbToBytes (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1066);
 if (RapidSub.canDelegate("mbtobytes")) { return __ref.runUserSub(false, "mediacache","mbtobytes", __ref, _valuemb);}
 Debug.locals.put("valueMb", _valuemb);
  BA.debugLineNum = 1066;BA.debugLine="Private Sub MbToBytes(valueMb As Long) As Long";
@@ -3371,7 +3371,7 @@ finally {
 		}}
 public static RemoteObject  _normalizetrackindexfilenames(RemoteObject __ref,RemoteObject _trackindex) throws Exception{
 try {
-		Debug.PushSubsStack("NormalizeTrackIndexFileNames (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,875);
+		Debug.PushSubsStack("NormalizeTrackIndexFileNames (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,875);
 if (RapidSub.canDelegate("normalizetrackindexfilenames")) { return __ref.runUserSub(false, "mediacache","normalizetrackindexfilenames", __ref, _trackindex);}
 RemoteObject _changed = RemoteObject.createImmutable(false);
 RemoteObject _trackid = RemoteObject.createImmutable("");
@@ -3451,7 +3451,7 @@ finally {
 		}}
 public static RemoteObject  _preparenextcacheaudittype(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareNextCacheAuditType (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,730);
+		Debug.PushSubsStack("PrepareNextCacheAuditType (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,730);
 if (RapidSub.canDelegate("preparenextcacheaudittype")) { return __ref.runUserSub(false, "mediacache","preparenextcacheaudittype", __ref);}
 RemoteObject _auditdir = RemoteObject.createImmutable("");
 RemoteObject _listedfiles = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -3532,7 +3532,7 @@ finally {
 		}}
 public static RemoteObject  _processcurrentcacheauditbatch(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ProcessCurrentCacheAuditBatch (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,753);
+		Debug.PushSubsStack("ProcessCurrentCacheAuditBatch (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,753);
 if (RapidSub.canDelegate("processcurrentcacheauditbatch")) { return __ref.runUserSub(false, "mediacache","processcurrentcacheauditbatch", __ref);}
 RemoteObject _auditdir = RemoteObject.createImmutable("");
 RemoteObject _auditindex = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -3636,7 +3636,7 @@ finally {
 		}}
 public static RemoteObject  _prunemissingads(RemoteObject __ref,RemoteObject _adindex,RemoteObject _actualadids) throws Exception{
 try {
-		Debug.PushSubsStack("PruneMissingAds (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,400);
+		Debug.PushSubsStack("PruneMissingAds (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,400);
 if (RapidSub.canDelegate("prunemissingads")) { return __ref.runUserSub(false, "mediacache","prunemissingads", __ref, _adindex, _actualadids);}
 RemoteObject _removedcount = RemoteObject.createImmutable(0);
 RemoteObject _idstoremove = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -3714,7 +3714,7 @@ finally {
 		}}
 public static RemoteObject  _prunetrackcacheifneeded(RemoteObject __ref,RemoteObject _protectedtrackids,RemoteObject _relevanttrackids) throws Exception{
 try {
-		Debug.PushSubsStack("PruneTrackCacheIfNeeded (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,233);
+		Debug.PushSubsStack("PruneTrackCacheIfNeeded (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,233);
 if (RapidSub.canDelegate("prunetrackcacheifneeded")) { return __ref.runUserSub(false, "mediacache","prunetrackcacheifneeded", __ref, _protectedtrackids, _relevanttrackids);}
 RemoteObject _protectedids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _relevantids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -3872,7 +3872,7 @@ finally {
 		}}
 public static RemoteObject  _replacecachefile(RemoteObject __ref,RemoteObject _dir,RemoteObject _tempfilename,RemoteObject _finalfilename) throws Exception{
 try {
-		Debug.PushSubsStack("ReplaceCacheFile (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,529);
+		Debug.PushSubsStack("ReplaceCacheFile (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,529);
 if (RapidSub.canDelegate("replacecachefile")) { return __ref.runUserSub(false, "mediacache","replacecachefile", __ref, _dir, _tempfilename, _finalfilename);}
 RemoteObject _tempfile = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 RemoteObject _finalfile = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
@@ -3939,7 +3939,7 @@ finally {
 		}}
 public static RemoteObject  _resolveindexedauditfilename(RemoteObject __ref,RemoteObject _audittype,RemoteObject _itemid,RemoteObject _auditindex) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveIndexedAuditFileName (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,858);
+		Debug.PushSubsStack("ResolveIndexedAuditFileName (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,858);
 if (RapidSub.canDelegate("resolveindexedauditfilename")) { return __ref.runUserSub(false, "mediacache","resolveindexedauditfilename", __ref, _audittype, _itemid, _auditindex);}
 Debug.locals.put("auditType", _audittype);
 Debug.locals.put("itemId", _itemid);
@@ -3965,7 +3965,7 @@ finally {
 		}}
 public static RemoteObject  _resolveindexedfilename(RemoteObject __ref,RemoteObject _itemtype,RemoteObject _itemid,RemoteObject _itemindex) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveIndexedFileName (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,692);
+		Debug.PushSubsStack("ResolveIndexedFileName (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,692);
 if (RapidSub.canDelegate("resolveindexedfilename")) { return __ref.runUserSub(false, "mediacache","resolveindexedfilename", __ref, _itemtype, _itemid, _itemindex);}
 Debug.locals.put("itemType", _itemtype);
 Debug.locals.put("itemId", _itemid);
@@ -3991,7 +3991,7 @@ finally {
 		}}
 public static RemoteObject  _resolvelocalmediauri(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveLocalMediaUri (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,131);
+		Debug.PushSubsStack("ResolveLocalMediaUri (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,131);
 if (RapidSub.canDelegate("resolvelocalmediauri")) { return __ref.runUserSub(false, "mediacache","resolvelocalmediauri", __ref, _item);}
 RemoteObject _itemtype = RemoteObject.createImmutable("");
 RemoteObject _itemid = RemoteObject.createImmutable("");
@@ -4039,7 +4039,7 @@ finally {
 		}}
 public static RemoteObject  _resolvemediasource(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveMediaSource (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,617);
+		Debug.PushSubsStack("ResolveMediaSource (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,617);
 if (RapidSub.canDelegate("resolvemediasource")) { return __ref.runUserSub(false, "mediacache","resolvemediasource", __ref, _item);}
 RemoteObject _itemtype = RemoteObject.createImmutable("");
 Debug.locals.put("item", _item);
@@ -4089,7 +4089,7 @@ finally {
 		}}
 public static RemoteObject  _resolveminfreediskbytes(RemoteObject __ref,RemoteObject _totalbytes) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveMinFreeDiskBytes (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1040);
+		Debug.PushSubsStack("ResolveMinFreeDiskBytes (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1040);
 if (RapidSub.canDelegate("resolveminfreediskbytes")) { return __ref.runUserSub(false, "mediacache","resolveminfreediskbytes", __ref, _totalbytes);}
 RemoteObject _percentbytes = RemoteObject.createImmutable(0L);
 Debug.locals.put("totalBytes", _totalbytes);
@@ -4117,7 +4117,7 @@ finally {
 		}}
 public static RemoteObject  _resolveplaybackmediauri(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ResolvePlaybackMediaUri (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,143);
+		Debug.PushSubsStack("ResolvePlaybackMediaUri (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,143);
 if (RapidSub.canDelegate("resolveplaybackmediauri")) { return __ref.runUserSub(false, "mediacache","resolveplaybackmediauri", __ref, _audiokey, _item);}
 RemoteObject _itemtype = RemoteObject.createImmutable("");
 RemoteObject _trackid = RemoteObject.createImmutable("");
@@ -4170,7 +4170,7 @@ finally {
 		}}
 public static RemoteObject  _resolvetrackcachefilename(RemoteObject __ref,RemoteObject _trackid,RemoteObject _trackindex) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveTrackCacheFileName (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,697);
+		Debug.PushSubsStack("ResolveTrackCacheFileName (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,697);
 if (RapidSub.canDelegate("resolvetrackcachefilename")) { return __ref.runUserSub(false, "mediacache","resolvetrackcachefilename", __ref, _trackid, _trackindex);}
 RemoteObject _entry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _filename = RemoteObject.createImmutable("");
@@ -4208,7 +4208,7 @@ finally {
 		}}
 public static RemoteObject  _restoreindexedfilebyid(RemoteObject __ref,RemoteObject _itemid,RemoteObject _itemindex) throws Exception{
 try {
-		Debug.PushSubsStack("RestoreIndexedFileById (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,648);
+		Debug.PushSubsStack("RestoreIndexedFileById (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,648);
 if (RapidSub.canDelegate("restoreindexedfilebyid")) { return __ref.runUserSub(false, "mediacache","restoreindexedfilebyid", __ref, _itemid, _itemindex);}
 RemoteObject _entry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("itemId", _itemid);
@@ -4251,7 +4251,7 @@ finally {
 		}}
 public static RemoteObject  _runcacheauditstep(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("RunCacheAuditStep (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,77);
+		Debug.PushSubsStack("RunCacheAuditStep (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,77);
 if (RapidSub.canDelegate("runcacheauditstep")) { return __ref.runUserSub(false, "mediacache","runcacheauditstep", __ref);}
  BA.debugLineNum = 77;BA.debugLine="Public Sub RunCacheAuditStep As Boolean";
 Debug.ShouldStop(4096);
@@ -4311,7 +4311,7 @@ finally {
 		}}
 public static RemoteObject  _saveadindex(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("SaveAdIndex (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,475);
+		Debug.PushSubsStack("SaveAdIndex (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,475);
 if (RapidSub.canDelegate("saveadindex")) { return __ref.runUserSub(false, "mediacache","saveadindex", __ref);}
  BA.debugLineNum = 475;BA.debugLine="Private Sub SaveAdIndex";
 Debug.ShouldStop(67108864);
@@ -4336,7 +4336,7 @@ finally {
 		}}
 public static RemoteObject  _saveindexbyitemtype(RemoteObject __ref,RemoteObject _itemtype) throws Exception{
 try {
-		Debug.PushSubsStack("SaveIndexByItemType (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,684);
+		Debug.PushSubsStack("SaveIndexByItemType (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,684);
 if (RapidSub.canDelegate("saveindexbyitemtype")) { return __ref.runUserSub(false, "mediacache","saveindexbyitemtype", __ref, _itemtype);}
 Debug.locals.put("itemType", _itemtype);
  BA.debugLineNum = 684;BA.debugLine="Private Sub SaveIndexByItemType(itemType As String";
@@ -4364,7 +4364,7 @@ finally {
 		}}
 public static RemoteObject  _savetrackindex(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("SaveTrackIndex (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,481);
+		Debug.PushSubsStack("SaveTrackIndex (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,481);
 if (RapidSub.canDelegate("savetrackindex")) { return __ref.runUserSub(false, "mediacache","savetrackindex", __ref);}
  BA.debugLineNum = 481;BA.debugLine="Private Sub SaveTrackIndex";
 Debug.ShouldStop(1);
@@ -4389,7 +4389,7 @@ finally {
 		}}
 public static RemoteObject  _sorttrackprunecandidates(RemoteObject __ref,RemoteObject _candidates) throws Exception{
 try {
-		Debug.PushSubsStack("SortTrackPruneCandidates (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,980);
+		Debug.PushSubsStack("SortTrackPruneCandidates (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,980);
 if (RapidSub.canDelegate("sorttrackprunecandidates")) { return __ref.runUserSub(false, "mediacache","sorttrackprunecandidates", __ref, _candidates);}
 int _i = 0;
 int _j = 0;
@@ -4454,7 +4454,7 @@ finally {
 		}}
 public static RemoteObject  _startcacheaudit(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StartCacheAudit (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,59);
+		Debug.PushSubsStack("StartCacheAudit (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,59);
 if (RapidSub.canDelegate("startcacheaudit")) { return __ref.runUserSub(false, "mediacache","startcacheaudit", __ref);}
  BA.debugLineNum = 59;BA.debugLine="Public Sub StartCacheAudit";
 Debug.ShouldStop(67108864);
@@ -4513,7 +4513,7 @@ finally {
 		}}
 public static RemoteObject  _tolongdefault(RemoteObject __ref,RemoteObject _value,RemoteObject _defaultvalue) throws Exception{
 try {
-		Debug.PushSubsStack("ToLongDefault (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1031);
+		Debug.PushSubsStack("ToLongDefault (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1031);
 if (RapidSub.canDelegate("tolongdefault")) { return __ref.runUserSub(false, "mediacache","tolongdefault", __ref, _value, _defaultvalue);}
 Debug.locals.put("value", _value);
 Debug.locals.put("defaultValue", _defaultvalue);
@@ -4547,7 +4547,7 @@ finally {
 		}}
 public static RemoteObject  _touchcacheditem(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("TouchCachedItem (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,450);
+		Debug.PushSubsStack("TouchCachedItem (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,450);
 if (RapidSub.canDelegate("touchcacheditem")) { return __ref.runUserSub(false, "mediacache","touchcacheditem", __ref, _item);}
 RemoteObject _itemid = RemoteObject.createImmutable("");
 RemoteObject _itemtype = RemoteObject.createImmutable("");
@@ -4605,7 +4605,7 @@ finally {
 		}}
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,1080);
+		Debug.PushSubsStack("Trace (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,1080);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "mediacache","trace", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 1080;BA.debugLine="Private Sub Trace(message As String)";
@@ -4629,7 +4629,7 @@ finally {
 		}}
 public static RemoteObject  _transformstreamwithxor(RemoteObject __ref,RemoteObject _inputstream,RemoteObject _outputstream,RemoteObject _keybytes) throws Exception{
 try {
-		Debug.PushSubsStack("TransformStreamWithXor (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,582);
+		Debug.PushSubsStack("TransformStreamWithXor (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,582);
 if (RapidSub.canDelegate("transformstreamwithxor")) { return __ref.runUserSub(false, "mediacache","transformstreamwithxor", __ref, _inputstream, _outputstream, _keybytes);}
 RemoteObject _buffer = null;
 RemoteObject _totalprocessed = RemoteObject.createImmutable(0L);
@@ -4694,7 +4694,7 @@ finally {
 		}}
 public static RemoteObject  _tryrestoreexistingcachedmedia(RemoteObject __ref,RemoteObject _itemtype,RemoteObject _itemid,RemoteObject _item,RemoteObject _itemindex) throws Exception{
 try {
-		Debug.PushSubsStack("TryRestoreExistingCachedMedia (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,658);
+		Debug.PushSubsStack("TryRestoreExistingCachedMedia (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,658);
 if (RapidSub.canDelegate("tryrestoreexistingcachedmedia")) { return __ref.runUserSub(false, "mediacache","tryrestoreexistingcachedmedia", __ref, _itemtype, _itemid, _item, _itemindex);}
 Debug.locals.put("itemType", _itemtype);
 Debug.locals.put("itemId", _itemid);
@@ -4751,7 +4751,7 @@ finally {
 		}}
 public static RemoteObject  _updateadindex(RemoteObject __ref,RemoteObject _ad,RemoteObject _adindex) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateAdIndex (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,385);
+		Debug.PushSubsStack("UpdateAdIndex (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,385);
 if (RapidSub.canDelegate("updateadindex")) { return __ref.runUserSub(false, "mediacache","updateadindex", __ref, _ad, _adindex);}
 RemoteObject _adid = RemoteObject.createImmutable("");
 RemoteObject _entry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -4811,7 +4811,7 @@ finally {
 		}}
 public static RemoteObject  _updatetrackindex(RemoteObject __ref,RemoteObject _item,RemoteObject _trackindex) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateTrackIndex (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,417);
+		Debug.PushSubsStack("UpdateTrackIndex (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,417);
 if (RapidSub.canDelegate("updatetrackindex")) { return __ref.runUserSub(false, "mediacache","updatetrackindex", __ref, _item, _trackindex);}
 RemoteObject _trackid = RemoteObject.createImmutable("");
 RemoteObject _entry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -4885,7 +4885,7 @@ finally {
 		}}
 public static RemoteObject  _validateindexedfile(RemoteObject __ref,RemoteObject _itemtype,RemoteObject _itemid) throws Exception{
 try {
-		Debug.PushSubsStack("ValidateIndexedFile (mediacache) ","mediacache",6,__ref.getField(false, "ba"),__ref,631);
+		Debug.PushSubsStack("ValidateIndexedFile (mediacache) ","mediacache",26,__ref.getField(false, "ba"),__ref,631);
 if (RapidSub.canDelegate("validateindexedfile")) { return __ref.runUserSub(false, "mediacache","validateindexedfile", __ref, _itemtype, _itemid);}
 RemoteObject _auditindex = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _auditdir = RemoteObject.createImmutable("");

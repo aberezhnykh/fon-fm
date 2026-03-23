@@ -74,7 +74,6 @@ public long _playback_watchdog_recovery_cooldown_ms = 0L;
 public long _playback_watchdog_progress_delta_ms = 0L;
 public long _playback_watchdog_grace_ms = 0L;
 public int _trace_error_debug_context_lines = 0;
-public int _connectivity_check_timeout_ms = 0;
 public int _pause_retry_delay = 0;
 public int _local_retry_delay_initial = 0;
 public int _local_retry_delay_max = 0;
@@ -134,8 +133,6 @@ public anywheresoftware.b4a.objects.B4XViewWrapper _txtplayercodeview = null;
 public anywheresoftware.b4a.objects.B4XViewWrapper _btnsetupsubmit = null;
 public anywheresoftware.b4a.objects.B4XViewWrapper _btnconfirmyes = null;
 public anywheresoftware.b4a.objects.B4XViewWrapper _btnconfirmno = null;
-public float _playiconbasesize = 0f;
-public float _stopiconbasesize = 0f;
 public float _headeractionfontsize = 0f;
 public float _codefontsize = 0f;
 public boolean _iscodeinputfocused = false;
@@ -145,13 +142,15 @@ public b4j.example.adscheduler _localadscheduler = null;
 public b4j.example.dataplaybackresolver _dataresolver = null;
 public b4j.example.offlinestore _offlinestoreservice = null;
 public b4j.example.traceservice _apptraceservice = null;
+public b4j.example.playbacktraceformatter _traceformatter = null;
+public b4j.example.playbacktracerouter _tracerouter = null;
+public b4j.example.playbacktraceuploader _traceuploader = null;
 public b4j.example.mediacache _mediacacheservice = null;
 public b4j.example.keyvaluestore _storage = null;
 public anywheresoftware.b4a.objects.collections.List _playqueue = null;
 public anywheresoftware.b4a.objects.collections.Map _messages = null;
 public int _traceloglimit = 0;
 public int _serversnapshotlimit = 0;
-public anywheresoftware.b4a.objects.collections.Map _offlinedata = null;
 public anywheresoftware.b4a.objects.Timer _retrytimer = null;
 public anywheresoftware.b4a.objects.Timer _breaktimer = null;
 public anywheresoftware.b4a.objects.Timer _historyflushtimer = null;
@@ -178,18 +177,17 @@ public b4j.example.playbackqueuebuilder _queuebuilder = null;
 public b4j.example.playbacktransitioncoordinator _transitioncoordinator = null;
 public b4j.example.playbackfacade _facade = null;
 public b4j.example.playbackresponseadapter _responseadapter = null;
+public b4j.example.playbackdatacoordinator _playerdatacoordinator = null;
+public b4j.example.playerstatestore _statestore = null;
+public b4j.example.networksyncservice _syncservice = null;
+public b4j.example.playeruicontroller _uicontroller = null;
 public b4j.example.playbackdirectorstate _directorstate = null;
 public boolean _initialstartfadepending = false;
 public boolean _ishistoryflushinprogress = false;
-public boolean _istraceuploadinprogress = false;
 public anywheresoftware.b4a.objects.collections.List _cachedrelevanttrackids = null;
 public long _lasttrackcachepruneat = 0L;
-public int _consecutivenetworkerrors = 0;
 public int _consecutiveaudiooutputerrors = 0;
 public boolean _isaudiooutputrecoverypause = false;
-public String _lastretrymode = "";
-public long _lastdataokat = 0L;
-public long _lasthistoryokat = 0L;
 public long _lastplaybackwatchdogpositionms = 0L;
 public String _lastplaybackwatchdogtrackid = "";
 public long _lastplaybackwatchdogprogressat = 0L;
@@ -198,8 +196,6 @@ public boolean _isplaybackwatchdogtickinprogress = false;
 public long _playbackactivationtoken = 0L;
 public int _playlistindex = 0;
 public int _orbitpulsestep = 0;
-public double _orbitfadevalue = 0;
-public double _orbitfadetarget = 0;
 public boolean _isstartupsequenceinprogress = false;
 public boolean _isadwarmupdeferredafterstartup = false;
 public boolean _ispoststarttasksdeferredafterstartup = false;
@@ -295,6 +291,7 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "activateloadeditem", false))
 	 {return ((String) Debug.delegate(ba, "activateloadeditem", new Object[] {_audiokey,_item,_fadeinms}));}
+String _plannedenddetails = "";
 RDebugUtils.currentLine=6619136;
  //BA.debugLineNum = 6619136;BA.debugLine="Private Sub ActivateLoadedItem(audioKey As String,";
 RDebugUtils.currentLine=6619137;
@@ -345,46 +342,49 @@ RDebugUtils.currentLine=6619153;
  //BA.debugLineNum = 6619153;BA.debugLine="mediaCacheService.TouchCachedItem(item)";
 __ref._mediacacheservice /*b4j.example.mediacache*/ ._touchcacheditem /*String*/ (null,_item);
 RDebugUtils.currentLine=6619154;
- //BA.debugLineNum = 6619154;BA.debugLine="TraceLog(\"воспроизведение activate audio=\" & audi";
-__ref._tracelog /*String*/ (null,"воспроизведение activate audio="+_audiokey+" item="+__ref._describeitem /*String*/ (null,(Object)(_item.getObject()))+" fadeInMs="+BA.NumberToString(_fadeinms));
+ //BA.debugLineNum = 6619154;BA.debugLine="Dim plannedEndDetails As String = BuildPlannedEnd";
+_plannedenddetails = __ref._buildplannedendtracedetails /*String*/ (null,_audiokey,_item);
 RDebugUtils.currentLine=6619155;
- //BA.debugLineNum = 6619155;BA.debugLine="TraceInfo(\"audio\", \"плеер play\", BuildAudioTraceD";
-__ref._traceinfo /*String*/ (null,"audio","плеер play",__ref._buildaudiotracedetails /*String*/ (null,_item,"player="+__ref._traceplayernumber /*String*/ (null,_audiokey)+" type="+__ref._traceitemtype /*String*/ (null,_item)+" id="+__ref._tracetrackvalue /*String*/ (null,_item)));
+ //BA.debugLineNum = 6619155;BA.debugLine="TraceLog(\"воспроизведение activate audio=\" & audi";
+__ref._tracelog /*String*/ (null,"воспроизведение activate audio="+_audiokey+" item="+__ref._describeitem /*String*/ (null,(Object)(_item.getObject()))+" fadeInMs="+BA.NumberToString(_fadeinms)+BA.ObjectToString((((_plannedenddetails).equals("") == false) ? ((Object)(" "+_plannedenddetails)) : ((Object)("")))));
 RDebugUtils.currentLine=6619156;
- //BA.debugLineNum = 6619156;BA.debugLine="GetAudioByKey(audioKey).PlayWithFade(fadeInMs)";
-__ref._getaudiobykey /*b4j.example.audioplayer*/ (null,_audiokey)._playwithfade /*String*/ (null,_fadeinms);
+ //BA.debugLineNum = 6619156;BA.debugLine="TraceInfo(\"audio\", \"плеер play\", BuildAudioTraceD";
+__ref._traceinfo /*String*/ (null,"audio","плеер play",__ref._buildaudiotracedetails /*String*/ (null,_item,"player="+__ref._traceplayernumber /*String*/ (null,_audiokey)+" type="+__ref._traceitemtype /*String*/ (null,_item)+" id="+__ref._tracetrackvalue /*String*/ (null,_item)+BA.ObjectToString((((_plannedenddetails).equals("") == false) ? ((Object)(" "+_plannedenddetails)) : ((Object)(""))))));
 RDebugUtils.currentLine=6619157;
- //BA.debugLineNum = 6619157;BA.debugLine="MarkPlaybackWatchdogProgress(item.GetDefault(\"id\"";
-__ref._markplaybackwatchdogprogress /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("id"),(Object)(""))),(long) (0));
+ //BA.debugLineNum = 6619157;BA.debugLine="GetAudioByKey(audioKey).PlayWithFade(fadeInMs)";
+__ref._getaudiobykey /*b4j.example.audioplayer*/ (null,_audiokey)._playwithfade /*String*/ (null,_fadeinms);
 RDebugUtils.currentLine=6619158;
- //BA.debugLineNum = 6619158;BA.debugLine="ScheduleTrackCacheWarmup";
-__ref._scheduletrackcachewarmup /*String*/ (null);
+ //BA.debugLineNum = 6619158;BA.debugLine="MarkPlaybackWatchdogProgress(item.GetDefault(\"id\"";
+__ref._markplaybackwatchdogprogress /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("id"),(Object)(""))),(long) (0));
 RDebugUtils.currentLine=6619159;
- //BA.debugLineNum = 6619159;BA.debugLine="ScheduleHistoryLog(item)";
-__ref._schedulehistorylog /*String*/ (null,_item);
+ //BA.debugLineNum = 6619159;BA.debugLine="ScheduleTrackCacheWarmup";
+__ref._scheduletrackcachewarmup /*String*/ (null);
 RDebugUtils.currentLine=6619160;
- //BA.debugLineNum = 6619160;BA.debugLine="ResetRetryDelay";
-__ref._resetretrydelay /*String*/ (null);
+ //BA.debugLineNum = 6619160;BA.debugLine="ScheduleHistoryLog(item)";
+__ref._schedulehistorylog /*String*/ (null,_item);
 RDebugUtils.currentLine=6619161;
- //BA.debugLineNum = 6619161;BA.debugLine="orchestrationState.ClearTrackTransitionFlags";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._cleartracktransitionflags /*String*/ (null);
+ //BA.debugLineNum = 6619161;BA.debugLine="ResetRetryDelay";
+__ref._resetretrydelay /*String*/ (null);
 RDebugUtils.currentLine=6619162;
- //BA.debugLineNum = 6619162;BA.debugLine="If isStartupSequenceInProgress Then";
-if (__ref._isstartupsequenceinprogress /*boolean*/ ) { 
+ //BA.debugLineNum = 6619162;BA.debugLine="orchestrationState.ClearTrackTransitionFlags";
+__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._cleartracktransitionflags /*String*/ (null);
 RDebugUtils.currentLine=6619163;
- //BA.debugLineNum = 6619163;BA.debugLine="RequestDeferredPostStartTasks";
+ //BA.debugLineNum = 6619163;BA.debugLine="If isStartupSequenceInProgress Then";
+if (__ref._isstartupsequenceinprogress /*boolean*/ ) { 
+RDebugUtils.currentLine=6619164;
+ //BA.debugLineNum = 6619164;BA.debugLine="RequestDeferredPostStartTasks";
 __ref._requestdeferredpoststarttasks /*String*/ (null);
  }else 
-{RDebugUtils.currentLine=6619164;
- //BA.debugLineNum = 6619164;BA.debugLine="Else If metaState.CurrentMediaType = \"track\" And";
+{RDebugUtils.currentLine=6619165;
+ //BA.debugLineNum = 6619165;BA.debugLine="Else If metaState.CurrentMediaType = \"track\" And";
 if ((__ref._metastate /*b4j.example.playbackmetastate*/ ._currentmediatype /*String*/ ).equals("track") && __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()==0) { 
-RDebugUtils.currentLine=6619165;
- //BA.debugLineNum = 6619165;BA.debugLine="BackfillPlaybackQueueAsync";
+RDebugUtils.currentLine=6619166;
+ //BA.debugLineNum = 6619166;BA.debugLine="BackfillPlaybackQueueAsync";
 __ref._backfillplaybackqueueasync /*void*/ (null);
  }}
 ;
-RDebugUtils.currentLine=6619167;
- //BA.debugLineNum = 6619167;BA.debugLine="End Sub";
+RDebugUtils.currentLine=6619168;
+ //BA.debugLineNum = 6619168;BA.debugLine="End Sub";
 return "";
 }
 public String  _resetaudiooutputerrorstate(b4j.example.b4xmainpage __ref) throws Exception{
@@ -573,6 +573,32 @@ RDebugUtils.currentLine=6553610;
  //BA.debugLineNum = 6553610;BA.debugLine="End Sub";
 return "";
 }
+public String  _buildplannedendtracedetails(b4j.example.b4xmainpage __ref,String _audiokey,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "buildplannedendtracedetails", false))
+	 {return ((String) Debug.delegate(ba, "buildplannedendtracedetails", new Object[] {_audiokey,_item}));}
+long _durationms = 0L;
+long _plannedendticks = 0L;
+RDebugUtils.currentLine=67829760;
+ //BA.debugLineNum = 67829760;BA.debugLine="Private Sub BuildPlannedEndTraceDetails(audioKey A";
+RDebugUtils.currentLine=67829761;
+ //BA.debugLineNum = 67829761;BA.debugLine="Dim durationMs As Long = ResolvePlannedDurationMs";
+_durationms = __ref._resolveplanneddurationms /*long*/ (null,_audiokey,_item);
+RDebugUtils.currentLine=67829762;
+ //BA.debugLineNum = 67829762;BA.debugLine="If durationMs <= 0 Then Return \"\"";
+if (_durationms<=0) { 
+if (true) return "";};
+RDebugUtils.currentLine=67829763;
+ //BA.debugLineNum = 67829763;BA.debugLine="Dim plannedEndTicks As Long = DateTime.Now + dura";
+_plannedendticks = (long) (__c.DateTime.getNow()+_durationms);
+RDebugUtils.currentLine=67829764;
+ //BA.debugLineNum = 67829764;BA.debugLine="Return \"durationMs=\" & durationMs & \" plannedEnd=";
+if (true) return "durationMs="+BA.NumberToString(_durationms)+" plannedEnd="+__ref._formattickstimefortrace /*String*/ (null,_plannedendticks);
+RDebugUtils.currentLine=67829765;
+ //BA.debugLineNum = 67829765;BA.debugLine="End Sub";
+return "";
+}
 public String  _tracelog(b4j.example.b4xmainpage __ref,String _message) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -581,18 +607,10 @@ if (Debug.shouldDelegate(ba, "tracelog", false))
 RDebugUtils.currentLine=13631488;
  //BA.debugLineNum = 13631488;BA.debugLine="Public Sub TraceLog(message As String)";
 RDebugUtils.currentLine=13631489;
- //BA.debugLineNum = 13631489;BA.debugLine="If message = \"\" Then Return";
-if ((_message).equals("")) { 
-if (true) return "";};
+ //BA.debugLineNum = 13631489;BA.debugLine="traceRouter.TraceLog(message)";
+__ref._tracerouter /*b4j.example.playbacktracerouter*/ ._tracelog /*String*/ (null,_message);
 RDebugUtils.currentLine=13631490;
- //BA.debugLineNum = 13631490;BA.debugLine="If HandleDiagnosticTraceMessage(message) Then Ret";
-if (__ref._handlediagnostictracemessage /*boolean*/ (null,_message)) { 
-if (true) return "";};
-RDebugUtils.currentLine=13631491;
- //BA.debugLineNum = 13631491;BA.debugLine="TraceDebug(message)";
-__ref._tracedebug /*String*/ (null,_message);
-RDebugUtils.currentLine=13631492;
- //BA.debugLineNum = 13631492;BA.debugLine="End Sub";
+ //BA.debugLineNum = 13631490;BA.debugLine="End Sub";
 return "";
 }
 public String  _describeitem(b4j.example.b4xmainpage __ref,Object _itemobj) throws Exception{
@@ -664,8 +682,8 @@ if (Debug.shouldDelegate(ba, "traceinfo", false))
 RDebugUtils.currentLine=58261504;
  //BA.debugLineNum = 58261504;BA.debugLine="Private Sub TraceInfo(category As String, message";
 RDebugUtils.currentLine=58261505;
- //BA.debugLineNum = 58261505;BA.debugLine="WriteTraceEntry(\"INFO\", category, message, detail";
-__ref._writetraceentry /*String*/ (null,"INFO",_category,_message,_details);
+ //BA.debugLineNum = 58261505;BA.debugLine="traceRouter.TraceInfo(category, message, details)";
+__ref._tracerouter /*b4j.example.playbacktracerouter*/ ._traceinfo /*String*/ (null,_category,_message,_details);
 RDebugUtils.currentLine=58261506;
  //BA.debugLineNum = 58261506;BA.debugLine="End Sub";
 return "";
@@ -903,17 +921,10 @@ if (Debug.shouldDelegate(ba, "resetretrydelay", false))
 RDebugUtils.currentLine=10485760;
  //BA.debugLineNum = 10485760;BA.debugLine="Private Sub ResetRetryDelay";
 RDebugUtils.currentLine=10485761;
- //BA.debugLineNum = 10485761;BA.debugLine="retryFallbackState.ResetRetryDelays(LOCAL_RETRY_D";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._resetretrydelays /*String*/ (null,__ref._local_retry_delay_initial /*int*/ ,__ref._server_retry_delay_initial /*int*/ );
+ //BA.debugLineNum = 10485761;BA.debugLine="playerDataCoordinator.ResetRetryDelay(LOCAL_RETRY";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._resetretrydelay /*String*/ (null,__ref._local_retry_delay_initial /*int*/ ,__ref._server_retry_delay_initial /*int*/ );
 RDebugUtils.currentLine=10485762;
- //BA.debugLineNum = 10485762;BA.debugLine="If consecutiveNetworkErrors > 0 Then TraceInfo(\"n";
-if (__ref._consecutivenetworkerrors /*int*/ >0) { 
-__ref._traceinfo /*String*/ (null,"network","retry сброшен","errors="+BA.NumberToString(__ref._consecutivenetworkerrors /*int*/ ));};
-RDebugUtils.currentLine=10485763;
- //BA.debugLineNum = 10485763;BA.debugLine="consecutiveNetworkErrors = 0";
-__ref._consecutivenetworkerrors /*int*/  = (int) (0);
-RDebugUtils.currentLine=10485764;
- //BA.debugLineNum = 10485764;BA.debugLine="End Sub";
+ //BA.debugLineNum = 10485762;BA.debugLine="End Sub";
 return "";
 }
 public String  _requestdeferredpoststarttasks(b4j.example.b4xmainpage __ref) throws Exception{
@@ -1221,66 +1232,6 @@ RDebugUtils.currentLine=60358662;
  //BA.debugLineNum = 60358662;BA.debugLine="End Sub";
 return "";
 }
-public String  _addcountpart(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.List _parts,String _details,String _key,String _label) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "addcountpart", false))
-	 {return ((String) Debug.delegate(ba, "addcountpart", new Object[] {_parts,_details,_key,_label}));}
-String _value = "";
-RDebugUtils.currentLine=61276160;
- //BA.debugLineNum = 61276160;BA.debugLine="Private Sub AddCountPart(parts As List, details As";
-RDebugUtils.currentLine=61276161;
- //BA.debugLineNum = 61276161;BA.debugLine="Dim value As String = ExtractDetailValue(details,";
-_value = __ref._extractdetailvalue /*String*/ (null,_details,_key);
-RDebugUtils.currentLine=61276162;
- //BA.debugLineNum = 61276162;BA.debugLine="If value = \"\" Then Return";
-if ((_value).equals("")) { 
-if (true) return "";};
-RDebugUtils.currentLine=61276163;
- //BA.debugLineNum = 61276163;BA.debugLine="parts.Add(label & \" \" & value)";
-_parts.Add((Object)(_label+" "+_value));
-RDebugUtils.currentLine=61276164;
- //BA.debugLineNum = 61276164;BA.debugLine="End Sub";
-return "";
-}
-public String  _extractdetailvalue(b4j.example.b4xmainpage __ref,String _details,String _key) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "extractdetailvalue", false))
-	 {return ((String) Debug.delegate(ba, "extractdetailvalue", new Object[] {_details,_key}));}
-String _marker = "";
-int _startindex = 0;
-String _value = "";
-int _nextspace = 0;
-RDebugUtils.currentLine=61472768;
- //BA.debugLineNum = 61472768;BA.debugLine="Private Sub ExtractDetailValue(details As String,";
-RDebugUtils.currentLine=61472769;
- //BA.debugLineNum = 61472769;BA.debugLine="Dim marker As String = key & \"=\"";
-_marker = _key+"=";
-RDebugUtils.currentLine=61472770;
- //BA.debugLineNum = 61472770;BA.debugLine="Dim startIndex As Int = details.IndexOf(marker)";
-_startindex = _details.indexOf(_marker);
-RDebugUtils.currentLine=61472771;
- //BA.debugLineNum = 61472771;BA.debugLine="If startIndex < 0 Then Return \"\"";
-if (_startindex<0) { 
-if (true) return "";};
-RDebugUtils.currentLine=61472772;
- //BA.debugLineNum = 61472772;BA.debugLine="Dim value As String = details.SubString(startInde";
-_value = _details.substring((int) (_startindex+_marker.length())).trim();
-RDebugUtils.currentLine=61472773;
- //BA.debugLineNum = 61472773;BA.debugLine="Dim nextSpace As Int = value.IndexOf(\" \")";
-_nextspace = _value.indexOf(" ");
-RDebugUtils.currentLine=61472774;
- //BA.debugLineNum = 61472774;BA.debugLine="If nextSpace >= 0 Then value = value.SubString2(0";
-if (_nextspace>=0) { 
-_value = _value.substring((int) (0),_nextspace);};
-RDebugUtils.currentLine=61472775;
- //BA.debugLineNum = 61472775;BA.debugLine="Return value.Trim";
-if (true) return _value.trim();
-RDebugUtils.currentLine=61472776;
- //BA.debugLineNum = 61472776;BA.debugLine="End Sub";
-return "";
-}
 public String  _addprotectedtrackid(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _protectedids,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -1316,61 +1267,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "allowregularadsattargetminute", false))
 	 {return ((Boolean) Debug.delegate(ba, "allowregularadsattargetminute", new Object[] {_targetminutetimestamp}));}
-long _targetticks = 0L;
-anywheresoftware.b4a.objects.collections.Map _targetslot = null;
 RDebugUtils.currentLine=9502720;
  //BA.debugLineNum = 9502720;BA.debugLine="Private Sub AllowRegularAdsAtTargetMinute(targetMi";
 RDebugUtils.currentLine=9502721;
- //BA.debugLineNum = 9502721;BA.debugLine="If offlineData.IsInitialized = False Then Return";
-if (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()==__c.False) { 
-if (true) return __c.False;};
+ //BA.debugLineNum = 9502721;BA.debugLine="Return playerDataCoordinator.AllowRegularAdsAtTar";
+if (true) return __ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._allowregularadsattargetminute /*boolean*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null),_targetminutetimestamp);
 RDebugUtils.currentLine=9502722;
- //BA.debugLineNum = 9502722;BA.debugLine="Dim targetTicks As Long = targetMinuteTimestamp *";
-_targetticks = (long) (_targetminutetimestamp*1000);
-RDebugUtils.currentLine=9502723;
- //BA.debugLineNum = 9502723;BA.debugLine="Dim targetSlot As Map = dataResolver.ResolveDataS";
-_targetslot = new anywheresoftware.b4a.objects.collections.Map();
-_targetslot = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._resolvedataslotatticks /*anywheresoftware.b4a.objects.collections.Map*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ,_targetticks);
-RDebugUtils.currentLine=9502724;
- //BA.debugLineNum = 9502724;BA.debugLine="Return IsIdleSlot(targetSlot) = False";
-if (true) return __ref._isidleslot /*boolean*/ (null,_targetslot)==__c.False;
-RDebugUtils.currentLine=9502725;
- //BA.debugLineNum = 9502725;BA.debugLine="End Sub";
-return false;
-}
-public boolean  _isidleslot(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _slotcontext) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "isidleslot", false))
-	 {return ((Boolean) Debug.delegate(ba, "isidleslot", new Object[] {_slotcontext}));}
-anywheresoftware.b4a.objects.collections.List _playlists = null;
-String _streamid = "";
-String _streamtitle = "";
-RDebugUtils.currentLine=9437184;
- //BA.debugLineNum = 9437184;BA.debugLine="Private Sub IsIdleSlot(slotContext As Map) As Bool";
-RDebugUtils.currentLine=9437185;
- //BA.debugLineNum = 9437185;BA.debugLine="If slotContext.IsInitialized = False Or slotConte";
-if (_slotcontext.IsInitialized()==__c.False || _slotcontext.getSize()==0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=9437186;
- //BA.debugLineNum = 9437186;BA.debugLine="Dim playlists As List = slotContext.GetDefault(\"p";
-_playlists = new anywheresoftware.b4a.objects.collections.List();
-_playlists = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_slotcontext.GetDefault((Object)("playlists"),__c.Null)));
-RDebugUtils.currentLine=9437187;
- //BA.debugLineNum = 9437187;BA.debugLine="If playlists.IsInitialized And playlists.Size > 0";
-if (_playlists.IsInitialized() && _playlists.getSize()>0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=9437188;
- //BA.debugLineNum = 9437188;BA.debugLine="Dim streamId As String = slotContext.GetDefault(\"";
-_streamid = BA.ObjectToString(_slotcontext.GetDefault((Object)("stream_id"),(Object)("")));
-RDebugUtils.currentLine=9437189;
- //BA.debugLineNum = 9437189;BA.debugLine="Dim streamTitle As String = slotContext.GetDefaul";
-_streamtitle = BA.ObjectToString(_slotcontext.GetDefault((Object)("stream_title"),(Object)("")));
-RDebugUtils.currentLine=9437190;
- //BA.debugLineNum = 9437190;BA.debugLine="Return streamId = \"\" And streamTitle = \"\"";
-if (true) return (_streamid).equals("") && (_streamtitle).equals("");
-RDebugUtils.currentLine=9437191;
- //BA.debugLineNum = 9437191;BA.debugLine="End Sub";
+ //BA.debugLineNum = 9502722;BA.debugLine="End Sub";
 return false;
 }
 public String  _appendhistoryrecord(b4j.example.b4xmainpage __ref,String _recorddate,anywheresoftware.b4a.objects.collections.Map _record) throws Exception{
@@ -1468,92 +1371,6 @@ RDebugUtils.currentLine=12255234;
  //BA.debugLineNum = 12255234;BA.debugLine="End Sub";
 return "";
 }
-public String  _appendrecentdebugcontext(b4j.example.b4xmainpage __ref,String _title) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "appendrecentdebugcontext", false))
-	 {return ((String) Debug.delegate(ba, "appendrecentdebugcontext", new Object[] {_title}));}
-anywheresoftware.b4a.objects.collections.List _debuglines = null;
-String _debugline = "";
-RDebugUtils.currentLine=61669376;
- //BA.debugLineNum = 61669376;BA.debugLine="Private Sub AppendRecentDebugContext(title As Stri";
-RDebugUtils.currentLine=61669377;
- //BA.debugLineNum = 61669377;BA.debugLine="Dim debugLines As List = appTraceService.GetRecen";
-_debuglines = new anywheresoftware.b4a.objects.collections.List();
-_debuglines = __ref._apptraceservice /*b4j.example.traceservice*/ ._getrecentdebuglist /*anywheresoftware.b4a.objects.collections.List*/ (null,__ref._trace_error_debug_context_lines /*int*/ );
-RDebugUtils.currentLine=61669378;
- //BA.debugLineNum = 61669378;BA.debugLine="If debugLines.IsInitialized = False Or debugLines";
-if (_debuglines.IsInitialized()==__c.False || _debuglines.getSize()==0) { 
-if (true) return "";};
-RDebugUtils.currentLine=61669379;
- //BA.debugLineNum = 61669379;BA.debugLine="WriteTraceEntry(\"DEBUG\", \"debug\", title, \"\")";
-__ref._writetraceentry /*String*/ (null,"DEBUG","debug",_title,"");
-RDebugUtils.currentLine=61669380;
- //BA.debugLineNum = 61669380;BA.debugLine="For Each debugLine As String In debugLines";
-{
-final anywheresoftware.b4a.BA.IterableList group4 = _debuglines;
-final int groupLen4 = group4.getSize()
-;int index4 = 0;
-;
-for (; index4 < groupLen4;index4++){
-_debugline = BA.ObjectToString(group4.Get(index4));
-RDebugUtils.currentLine=61669381;
- //BA.debugLineNum = 61669381;BA.debugLine="appTraceService.Trace(\"DEBUG \" & TrimDebugContex";
-__ref._apptraceservice /*b4j.example.traceservice*/ ._trace /*String*/ (null,"DEBUG "+__ref._trimdebugcontextline /*String*/ (null,_debugline));
- }
-};
-RDebugUtils.currentLine=61669383;
- //BA.debugLineNum = 61669383;BA.debugLine="End Sub";
-return "";
-}
-public String  _writetraceentry(b4j.example.b4xmainpage __ref,String _level,String _category,String _message,String _details) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "writetraceentry", false))
-	 {return ((String) Debug.delegate(ba, "writetraceentry", new Object[] {_level,_category,_message,_details}));}
-String _line = "";
-RDebugUtils.currentLine=58523648;
- //BA.debugLineNum = 58523648;BA.debugLine="Private Sub WriteTraceEntry(level As String, categ";
-RDebugUtils.currentLine=58523649;
- //BA.debugLineNum = 58523649;BA.debugLine="Dim line As String = level & \" \" & BuildHumanTrac";
-_line = _level+" "+__ref._buildhumantracemessage /*String*/ (null,_category,_message,_details.trim());
-RDebugUtils.currentLine=58523650;
- //BA.debugLineNum = 58523650;BA.debugLine="appTraceService.Trace(line)";
-__ref._apptraceservice /*b4j.example.traceservice*/ ._trace /*String*/ (null,_line);
-RDebugUtils.currentLine=58523651;
- //BA.debugLineNum = 58523651;BA.debugLine="End Sub";
-return "";
-}
-public String  _trimdebugcontextline(b4j.example.b4xmainpage __ref,String _debugline) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "trimdebugcontextline", false))
-	 {return ((String) Debug.delegate(ba, "trimdebugcontextline", new Object[] {_debugline}));}
-String _marker = "";
-int _markerindex = 0;
-RDebugUtils.currentLine=61734912;
- //BA.debugLineNum = 61734912;BA.debugLine="Private Sub TrimDebugContextLine(debugLine As Stri";
-RDebugUtils.currentLine=61734913;
- //BA.debugLineNum = 61734913;BA.debugLine="If debugLine = \"\" Then Return \"\"";
-if ((_debugline).equals("")) { 
-if (true) return "";};
-RDebugUtils.currentLine=61734914;
- //BA.debugLineNum = 61734914;BA.debugLine="Dim marker As String = \" DEBUG \"";
-_marker = " DEBUG ";
-RDebugUtils.currentLine=61734915;
- //BA.debugLineNum = 61734915;BA.debugLine="Dim markerIndex As Int = debugLine.IndexOf(marker";
-_markerindex = _debugline.indexOf(_marker);
-RDebugUtils.currentLine=61734916;
- //BA.debugLineNum = 61734916;BA.debugLine="If markerIndex < 0 Then Return debugLine";
-if (_markerindex<0) { 
-if (true) return _debugline;};
-RDebugUtils.currentLine=61734917;
- //BA.debugLineNum = 61734917;BA.debugLine="Return debugLine.SubString(markerIndex + marker.L";
-if (true) return _debugline.substring((int) (_markerindex+_marker.length())).trim();
-RDebugUtils.currentLine=61734918;
- //BA.debugLineNum = 61734918;BA.debugLine="End Sub";
-return "";
-}
 public String  _applyclientrequestheaders(b4j.example.b4xmainpage __ref,b4j.example.httpjob _j) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -1572,76 +1389,6 @@ RDebugUtils.currentLine=67764227;
  //BA.debugLineNum = 67764227;BA.debugLine="End Sub";
 return "";
 }
-public String  _applymaterialiconfont(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.B4XViewWrapper _view,float _fontsize) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "applymaterialiconfont", false))
-	 {return ((String) Debug.delegate(ba, "applymaterialiconfont", new Object[] {_view,_fontsize}));}
-RDebugUtils.currentLine=18481152;
- //BA.debugLineNum = 18481152;BA.debugLine="Private Sub ApplyMaterialIconFont(view As B4XView,";
-RDebugUtils.currentLine=18481153;
- //BA.debugLineNum = 18481153;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, view, fontSize";
-_uistyle._applymaterialiconfont /*String*/ (__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ ,_view,_fontsize);
-RDebugUtils.currentLine=18481154;
- //BA.debugLineNum = 18481154;BA.debugLine="End Sub";
-return "";
-}
-public String  _applyorbitframe(b4j.example.b4xmainpage __ref,int _stepindex) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "applyorbitframe", false))
-	 {return ((String) Debug.delegate(ba, "applyorbitframe", new Object[] {_stepindex}));}
-double _opacity = 0;
-double _basephase = 0;
-double _wave = 0;
-RDebugUtils.currentLine=14483456;
- //BA.debugLineNum = 14483456;BA.debugLine="Private Sub ApplyOrbitFrame(stepIndex As Int)";
-RDebugUtils.currentLine=14483457;
- //BA.debugLineNum = 14483457;BA.debugLine="Dim opacity As Double";
-_opacity = 0;
-RDebugUtils.currentLine=14483458;
- //BA.debugLineNum = 14483458;BA.debugLine="If orbitFadeValue <= 0 Then";
-if (__ref._orbitfadevalue /*double*/ <=0) { 
-RDebugUtils.currentLine=14483459;
- //BA.debugLineNum = 14483459;BA.debugLine="opacity = 0";
-_opacity = 0;
- }else {
-RDebugUtils.currentLine=14483461;
- //BA.debugLineNum = 14483461;BA.debugLine="Dim basePhase As Double = stepIndex / 24";
-_basephase = _stepindex/(double)24;
-RDebugUtils.currentLine=14483462;
- //BA.debugLineNum = 14483462;BA.debugLine="Dim wave As Double = (Sin(basePhase * cPI * 2) +";
-_wave = (__c.Sin(_basephase*__c.cPI*2)+1)/(double)2;
-RDebugUtils.currentLine=14483463;
- //BA.debugLineNum = 14483463;BA.debugLine="opacity = (0.38 + wave * 0.28) * orbitFadeValue";
-_opacity = (0.38+_wave*0.28)*__ref._orbitfadevalue /*double*/ ;
- };
-RDebugUtils.currentLine=14483465;
- //BA.debugLineNum = 14483465;BA.debugLine="ApplyOrbitState(opacity)";
-__ref._applyorbitstate /*String*/ (null,_opacity);
-RDebugUtils.currentLine=14483466;
- //BA.debugLineNum = 14483466;BA.debugLine="End Sub";
-return "";
-}
-public String  _applyorbitstate(b4j.example.b4xmainpage __ref,double _opacity) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "applyorbitstate", false))
-	 {return ((String) Debug.delegate(ba, "applyorbitstate", new Object[] {_opacity}));}
-anywheresoftware.b4j.object.JavaObject _jo = null;
-RDebugUtils.currentLine=14548992;
- //BA.debugLineNum = 14548992;BA.debugLine="Private Sub ApplyOrbitState(opacity As Double)";
-RDebugUtils.currentLine=14548993;
- //BA.debugLineNum = 14548993;BA.debugLine="Dim jo As JavaObject = orbitPane";
-_jo = new anywheresoftware.b4j.object.JavaObject();
-_jo = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(__ref._orbitpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .getObject()));
-RDebugUtils.currentLine=14548994;
- //BA.debugLineNum = 14548994;BA.debugLine="jo.RunMethod(\"setOpacity\", Array As Object(opacit";
-_jo.RunMethod("setOpacity",new Object[]{(Object)(_opacity)});
-RDebugUtils.currentLine=14548995;
- //BA.debugLineNum = 14548995;BA.debugLine="End Sub";
-return "";
-}
 public String  _applystoppedstate(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -1650,27 +1397,10 @@ if (Debug.shouldDelegate(ba, "applystoppedstate", false))
 RDebugUtils.currentLine=14876672;
  //BA.debugLineNum = 14876672;BA.debugLine="Private Sub ApplyStoppedState";
 RDebugUtils.currentLine=14876673;
- //BA.debugLineNum = 14876673;BA.debugLine="ShowStream(MessageValue(\"idle_stream\"))";
-__ref._showstream /*String*/ (null,__ref._messagevalue /*String*/ (null,"idle_stream"));
+ //BA.debugLineNum = 14876673;BA.debugLine="uiController.ApplyStoppedState(MessageValue(\"idle";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._applystoppedstate /*String*/ (null,__ref._messagevalue /*String*/ (null,"idle_stream"));
 RDebugUtils.currentLine=14876674;
- //BA.debugLineNum = 14876674;BA.debugLine="SetStatusText(\"\")";
-__ref._setstatustext /*String*/ (null,"");
-RDebugUtils.currentLine=14876675;
- //BA.debugLineNum = 14876675;BA.debugLine="End Sub";
-return "";
-}
-public String  _showstream(b4j.example.b4xmainpage __ref,String _text) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "showstream", false))
-	 {return ((String) Debug.delegate(ba, "showstream", new Object[] {_text}));}
-RDebugUtils.currentLine=15007744;
- //BA.debugLineNum = 15007744;BA.debugLine="Private Sub ShowStream(text As String)";
-RDebugUtils.currentLine=15007745;
- //BA.debugLineNum = 15007745;BA.debugLine="SetStreamText(text)";
-__ref._setstreamtext /*String*/ (null,_text);
-RDebugUtils.currentLine=15007746;
- //BA.debugLineNum = 15007746;BA.debugLine="End Sub";
+ //BA.debugLineNum = 14876674;BA.debugLine="End Sub";
 return "";
 }
 public String  _messagevalue(b4j.example.b4xmainpage __ref,String _key) throws Exception{
@@ -1685,20 +1415,6 @@ RDebugUtils.currentLine=18284545;
 if (true) return BA.ObjectToString(__ref._messages /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)(_key),(Object)("")));
 RDebugUtils.currentLine=18284546;
  //BA.debugLineNum = 18284546;BA.debugLine="End Sub";
-return "";
-}
-public String  _setstatustext(b4j.example.b4xmainpage __ref,String _text) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "setstatustext", false))
-	 {return ((String) Debug.delegate(ba, "setstatustext", new Object[] {_text}));}
-RDebugUtils.currentLine=15466496;
- //BA.debugLineNum = 15466496;BA.debugLine="Private Sub SetStatusText(text As String)";
-RDebugUtils.currentLine=15466497;
- //BA.debugLineNum = 15466497;BA.debugLine="lblInfo.Text = text";
-__ref._lblinfo /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(_text);
-RDebugUtils.currentLine=15466498;
- //BA.debugLineNum = 15466498;BA.debugLine="End Sub";
 return "";
 }
 public String  _audioplayer_complete(b4j.example.b4xmainpage __ref,String _audiokey) throws Exception{
@@ -2367,7 +2083,7 @@ case 43:
 this.state = 44;
 RDebugUtils.currentLine=2818085;
  //BA.debugLineNum = 2818085;BA.debugLine="PausePlaybackByPolicy(ResolvePlaybackBlockReason";
-__ref._pauseplaybackbypolicy /*String*/ (null,__ref._resolveplaybackblockreason /*String*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ),"server");
+__ref._pauseplaybackbypolicy /*String*/ (null,__ref._resolveplaybackblockreason /*String*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null)),"server");
 RDebugUtils.currentLine=2818086;
  //BA.debugLineNum = 2818086;BA.debugLine="FailStartupSequence(\"playback_not_allowed\")";
 __ref._failstartupsequence /*String*/ (null,"playback_not_allowed");
@@ -2436,22 +2152,25 @@ RDebugUtils.currentLine=1441794;
  //BA.debugLineNum = 1441794;BA.debugLine="isStartupSequenceInProgress = True";
 __ref._isstartupsequenceinprogress /*boolean*/  = __c.True;
 RDebugUtils.currentLine=1441795;
- //BA.debugLineNum = 1441795;BA.debugLine="isAdWarmupDeferredAfterStartup = False";
-__ref._isadwarmupdeferredafterstartup /*boolean*/  = __c.False;
+ //BA.debugLineNum = 1441795;BA.debugLine="stateStore.SetStartupSequenceInProgress(True)";
+__ref._statestore /*b4j.example.playerstatestore*/ ._setstartupsequenceinprogress /*String*/ (null,__c.True);
 RDebugUtils.currentLine=1441796;
- //BA.debugLineNum = 1441796;BA.debugLine="isPostStartTasksDeferredAfterStartup = False";
-__ref._ispoststarttasksdeferredafterstartup /*boolean*/  = __c.False;
+ //BA.debugLineNum = 1441796;BA.debugLine="isAdWarmupDeferredAfterStartup = False";
+__ref._isadwarmupdeferredafterstartup /*boolean*/  = __c.False;
 RDebugUtils.currentLine=1441797;
- //BA.debugLineNum = 1441797;BA.debugLine="retryFallbackState.ClearDispatchRetryAfter";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._cleardispatchretryafter /*String*/ (null);
+ //BA.debugLineNum = 1441797;BA.debugLine="isPostStartTasksDeferredAfterStartup = False";
+__ref._ispoststarttasksdeferredafterstartup /*boolean*/  = __c.False;
 RDebugUtils.currentLine=1441798;
- //BA.debugLineNum = 1441798;BA.debugLine="cacheAuditTimer.Enabled = False";
-__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+ //BA.debugLineNum = 1441798;BA.debugLine="stateStore.ClearDispatchRetryAfter";
+__ref._statestore /*b4j.example.playerstatestore*/ ._cleardispatchretryafter /*String*/ (null);
 RDebugUtils.currentLine=1441799;
- //BA.debugLineNum = 1441799;BA.debugLine="Return True";
-if (true) return __c.True;
+ //BA.debugLineNum = 1441799;BA.debugLine="cacheAuditTimer.Enabled = False";
+__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
 RDebugUtils.currentLine=1441800;
- //BA.debugLineNum = 1441800;BA.debugLine="End Sub";
+ //BA.debugLineNum = 1441800;BA.debugLine="Return True";
+if (true) return __c.True;
+RDebugUtils.currentLine=1441801;
+ //BA.debugLineNum = 1441801;BA.debugLine="End Sub";
 return false;
 }
 public String  _setstopicon(b4j.example.b4xmainpage __ref) throws Exception{
@@ -2462,25 +2181,16 @@ if (Debug.shouldDelegate(ba, "setstopicon", false))
 RDebugUtils.currentLine=14155776;
  //BA.debugLineNum = 14155776;BA.debugLine="Private Sub SetStopIcon";
 RDebugUtils.currentLine=14155777;
- //BA.debugLineNum = 14155777;BA.debugLine="SetLabelStyle(lblPlayIcon, \"-fx-alignment: center";
-__ref._setlabelstyle /*String*/ (null,__ref._lblplayicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-alignment: center; -fx-text-fill: "+__ref._colortocss /*String*/ (null,((int)0xffd0ff71))+"; -fx-padding: 0;");
+ //BA.debugLineNum = 14155777;BA.debugLine="uiController.SetStopIcon";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._setstopicon /*String*/ (null);
 RDebugUtils.currentLine=14155778;
- //BA.debugLineNum = 14155778;BA.debugLine="lblPlayIcon.Text = ICON_STOP";
-__ref._lblplayicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._icon_stop /*String*/ );
+ //BA.debugLineNum = 14155778;BA.debugLine="orbitPulseStep = 0";
+__ref._orbitpulsestep /*int*/  = (int) (0);
 RDebugUtils.currentLine=14155779;
- //BA.debugLineNum = 14155779;BA.debugLine="ApplyMaterialIconFont(lblPlayIcon, stopIconBaseSi";
-__ref._applymaterialiconfont /*String*/ (null,__ref._lblplayicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._stopiconbasesize /*float*/ );
+ //BA.debugLineNum = 14155779;BA.debugLine="orbitTimer.Enabled = True";
+__ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
 RDebugUtils.currentLine=14155780;
- //BA.debugLineNum = 14155780;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
-__ref._orbitpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,__c.DipToCurrent((int) (2)),((int)0x66d0ff71),__c.DipToCurrent((int) (999)));
-RDebugUtils.currentLine=14155781;
- //BA.debugLineNum = 14155781;BA.debugLine="StartOrbitAnimation";
-__ref._startorbitanimation /*String*/ (null);
-RDebugUtils.currentLine=14155782;
- //BA.debugLineNum = 14155782;BA.debugLine="UpdatePlayButtonAppearance(False)";
-__ref._updateplaybuttonappearance /*String*/ (null,__c.False);
-RDebugUtils.currentLine=14155783;
- //BA.debugLineNum = 14155783;BA.debugLine="End Sub";
+ //BA.debugLineNum = 14155780;BA.debugLine="End Sub";
 return "";
 }
 public String  _showmessage(b4j.example.b4xmainpage __ref,String _text) throws Exception{
@@ -2491,13 +2201,10 @@ if (Debug.shouldDelegate(ba, "showmessage", false))
 RDebugUtils.currentLine=15073280;
  //BA.debugLineNum = 15073280;BA.debugLine="Private Sub ShowMessage(text As String)";
 RDebugUtils.currentLine=15073281;
- //BA.debugLineNum = 15073281;BA.debugLine="HideContentBlocks";
-__ref._hidecontentblocks /*String*/ (null);
+ //BA.debugLineNum = 15073281;BA.debugLine="uiController.ShowMessage(text)";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._showmessage /*String*/ (null,_text);
 RDebugUtils.currentLine=15073282;
- //BA.debugLineNum = 15073282;BA.debugLine="SetStatusText(text)";
-__ref._setstatustext /*String*/ (null,_text);
-RDebugUtils.currentLine=15073283;
- //BA.debugLineNum = 15073283;BA.debugLine="End Sub";
+ //BA.debugLineNum = 15073282;BA.debugLine="End Sub";
 return "";
 }
 public String  _updateconnectionindicator(b4j.example.b4xmainpage __ref,String _mode) throws Exception{
@@ -2505,84 +2212,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "updateconnectionindicator", false))
 	 {return ((String) Debug.delegate(ba, "updateconnectionindicator", new Object[] {_mode}));}
-String _icontext = "";
-int _iconcolor = 0;
 RDebugUtils.currentLine=15532032;
  //BA.debugLineNum = 15532032;BA.debugLine="Private Sub UpdateConnectionIndicator(mode As Stri";
 RDebugUtils.currentLine=15532033;
- //BA.debugLineNum = 15532033;BA.debugLine="If lblConnectionIcon.IsInitialized = False Then R";
-if (__ref._lblconnectionicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .IsInitialized()==__c.False) { 
-if (true) return "";};
+ //BA.debugLineNum = 15532033;BA.debugLine="uiController.UpdateConnectionIndicator(mode)";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._updateconnectionindicator /*String*/ (null,_mode);
 RDebugUtils.currentLine=15532034;
- //BA.debugLineNum = 15532034;BA.debugLine="Dim iconText As String = ICON_CLOUD_OK";
-_icontext = __ref._icon_cloud_ok /*String*/ ;
-RDebugUtils.currentLine=15532035;
- //BA.debugLineNum = 15532035;BA.debugLine="Dim iconColor As Int = 0xFF747B86";
-_iconcolor = ((int)0xff747b86);
-RDebugUtils.currentLine=15532036;
- //BA.debugLineNum = 15532036;BA.debugLine="Select mode";
-switch (BA.switchObjectToInt(_mode,"online","offline","server","degraded","connecting")) {
-case 0: {
-RDebugUtils.currentLine=15532038;
- //BA.debugLineNum = 15532038;BA.debugLine="iconText = ICON_CLOUD_OK";
-_icontext = __ref._icon_cloud_ok /*String*/ ;
-RDebugUtils.currentLine=15532039;
- //BA.debugLineNum = 15532039;BA.debugLine="iconColor = 0xFFD0FF71";
-_iconcolor = ((int)0xffd0ff71);
- break; }
-case 1: {
-RDebugUtils.currentLine=15532041;
- //BA.debugLineNum = 15532041;BA.debugLine="iconText = ICON_CLOUD_OFF";
-_icontext = __ref._icon_cloud_off /*String*/ ;
-RDebugUtils.currentLine=15532042;
- //BA.debugLineNum = 15532042;BA.debugLine="iconColor = 0xFFFF6B6B";
-_iconcolor = ((int)0xffff6b6b);
- break; }
-case 2: {
-RDebugUtils.currentLine=15532044;
- //BA.debugLineNum = 15532044;BA.debugLine="iconText = ICON_CLOUD_OFF";
-_icontext = __ref._icon_cloud_off /*String*/ ;
-RDebugUtils.currentLine=15532045;
- //BA.debugLineNum = 15532045;BA.debugLine="iconColor = 0xFFFF6B6B";
-_iconcolor = ((int)0xffff6b6b);
- break; }
-case 3: {
-RDebugUtils.currentLine=15532047;
- //BA.debugLineNum = 15532047;BA.debugLine="iconText = ICON_CLOUD_DEGRADED";
-_icontext = __ref._icon_cloud_degraded /*String*/ ;
-RDebugUtils.currentLine=15532048;
- //BA.debugLineNum = 15532048;BA.debugLine="iconColor = 0xFFFFD166";
-_iconcolor = ((int)0xffffd166);
- break; }
-case 4: {
-RDebugUtils.currentLine=15532050;
- //BA.debugLineNum = 15532050;BA.debugLine="iconText = ICON_CLOUD_OK";
-_icontext = __ref._icon_cloud_ok /*String*/ ;
-RDebugUtils.currentLine=15532051;
- //BA.debugLineNum = 15532051;BA.debugLine="iconColor = 0xFF8E97A3";
-_iconcolor = ((int)0xff8e97a3);
- break; }
-default: {
-RDebugUtils.currentLine=15532053;
- //BA.debugLineNum = 15532053;BA.debugLine="iconText = ICON_CLOUD_OK";
-_icontext = __ref._icon_cloud_ok /*String*/ ;
-RDebugUtils.currentLine=15532054;
- //BA.debugLineNum = 15532054;BA.debugLine="iconColor = 0xFF747B86";
-_iconcolor = ((int)0xff747b86);
- break; }
-}
-;
-RDebugUtils.currentLine=15532056;
- //BA.debugLineNum = 15532056;BA.debugLine="lblConnectionIcon.Text = iconText";
-__ref._lblconnectionicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(_icontext);
-RDebugUtils.currentLine=15532057;
- //BA.debugLineNum = 15532057;BA.debugLine="SetLabelStyle(lblConnectionIcon, \"-fx-alignment:";
-__ref._setlabelstyle /*String*/ (null,__ref._lblconnectionicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-alignment: center; -fx-text-fill: "+__ref._colortocss /*String*/ (null,_iconcolor)+";");
-RDebugUtils.currentLine=15532058;
- //BA.debugLineNum = 15532058;BA.debugLine="ApplyMaterialIconFont(lblConnectionIcon, 16)";
-__ref._applymaterialiconfont /*String*/ (null,__ref._lblconnectionicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,(float) (16));
-RDebugUtils.currentLine=15532059;
- //BA.debugLineNum = 15532059;BA.debugLine="End Sub";
+ //BA.debugLineNum = 15532034;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _refreshofflinedatanow(b4j.example.b4xmainpage __ref) throws Exception{
@@ -2601,10 +2237,7 @@ this.__ref = parent;
 }
 b4j.example.b4xmainpage __ref;
 b4j.example.b4xmainpage parent;
-anywheresoftware.b4a.objects.collections.Map _result = null;
-Object _resultdata = null;
-anywheresoftware.b4a.objects.collections.Map _data = null;
-boolean _unused = false;
+boolean _refreshed = false;
 
 @Override
 public void resume(BA ba, Object[] result) throws Exception{
@@ -2617,427 +2250,23 @@ RDebugUtils.currentModule="b4xmainpage";
 parent.__c.ReturnFromResumableSub(this,null);return;}
 case 0:
 //C
-this.state = 1;
+this.state = -1;
 RDebugUtils.currentLine=2097153;
- //BA.debugLineNum = 2097153;BA.debugLine="If playerCode = \"\" Then Return False";
-if (true) break;
-
+ //BA.debugLineNum = 2097153;BA.debugLine="Wait For (playerDataCoordinator.RefreshOfflineDat";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "refreshofflinedatanow"), __ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._refreshofflinedatanow /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._fetch_timeout_ms /*int*/ ));
+this.state = 1;
+return;
 case 1:
-//if
-this.state = 6;
-if ((__ref._playercode /*String*/ ).equals("")) { 
-this.state = 3;
-;}if (true) break;
-
-case 3:
-//C
-this.state = 6;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 6:
-//C
-this.state = 7;
-;
-RDebugUtils.currentLine=2097154;
- //BA.debugLineNum = 2097154;BA.debugLine="If dataPolicyState.BeginOfflineDataRefresh = Fals";
-if (true) break;
-
-case 7:
-//if
-this.state = 12;
-if (__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._beginofflinedatarefresh /*boolean*/ (null)==parent.__c.False) { 
-this.state = 9;
-;}if (true) break;
-
-case 9:
-//C
-this.state = 12;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 12:
-//C
-this.state = 13;
-;
-RDebugUtils.currentLine=2097155;
- //BA.debugLineNum = 2097155;BA.debugLine="TraceInfo(\"network\", \"запрос данных\", \"\")";
-__ref._traceinfo /*String*/ (null,"network","запрос данных","");
-RDebugUtils.currentLine=2097156;
- //BA.debugLineNum = 2097156;BA.debugLine="Wait For (FetchJsonWithTimeout(DATA_BASE_URL & \"?";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "refreshofflinedatanow"), __ref._fetchjsonwithtimeout /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._data_base_url /*String*/ +"?"+__ref._buildparams /*String*/ (null,__ref._createdataparams /*anywheresoftware.b4a.objects.collections.Map*/ (null)),__ref._fetch_timeout_ms /*int*/ ));
-this.state = 55;
-return;
-case 55:
-//C
-this.state = 13;
-_result = (anywheresoftware.b4a.objects.collections.Map) result[1];
-;
-RDebugUtils.currentLine=2097157;
- //BA.debugLineNum = 2097157;BA.debugLine="If result.GetDefault(\"Success\", False) = False Th";
-if (true) break;
-
-case 13:
-//if
-this.state = 16;
-if ((_result.GetDefault((Object)("Success"),(Object)(parent.__c.False))).equals((Object)(parent.__c.False))) { 
-this.state = 15;
-}if (true) break;
-
-case 15:
-//C
-this.state = 16;
-RDebugUtils.currentLine=2097158;
- //BA.debugLineNum = 2097158;BA.debugLine="consecutiveNetworkErrors = consecutiveNetworkErr";
-__ref._consecutivenetworkerrors /*int*/  = (int) (__ref._consecutivenetworkerrors /*int*/ +1);
-RDebugUtils.currentLine=2097159;
- //BA.debugLineNum = 2097159;BA.debugLine="TraceWarn(\"network\", \"data ошибка\", \"kind=\" & re";
-__ref._tracewarn /*String*/ (null,"network","data ошибка","kind="+BA.ObjectToString(_result.GetDefault((Object)("Kind"),(Object)("")))+" lastDataOkAgoSec="+__ref._secondsagotext /*String*/ (null,__ref._lastdataokat /*long*/ ));
-RDebugUtils.currentLine=2097160;
- //BA.debugLineNum = 2097160;BA.debugLine="dataPolicyState.EndOfflineDataRefresh(\"http_fail";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._endofflinedatarefresh /*String*/ (null,"http_failed");
-RDebugUtils.currentLine=2097161;
- //BA.debugLineNum = 2097161;BA.debugLine="WriteHealthSnapshot(\"ошибка_data\")";
-__ref._writehealthsnapshot /*String*/ (null,"ошибка_data");
-RDebugUtils.currentLine=2097162;
- //BA.debugLineNum = 2097162;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-
-case 16:
-//C
-this.state = 17;
-;
-RDebugUtils.currentLine=2097164;
- //BA.debugLineNum = 2097164;BA.debugLine="Dim resultData As Object = result.Get(\"Data\")";
-_resultdata = _result.Get((Object)("Data"));
-RDebugUtils.currentLine=2097165;
- //BA.debugLineNum = 2097165;BA.debugLine="If resultData Is Map Then";
-if (true) break;
-
-case 17:
-//if
-this.state = 54;
-if (_resultdata instanceof java.util.Map) { 
-this.state = 19;
-}else {
-this.state = 53;
-}if (true) break;
-
-case 19:
-//C
-this.state = 20;
-RDebugUtils.currentLine=2097166;
- //BA.debugLineNum = 2097166;BA.debugLine="Dim data As Map = resultData";
-_data = new anywheresoftware.b4a.objects.collections.Map();
-_data = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_resultdata));
-RDebugUtils.currentLine=2097167;
- //BA.debugLineNum = 2097167;BA.debugLine="If data.GetDefault(\"ok\", False) = True And data.";
-if (true) break;
-
-case 20:
-//if
-this.state = 48;
-if ((_data.GetDefault((Object)("ok"),(Object)(parent.__c.False))).equals((Object)(parent.__c.True)) && (_data.GetDefault((Object)("type"),(Object)(""))).equals((Object)("data"))) { 
-this.state = 22;
-}if (true) break;
-
-case 22:
-//C
-this.state = 23;
-RDebugUtils.currentLine=2097168;
- //BA.debugLineNum = 2097168;BA.debugLine="lastDataOkAt = DateTime.Now";
-__ref._lastdataokat /*long*/  = parent.__c.DateTime.getNow();
-RDebugUtils.currentLine=2097169;
- //BA.debugLineNum = 2097169;BA.debugLine="consecutiveNetworkErrors = 0";
-__ref._consecutivenetworkerrors /*int*/  = (int) (0);
-RDebugUtils.currentLine=2097170;
- //BA.debugLineNum = 2097170;BA.debugLine="dataPolicyState.LastOfflineDataRefreshState = \"";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._lastofflinedatarefreshstate /*String*/  = "data";
-RDebugUtils.currentLine=2097171;
- //BA.debugLineNum = 2097171;BA.debugLine="UpdateTrustedOnlineTimeFromData(data)";
-__ref._updatetrustedonlinetimefromdata /*String*/ (null,_data);
-RDebugUtils.currentLine=2097172;
- //BA.debugLineNum = 2097172;BA.debugLine="offlineData = offlineStoreService.SaveOfflineDa";
-__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/  = __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._saveofflinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null,_data,__ref._playercode /*String*/ ,__ref._deviceid /*String*/ );
-RDebugUtils.currentLine=2097173;
- //BA.debugLineNum = 2097173;BA.debugLine="If IsTraceUploadEnabled Then FlushTraceBufferAs";
-if (true) break;
-
-case 23:
-//if
-this.state = 28;
-if (__ref._istraceuploadenabled /*boolean*/ (null)) { 
-this.state = 25;
-;}if (true) break;
-
-case 25:
-//C
-this.state = 28;
-__ref._flushtracebufferasync /*void*/ (null);
-if (true) break;
-
-case 28:
-//C
-this.state = 29;
-;
-RDebugUtils.currentLine=2097174;
- //BA.debugLineNum = 2097174;BA.debugLine="InvalidateRelevantTrackIdsCache";
-__ref._invalidaterelevanttrackidscache /*String*/ (null);
-RDebugUtils.currentLine=2097175;
- //BA.debugLineNum = 2097175;BA.debugLine="dataPolicyState.SetRemoteDataReady";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._setremotedataready /*String*/ (null);
-RDebugUtils.currentLine=2097176;
- //BA.debugLineNum = 2097176;BA.debugLine="RefreshConnectionIndicatorState";
-__ref._refreshconnectionindicatorstate /*String*/ (null);
-RDebugUtils.currentLine=2097177;
- //BA.debugLineNum = 2097177;BA.debugLine="TraceInfo(\"network\", \"data загружены\", \"trace=\"";
-__ref._traceinfo /*String*/ (null,"network","data загружены","trace="+BA.ObjectToString(__ref._istraceuploadenabled /*boolean*/ (null)));
-RDebugUtils.currentLine=2097178;
- //BA.debugLineNum = 2097178;BA.debugLine="WriteHealthSnapshot(\"data\")";
-__ref._writehealthsnapshot /*String*/ (null,"data");
-RDebugUtils.currentLine=2097179;
- //BA.debugLineNum = 2097179;BA.debugLine="Wait For (SyncOfflinePlaylistMetadata) Complete";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "refreshofflinedatanow"), __ref._syncofflineplaylistmetadata /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 56;
-return;
-case 56:
-//C
-this.state = 29;
-_unused = (boolean) result[1];
-;
-RDebugUtils.currentLine=2097180;
- //BA.debugLineNum = 2097180;BA.debugLine="If isStartupSequenceInProgress Then";
-if (true) break;
-
-case 29:
-//if
-this.state = 34;
-if (__ref._isstartupsequenceinprogress /*boolean*/ ) { 
-this.state = 31;
-}else {
-this.state = 33;
-}if (true) break;
-
-case 31:
-//C
-this.state = 34;
-RDebugUtils.currentLine=2097181;
- //BA.debugLineNum = 2097181;BA.debugLine="isAdWarmupDeferredAfterStartup = True";
-__ref._isadwarmupdeferredafterstartup /*boolean*/  = parent.__c.True;
- if (true) break;
-
-case 33:
-//C
-this.state = 34;
-RDebugUtils.currentLine=2097183;
- //BA.debugLineNum = 2097183;BA.debugLine="EnsureAdCacheSyncAsync";
-__ref._ensureadcachesyncasync /*void*/ (null);
- if (true) break;
-;
-RDebugUtils.currentLine=2097185;
- //BA.debugLineNum = 2097185;BA.debugLine="If IsPlaybackAllowedByCurrentData = False Then";
-
-case 34:
-//if
-this.state = 37;
-if (__ref._isplaybackallowedbycurrentdata /*boolean*/ (null)==parent.__c.False) { 
-this.state = 36;
-}if (true) break;
-
-case 36:
-//C
-this.state = 37;
-RDebugUtils.currentLine=2097186;
- //BA.debugLineNum = 2097186;BA.debugLine="PausePlaybackByPolicy(ResolvePlaybackBlockReas";
-__ref._pauseplaybackbypolicy /*String*/ (null,__ref._resolveplaybackblockreason /*String*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ),"server");
-RDebugUtils.currentLine=2097187;
- //BA.debugLineNum = 2097187;BA.debugLine="dataPolicyState.EndOfflineDataRefresh(\"data\")";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._endofflinedatarefresh /*String*/ (null,"data");
-RDebugUtils.currentLine=2097188;
- //BA.debugLineNum = 2097188;BA.debugLine="Return True";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
- if (true) break;
-;
-RDebugUtils.currentLine=2097190;
- //BA.debugLineNum = 2097190;BA.debugLine="If dataPolicyState.ResumePlaybackWhenServerAllo";
-
-case 37:
-//if
-this.state = 40;
-if (__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._resumeplaybackwhenserverallows /*boolean*/  && __ref._shouldresumewithnewstart /*boolean*/ (null)==parent.__c.False && __ref._isuserstoppedstate /*boolean*/ (null)==parent.__c.False && __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstopping /*boolean*/ ==parent.__c.False) { 
-this.state = 39;
-}if (true) break;
-
-case 39:
-//C
-this.state = 40;
-RDebugUtils.currentLine=2097191;
- //BA.debugLineNum = 2097191;BA.debugLine="TraceLog(\"policy resume авто mode=server_allow";
-__ref._tracelog /*String*/ (null,"policy resume авто mode=server_allow");
-RDebugUtils.currentLine=2097192;
- //BA.debugLineNum = 2097192;BA.debugLine="dataPolicyState.ResumePlaybackWhenServerAllows";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._resumeplaybackwhenserverallows /*boolean*/  = parent.__c.False;
-RDebugUtils.currentLine=2097193;
- //BA.debugLineNum = 2097193;BA.debugLine="orchestrationState.EnterStartedState";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enterstartedstate /*String*/ (null);
-RDebugUtils.currentLine=2097194;
- //BA.debugLineNum = 2097194;BA.debugLine="SetStopIcon";
-__ref._setstopicon /*String*/ (null);
-RDebugUtils.currentLine=2097195;
- //BA.debugLineNum = 2097195;BA.debugLine="HideContentBlocks";
-__ref._hidecontentblocks /*String*/ (null);
-RDebugUtils.currentLine=2097196;
- //BA.debugLineNum = 2097196;BA.debugLine="ResumePlaybackAfterPolicyPause";
-__ref._resumeplaybackafterpolicypause /*void*/ (null);
- if (true) break;
-;
-RDebugUtils.currentLine=2097198;
- //BA.debugLineNum = 2097198;BA.debugLine="If IsPolicyPauseState Then";
-
-case 40:
-//if
-this.state = 47;
-if (__ref._ispolicypausestate /*boolean*/ (null)) { 
-this.state = 42;
-}if (true) break;
-
-case 42:
-//C
-this.state = 43;
-RDebugUtils.currentLine=2097199;
- //BA.debugLineNum = 2097199;BA.debugLine="dataPolicyState.ClearPolicyPause";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._clearpolicypause /*String*/ (null);
-RDebugUtils.currentLine=2097200;
- //BA.debugLineNum = 2097200;BA.debugLine="If IsUserStoppedState = False And orchestratio";
-if (true) break;
-
-case 43:
-//if
-this.state = 46;
-if (__ref._isuserstoppedstate /*boolean*/ (null)==parent.__c.False && __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ ==parent.__c.False && __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstopping /*boolean*/ ==parent.__c.False) { 
-this.state = 45;
-}if (true) break;
-
-case 45:
-//C
-this.state = 46;
-RDebugUtils.currentLine=2097201;
- //BA.debugLineNum = 2097201;BA.debugLine="TraceLog(\"policy resume авто mode=policy_paus";
-__ref._tracelog /*String*/ (null,"policy resume авто mode=policy_pause_clear");
-RDebugUtils.currentLine=2097202;
- //BA.debugLineNum = 2097202;BA.debugLine="orchestrationState.EnterStartedState";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enterstartedstate /*String*/ (null);
-RDebugUtils.currentLine=2097203;
- //BA.debugLineNum = 2097203;BA.debugLine="SetStopIcon";
-__ref._setstopicon /*String*/ (null);
-RDebugUtils.currentLine=2097204;
- //BA.debugLineNum = 2097204;BA.debugLine="HideContentBlocks";
-__ref._hidecontentblocks /*String*/ (null);
-RDebugUtils.currentLine=2097205;
- //BA.debugLineNum = 2097205;BA.debugLine="ResumePlaybackAfterPolicyPause";
-__ref._resumeplaybackafterpolicypause /*void*/ (null);
- if (true) break;
-
-case 46:
-//C
-this.state = 47;
-;
- if (true) break;
-
-case 47:
-//C
-this.state = 48;
-;
-RDebugUtils.currentLine=2097208;
- //BA.debugLineNum = 2097208;BA.debugLine="dataPolicyState.EndOfflineDataRefresh(\"data\")";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._endofflinedatarefresh /*String*/ (null,"data");
-RDebugUtils.currentLine=2097209;
- //BA.debugLineNum = 2097209;BA.debugLine="Return True";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
- if (true) break;
-;
-RDebugUtils.currentLine=2097211;
- //BA.debugLineNum = 2097211;BA.debugLine="If data.GetDefault(\"type\", \"\") = \"message\" Then";
-
-case 48:
-//if
-this.state = 51;
-if ((_data.GetDefault((Object)("type"),(Object)(""))).equals((Object)("message"))) { 
-this.state = 50;
-}if (true) break;
-
-case 50:
-//C
-this.state = 51;
-RDebugUtils.currentLine=2097212;
- //BA.debugLineNum = 2097212;BA.debugLine="dataPolicyState.LastOfflineDataRefreshState = \"";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._lastofflinedatarefreshstate /*String*/  = "message";
-RDebugUtils.currentLine=2097213;
- //BA.debugLineNum = 2097213;BA.debugLine="TraceWarn(\"network\", \"data сообщение\", \"action=";
-__ref._tracewarn /*String*/ (null,"network","data сообщение","action="+BA.ObjectToString(_data.GetDefault((Object)("action"),(Object)("")))+" reason="+BA.ObjectToString(_data.GetDefault((Object)("reason"),(Object)(""))));
-RDebugUtils.currentLine=2097214;
- //BA.debugLineNum = 2097214;BA.debugLine="HandleMessageItem(data)";
-__ref._handlemessageitem /*String*/ (null,_data);
-RDebugUtils.currentLine=2097215;
- //BA.debugLineNum = 2097215;BA.debugLine="dataPolicyState.EndOfflineDataRefresh(\"message\"";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._endofflinedatarefresh /*String*/ (null,"message");
-RDebugUtils.currentLine=2097216;
- //BA.debugLineNum = 2097216;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-
-case 51:
-//C
-this.state = 54;
-;
-RDebugUtils.currentLine=2097218;
- //BA.debugLineNum = 2097218;BA.debugLine="dataPolicyState.LastOfflineDataRefreshState = \"i";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._lastofflinedatarefreshstate /*String*/  = "invalid_data";
-RDebugUtils.currentLine=2097219;
- //BA.debugLineNum = 2097219;BA.debugLine="TraceWarn(\"network\", \"data некорректны\", \"type=\"";
-__ref._tracewarn /*String*/ (null,"network","data некорректны","type="+BA.ObjectToString(_data.GetDefault((Object)("type"),(Object)("")))+" ok="+BA.ObjectToString(_data.GetDefault((Object)("ok"),(Object)(parent.__c.False))));
-RDebugUtils.currentLine=2097220;
- //BA.debugLineNum = 2097220;BA.debugLine="PausePlaybackByPolicy(MessageValue(\"invalid_data";
-__ref._pauseplaybackbypolicy /*String*/ (null,__ref._messagevalue /*String*/ (null,"invalid_data_response"),"server");
- if (true) break;
-
-case 53:
-//C
-this.state = 54;
-RDebugUtils.currentLine=2097222;
- //BA.debugLineNum = 2097222;BA.debugLine="dataPolicyState.LastOfflineDataRefreshState = \"i";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._lastofflinedatarefreshstate /*String*/  = "invalid_payload";
-RDebugUtils.currentLine=2097223;
- //BA.debugLineNum = 2097223;BA.debugLine="TraceWarn(\"network\", \"data некорректны\", \"payloa";
-__ref._tracewarn /*String*/ (null,"network","data некорректны","payload=not_map");
-RDebugUtils.currentLine=2097224;
- //BA.debugLineNum = 2097224;BA.debugLine="PausePlaybackByPolicy(MessageValue(\"invalid_data";
-__ref._pauseplaybackbypolicy /*String*/ (null,__ref._messagevalue /*String*/ (null,"invalid_data_response"),"server");
- if (true) break;
-
-case 54:
 //C
 this.state = -1;
+_refreshed = (boolean) result[1];
 ;
-RDebugUtils.currentLine=2097226;
- //BA.debugLineNum = 2097226;BA.debugLine="dataPolicyState.EndOfflineDataRefresh(dataPolicyS";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._endofflinedatarefresh /*String*/ (null,__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._lastofflinedatarefreshstate /*String*/ );
-RDebugUtils.currentLine=2097227;
- //BA.debugLineNum = 2097227;BA.debugLine="WriteHealthSnapshot(\"ошибка_data\")";
-__ref._writehealthsnapshot /*String*/ (null,"ошибка_data");
-RDebugUtils.currentLine=2097228;
- //BA.debugLineNum = 2097228;BA.debugLine="Return False";
+RDebugUtils.currentLine=2097154;
+ //BA.debugLineNum = 2097154;BA.debugLine="Return refreshed";
 if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-RDebugUtils.currentLine=2097229;
- //BA.debugLineNum = 2097229;BA.debugLine="End Sub";
+parent.__c.ReturnFromResumableSub(this,(Object)(_refreshed));return;};
+RDebugUtils.currentLine=2097155;
+ //BA.debugLineNum = 2097155;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -3062,19 +2291,22 @@ RDebugUtils.currentLine=1835011;
  //BA.debugLineNum = 1835011;BA.debugLine="isStartupSequenceInProgress = False";
 __ref._isstartupsequenceinprogress /*boolean*/  = __c.False;
 RDebugUtils.currentLine=1835012;
- //BA.debugLineNum = 1835012;BA.debugLine="cacheAuditTimer.Interval = CACHE_AUDIT_START_DELA";
-__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setInterval((long) (__ref._cache_audit_start_delay_ms /*int*/ ));
+ //BA.debugLineNum = 1835012;BA.debugLine="stateStore.SetStartupSequenceInProgress(False)";
+__ref._statestore /*b4j.example.playerstatestore*/ ._setstartupsequenceinprogress /*String*/ (null,__c.False);
 RDebugUtils.currentLine=1835013;
- //BA.debugLineNum = 1835013;BA.debugLine="cacheAuditTimer.Enabled = True";
-__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
+ //BA.debugLineNum = 1835013;BA.debugLine="cacheAuditTimer.Interval = CACHE_AUDIT_START_DELA";
+__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setInterval((long) (__ref._cache_audit_start_delay_ms /*int*/ ));
 RDebugUtils.currentLine=1835014;
- //BA.debugLineNum = 1835014;BA.debugLine="TraceWarn(\"player\", \"старт не завершен\", \"reason=";
-__ref._tracewarn /*String*/ (null,"player","старт не завершен","reason="+_reason);
+ //BA.debugLineNum = 1835014;BA.debugLine="cacheAuditTimer.Enabled = True";
+__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
 RDebugUtils.currentLine=1835015;
- //BA.debugLineNum = 1835015;BA.debugLine="WriteHealthSnapshot(\"ошибка_старта\")";
-__ref._writehealthsnapshot /*String*/ (null,"ошибка_старта");
+ //BA.debugLineNum = 1835015;BA.debugLine="TraceWarn(\"player\", \"старт не завершен\", \"reason=";
+__ref._tracewarn /*String*/ (null,"player","старт не завершен","reason="+_reason);
 RDebugUtils.currentLine=1835016;
- //BA.debugLineNum = 1835016;BA.debugLine="End Sub";
+ //BA.debugLineNum = 1835016;BA.debugLine="WriteHealthSnapshot(\"ошибка_старта\")";
+__ref._writehealthsnapshot /*String*/ (null,"ошибка_старта");
+RDebugUtils.currentLine=1835017;
+ //BA.debugLineNum = 1835017;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _haslocalplaybackfallback(b4j.example.b4xmainpage __ref) throws Exception{
@@ -3082,21 +2314,26 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "haslocalplaybackfallback", false))
 	 {return ((Boolean) Debug.delegate(ba, "haslocalplaybackfallback", null));}
+anywheresoftware.b4a.objects.collections.Map _offlinedata = null;
 RDebugUtils.currentLine=9175040;
  //BA.debugLineNum = 9175040;BA.debugLine="Private Sub HasLocalPlaybackFallback As Boolean";
 RDebugUtils.currentLine=9175041;
- //BA.debugLineNum = 9175041;BA.debugLine="If offlineData.IsInitialized = False Then Return";
-if (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()==__c.False) { 
-if (true) return __c.False;};
+ //BA.debugLineNum = 9175041;BA.debugLine="Dim offlineData As Map = stateStore.OfflineData";
+_offlinedata = new anywheresoftware.b4a.objects.collections.Map();
+_offlinedata = __ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null);
 RDebugUtils.currentLine=9175042;
- //BA.debugLineNum = 9175042;BA.debugLine="If offlineData.GetDefault(\"ok\", False) <> True Th";
-if ((__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)("ok"),(Object)(__c.False))).equals((Object)(__c.True)) == false) { 
+ //BA.debugLineNum = 9175042;BA.debugLine="If offlineData.IsInitialized = False Then Return";
+if (_offlinedata.IsInitialized()==__c.False) { 
 if (true) return __c.False;};
 RDebugUtils.currentLine=9175043;
- //BA.debugLineNum = 9175043;BA.debugLine="Return HasPlayableLocalTrackInCurrentSlot";
-if (true) return __ref._hasplayablelocaltrackincurrentslot /*boolean*/ (null);
+ //BA.debugLineNum = 9175043;BA.debugLine="If offlineData.GetDefault(\"ok\", False) <> True Th";
+if ((_offlinedata.GetDefault((Object)("ok"),(Object)(__c.False))).equals((Object)(__c.True)) == false) { 
+if (true) return __c.False;};
 RDebugUtils.currentLine=9175044;
- //BA.debugLineNum = 9175044;BA.debugLine="End Sub";
+ //BA.debugLineNum = 9175044;BA.debugLine="Return playerDataCoordinator.HasPlayableLocalTrac";
+if (true) return __ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._hasplayablelocaltrackincurrentslot /*boolean*/ (null,_offlinedata,__ref._effectivenowticks /*long*/ (null));
+RDebugUtils.currentLine=9175045;
+ //BA.debugLineNum = 9175045;BA.debugLine="End Sub";
 return false;
 }
 public String  _switchtolocalplayback(b4j.example.b4xmainpage __ref,boolean _markdegraded,String _reason) throws Exception{
@@ -3107,31 +2344,10 @@ if (Debug.shouldDelegate(ba, "switchtolocalplayback", false))
 RDebugUtils.currentLine=9109504;
  //BA.debugLineNum = 9109504;BA.debugLine="Private Sub SwitchToLocalPlayback(markDegraded As";
 RDebugUtils.currentLine=9109505;
- //BA.debugLineNum = 9109505;BA.debugLine="TraceLog(\"fallback activate mode=local reason=\" &";
-__ref._tracelog /*String*/ (null,"fallback activate mode=local reason="+_reason+" degraded="+BA.ObjectToString(_markdegraded));
+ //BA.debugLineNum = 9109505;BA.debugLine="playerDataCoordinator.SwitchToLocalPlayback(markD";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._switchtolocalplayback /*String*/ (null,_markdegraded,_reason);
 RDebugUtils.currentLine=9109506;
- //BA.debugLineNum = 9109506;BA.debugLine="SetPlaybackFlowState(FLOW_IDLE, \"switch_local:\" &";
-__ref._setplaybackflowstate /*String*/ (null,__ref._flow_idle /*String*/ ,"switch_local:"+_reason);
-RDebugUtils.currentLine=9109507;
- //BA.debugLineNum = 9109507;BA.debugLine="dataPolicyState.EnterLocalPlayback";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._enterlocalplayback /*String*/ (null);
-RDebugUtils.currentLine=9109508;
- //BA.debugLineNum = 9109508;BA.debugLine="retryFallbackState.SetMediaPathDegraded(markDegra";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._setmediapathdegraded /*String*/ (null,_markdegraded);
-RDebugUtils.currentLine=9109509;
- //BA.debugLineNum = 9109509;BA.debugLine="RequestSkipQueueSnapshotRestore(\"switch_local:\" &";
-__ref._requestskipqueuesnapshotrestore /*String*/ (null,"switch_local:"+_reason);
-RDebugUtils.currentLine=9109510;
- //BA.debugLineNum = 9109510;BA.debugLine="RefreshConnectionIndicatorState";
-__ref._refreshconnectionindicatorstate /*String*/ (null);
-RDebugUtils.currentLine=9109511;
- //BA.debugLineNum = 9109511;BA.debugLine="ClearPlaybackState";
-__ref._clearplaybackstate /*String*/ (null);
-RDebugUtils.currentLine=9109512;
- //BA.debugLineNum = 9109512;BA.debugLine="HidePin";
-__ref._hidepin /*String*/ (null);
-RDebugUtils.currentLine=9109513;
- //BA.debugLineNum = 9109513;BA.debugLine="End Sub";
+ //BA.debugLineNum = 9109506;BA.debugLine="End Sub";
 return "";
 }
 public String  _handlelocaltemporarystate(b4j.example.b4xmainpage __ref,String _text) throws Exception{
@@ -3139,50 +2355,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "handlelocaltemporarystate", false))
 	 {return ((String) Debug.delegate(ba, "handlelocaltemporarystate", new Object[] {_text}));}
-boolean _fallbackready = false;
 RDebugUtils.currentLine=9240576;
  //BA.debugLineNum = 9240576;BA.debugLine="Private Sub HandleLocalTemporaryState(text As Stri";
 RDebugUtils.currentLine=9240577;
- //BA.debugLineNum = 9240577;BA.debugLine="Dim fallbackReady As Boolean = HasLocalPlaybackFa";
-_fallbackready = __ref._haslocalplaybackfallback /*boolean*/ (null);
+ //BA.debugLineNum = 9240577;BA.debugLine="playerDataCoordinator.HandleLocalTemporaryState(t";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._handlelocaltemporarystate /*String*/ (null,_text);
 RDebugUtils.currentLine=9240578;
- //BA.debugLineNum = 9240578;BA.debugLine="TraceLog(\"состояние temporary mode=offline playab";
-__ref._tracelog /*String*/ (null,"состояние temporary mode=offline playableFallback="+BA.ObjectToString(_fallbackready)+" text="+_text);
-RDebugUtils.currentLine=9240579;
- //BA.debugLineNum = 9240579;BA.debugLine="If fallbackReady Then TraceLog(\"fallback выбор mo";
-if (_fallbackready) { 
-__ref._tracelog /*String*/ (null,"fallback выбор mode=temporary_local reason=playable_local_fallback");};
-RDebugUtils.currentLine=9240580;
- //BA.debugLineNum = 9240580;BA.debugLine="SetPlaybackFlowState(FLOW_IDLE, \"temporary_local_";
-__ref._setplaybackflowstate /*String*/ (null,__ref._flow_idle /*String*/ ,"temporary_local_state");
-RDebugUtils.currentLine=9240581;
- //BA.debugLineNum = 9240581;BA.debugLine="dataPolicyState.SetLocalFallbackReady(fallbackRea";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._setlocalfallbackready /*String*/ (null,_fallbackready);
-RDebugUtils.currentLine=9240582;
- //BA.debugLineNum = 9240582;BA.debugLine="RefreshConnectionIndicatorState";
-__ref._refreshconnectionindicatorstate /*String*/ (null);
-RDebugUtils.currentLine=9240583;
- //BA.debugLineNum = 9240583;BA.debugLine="ClearPlaybackState";
-__ref._clearplaybackstate /*String*/ (null);
-RDebugUtils.currentLine=9240584;
- //BA.debugLineNum = 9240584;BA.debugLine="HidePin";
-__ref._hidepin /*String*/ (null);
-RDebugUtils.currentLine=9240585;
- //BA.debugLineNum = 9240585;BA.debugLine="If text <> \"\" Then";
-if ((_text).equals("") == false) { 
-RDebugUtils.currentLine=9240586;
- //BA.debugLineNum = 9240586;BA.debugLine="ShowMessage(text)";
-__ref._showmessage /*String*/ (null,_text);
- }else {
-RDebugUtils.currentLine=9240588;
- //BA.debugLineNum = 9240588;BA.debugLine="ShowMessage(MessageValue(\"offline\"))";
-__ref._showmessage /*String*/ (null,__ref._messagevalue /*String*/ (null,"offline"));
- };
-RDebugUtils.currentLine=9240590;
- //BA.debugLineNum = 9240590;BA.debugLine="ScheduleRetry(\"offline\", 0)";
-__ref._scheduleretry /*String*/ (null,"offline",(int) (0));
-RDebugUtils.currentLine=9240591;
- //BA.debugLineNum = 9240591;BA.debugLine="End Sub";
+ //BA.debugLineNum = 9240578;BA.debugLine="End Sub";
 return "";
 }
 public String  _requestskipqueuesnapshotrestore(b4j.example.b4xmainpage __ref,String _reason) throws Exception{
@@ -3193,13 +2372,10 @@ if (Debug.shouldDelegate(ba, "requestskipqueuesnapshotrestore", false))
 RDebugUtils.currentLine=48234496;
  //BA.debugLineNum = 48234496;BA.debugLine="Private Sub RequestSkipQueueSnapshotRestore(reason";
 RDebugUtils.currentLine=48234497;
- //BA.debugLineNum = 48234497;BA.debugLine="queueState.RequestSkipQueueSnapshotRestore";
-__ref._queuestate /*b4j.example.playbackqueuestate*/ ._requestskipqueuesnapshotrestore /*String*/ (null);
+ //BA.debugLineNum = 48234497;BA.debugLine="stateStore.RequestSkipQueueSnapshotRestore(reason";
+__ref._statestore /*b4j.example.playerstatestore*/ ._requestskipqueuesnapshotrestore /*String*/ (null,_reason);
 RDebugUtils.currentLine=48234498;
- //BA.debugLineNum = 48234498;BA.debugLine="TraceLog(\"снимок очереди восстановление skip reas";
-__ref._tracelog /*String*/ (null,"снимок очереди восстановление skip reason="+_reason);
-RDebugUtils.currentLine=48234499;
- //BA.debugLineNum = 48234499;BA.debugLine="End Sub";
+ //BA.debugLineNum = 48234498;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _canusedataplaybackresolver(b4j.example.b4xmainpage __ref) throws Exception{
@@ -3214,8 +2390,8 @@ RDebugUtils.currentLine=2293761;
 if (__ref._use_data_playback_resolver /*boolean*/ ==__c.False) { 
 if (true) return __c.False;};
 RDebugUtils.currentLine=2293762;
- //BA.debugLineNum = 2293762;BA.debugLine="Return queueBuilder.CanUseDataPlaybackResolver(of";
-if (true) return __ref._queuebuilder /*b4j.example.playbackqueuebuilder*/ ._canusedataplaybackresolver /*boolean*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ );
+ //BA.debugLineNum = 2293762;BA.debugLine="Return stateStore.CanUseDataPlaybackResolver";
+if (true) return __ref._statestore /*b4j.example.playerstatestore*/ ._canusedataplaybackresolver /*boolean*/ (null);
 RDebugUtils.currentLine=2293763;
  //BA.debugLineNum = 2293763;BA.debugLine="End Sub";
 return false;
@@ -3225,38 +2401,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "isplaybackallowedbycurrentdata", false))
 	 {return ((Boolean) Debug.delegate(ba, "isplaybackallowedbycurrentdata", null));}
-anywheresoftware.b4a.objects.collections.Map _playerdata = null;
-long _endtimestamp = 0L;
 RDebugUtils.currentLine=9699328;
  //BA.debugLineNum = 9699328;BA.debugLine="Private Sub IsPlaybackAllowedByCurrentData As Bool";
 RDebugUtils.currentLine=9699329;
- //BA.debugLineNum = 9699329;BA.debugLine="If offlineData.IsInitialized = False Then Return";
-if (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()==__c.False) { 
-if (true) return __c.True;};
+ //BA.debugLineNum = 9699329;BA.debugLine="Return playerDataCoordinator.IsPlaybackAllowed(st";
+if (true) return __ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._isplaybackallowed /*boolean*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null),__ref._effectivenowticks /*long*/ (null));
 RDebugUtils.currentLine=9699330;
- //BA.debugLineNum = 9699330;BA.debugLine="Dim playerData As Map = offlineData.GetDefault(\"p";
-_playerdata = new anywheresoftware.b4a.objects.collections.Map();
-_playerdata = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)("player"),(Object)(__ref._createinitializedmap /*anywheresoftware.b4a.objects.collections.Map*/ (null).getObject()))));
-RDebugUtils.currentLine=9699331;
- //BA.debugLineNum = 9699331;BA.debugLine="If playerData.IsInitialized And playerData.Contai";
-if (_playerdata.IsInitialized() && _playerdata.ContainsKey((Object)("playback_allowed"))) { 
-RDebugUtils.currentLine=9699332;
- //BA.debugLineNum = 9699332;BA.debugLine="If playerData.GetDefault(\"playback_allowed\", Tru";
-if ((_playerdata.GetDefault((Object)("playback_allowed"),(Object)(__c.True))).equals((Object)(__c.True)) == false) { 
-if (true) return __c.False;};
- };
-RDebugUtils.currentLine=9699334;
- //BA.debugLineNum = 9699334;BA.debugLine="Dim endTimestamp As Long = ResolvePlaybackEndTime";
-_endtimestamp = __ref._resolveplaybackendtimestamp /*long*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ );
-RDebugUtils.currentLine=9699335;
- //BA.debugLineNum = 9699335;BA.debugLine="If endTimestamp <= 0 Then Return True";
-if (_endtimestamp<=0) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=9699336;
- //BA.debugLineNum = 9699336;BA.debugLine="Return EffectiveNowTicks < (endTimestamp * 1000)";
-if (true) return __ref._effectivenowticks /*long*/ (null)<(_endtimestamp*1000);
-RDebugUtils.currentLine=9699337;
- //BA.debugLineNum = 9699337;BA.debugLine="End Sub";
+ //BA.debugLineNum = 9699330;BA.debugLine="End Sub";
 return false;
 }
 public String  _pauseplaybackbypolicy(b4j.example.b4xmainpage __ref,String _reason,String _connectionmode) throws Exception{
@@ -3278,50 +2429,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "resolveplaybackblockreason", false))
 	 {return ((String) Debug.delegate(ba, "resolveplaybackblockreason", new Object[] {_data}));}
-anywheresoftware.b4a.objects.collections.Map _playerdata = null;
-String _pausereason = "";
-long _endtimestamp = 0L;
 RDebugUtils.currentLine=9764864;
  //BA.debugLineNum = 9764864;BA.debugLine="Private Sub ResolvePlaybackBlockReason(data As Map";
 RDebugUtils.currentLine=9764865;
- //BA.debugLineNum = 9764865;BA.debugLine="If data.IsInitialized = False Then Return Message";
-if (_data.IsInitialized()==__c.False) { 
-if (true) return __ref._messagevalue /*String*/ (null,"playback_paused");};
+ //BA.debugLineNum = 9764865;BA.debugLine="Return playerDataCoordinator.ResolvePlaybackBlock";
+if (true) return __ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._resolveplaybackblockreason /*String*/ (null,_data,__ref._effectivenowticks /*long*/ (null));
 RDebugUtils.currentLine=9764866;
- //BA.debugLineNum = 9764866;BA.debugLine="Dim playerData As Map = data.GetDefault(\"player\",";
-_playerdata = new anywheresoftware.b4a.objects.collections.Map();
-_playerdata = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_data.GetDefault((Object)("player"),(Object)(__ref._createinitializedmap /*anywheresoftware.b4a.objects.collections.Map*/ (null).getObject()))));
-RDebugUtils.currentLine=9764867;
- //BA.debugLineNum = 9764867;BA.debugLine="If playerData.IsInitialized Then";
-if (_playerdata.IsInitialized()) { 
-RDebugUtils.currentLine=9764868;
- //BA.debugLineNum = 9764868;BA.debugLine="Dim pauseReason As String = playerData.GetDefaul";
-_pausereason = BA.ObjectToString(_playerdata.GetDefault((Object)("pause_reason"),(Object)("")));
-RDebugUtils.currentLine=9764869;
- //BA.debugLineNum = 9764869;BA.debugLine="If pauseReason <> \"\" Then Return pauseReason";
-if ((_pausereason).equals("") == false) { 
-if (true) return _pausereason;};
- };
-RDebugUtils.currentLine=9764871;
- //BA.debugLineNum = 9764871;BA.debugLine="Dim endTimestamp As Long = ResolvePlaybackEndTime";
-_endtimestamp = __ref._resolveplaybackendtimestamp /*long*/ (null,_data);
-RDebugUtils.currentLine=9764872;
- //BA.debugLineNum = 9764872;BA.debugLine="If endTimestamp > 0 And EffectiveNowTicks >= (end";
-if (_endtimestamp>0 && __ref._effectivenowticks /*long*/ (null)>=(_endtimestamp*1000)) { 
-if (true) return __ref._messagevalue /*String*/ (null,"subscription_expired");};
-RDebugUtils.currentLine=9764873;
- //BA.debugLineNum = 9764873;BA.debugLine="If playerData.IsInitialized And playerData.Contai";
-if (_playerdata.IsInitialized() && _playerdata.ContainsKey((Object)("playback_allowed"))) { 
-RDebugUtils.currentLine=9764874;
- //BA.debugLineNum = 9764874;BA.debugLine="If playerData.GetDefault(\"playback_allowed\", Tru";
-if ((_playerdata.GetDefault((Object)("playback_allowed"),(Object)(__c.True))).equals((Object)(__c.True)) == false) { 
-if (true) return __ref._messagevalue /*String*/ (null,"playback_paused");};
- };
-RDebugUtils.currentLine=9764876;
- //BA.debugLineNum = 9764876;BA.debugLine="Return MessageValue(\"playback_paused\")";
-if (true) return __ref._messagevalue /*String*/ (null,"playback_paused");
-RDebugUtils.currentLine=9764877;
- //BA.debugLineNum = 9764877;BA.debugLine="End Sub";
+ //BA.debugLineNum = 9764866;BA.debugLine="End Sub";
 return "";
 }
 public String  _hidecontentblocks(b4j.example.b4xmainpage __ref) throws Exception{
@@ -3332,22 +2446,10 @@ if (Debug.shouldDelegate(ba, "hidecontentblocks", false))
 RDebugUtils.currentLine=14942208;
  //BA.debugLineNum = 14942208;BA.debugLine="Private Sub HideContentBlocks";
 RDebugUtils.currentLine=14942209;
- //BA.debugLineNum = 14942209;BA.debugLine="HidePin";
-__ref._hidepin /*String*/ (null);
+ //BA.debugLineNum = 14942209;BA.debugLine="uiController.HideContentBlocks";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._hidecontentblocks /*String*/ (null);
 RDebugUtils.currentLine=14942210;
- //BA.debugLineNum = 14942210;BA.debugLine="SetStreamText(\"\")";
-__ref._setstreamtext /*String*/ (null,"");
-RDebugUtils.currentLine=14942211;
- //BA.debugLineNum = 14942211;BA.debugLine="SetStatusText(\"\")";
-__ref._setstatustext /*String*/ (null,"");
-RDebugUtils.currentLine=14942212;
- //BA.debugLineNum = 14942212;BA.debugLine="btnConfirmYes.Enabled = True";
-__ref._btnconfirmyes /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setEnabled(__c.True);
-RDebugUtils.currentLine=14942213;
- //BA.debugLineNum = 14942213;BA.debugLine="btnConfirmNo.Enabled = True";
-__ref._btnconfirmno /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setEnabled(__c.True);
-RDebugUtils.currentLine=14942214;
- //BA.debugLineNum = 14942214;BA.debugLine="End Sub";
+ //BA.debugLineNum = 14942210;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _startfirsttrack(b4j.example.b4xmainpage __ref,String _mode) throws Exception{
@@ -3444,37 +2546,43 @@ RDebugUtils.currentLine=327686;
  //BA.debugLineNum = 327686;BA.debugLine="BuildUi";
 __ref._buildui /*String*/ (null);
 RDebugUtils.currentLine=327687;
- //BA.debugLineNum = 327687;BA.debugLine="RestoreWindowState";
-__ref._restorewindowstate /*String*/ (null);
+ //BA.debugLineNum = 327687;BA.debugLine="uiController.Initialize(xui, lblStream, lblInfo,";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._initialize /*String*/ (null,ba,__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ ,__ref._lblstream /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._lblinfo /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._lblheader /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._lblconnectionicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._lblheaderaction /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._lblsetupmessage /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._lblplayicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._confirmpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._btnconfirmyes /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._btnconfirmno /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._setuppane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._playerpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._headeractionpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._playbuttonpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._orbitpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._accesscirclepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._accesscorepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._accessinputpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._btnsetupsubmit /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._txtplayercode /*anywheresoftware.b4j.objects.TextInputControlWrapper.TextFieldWrapper*/ ,__ref._txtplayercodeview /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._icon_cloud_ok /*String*/ ,__ref._icon_cloud_off /*String*/ ,__ref._icon_cloud_degraded /*String*/ ,__ref._icon_more /*String*/ ,__ref._icon_close /*String*/ ,__ref._icon_play /*String*/ ,__ref._icon_stop /*String*/ );
 RDebugUtils.currentLine=327688;
- //BA.debugLineNum = 327688;BA.debugLine="audioPrimary.Initialize(\"AudioPrimary\", Me)";
-__ref._audioprimary /*b4j.example.audioplayer*/ ._initialize /*String*/ (null,ba,"AudioPrimary",(b4j.example.b4xmainpage)(this));
+ //BA.debugLineNum = 327688;BA.debugLine="UpdateVisibleMode";
+__ref._updatevisiblemode /*String*/ (null);
 RDebugUtils.currentLine=327689;
- //BA.debugLineNum = 327689;BA.debugLine="audioSecondary.Initialize(\"AudioSecondary\", Me)";
-__ref._audiosecondary /*b4j.example.audioplayer*/ ._initialize /*String*/ (null,ba,"AudioSecondary",(b4j.example.b4xmainpage)(this));
+ //BA.debugLineNum = 327689;BA.debugLine="RestoreWindowState";
+__ref._restorewindowstate /*String*/ (null);
 RDebugUtils.currentLine=327690;
- //BA.debugLineNum = 327690;BA.debugLine="TraceInfo(\"app\", \"запуск\", \"version=\" & ResolveAp";
-__ref._traceinfo /*String*/ (null,"app","запуск","version="+__ref._resolveappversion /*String*/ (null)+" player="+__ref._formatplayercodefordisplay /*String*/ (null,__ref._playercode /*String*/ ));
+ //BA.debugLineNum = 327690;BA.debugLine="audioPrimary.Initialize(\"AudioPrimary\", Me)";
+__ref._audioprimary /*b4j.example.audioplayer*/ ._initialize /*String*/ (null,ba,"AudioPrimary",(b4j.example.b4xmainpage)(this));
 RDebugUtils.currentLine=327691;
- //BA.debugLineNum = 327691;BA.debugLine="TraceInfo(\"system\", \"устройство\", \"name=\" & Resol";
-__ref._traceinfo /*String*/ (null,"system","устройство","name="+__ref._resolvedevicetracename /*String*/ (null)+" id="+__ref._deviceid /*String*/ );
+ //BA.debugLineNum = 327691;BA.debugLine="audioSecondary.Initialize(\"AudioSecondary\", Me)";
+__ref._audiosecondary /*b4j.example.audioplayer*/ ._initialize /*String*/ (null,ba,"AudioSecondary",(b4j.example.b4xmainpage)(this));
 RDebugUtils.currentLine=327692;
- //BA.debugLineNum = 327692;BA.debugLine="TraceInfo(\"system\", \"платформа\", \"os=\" & ResolveC";
-__ref._traceinfo /*String*/ (null,"system","платформа","os="+__ref._resolveclientplatformtext /*String*/ (null));
+ //BA.debugLineNum = 327692;BA.debugLine="TraceInfo(\"app\", \"запуск\", \"version=\" & ResolveAp";
+__ref._traceinfo /*String*/ (null,"app","запуск","version="+__ref._resolveappversion /*String*/ (null)+" player="+__ref._formatplayercodefordisplay /*String*/ (null,__ref._playercode /*String*/ ));
 RDebugUtils.currentLine=327693;
- //BA.debugLineNum = 327693;BA.debugLine="TraceInfo(\"system\", \"диск\", \"diskFreeMb=\" & Resol";
-__ref._traceinfo /*String*/ (null,"system","диск","diskFreeMb="+__ref._resolvefreediskmbtext /*String*/ (null)+" diskTotalMb="+__ref._resolvetotaldiskmbtext /*String*/ (null));
+ //BA.debugLineNum = 327693;BA.debugLine="TraceInfo(\"system\", \"устройство\", \"name=\" & Resol";
+__ref._traceinfo /*String*/ (null,"system","устройство","name="+__ref._resolvedevicetracename /*String*/ (null)+" id="+__ref._deviceid /*String*/ );
 RDebugUtils.currentLine=327694;
- //BA.debugLineNum = 327694;BA.debugLine="WriteHealthSnapshot(\"запуск\")";
-__ref._writehealthsnapshot /*String*/ (null,"запуск");
+ //BA.debugLineNum = 327694;BA.debugLine="TraceInfo(\"system\", \"платформа\", \"os=\" & ResolveC";
+__ref._traceinfo /*String*/ (null,"system","платформа","os="+__ref._resolveclientplatformtext /*String*/ (null));
 RDebugUtils.currentLine=327695;
- //BA.debugLineNum = 327695;BA.debugLine="StartOfflineDataRefresh";
-__ref._startofflinedatarefresh /*String*/ (null);
+ //BA.debugLineNum = 327695;BA.debugLine="TraceInfo(\"system\", \"диск\", \"diskFreeMb=\" & Resol";
+__ref._traceinfo /*String*/ (null,"system","диск","diskFreeMb="+__ref._resolvefreediskmbtext /*String*/ (null)+" diskTotalMb="+__ref._resolvetotaldiskmbtext /*String*/ (null));
 RDebugUtils.currentLine=327696;
- //BA.debugLineNum = 327696;BA.debugLine="ShowInitialScreen";
-__ref._showinitialscreen /*String*/ (null);
+ //BA.debugLineNum = 327696;BA.debugLine="WriteHealthSnapshot(\"запуск\")";
+__ref._writehealthsnapshot /*String*/ (null,"запуск");
 RDebugUtils.currentLine=327697;
- //BA.debugLineNum = 327697;BA.debugLine="End Sub";
+ //BA.debugLineNum = 327697;BA.debugLine="StartOfflineDataRefresh";
+__ref._startofflinedatarefresh /*String*/ (null);
+RDebugUtils.currentLine=327698;
+ //BA.debugLineNum = 327698;BA.debugLine="ShowInitialScreen";
+__ref._showinitialscreen /*String*/ (null);
+RDebugUtils.currentLine=327699;
+ //BA.debugLineNum = 327699;BA.debugLine="End Sub";
 return "";
 }
 public String  _initsettings(b4j.example.b4xmainpage __ref) throws Exception{
@@ -3619,160 +2727,175 @@ RDebugUtils.currentLine=524297;
  //BA.debugLineNum = 524297;BA.debugLine="appTraceService.Initialize(storageDir, debugRespo";
 __ref._apptraceservice /*b4j.example.traceservice*/ ._initialize /*String*/ (null,ba,__ref._storagedir /*String*/ ,__ref._debugresponsesdir /*String*/ ,__ref._traceloglimit /*int*/ ,__ref._serversnapshotlimit /*int*/ );
 RDebugUtils.currentLine=524298;
- //BA.debugLineNum = 524298;BA.debugLine="offlineData.Initialize";
-__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();
+ //BA.debugLineNum = 524298;BA.debugLine="traceFormatter.Initialize";
+__ref._traceformatter /*b4j.example.playbacktraceformatter*/ ._initialize /*String*/ (null,ba);
 RDebugUtils.currentLine=524299;
- //BA.debugLineNum = 524299;BA.debugLine="playQueue.Initialize";
-__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
+ //BA.debugLineNum = 524299;BA.debugLine="traceRouter.Initialize(appTraceService, traceForm";
+__ref._tracerouter /*b4j.example.playbacktracerouter*/ ._initialize /*String*/ (null,ba,__ref._apptraceservice /*b4j.example.traceservice*/ ,__ref._traceformatter /*b4j.example.playbacktraceformatter*/ ,__ref._isreleasebuild /*boolean*/ (null),__ref._trace_error_debug_context_lines /*int*/ );
 RDebugUtils.currentLine=524300;
- //BA.debugLineNum = 524300;BA.debugLine="orchestrationState.Initialize";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._initialize /*String*/ (null,ba);
+ //BA.debugLineNum = 524300;BA.debugLine="playQueue.Initialize";
+__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
 RDebugUtils.currentLine=524301;
- //BA.debugLineNum = 524301;BA.debugLine="runtimeState.Initialize";
-__ref._runtimestate /*b4j.example.playbackruntimestate*/ ._initialize /*String*/ (null,ba);
+ //BA.debugLineNum = 524301;BA.debugLine="orchestrationState.Initialize";
+__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._initialize /*String*/ (null,ba);
 RDebugUtils.currentLine=524302;
- //BA.debugLineNum = 524302;BA.debugLine="metaState.Initialize";
-__ref._metastate /*b4j.example.playbackmetastate*/ ._initialize /*String*/ (null,ba);
+ //BA.debugLineNum = 524302;BA.debugLine="runtimeState.Initialize";
+__ref._runtimestate /*b4j.example.playbackruntimestate*/ ._initialize /*String*/ (null,ba);
 RDebugUtils.currentLine=524303;
- //BA.debugLineNum = 524303;BA.debugLine="dataPolicyState.Initialize";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._initialize /*String*/ (null,ba);
+ //BA.debugLineNum = 524303;BA.debugLine="metaState.Initialize";
+__ref._metastate /*b4j.example.playbackmetastate*/ ._initialize /*String*/ (null,ba);
 RDebugUtils.currentLine=524304;
- //BA.debugLineNum = 524304;BA.debugLine="retryFallbackState.Initialize(LOCAL_RETRY_DELAY_I";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._initialize /*String*/ (null,ba,__ref._local_retry_delay_initial /*int*/ ,__ref._server_retry_delay_initial /*int*/ );
+ //BA.debugLineNum = 524304;BA.debugLine="dataPolicyState.Initialize";
+__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._initialize /*String*/ (null,ba);
 RDebugUtils.currentLine=524305;
- //BA.debugLineNum = 524305;BA.debugLine="queueState.Initialize";
-__ref._queuestate /*b4j.example.playbackqueuestate*/ ._initialize /*String*/ (null,ba);
+ //BA.debugLineNum = 524305;BA.debugLine="retryFallbackState.Initialize(LOCAL_RETRY_DELAY_I";
+__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._initialize /*String*/ (null,ba,__ref._local_retry_delay_initial /*int*/ ,__ref._server_retry_delay_initial /*int*/ );
 RDebugUtils.currentLine=524306;
- //BA.debugLineNum = 524306;BA.debugLine="directorState.Initialize";
-__ref._directorstate /*b4j.example.playbackdirectorstate*/ ._initialize /*String*/ (null,ba);
+ //BA.debugLineNum = 524306;BA.debugLine="queueState.Initialize";
+__ref._queuestate /*b4j.example.playbackqueuestate*/ ._initialize /*String*/ (null,ba);
 RDebugUtils.currentLine=524307;
- //BA.debugLineNum = 524307;BA.debugLine="directorState.ConfigureDefaultSlots";
-__ref._directorstate /*b4j.example.playbackdirectorstate*/ ._configuredefaultslots /*String*/ (null);
+ //BA.debugLineNum = 524307;BA.debugLine="directorState.Initialize";
+__ref._directorstate /*b4j.example.playbackdirectorstate*/ ._initialize /*String*/ (null,ba);
 RDebugUtils.currentLine=524308;
- //BA.debugLineNum = 524308;BA.debugLine="queueBuilder.Initialize(Me)";
-__ref._queuebuilder /*b4j.example.playbackqueuebuilder*/ ._initialize /*String*/ (null,ba,(b4j.example.b4xmainpage)(this));
+ //BA.debugLineNum = 524308;BA.debugLine="directorState.ConfigureDefaultSlots";
+__ref._directorstate /*b4j.example.playbackdirectorstate*/ ._configuredefaultslots /*String*/ (null);
 RDebugUtils.currentLine=524309;
- //BA.debugLineNum = 524309;BA.debugLine="transitionCoordinator.Initialize(Me)";
-__ref._transitioncoordinator /*b4j.example.playbacktransitioncoordinator*/ ._initialize /*String*/ (null,ba,(b4j.example.b4xmainpage)(this));
+ //BA.debugLineNum = 524309;BA.debugLine="queueBuilder.Initialize(Me)";
+__ref._queuebuilder /*b4j.example.playbackqueuebuilder*/ ._initialize /*String*/ (null,ba,(b4j.example.b4xmainpage)(this));
 RDebugUtils.currentLine=524310;
- //BA.debugLineNum = 524310;BA.debugLine="facade.Initialize(Me)";
-__ref._facade /*b4j.example.playbackfacade*/ ._initialize /*String*/ (null,ba,(b4j.example.b4xmainpage)(this));
+ //BA.debugLineNum = 524310;BA.debugLine="transitionCoordinator.Initialize(Me)";
+__ref._transitioncoordinator /*b4j.example.playbacktransitioncoordinator*/ ._initialize /*String*/ (null,ba,(b4j.example.b4xmainpage)(this));
 RDebugUtils.currentLine=524311;
- //BA.debugLineNum = 524311;BA.debugLine="responseAdapter.Initialize";
-__ref._responseadapter /*b4j.example.playbackresponseadapter*/ ._initialize /*String*/ (null,ba);
+ //BA.debugLineNum = 524311;BA.debugLine="facade.Initialize(Me)";
+__ref._facade /*b4j.example.playbackfacade*/ ._initialize /*String*/ (null,ba,(b4j.example.b4xmainpage)(this));
 RDebugUtils.currentLine=524312;
- //BA.debugLineNum = 524312;BA.debugLine="localAdScheduler.Initialize(Me, \"TraceLog\", Messa";
-__ref._localadscheduler /*b4j.example.adscheduler*/ ._initialize /*String*/ (null,ba,this,"TraceLog",__ref._messagevalue /*String*/ (null,"ad_label"));
+ //BA.debugLineNum = 524312;BA.debugLine="responseAdapter.Initialize";
+__ref._responseadapter /*b4j.example.playbackresponseadapter*/ ._initialize /*String*/ (null,ba);
 RDebugUtils.currentLine=524313;
- //BA.debugLineNum = 524313;BA.debugLine="dataResolver.Initialize(storageDir, Me, \"TraceLog";
-__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._initialize /*String*/ (null,ba,__ref._storagedir /*String*/ ,this,"TraceLog");
+ //BA.debugLineNum = 524313;BA.debugLine="localAdScheduler.Initialize(Me, \"TraceLog\", Messa";
+__ref._localadscheduler /*b4j.example.adscheduler*/ ._initialize /*String*/ (null,ba,this,"TraceLog",__ref._messagevalue /*String*/ (null,"ad_label"));
 RDebugUtils.currentLine=524314;
- //BA.debugLineNum = 524314;BA.debugLine="dataResolver.LoadState(storage)";
-__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._loadstate /*String*/ (null,__ref._storage /*b4j.example.keyvaluestore*/ );
+ //BA.debugLineNum = 524314;BA.debugLine="dataResolver.Initialize(storageDir, Me, \"TraceLog";
+__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._initialize /*String*/ (null,ba,__ref._storagedir /*String*/ ,this,"TraceLog");
 RDebugUtils.currentLine=524315;
- //BA.debugLineNum = 524315;BA.debugLine="TraceLog(\"курсор плейлистов load count=\" & dataRe";
-__ref._tracelog /*String*/ (null,"курсор плейлистов load count="+BA.NumberToString(__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._cursorcount /*int*/ (null)));
+ //BA.debugLineNum = 524315;BA.debugLine="dataResolver.LoadState(storage)";
+__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._loadstate /*String*/ (null,__ref._storage /*b4j.example.keyvaluestore*/ );
 RDebugUtils.currentLine=524316;
- //BA.debugLineNum = 524316;BA.debugLine="deviceId = GetOrCreateDeviceId";
-__ref._deviceid /*String*/  = __ref._getorcreatedeviceid /*String*/ (null);
+ //BA.debugLineNum = 524316;BA.debugLine="TraceLog(\"курсор плейлистов load count=\" & dataRe";
+__ref._tracelog /*String*/ (null,"курсор плейлистов load count="+BA.NumberToString(__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._cursorcount /*int*/ (null)));
 RDebugUtils.currentLine=524317;
- //BA.debugLineNum = 524317;BA.debugLine="mediaCacheService.Initialize(storageDir, storage,";
-__ref._mediacacheservice /*b4j.example.mediacache*/ ._initialize /*String*/ (null,ba,__ref._storagedir /*String*/ ,__ref._storage /*b4j.example.keyvaluestore*/ ,this,"TraceLog",__ref._deviceid /*String*/ );
+ //BA.debugLineNum = 524317;BA.debugLine="deviceId = GetOrCreateDeviceId";
+__ref._deviceid /*String*/  = __ref._getorcreatedeviceid /*String*/ (null);
 RDebugUtils.currentLine=524318;
- //BA.debugLineNum = 524318;BA.debugLine="mediaCacheService.CleanupPlaybackTempFiles";
-__ref._mediacacheservice /*b4j.example.mediacache*/ ._cleanupplaybacktempfiles /*String*/ (null);
+ //BA.debugLineNum = 524318;BA.debugLine="mediaCacheService.Initialize(storageDir, storage,";
+__ref._mediacacheservice /*b4j.example.mediacache*/ ._initialize /*String*/ (null,ba,__ref._storagedir /*String*/ ,__ref._storage /*b4j.example.keyvaluestore*/ ,this,"TraceLog",__ref._deviceid /*String*/ );
 RDebugUtils.currentLine=524319;
- //BA.debugLineNum = 524319;BA.debugLine="retryTimer.Initialize(\"RetryTimer\", SERVER_RETRY_";
-__ref._retrytimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"RetryTimer",(long) (__ref._server_retry_delay_initial /*int*/ ));
+ //BA.debugLineNum = 524319;BA.debugLine="mediaCacheService.CleanupPlaybackTempFiles";
+__ref._mediacacheservice /*b4j.example.mediacache*/ ._cleanupplaybacktempfiles /*String*/ (null);
 RDebugUtils.currentLine=524320;
- //BA.debugLineNum = 524320;BA.debugLine="breakTimer.Initialize(\"BreakTimer\", 1000)";
-__ref._breaktimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"BreakTimer",(long) (1000));
+ //BA.debugLineNum = 524320;BA.debugLine="retryTimer.Initialize(\"RetryTimer\", SERVER_RETRY_";
+__ref._retrytimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"RetryTimer",(long) (__ref._server_retry_delay_initial /*int*/ ));
 RDebugUtils.currentLine=524321;
- //BA.debugLineNum = 524321;BA.debugLine="historyFlushTimer.Initialize(\"HistoryFlushTimer\",";
-__ref._historyflushtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"HistoryFlushTimer",(long) (__ref._history_flush_interval_ms /*int*/ ));
+ //BA.debugLineNum = 524321;BA.debugLine="breakTimer.Initialize(\"BreakTimer\", 1000)";
+__ref._breaktimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"BreakTimer",(long) (1000));
 RDebugUtils.currentLine=524322;
- //BA.debugLineNum = 524322;BA.debugLine="traceUploadTimer.Initialize(\"TraceUploadTimer\", T";
-__ref._traceuploadtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"TraceUploadTimer",(long) (__ref._trace_flush_interval_ms /*int*/ ));
+ //BA.debugLineNum = 524322;BA.debugLine="historyFlushTimer.Initialize(\"HistoryFlushTimer\",";
+__ref._historyflushtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"HistoryFlushTimer",(long) (__ref._history_flush_interval_ms /*int*/ ));
 RDebugUtils.currentLine=524323;
- //BA.debugLineNum = 524323;BA.debugLine="orbitTimer.Initialize(\"OrbitTimer\", 70)";
-__ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"OrbitTimer",(long) (70));
+ //BA.debugLineNum = 524323;BA.debugLine="traceUploadTimer.Initialize(\"TraceUploadTimer\", T";
+__ref._traceuploadtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"TraceUploadTimer",(long) (__ref._trace_flush_interval_ms /*int*/ ));
 RDebugUtils.currentLine=524324;
- //BA.debugLineNum = 524324;BA.debugLine="offlineDataRefreshTimer.Initialize(\"OfflineDataRe";
-__ref._offlinedatarefreshtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"OfflineDataRefreshTimer",(long) (__ref._data_refresh_ms /*int*/ ));
+ //BA.debugLineNum = 524324;BA.debugLine="orbitTimer.Initialize(\"OrbitTimer\", 70)";
+__ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"OrbitTimer",(long) (70));
 RDebugUtils.currentLine=524325;
- //BA.debugLineNum = 524325;BA.debugLine="localAdMinuteTimer.Initialize(\"LocalAdMinuteTimer";
-__ref._localadminutetimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"LocalAdMinuteTimer",(long) (1000));
+ //BA.debugLineNum = 524325;BA.debugLine="offlineDataRefreshTimer.Initialize(\"OfflineDataRe";
+__ref._offlinedatarefreshtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"OfflineDataRefreshTimer",(long) (__ref._data_refresh_ms /*int*/ ));
 RDebugUtils.currentLine=524326;
- //BA.debugLineNum = 524326;BA.debugLine="trackCacheWarmupTimer.Initialize(\"TrackCacheWarmu";
-__ref._trackcachewarmuptimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"TrackCacheWarmupTimer",(long) (__ref._track_cache_warmup_delay_ms /*int*/ ));
+ //BA.debugLineNum = 524326;BA.debugLine="localAdMinuteTimer.Initialize(\"LocalAdMinuteTimer";
+__ref._localadminutetimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"LocalAdMinuteTimer",(long) (1000));
 RDebugUtils.currentLine=524327;
- //BA.debugLineNum = 524327;BA.debugLine="cacheAuditTimer.Initialize(\"CacheAuditTimer\", CAC";
-__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"CacheAuditTimer",(long) (__ref._cache_audit_start_delay_ms /*int*/ ));
+ //BA.debugLineNum = 524327;BA.debugLine="trackCacheWarmupTimer.Initialize(\"TrackCacheWarmu";
+__ref._trackcachewarmuptimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"TrackCacheWarmupTimer",(long) (__ref._track_cache_warmup_delay_ms /*int*/ ));
 RDebugUtils.currentLine=524328;
- //BA.debugLineNum = 524328;BA.debugLine="playbackWatchdogTimer.Initialize(\"PlaybackWatchdo";
-__ref._playbackwatchdogtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"PlaybackWatchdogTimer",(long) (__ref._playback_watchdog_interval_ms /*int*/ ));
+ //BA.debugLineNum = 524328;BA.debugLine="cacheAuditTimer.Initialize(\"CacheAuditTimer\", CAC";
+__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"CacheAuditTimer",(long) (__ref._cache_audit_start_delay_ms /*int*/ ));
 RDebugUtils.currentLine=524329;
- //BA.debugLineNum = 524329;BA.debugLine="playbackDirectorTimer.Initialize(\"PlaybackDirecto";
-__ref._playbackdirectortimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"PlaybackDirectorTimer",(long) (__ref._playback_director_interval_ms /*int*/ ));
+ //BA.debugLineNum = 524329;BA.debugLine="playbackWatchdogTimer.Initialize(\"PlaybackWatchdo";
+__ref._playbackwatchdogtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"PlaybackWatchdogTimer",(long) (__ref._playback_watchdog_interval_ms /*int*/ ));
 RDebugUtils.currentLine=524330;
- //BA.debugLineNum = 524330;BA.debugLine="playbackWatchdogTimer.Enabled = True";
-__ref._playbackwatchdogtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
+ //BA.debugLineNum = 524330;BA.debugLine="playbackDirectorTimer.Initialize(\"PlaybackDirecto";
+__ref._playbackdirectortimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"PlaybackDirectorTimer",(long) (__ref._playback_director_interval_ms /*int*/ ));
 RDebugUtils.currentLine=524331;
- //BA.debugLineNum = 524331;BA.debugLine="playbackDirectorTimer.Enabled = True";
-__ref._playbackdirectortimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
-RDebugUtils.currentLine=524332;
- //BA.debugLineNum = 524332;BA.debugLine="isHistoryFlushInProgress = False";
-__ref._ishistoryflushinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=524333;
- //BA.debugLineNum = 524333;BA.debugLine="isTraceUploadInProgress = False";
-__ref._istraceuploadinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=524334;
- //BA.debugLineNum = 524334;BA.debugLine="isPlaybackWatchdogTickInProgress = False";
-__ref._isplaybackwatchdogtickinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=524335;
- //BA.debugLineNum = 524335;BA.debugLine="isStartupSequenceInProgress = False";
-__ref._isstartupsequenceinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=524336;
- //BA.debugLineNum = 524336;BA.debugLine="isAdWarmupDeferredAfterStartup = False";
-__ref._isadwarmupdeferredafterstartup /*boolean*/  = __c.False;
-RDebugUtils.currentLine=524337;
- //BA.debugLineNum = 524337;BA.debugLine="isPostStartTasksDeferredAfterStartup = False";
-__ref._ispoststarttasksdeferredafterstartup /*boolean*/  = __c.False;
-RDebugUtils.currentLine=524338;
- //BA.debugLineNum = 524338;BA.debugLine="cachedRelevantTrackIds.Initialize";
-__ref._cachedrelevanttrackids /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
-RDebugUtils.currentLine=524339;
- //BA.debugLineNum = 524339;BA.debugLine="lastTrackCachePruneAt = 0";
-__ref._lasttrackcachepruneat /*long*/  = (long) (0);
-RDebugUtils.currentLine=524340;
- //BA.debugLineNum = 524340;BA.debugLine="playbackFlowState = FLOW_IDLE";
-__ref._playbackflowstate /*String*/  = __ref._flow_idle /*String*/ ;
-RDebugUtils.currentLine=524341;
- //BA.debugLineNum = 524341;BA.debugLine="ResetPlaybackWatchdogState";
-__ref._resetplaybackwatchdogstate /*String*/ (null);
-RDebugUtils.currentLine=524342;
- //BA.debugLineNum = 524342;BA.debugLine="directorState.SetFlowState(playbackFlowState)";
-__ref._directorstate /*b4j.example.playbackdirectorstate*/ ._setflowstate /*String*/ (null,__ref._playbackflowstate /*String*/ );
-RDebugUtils.currentLine=524343;
- //BA.debugLineNum = 524343;BA.debugLine="MirrorRuntimeStateFromDirector";
-__ref._mirrorruntimestatefromdirector /*String*/ (null);
-RDebugUtils.currentLine=524344;
- //BA.debugLineNum = 524344;BA.debugLine="offlineStoreService.Initialize(storageDir, storag";
+ //BA.debugLineNum = 524331;BA.debugLine="offlineStoreService.Initialize(storageDir, storag";
 __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._initialize /*String*/ (null,ba,__ref._storagedir /*String*/ ,__ref._storage /*b4j.example.keyvaluestore*/ ,this,"TraceLog",__ref._playerdatafile /*String*/ ,__ref._playlistrequirementsfile /*String*/ ,__ref._localplaylistsdirname /*String*/ ,__ref._playlist_cdn_base_url /*String*/ );
+RDebugUtils.currentLine=524332;
+ //BA.debugLineNum = 524332;BA.debugLine="stateStore.Initialize(Me, retryTimer, dataPolicyS";
+__ref._statestore /*b4j.example.playerstatestore*/ ._initialize /*String*/ (null,ba,(b4j.example.b4xmainpage)(this),__ref._retrytimer /*anywheresoftware.b4a.objects.Timer*/ ,__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ,__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ,__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ,__ref._queuestate /*b4j.example.playbackqueuestate*/ ,__ref._queuebuilder /*b4j.example.playbackqueuebuilder*/ ,__ref._storage /*b4j.example.keyvaluestore*/ ,__ref._trustedsynctimekey /*String*/ ,__ref._offlinestoreservice /*b4j.example.offlinestore*/ ,__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ,__ref._mediacacheservice /*b4j.example.mediacache*/ );
+RDebugUtils.currentLine=524333;
+ //BA.debugLineNum = 524333;BA.debugLine="syncService.Initialize(stateStore)";
+__ref._syncservice /*b4j.example.networksyncservice*/ ._initialize /*String*/ (null,ba,__ref._statestore /*b4j.example.playerstatestore*/ );
+RDebugUtils.currentLine=524334;
+ //BA.debugLineNum = 524334;BA.debugLine="traceUploader.Initialize(stateStore, appTraceServ";
+__ref._traceuploader /*b4j.example.playbacktraceuploader*/ ._initialize /*String*/ (null,ba,__ref._statestore /*b4j.example.playerstatestore*/ ,__ref._apptraceservice /*b4j.example.traceservice*/ ,__ref._syncservice /*b4j.example.networksyncservice*/ ,__ref._trace_base_url /*String*/ ,__ref._resolveappversion /*String*/ (null));
+RDebugUtils.currentLine=524335;
+ //BA.debugLineNum = 524335;BA.debugLine="playerDataCoordinator.Initialize(stateStore, sync";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._initialize /*String*/ (null,ba,__ref._statestore /*b4j.example.playerstatestore*/ ,__ref._syncservice /*b4j.example.networksyncservice*/ );
+RDebugUtils.currentLine=524336;
+ //BA.debugLineNum = 524336;BA.debugLine="playbackWatchdogTimer.Enabled = True";
+__ref._playbackwatchdogtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
+RDebugUtils.currentLine=524337;
+ //BA.debugLineNum = 524337;BA.debugLine="playbackDirectorTimer.Enabled = True";
+__ref._playbackdirectortimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
+RDebugUtils.currentLine=524338;
+ //BA.debugLineNum = 524338;BA.debugLine="isHistoryFlushInProgress = False";
+__ref._ishistoryflushinprogress /*boolean*/  = __c.False;
+RDebugUtils.currentLine=524339;
+ //BA.debugLineNum = 524339;BA.debugLine="isPlaybackWatchdogTickInProgress = False";
+__ref._isplaybackwatchdogtickinprogress /*boolean*/  = __c.False;
+RDebugUtils.currentLine=524340;
+ //BA.debugLineNum = 524340;BA.debugLine="isStartupSequenceInProgress = False";
+__ref._isstartupsequenceinprogress /*boolean*/  = __c.False;
+RDebugUtils.currentLine=524341;
+ //BA.debugLineNum = 524341;BA.debugLine="stateStore.SetStartupSequenceInProgress(False)";
+__ref._statestore /*b4j.example.playerstatestore*/ ._setstartupsequenceinprogress /*String*/ (null,__c.False);
+RDebugUtils.currentLine=524342;
+ //BA.debugLineNum = 524342;BA.debugLine="isAdWarmupDeferredAfterStartup = False";
+__ref._isadwarmupdeferredafterstartup /*boolean*/  = __c.False;
+RDebugUtils.currentLine=524343;
+ //BA.debugLineNum = 524343;BA.debugLine="isPostStartTasksDeferredAfterStartup = False";
+__ref._ispoststarttasksdeferredafterstartup /*boolean*/  = __c.False;
+RDebugUtils.currentLine=524344;
+ //BA.debugLineNum = 524344;BA.debugLine="cachedRelevantTrackIds.Initialize";
+__ref._cachedrelevanttrackids /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
 RDebugUtils.currentLine=524345;
- //BA.debugLineNum = 524345;BA.debugLine="offlineData = offlineStoreService.LoadOfflineData";
-__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/  = __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._loadofflinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null);
+ //BA.debugLineNum = 524345;BA.debugLine="lastTrackCachePruneAt = 0";
+__ref._lasttrackcachepruneat /*long*/  = (long) (0);
 RDebugUtils.currentLine=524346;
- //BA.debugLineNum = 524346;BA.debugLine="RefreshPendingHistoryState";
-__ref._refreshpendinghistorystate /*String*/ (null);
+ //BA.debugLineNum = 524346;BA.debugLine="playbackFlowState = FLOW_IDLE";
+__ref._playbackflowstate /*String*/  = __ref._flow_idle /*String*/ ;
 RDebugUtils.currentLine=524347;
- //BA.debugLineNum = 524347;BA.debugLine="ResolveMachineGuidAsync";
-__ref._resolvemachineguidasync /*String*/ (null);
+ //BA.debugLineNum = 524347;BA.debugLine="ResetPlaybackWatchdogState";
+__ref._resetplaybackwatchdogstate /*String*/ (null);
 RDebugUtils.currentLine=524348;
- //BA.debugLineNum = 524348;BA.debugLine="TraceLog(\"состояние init dir=\" & storageDir & \" p";
-__ref._tracelog /*String*/ (null,"состояние init dir="+__ref._storagedir /*String*/ +" player="+__ref._formatplayercodefordisplay /*String*/ (null,__ref._playercode /*String*/ ));
+ //BA.debugLineNum = 524348;BA.debugLine="directorState.SetFlowState(playbackFlowState)";
+__ref._directorstate /*b4j.example.playbackdirectorstate*/ ._setflowstate /*String*/ (null,__ref._playbackflowstate /*String*/ );
 RDebugUtils.currentLine=524349;
- //BA.debugLineNum = 524349;BA.debugLine="End Sub";
+ //BA.debugLineNum = 524349;BA.debugLine="MirrorRuntimeStateFromDirector";
+__ref._mirrorruntimestatefromdirector /*String*/ (null);
+RDebugUtils.currentLine=524350;
+ //BA.debugLineNum = 524350;BA.debugLine="stateStore.SetOfflineData(offlineStoreService.Loa";
+__ref._statestore /*b4j.example.playerstatestore*/ ._setofflinedata /*String*/ (null,__ref._offlinestoreservice /*b4j.example.offlinestore*/ ._loadofflinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null));
+RDebugUtils.currentLine=524351;
+ //BA.debugLineNum = 524351;BA.debugLine="RefreshPendingHistoryState";
+__ref._refreshpendinghistorystate /*String*/ (null);
+RDebugUtils.currentLine=524352;
+ //BA.debugLineNum = 524352;BA.debugLine="ResolveMachineGuidAsync";
+__ref._resolvemachineguidasync /*String*/ (null);
+RDebugUtils.currentLine=524353;
+ //BA.debugLineNum = 524353;BA.debugLine="TraceLog(\"состояние init dir=\" & storageDir & \" p";
+__ref._tracelog /*String*/ (null,"состояние init dir="+__ref._storagedir /*String*/ +" player="+__ref._formatplayercodefordisplay /*String*/ (null,__ref._playercode /*String*/ ));
+RDebugUtils.currentLine=524354;
+ //BA.debugLineNum = 524354;BA.debugLine="End Sub";
 return "";
 }
 public String  _buildui(b4j.example.b4xmainpage __ref) throws Exception{
@@ -4080,10 +3203,21 @@ RDebugUtils.currentLine=589931;
  //BA.debugLineNum = 589931;BA.debugLine="confirmPane.Visible = False";
 __ref._confirmpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible(__c.False);
 RDebugUtils.currentLine=589932;
- //BA.debugLineNum = 589932;BA.debugLine="LayoutUi(rootView.Width, rootView.Height)";
-__ref._layoutui /*String*/ (null,(int) (__ref._rootview /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .getWidth()),(int) (__ref._rootview /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .getHeight()));
-RDebugUtils.currentLine=589933;
- //BA.debugLineNum = 589933;BA.debugLine="End Sub";
+ //BA.debugLineNum = 589932;BA.debugLine="End Sub";
+return "";
+}
+public String  _updatevisiblemode(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "updatevisiblemode", false))
+	 {return ((String) Debug.delegate(ba, "updatevisiblemode", null));}
+RDebugUtils.currentLine=3211264;
+ //BA.debugLineNum = 3211264;BA.debugLine="Private Sub UpdateVisibleMode";
+RDebugUtils.currentLine=3211265;
+ //BA.debugLineNum = 3211265;BA.debugLine="uiController.UpdateVisibleMode(appScreenMode)";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._updatevisiblemode /*String*/ (null,__ref._appscreenmode /*String*/ );
+RDebugUtils.currentLine=3211266;
+ //BA.debugLineNum = 3211266;BA.debugLine="End Sub";
 return "";
 }
 public String  _restorewindowstate(b4j.example.b4xmainpage __ref) throws Exception{
@@ -4390,7 +3524,7 @@ RDebugUtils.currentLine=58982416;
 __ref._tracestate /*String*/ (null,"health","ресурсы",_basedetails+" ramFreeMb="+__ref._resolvefreerammbtext /*String*/ (null)+" diskFreeMb="+__ref._resolvefreediskmbtext /*String*/ (null)+" diskTotalMb="+__ref._resolvetotaldiskmbtext /*String*/ (null));
 RDebugUtils.currentLine=58982420;
  //BA.debugLineNum = 58982420;BA.debugLine="TraceState(\"health\", \"сеть\", baseDetails & _ 		\"";
-__ref._tracestate /*String*/ (null,"health","сеть",_basedetails+" netErrors="+BA.NumberToString(__ref._consecutivenetworkerrors /*int*/ )+" lastDataOkAgoSec="+__ref._secondsagotext /*String*/ (null,__ref._lastdataokat /*long*/ )+" lastHistoryOkAgoSec="+__ref._secondsagotext /*String*/ (null,__ref._lasthistoryokat /*long*/ ));
+__ref._tracestate /*String*/ (null,"health","сеть",_basedetails+" netErrors="+BA.NumberToString(__ref._statestore /*b4j.example.playerstatestore*/ ._getconsecutivenetworkerrors /*int*/ (null))+" lastDataOkAgoSec="+__ref._secondsagotext /*String*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._getlastdataokat /*long*/ (null))+" lastHistoryOkAgoSec="+__ref._secondsagotext /*String*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._getlasthistoryokat /*long*/ (null)));
 RDebugUtils.currentLine=58982424;
  //BA.debugLineNum = 58982424;BA.debugLine="End Sub";
 return "";
@@ -4800,8 +3934,8 @@ case 0:
 //C
 this.state = -1;
 RDebugUtils.currentLine=2359297;
- //BA.debugLineNum = 2359297;BA.debugLine="Wait For (queueBuilder.EnsureDataPlaybackQueue(pl";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensuredataplaybackqueue"), __ref._queuebuilder /*b4j.example.playbackqueuebuilder*/ ._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,_minitems,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ,__ref._effectivenowticks /*long*/ (null),__ref._storage /*b4j.example.keyvaluestore*/ ,__ref._queuestate /*b4j.example.playbackqueuestate*/ ,__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ,__ref._mediacacheservice /*b4j.example.mediacache*/ ));
+ //BA.debugLineNum = 2359297;BA.debugLine="Wait For (stateStore.EnsureDataPlaybackQueue(play";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensuredataplaybackqueue"), __ref._statestore /*b4j.example.playerstatestore*/ ._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,_minitems));
 this.state = 1;
 return;
 case 1:
@@ -5129,14 +4263,24 @@ anywheresoftware.b4j.object.JavaObject _jo = null;
 RDebugUtils.currentLine=14811136;
  //BA.debugLineNum = 14811136;BA.debugLine="Private Sub BringToFront(view As B4XView)";
 RDebugUtils.currentLine=14811137;
- //BA.debugLineNum = 14811137;BA.debugLine="Dim jo As JavaObject = view";
+ //BA.debugLineNum = 14811137;BA.debugLine="If uiController.IsInitialized Then";
+if (__ref._uicontroller /*b4j.example.playeruicontroller*/ .IsInitialized /*boolean*/ ()) { 
+RDebugUtils.currentLine=14811138;
+ //BA.debugLineNum = 14811138;BA.debugLine="uiController.BringToFront(view)";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._bringtofront /*String*/ (null,_view);
+RDebugUtils.currentLine=14811139;
+ //BA.debugLineNum = 14811139;BA.debugLine="Return";
+if (true) return "";
+ };
+RDebugUtils.currentLine=14811141;
+ //BA.debugLineNum = 14811141;BA.debugLine="Dim jo As JavaObject = view";
 _jo = new anywheresoftware.b4j.object.JavaObject();
 _jo = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_view.getObject()));
-RDebugUtils.currentLine=14811138;
- //BA.debugLineNum = 14811138;BA.debugLine="jo.RunMethod(\"toFront\", Null)";
+RDebugUtils.currentLine=14811142;
+ //BA.debugLineNum = 14811142;BA.debugLine="jo.RunMethod(\"toFront\", Null)";
 _jo.RunMethod("toFront",(Object[])(__c.Null));
-RDebugUtils.currentLine=14811139;
- //BA.debugLineNum = 14811139;BA.debugLine="End Sub";
+RDebugUtils.currentLine=14811143;
+ //BA.debugLineNum = 14811143;BA.debugLine="End Sub";
 return "";
 }
 public String  _btnconfirmno_click(b4j.example.b4xmainpage __ref) throws Exception{
@@ -5164,16 +4308,10 @@ if (Debug.shouldDelegate(ba, "hidepin", false))
 RDebugUtils.currentLine=15204352;
  //BA.debugLineNum = 15204352;BA.debugLine="Private Sub HidePin";
 RDebugUtils.currentLine=15204353;
- //BA.debugLineNum = 15204353;BA.debugLine="confirmPane.Visible = False";
-__ref._confirmpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible(__c.False);
+ //BA.debugLineNum = 15204353;BA.debugLine="uiController.HidePin";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._hidepin /*String*/ (null);
 RDebugUtils.currentLine=15204354;
- //BA.debugLineNum = 15204354;BA.debugLine="btnConfirmYes.Enabled = True";
-__ref._btnconfirmyes /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setEnabled(__c.True);
-RDebugUtils.currentLine=15204355;
- //BA.debugLineNum = 15204355;BA.debugLine="btnConfirmNo.Enabled = True";
-__ref._btnconfirmno /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setEnabled(__c.True);
-RDebugUtils.currentLine=15204356;
- //BA.debugLineNum = 15204356;BA.debugLine="End Sub";
+ //BA.debugLineNum = 15204354;BA.debugLine="End Sub";
 return "";
 }
 public String  _btnconfirmno_mouseentered(b4j.example.b4xmainpage __ref,anywheresoftware.b4j.objects.NodeWrapper.MouseEventWrapper _eventdata) throws Exception{
@@ -5201,48 +4339,58 @@ int _textcolor = 0;
 RDebugUtils.currentLine=14680064;
  //BA.debugLineNum = 14680064;BA.debugLine="Private Sub UpdateTextButtonAppearance(buttonView";
 RDebugUtils.currentLine=14680065;
- //BA.debugLineNum = 14680065;BA.debugLine="Dim fillColor As Int";
-_fillcolor = 0;
+ //BA.debugLineNum = 14680065;BA.debugLine="If uiController.IsInitialized Then";
+if (__ref._uicontroller /*b4j.example.playeruicontroller*/ .IsInitialized /*boolean*/ ()) { 
 RDebugUtils.currentLine=14680066;
- //BA.debugLineNum = 14680066;BA.debugLine="Dim borderColor As Int";
-_bordercolor = 0;
+ //BA.debugLineNum = 14680066;BA.debugLine="uiController.UpdateTextButtonAppearance(buttonVi";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._updatetextbuttonappearance /*String*/ (null,_buttonview,_ishovered);
 RDebugUtils.currentLine=14680067;
- //BA.debugLineNum = 14680067;BA.debugLine="Dim textColor As Int";
-_textcolor = 0;
-RDebugUtils.currentLine=14680068;
- //BA.debugLineNum = 14680068;BA.debugLine="If isHovered Then";
-if (_ishovered) { 
+ //BA.debugLineNum = 14680067;BA.debugLine="Return";
+if (true) return "";
+ };
 RDebugUtils.currentLine=14680069;
- //BA.debugLineNum = 14680069;BA.debugLine="fillColor = 0x12FFFFFF";
-_fillcolor = ((int)0x12ffffff);
+ //BA.debugLineNum = 14680069;BA.debugLine="Dim fillColor As Int";
+_fillcolor = 0;
 RDebugUtils.currentLine=14680070;
- //BA.debugLineNum = 14680070;BA.debugLine="borderColor = 0x34FFFFFF";
-_bordercolor = ((int)0x34ffffff);
+ //BA.debugLineNum = 14680070;BA.debugLine="Dim borderColor As Int";
+_bordercolor = 0;
 RDebugUtils.currentLine=14680071;
- //BA.debugLineNum = 14680071;BA.debugLine="textColor = 0xFFF2F7FB";
+ //BA.debugLineNum = 14680071;BA.debugLine="Dim textColor As Int";
+_textcolor = 0;
+RDebugUtils.currentLine=14680072;
+ //BA.debugLineNum = 14680072;BA.debugLine="If isHovered Then";
+if (_ishovered) { 
+RDebugUtils.currentLine=14680073;
+ //BA.debugLineNum = 14680073;BA.debugLine="fillColor = 0x12FFFFFF";
+_fillcolor = ((int)0x12ffffff);
+RDebugUtils.currentLine=14680074;
+ //BA.debugLineNum = 14680074;BA.debugLine="borderColor = 0x34FFFFFF";
+_bordercolor = ((int)0x34ffffff);
+RDebugUtils.currentLine=14680075;
+ //BA.debugLineNum = 14680075;BA.debugLine="textColor = 0xFFF2F7FB";
 _textcolor = ((int)0xfff2f7fb);
  }else {
-RDebugUtils.currentLine=14680073;
- //BA.debugLineNum = 14680073;BA.debugLine="fillColor = 0x06FFFFFF";
+RDebugUtils.currentLine=14680077;
+ //BA.debugLineNum = 14680077;BA.debugLine="fillColor = 0x06FFFFFF";
 _fillcolor = ((int)0x06ffffff);
-RDebugUtils.currentLine=14680074;
- //BA.debugLineNum = 14680074;BA.debugLine="borderColor = 0x1EFFFFFF";
+RDebugUtils.currentLine=14680078;
+ //BA.debugLineNum = 14680078;BA.debugLine="borderColor = 0x1EFFFFFF";
 _bordercolor = ((int)0x1effffff);
-RDebugUtils.currentLine=14680075;
- //BA.debugLineNum = 14680075;BA.debugLine="textColor = 0xFFE0E4EA";
+RDebugUtils.currentLine=14680079;
+ //BA.debugLineNum = 14680079;BA.debugLine="textColor = 0xFFE0E4EA";
 _textcolor = ((int)0xffe0e4ea);
  };
-RDebugUtils.currentLine=14680077;
- //BA.debugLineNum = 14680077;BA.debugLine="buttonView.SetColorAndBorder(fillColor, 1dip, bor";
+RDebugUtils.currentLine=14680081;
+ //BA.debugLineNum = 14680081;BA.debugLine="buttonView.SetColorAndBorder(fillColor, 1dip, bor";
 _buttonview.SetColorAndBorder(_fillcolor,__c.DipToCurrent((int) (1)),_bordercolor,__c.DipToCurrent((int) (12)));
-RDebugUtils.currentLine=14680078;
- //BA.debugLineNum = 14680078;BA.debugLine="SetPaneStyle(buttonView, \"-fx-cursor: hand; -fx-b";
-__ref._setpanestyle /*String*/ (null,_buttonview,"-fx-cursor: hand; -fx-border-radius: 12; -fx-background-radius: 12; -fx-text-fill: "+__ref._colortocss /*String*/ (null,_textcolor)+";");
-RDebugUtils.currentLine=14680079;
- //BA.debugLineNum = 14680079;BA.debugLine="buttonView.Font = xui.CreateDefaultBoldFont(13)";
+RDebugUtils.currentLine=14680082;
+ //BA.debugLineNum = 14680082;BA.debugLine="UiStyle.SetPaneStyle(buttonView, \"-fx-cursor: han";
+_uistyle._setpanestyle /*String*/ (_buttonview,"-fx-cursor: hand; -fx-border-radius: 12; -fx-background-radius: 12; -fx-text-fill: "+_uistyle._colortocss /*String*/ (_textcolor)+";");
+RDebugUtils.currentLine=14680083;
+ //BA.debugLineNum = 14680083;BA.debugLine="buttonView.Font = xui.CreateDefaultBoldFont(13)";
 _buttonview.setFont(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .CreateDefaultBoldFont((float) (13)));
-RDebugUtils.currentLine=14680080;
- //BA.debugLineNum = 14680080;BA.debugLine="End Sub";
+RDebugUtils.currentLine=14680084;
+ //BA.debugLineNum = 14680084;BA.debugLine="End Sub";
 return "";
 }
 public String  _btnconfirmno_mouseexited(b4j.example.b4xmainpage __ref,anywheresoftware.b4j.objects.NodeWrapper.MouseEventWrapper _eventdata) throws Exception{
@@ -5349,8 +4497,8 @@ RDebugUtils.currentLine=7929859;
  //BA.debugLineNum = 7929859;BA.debugLine="TraceLog(\"claim начало player=\" & FormatPlayerCod";
 __ref._tracelog /*String*/ (null,"claim начало player="+__ref._formatplayercodefordisplay /*String*/ (null,__ref._playercode /*String*/ )+" device="+__ref._deviceid /*String*/ );
 RDebugUtils.currentLine=7929860;
- //BA.debugLineNum = 7929860;BA.debugLine="Wait For (FetchJsonWithTimeout(CLAIM_BASE_URL & \"";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "submitclaim"), __ref._fetchjsonwithtimeout /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._claim_base_url /*String*/ +"?"+__ref._buildparams /*String*/ (null,__ref._createclaimparams /*anywheresoftware.b4a.objects.collections.Map*/ (null)),__ref._fetch_timeout_ms /*int*/ ));
+ //BA.debugLineNum = 7929860;BA.debugLine="Wait For (syncService.SubmitClaim(FETCH_TIMEOUT_M";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "submitclaim"), __ref._syncservice /*b4j.example.networksyncservice*/ ._submitclaim /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._fetch_timeout_ms /*int*/ ));
 this.state = 13;
 return;
 case 13:
@@ -5641,8 +4789,8 @@ this.state = -1;
 _unused = (boolean) result[1];
 ;
 RDebugUtils.currentLine=4653060;
- //BA.debugLineNum = 4653060;BA.debugLine="SetStatusText(\"\")";
-__ref._setstatustext /*String*/ (null,"");
+ //BA.debugLineNum = 4653060;BA.debugLine="uiController.SetStatusText(\"\")";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._setstatustext /*String*/ (null,"");
 RDebugUtils.currentLine=4653061;
  //BA.debugLineNum = 4653061;BA.debugLine="ShowSetupScreen(\"\")";
 __ref._showsetupscreen /*String*/ (null,"");
@@ -5779,100 +4927,6 @@ RDebugUtils.currentLine=3932162;
  //BA.debugLineNum = 3932162;BA.debugLine="End Sub";
 return "";
 }
-public String  _buildaudiosettingstext(b4j.example.b4xmainpage __ref,String _details) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "buildaudiosettingstext", false))
-	 {return ((String) Debug.delegate(ba, "buildaudiosettingstext", new Object[] {_details}));}
-String _volumetext = "";
-String _gaintext = "";
-String _gainstate = "";
-anywheresoftware.b4a.objects.collections.List _parts = null;
-RDebugUtils.currentLine=63111168;
- //BA.debugLineNum = 63111168;BA.debugLine="Private Sub BuildAudioSettingsText(details As Stri";
-RDebugUtils.currentLine=63111169;
- //BA.debugLineNum = 63111169;BA.debugLine="Dim volumeText As String = ExtractDetailValue(det";
-_volumetext = __ref._extractdetailvalue /*String*/ (null,_details,"volume");
-RDebugUtils.currentLine=63111170;
- //BA.debugLineNum = 63111170;BA.debugLine="Dim gainText As String = ExtractDetailValue(detai";
-_gaintext = __ref._extractdetailvalue /*String*/ (null,_details,"gainDb");
-RDebugUtils.currentLine=63111171;
- //BA.debugLineNum = 63111171;BA.debugLine="Dim gainState As String = ExtractDetailValue(deta";
-_gainstate = __ref._extractdetailvalue /*String*/ (null,_details,"gainApplied");
-RDebugUtils.currentLine=63111172;
- //BA.debugLineNum = 63111172;BA.debugLine="Dim parts As List";
-_parts = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=63111173;
- //BA.debugLineNum = 63111173;BA.debugLine="parts.Initialize";
-_parts.Initialize();
-RDebugUtils.currentLine=63111174;
- //BA.debugLineNum = 63111174;BA.debugLine="If volumeText <> \"\" Then parts.Add(\"громкость \" &";
-if ((_volumetext).equals("") == false) { 
-_parts.Add((Object)("громкость "+_volumetext));};
-RDebugUtils.currentLine=63111175;
- //BA.debugLineNum = 63111175;BA.debugLine="If gainText <> \"\" Then";
-if ((_gaintext).equals("") == false) { 
-RDebugUtils.currentLine=63111176;
- //BA.debugLineNum = 63111176;BA.debugLine="If gainState = \"yes\" Then";
-if ((_gainstate).equals("yes")) { 
-RDebugUtils.currentLine=63111177;
- //BA.debugLineNum = 63111177;BA.debugLine="parts.Add(\"gain \" & gainText & \" дБ\")";
-_parts.Add((Object)("gain "+_gaintext+" дБ"));
- }else {
-RDebugUtils.currentLine=63111179;
- //BA.debugLineNum = 63111179;BA.debugLine="parts.Add(\"gain по умолчанию \" & gainText & \" д";
-_parts.Add((Object)("gain по умолчанию "+_gaintext+" дБ"));
- };
- };
-RDebugUtils.currentLine=63111182;
- //BA.debugLineNum = 63111182;BA.debugLine="If parts.Size = 0 Then Return \"\"";
-if (_parts.getSize()==0) { 
-if (true) return "";};
-RDebugUtils.currentLine=63111183;
- //BA.debugLineNum = 63111183;BA.debugLine="Return \". \" & JoinWords(parts)";
-if (true) return ". "+__ref._joinwords /*String*/ (null,_parts);
-RDebugUtils.currentLine=63111184;
- //BA.debugLineNum = 63111184;BA.debugLine="End Sub";
-return "";
-}
-public String  _joinwords(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.List _parts) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "joinwords", false))
-	 {return ((String) Debug.delegate(ba, "joinwords", new Object[] {_parts}));}
-anywheresoftware.b4a.keywords.StringBuilderWrapper _sb = null;
-int _i = 0;
-RDebugUtils.currentLine=61341696;
- //BA.debugLineNum = 61341696;BA.debugLine="Private Sub JoinWords(parts As List) As String";
-RDebugUtils.currentLine=61341697;
- //BA.debugLineNum = 61341697;BA.debugLine="Dim sb As StringBuilder";
-_sb = new anywheresoftware.b4a.keywords.StringBuilderWrapper();
-RDebugUtils.currentLine=61341698;
- //BA.debugLineNum = 61341698;BA.debugLine="sb.Initialize";
-_sb.Initialize();
-RDebugUtils.currentLine=61341699;
- //BA.debugLineNum = 61341699;BA.debugLine="For i = 0 To parts.Size - 1";
-{
-final int step3 = 1;
-final int limit3 = (int) (_parts.getSize()-1);
-_i = (int) (0) ;
-for (;_i <= limit3 ;_i = _i + step3 ) {
-RDebugUtils.currentLine=61341700;
- //BA.debugLineNum = 61341700;BA.debugLine="If i > 0 Then sb.Append(\". \")";
-if (_i>0) { 
-_sb.Append(". ");};
-RDebugUtils.currentLine=61341701;
- //BA.debugLineNum = 61341701;BA.debugLine="sb.Append(parts.Get(i))";
-_sb.Append(BA.ObjectToString(_parts.Get(_i)));
- }
-};
-RDebugUtils.currentLine=61341703;
- //BA.debugLineNum = 61341703;BA.debugLine="Return sb.ToString";
-if (true) return _sb.ToString();
-RDebugUtils.currentLine=61341704;
- //BA.debugLineNum = 61341704;BA.debugLine="End Sub";
-return "";
-}
 public double  _currentvolume(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -5904,172 +4958,6 @@ if (true) return __ref._normalizedbvalue /*double*/ (null,_item.GetDefault((Obje
 RDebugUtils.currentLine=63373315;
  //BA.debugLineNum = 63373315;BA.debugLine="End Sub";
 return 0;
-}
-public String  _buildcountstext(b4j.example.b4xmainpage __ref,String _details) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "buildcountstext", false))
-	 {return ((String) Debug.delegate(ba, "buildcountstext", new Object[] {_details}));}
-anywheresoftware.b4a.objects.collections.List _parts = null;
-RDebugUtils.currentLine=61210624;
- //BA.debugLineNum = 61210624;BA.debugLine="Private Sub BuildCountsText(details As String) As";
-RDebugUtils.currentLine=61210625;
- //BA.debugLineNum = 61210625;BA.debugLine="Dim parts As List";
-_parts = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=61210626;
- //BA.debugLineNum = 61210626;BA.debugLine="parts.Initialize";
-_parts.Initialize();
-RDebugUtils.currentLine=61210627;
- //BA.debugLineNum = 61210627;BA.debugLine="AddCountPart(parts, details, \"downloaded\", \"загру";
-__ref._addcountpart /*String*/ (null,_parts,_details,"downloaded","загружено");
-RDebugUtils.currentLine=61210628;
- //BA.debugLineNum = 61210628;BA.debugLine="AddCountPart(parts, details, \"updated\", \"обновлен";
-__ref._addcountpart /*String*/ (null,_parts,_details,"updated","обновлено");
-RDebugUtils.currentLine=61210629;
- //BA.debugLineNum = 61210629;BA.debugLine="AddCountPart(parts, details, \"failed\", \"ошибок\")";
-__ref._addcountpart /*String*/ (null,_parts,_details,"failed","ошибок");
-RDebugUtils.currentLine=61210630;
- //BA.debugLineNum = 61210630;BA.debugLine="AddCountPart(parts, details, \"removed\", \"удалено\"";
-__ref._addcountpart /*String*/ (null,_parts,_details,"removed","удалено");
-RDebugUtils.currentLine=61210631;
- //BA.debugLineNum = 61210631;BA.debugLine="AddCountPart(parts, details, \"actual\", \"осталось\"";
-__ref._addcountpart /*String*/ (null,_parts,_details,"actual","осталось");
-RDebugUtils.currentLine=61210632;
- //BA.debugLineNum = 61210632;BA.debugLine="AddCountPart(parts, details, \"added\", \"добавлено\"";
-__ref._addcountpart /*String*/ (null,_parts,_details,"added","добавлено");
-RDebugUtils.currentLine=61210633;
- //BA.debugLineNum = 61210633;BA.debugLine="AddCountPart(parts, details, \"tempDeleted\", \"врем";
-__ref._addcountpart /*String*/ (null,_parts,_details,"tempDeleted","временных удалено");
-RDebugUtils.currentLine=61210634;
- //BA.debugLineNum = 61210634;BA.debugLine="AddCountPart(parts, details, \"ads\", \"рекламы\")";
-__ref._addcountpart /*String*/ (null,_parts,_details,"ads","рекламы");
-RDebugUtils.currentLine=61210635;
- //BA.debugLineNum = 61210635;BA.debugLine="AddCountPart(parts, details, \"tracks\", \"треков\")";
-__ref._addcountpart /*String*/ (null,_parts,_details,"tracks","треков");
-RDebugUtils.currentLine=61210636;
- //BA.debugLineNum = 61210636;BA.debugLine="If parts.Size = 0 Then Return BuildReasonText(det";
-if (_parts.getSize()==0) { 
-if (true) return __ref._buildreasontext /*String*/ (null,_details);};
-RDebugUtils.currentLine=61210637;
- //BA.debugLineNum = 61210637;BA.debugLine="Return JoinWords(parts)";
-if (true) return __ref._joinwords /*String*/ (null,_parts);
-RDebugUtils.currentLine=61210638;
- //BA.debugLineNum = 61210638;BA.debugLine="End Sub";
-return "";
-}
-public String  _buildreasontext(b4j.example.b4xmainpage __ref,String _details) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "buildreasontext", false))
-	 {return ((String) Debug.delegate(ba, "buildreasontext", new Object[] {_details}));}
-String _messagetext = "";
-String _reasontext = "";
-String _kindtext = "";
-String _steptext = "";
-String _resulttext = "";
-RDebugUtils.currentLine=61145088;
- //BA.debugLineNum = 61145088;BA.debugLine="Private Sub BuildReasonText(details As String) As";
-RDebugUtils.currentLine=61145089;
- //BA.debugLineNum = 61145089;BA.debugLine="If details = \"\" Then Return \"\"";
-if ((_details).equals("")) { 
-if (true) return "";};
-RDebugUtils.currentLine=61145090;
- //BA.debugLineNum = 61145090;BA.debugLine="Dim messageText As String = ExtractDetailTail(det";
-_messagetext = __ref._extractdetailtail /*String*/ (null,_details,"message");
-RDebugUtils.currentLine=61145091;
- //BA.debugLineNum = 61145091;BA.debugLine="If messageText <> \"\" Then Return messageText";
-if ((_messagetext).equals("") == false) { 
-if (true) return _messagetext;};
-RDebugUtils.currentLine=61145092;
- //BA.debugLineNum = 61145092;BA.debugLine="Dim reasonText As String = ExtractDetailTail(deta";
-_reasontext = __ref._extractdetailtail /*String*/ (null,_details,"reason");
-RDebugUtils.currentLine=61145093;
- //BA.debugLineNum = 61145093;BA.debugLine="If reasonText <> \"\" Then Return \"Причина: \" & rea";
-if ((_reasontext).equals("") == false) { 
-if (true) return "Причина: "+_reasontext;};
-RDebugUtils.currentLine=61145094;
- //BA.debugLineNum = 61145094;BA.debugLine="Dim kindText As String = ExtractDetailValue(detai";
-_kindtext = __ref._extractdetailvalue /*String*/ (null,_details,"kind");
-RDebugUtils.currentLine=61145095;
- //BA.debugLineNum = 61145095;BA.debugLine="If kindText <> \"\" Then Return \"Причина: \" & kindT";
-if ((_kindtext).equals("") == false) { 
-if (true) return "Причина: "+_kindtext;};
-RDebugUtils.currentLine=61145096;
- //BA.debugLineNum = 61145096;BA.debugLine="Dim stepText As String = ExtractDetailValue(detai";
-_steptext = __ref._extractdetailvalue /*String*/ (null,_details,"step");
-RDebugUtils.currentLine=61145097;
- //BA.debugLineNum = 61145097;BA.debugLine="If stepText <> \"\" Then Return \"Шаг: \" & stepText";
-if ((_steptext).equals("") == false) { 
-if (true) return "Шаг: "+_steptext;};
-RDebugUtils.currentLine=61145098;
- //BA.debugLineNum = 61145098;BA.debugLine="Dim resultText As String = ExtractDetailValue(det";
-_resulttext = __ref._extractdetailvalue /*String*/ (null,_details,"result");
-RDebugUtils.currentLine=61145099;
- //BA.debugLineNum = 61145099;BA.debugLine="If resultText <> \"\" Then Return \"Результат: \" & r";
-if ((_resulttext).equals("") == false) { 
-if (true) return "Результат: "+_resulttext;};
-RDebugUtils.currentLine=61145100;
- //BA.debugLineNum = 61145100;BA.debugLine="Return details";
-if (true) return _details;
-RDebugUtils.currentLine=61145101;
- //BA.debugLineNum = 61145101;BA.debugLine="End Sub";
-return "";
-}
-public String  _buildhealthaudiosettingstext(b4j.example.b4xmainpage __ref,String _details) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "buildhealthaudiosettingstext", false))
-	 {return ((String) Debug.delegate(ba, "buildhealthaudiosettingstext", new Object[] {_details}));}
-String _volumetext = "";
-String _gaintext = "";
-String _gainstate = "";
-anywheresoftware.b4a.objects.collections.List _parts = null;
-RDebugUtils.currentLine=63176704;
- //BA.debugLineNum = 63176704;BA.debugLine="Private Sub BuildHealthAudioSettingsText(details A";
-RDebugUtils.currentLine=63176705;
- //BA.debugLineNum = 63176705;BA.debugLine="Dim volumeText As String = ExtractDetailValue(det";
-_volumetext = __ref._extractdetailvalue /*String*/ (null,_details,"volume");
-RDebugUtils.currentLine=63176706;
- //BA.debugLineNum = 63176706;BA.debugLine="Dim gainText As String = ExtractDetailValue(detai";
-_gaintext = __ref._extractdetailvalue /*String*/ (null,_details,"gainDb");
-RDebugUtils.currentLine=63176707;
- //BA.debugLineNum = 63176707;BA.debugLine="Dim gainState As String = ExtractDetailValue(deta";
-_gainstate = __ref._extractdetailvalue /*String*/ (null,_details,"gainApplied");
-RDebugUtils.currentLine=63176708;
- //BA.debugLineNum = 63176708;BA.debugLine="Dim parts As List";
-_parts = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=63176709;
- //BA.debugLineNum = 63176709;BA.debugLine="parts.Initialize";
-_parts.Initialize();
-RDebugUtils.currentLine=63176710;
- //BA.debugLineNum = 63176710;BA.debugLine="If volumeText <> \"\" Then parts.Add(\"громкость=\" &";
-if ((_volumetext).equals("") == false) { 
-_parts.Add((Object)("громкость="+_volumetext));};
-RDebugUtils.currentLine=63176711;
- //BA.debugLineNum = 63176711;BA.debugLine="If gainText <> \"\" Then";
-if ((_gaintext).equals("") == false) { 
-RDebugUtils.currentLine=63176712;
- //BA.debugLineNum = 63176712;BA.debugLine="If gainState = \"yes\" Then";
-if ((_gainstate).equals("yes")) { 
-RDebugUtils.currentLine=63176713;
- //BA.debugLineNum = 63176713;BA.debugLine="parts.Add(\"gain=\" & gainText & \" дБ\")";
-_parts.Add((Object)("gain="+_gaintext+" дБ"));
- }else {
-RDebugUtils.currentLine=63176715;
- //BA.debugLineNum = 63176715;BA.debugLine="parts.Add(\"gain=\" & gainText & \" дБ по умолчани";
-_parts.Add((Object)("gain="+_gaintext+" дБ по умолчанию"));
- };
- };
-RDebugUtils.currentLine=63176718;
- //BA.debugLineNum = 63176718;BA.debugLine="If parts.Size = 0 Then Return \"\"";
-if (_parts.getSize()==0) { 
-if (true) return "";};
-RDebugUtils.currentLine=63176719;
- //BA.debugLineNum = 63176719;BA.debugLine="Return \", \" & JoinWords(parts)";
-if (true) return ", "+__ref._joinwords /*String*/ (null,_parts);
-RDebugUtils.currentLine=63176720;
- //BA.debugLineNum = 63176720;BA.debugLine="End Sub";
-return "";
 }
 public String  _buildhealthaudiotracedetails(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
@@ -6120,760 +5008,99 @@ RDebugUtils.currentLine=66519046;
  //BA.debugLineNum = 66519046;BA.debugLine="End Sub";
 return null;
 }
-public String  _buildhumantracemessage(b4j.example.b4xmainpage __ref,String _category,String _message,String _details) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "buildhumantracemessage", false))
-	 {return ((String) Debug.delegate(ba, "buildhumantracemessage", new Object[] {_category,_message,_details}));}
-String _delaysec = "";
-String _playertext = "";
-String _itemlabel = "";
-String _audiosettingstext = "";
-String _skipreason = "";
-String _sourcetext = "";
-String _generictext = "";
-RDebugUtils.currentLine=60948480;
- //BA.debugLineNum = 60948480;BA.debugLine="Private Sub BuildHumanTraceMessage(category As Str";
-RDebugUtils.currentLine=60948481;
- //BA.debugLineNum = 60948481;BA.debugLine="Select category";
-switch (BA.switchObjectToInt(_category,"app","network","audio","playback","player","cache","history","health","system")) {
-case 0: {
-RDebugUtils.currentLine=60948483;
- //BA.debugLineNum = 60948483;BA.debugLine="If message = \"запуск\" Then";
-if ((_message).equals("запуск")) { 
-RDebugUtils.currentLine=60948484;
- //BA.debugLineNum = 60948484;BA.debugLine="Return \"Приложение запущено. \" & BuildVersionP";
-if (true) return "Приложение запущено. "+__ref._buildversionplayertext /*String*/ (null,_details);
- };
- break; }
-case 1: {
-RDebugUtils.currentLine=60948487;
- //BA.debugLineNum = 60948487;BA.debugLine="Select message";
-switch (BA.switchObjectToInt(_message,"запрос данных","data загружены","data ошибка","data сообщение","data некорректны","переход в retry","data timeout","метаданные плейлистов обновлены","ошибка метаданных плейлиста","ошибка очереди","media path восстановлен","деградация media path")) {
-case 0: {
-RDebugUtils.currentLine=60948489;
- //BA.debugLineNum = 60948489;BA.debugLine="Return \"Запрос данных\"";
-if (true) return "Запрос данных";
- break; }
-case 1: {
-RDebugUtils.currentLine=60948491;
- //BA.debugLineNum = 60948491;BA.debugLine="Return \"Данные получены.\"";
-if (true) return "Данные получены.";
- break; }
-case 2: {
-RDebugUtils.currentLine=60948493;
- //BA.debugLineNum = 60948493;BA.debugLine="Return \"Ошибка запроса данных. \" & BuildReaso";
-if (true) return "Ошибка запроса данных. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 3: {
-RDebugUtils.currentLine=60948495;
- //BA.debugLineNum = 60948495;BA.debugLine="Return \"Сервер вернул сообщение. \" & BuildRea";
-if (true) return "Сервер вернул сообщение. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 4: {
-RDebugUtils.currentLine=60948497;
- //BA.debugLineNum = 60948497;BA.debugLine="Return \"Ошибка данных от сервера. \" & BuildRe";
-if (true) return "Ошибка данных от сервера. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 5: {
-RDebugUtils.currentLine=60948499;
- //BA.debugLineNum = 60948499;BA.debugLine="Dim delaySec As String = ExtractDetailValue(d";
-_delaysec = __ref._extractdetailvalue /*String*/ (null,_details,"delaySec");
-RDebugUtils.currentLine=60948500;
- //BA.debugLineNum = 60948500;BA.debugLine="If delaySec = \"\" Then delaySec = ExtractDetai";
-if ((_delaysec).equals("")) { 
-_delaysec = __ref._extractdetailvalue /*String*/ (null,_details,"delay");};
-RDebugUtils.currentLine=60948501;
- //BA.debugLineNum = 60948501;BA.debugLine="If delaySec <> \"\" Then Return \"Повторный запр";
-if ((_delaysec).equals("") == false) { 
-if (true) return "Повторный запрос данных через "+_delaysec+" секунд";};
-RDebugUtils.currentLine=60948502;
- //BA.debugLineNum = 60948502;BA.debugLine="Return \"Повторный запрос данных позже\"";
-if (true) return "Повторный запрос данных позже";
- break; }
-case 6: {
-RDebugUtils.currentLine=60948504;
- //BA.debugLineNum = 60948504;BA.debugLine="Return \"Сервер не ответил вовремя. \" & BuildR";
-if (true) return "Сервер не ответил вовремя. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 7: {
-RDebugUtils.currentLine=60948506;
- //BA.debugLineNum = 60948506;BA.debugLine="Return \"Метаданные плейлистов обновлены. \" &";
-if (true) return "Метаданные плейлистов обновлены. "+__ref._buildcountstext /*String*/ (null,_details);
- break; }
-case 8: {
-RDebugUtils.currentLine=60948508;
- //BA.debugLineNum = 60948508;BA.debugLine="Return \"Не удалось загрузить метаданные плейл";
-if (true) return "Не удалось загрузить метаданные плейлиста. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 9: {
-RDebugUtils.currentLine=60948510;
- //BA.debugLineNum = 60948510;BA.debugLine="Return \"Не удалось получить очередь. \" & Buil";
-if (true) return "Не удалось получить очередь. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 10: {
-RDebugUtils.currentLine=60948512;
- //BA.debugLineNum = 60948512;BA.debugLine="Return \"Доступ к медиа восстановлен.\"";
-if (true) return "Доступ к медиа восстановлен.";
- break; }
-case 11: {
-RDebugUtils.currentLine=60948514;
- //BA.debugLineNum = 60948514;BA.debugLine="Return \"Доступ к медиа ухудшился.\"";
-if (true) return "Доступ к медиа ухудшился.";
- break; }
-}
-;
- break; }
-case 2: {
-RDebugUtils.currentLine=60948517;
- //BA.debugLineNum = 60948517;BA.debugLine="Dim playerText As String = \"Плеер \" & ExtractDe";
-_playertext = "Плеер "+__ref._extractdetailvalue /*String*/ (null,_details,"player");
-RDebugUtils.currentLine=60948518;
- //BA.debugLineNum = 60948518;BA.debugLine="Dim itemLabel As String = TraceItemLabelFromDet";
-_itemlabel = __ref._traceitemlabelfromdetails /*String*/ (null,_details);
-RDebugUtils.currentLine=60948519;
- //BA.debugLineNum = 60948519;BA.debugLine="Dim audioSettingsText As String = BuildAudioSet";
-_audiosettingstext = __ref._buildaudiosettingstext /*String*/ (null,_details);
-RDebugUtils.currentLine=60948520;
- //BA.debugLineNum = 60948520;BA.debugLine="Select message";
-switch (BA.switchObjectToInt(_message,"плеер load","плеер ready","плеер play","плеер complete","плеер error","не удалось запустить трек","таймаут старта трека","таймаут preload")) {
-case 0: {
-RDebugUtils.currentLine=60948522;
- //BA.debugLineNum = 60948522;BA.debugLine="Return playerText & \": Загружен \" & itemLabel";
-if (true) return _playertext+": Загружен "+_itemlabel+_audiosettingstext;
- break; }
-case 1: {
-RDebugUtils.currentLine=60948524;
- //BA.debugLineNum = 60948524;BA.debugLine="If ExtractDetailValue(details, \"mode\") = \"pre";
-if ((__ref._extractdetailvalue /*String*/ (null,_details,"mode")).equals("prepare")) { 
-RDebugUtils.currentLine=60948525;
- //BA.debugLineNum = 60948525;BA.debugLine="Return playerText & \": Подготовлен \" & itemL";
-if (true) return _playertext+": Подготовлен "+_itemlabel+_audiosettingstext;
- };
-RDebugUtils.currentLine=60948527;
- //BA.debugLineNum = 60948527;BA.debugLine="Return playerText & \": Готов к воспроизведени";
-if (true) return _playertext+": Готов к воспроизведению "+_itemlabel+_audiosettingstext;
- break; }
-case 2: {
-RDebugUtils.currentLine=60948529;
- //BA.debugLineNum = 60948529;BA.debugLine="Return playerText & \": Воспроизведение \" & it";
-if (true) return _playertext+": Воспроизведение "+_itemlabel+_audiosettingstext;
- break; }
-case 3: {
-RDebugUtils.currentLine=60948531;
- //BA.debugLineNum = 60948531;BA.debugLine="Return playerText & \": Закончил \" & itemLabel";
-if (true) return _playertext+": Закончил "+_itemlabel;
- break; }
-case 4: {
-RDebugUtils.currentLine=60948533;
- //BA.debugLineNum = 60948533;BA.debugLine="Return playerText & \": Ошибка \" & itemLabel &";
-if (true) return _playertext+": Ошибка "+_itemlabel+". "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 5: {
-RDebugUtils.currentLine=60948535;
- //BA.debugLineNum = 60948535;BA.debugLine="Return playerText & \": Не удалось запустить \"";
-if (true) return _playertext+": Не удалось запустить "+_itemlabel+". "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 6: {
-RDebugUtils.currentLine=60948537;
- //BA.debugLineNum = 60948537;BA.debugLine="Return playerText & \": Не дождались старта \"";
-if (true) return _playertext+": Не дождались старта "+_itemlabel;
- break; }
-case 7: {
-RDebugUtils.currentLine=60948539;
- //BA.debugLineNum = 60948539;BA.debugLine="Return playerText & \": Не дождались подготовк";
-if (true) return _playertext+": Не дождались подготовки "+_itemlabel;
- break; }
-}
-;
- break; }
-case 3: {
-RDebugUtils.currentLine=60948542;
- //BA.debugLineNum = 60948542;BA.debugLine="Select message";
-switch (BA.switchObjectToInt(_message,"первый трек выбран из кэша","populate queue start","populate queue done","populate queue fail","dispatch next","dispatch break","dispatch prepared","dispatch переход","prefetch start","prefetch done","prefetch fail","prefetch skip","crossfade trigger","старт трека","смена трека","watchdog stall","watchdog recovery","break переход начало","break переход итог","break переход fade","break переход пропущен","вставлен break","вставлена реклама","очередь пуста","audio complete пропущен")) {
-case 0: {
-RDebugUtils.currentLine=60948544;
- //BA.debugLineNum = 60948544;BA.debugLine="Return \"Первый трек выбран из кэша.\"";
-if (true) return "Первый трек выбран из кэша.";
- break; }
-case 1: {
-RDebugUtils.currentLine=60948546;
- //BA.debugLineNum = 60948546;BA.debugLine="Return \"Подготовка очереди.\"";
-if (true) return "Подготовка очереди.";
- break; }
-case 2: {
-RDebugUtils.currentLine=60948548;
- //BA.debugLineNum = 60948548;BA.debugLine="Return \"Очередь подготовлена. Элементов: \" &";
-if (true) return "Очередь подготовлена. Элементов: "+__ref._defaultifempty /*String*/ (null,__ref._extractdetailvalue /*String*/ (null,_details,"queue"),"0");
- break; }
-case 3: {
-RDebugUtils.currentLine=60948550;
- //BA.debugLineNum = 60948550;BA.debugLine="Return \"Не удалось подготовить очередь. \" & B";
-if (true) return "Не удалось подготовить очередь. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 4: {
-RDebugUtils.currentLine=60948552;
- //BA.debugLineNum = 60948552;BA.debugLine="Return \"Следующий элемент очереди: \" & TraceI";
-if (true) return "Следующий элемент очереди: "+__ref._traceitemlabelfromdetails /*String*/ (null,_details);
- break; }
-case 5: {
-RDebugUtils.currentLine=60948554;
- //BA.debugLineNum = 60948554;BA.debugLine="Return \"Начата обработка break.\"";
-if (true) return "Начата обработка break.";
- break; }
-case 6: {
-RDebugUtils.currentLine=60948556;
- //BA.debugLineNum = 60948556;BA.debugLine="Return \"Запущен заранее подготовленный элемен";
-if (true) return "Запущен заранее подготовленный элемент.";
- break; }
-case 7: {
-RDebugUtils.currentLine=60948558;
- //BA.debugLineNum = 60948558;BA.debugLine="Return \"Переход к следующему элементу.\"";
-if (true) return "Переход к следующему элементу.";
- break; }
-case 8: {
-RDebugUtils.currentLine=60948560;
- //BA.debugLineNum = 60948560;BA.debugLine="Return \"Начата подготовка следующего элемента";
-if (true) return "Начата подготовка следующего элемента.";
- break; }
-case 9: {
-RDebugUtils.currentLine=60948562;
- //BA.debugLineNum = 60948562;BA.debugLine="Return \"Следующий элемент подготовлен заранее";
-if (true) return "Следующий элемент подготовлен заранее.";
- break; }
-case 10: {
-RDebugUtils.currentLine=60948564;
- //BA.debugLineNum = 60948564;BA.debugLine="Return \"Не удалось заранее подготовить следую";
-if (true) return "Не удалось заранее подготовить следующий элемент. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 11: {
-RDebugUtils.currentLine=60948566;
- //BA.debugLineNum = 60948566;BA.debugLine="Dim skipReason As String = ExtractDetailValue";
-_skipreason = __ref._extractdetailvalue /*String*/ (null,_details,"reason");
-RDebugUtils.currentLine=60948567;
- //BA.debugLineNum = 60948567;BA.debugLine="If skipReason = \"break_ahead\" Then Return \"Пр";
-if ((_skipreason).equals("break_ahead")) { 
-if (true) return "Предварительная подготовка отложена: впереди break.";};
-RDebugUtils.currentLine=60948568;
- //BA.debugLineNum = 60948568;BA.debugLine="Return \"Предварительная подготовка пропущена.";
-if (true) return "Предварительная подготовка пропущена. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 12: {
-RDebugUtils.currentLine=60948570;
- //BA.debugLineNum = 60948570;BA.debugLine="Return \"Начат кроссфейд на следующий трек.\"";
-if (true) return "Начат кроссфейд на следующий трек.";
- break; }
-case 13: {
-RDebugUtils.currentLine=60948572;
- //BA.debugLineNum = 60948572;BA.debugLine="Dim sourceText As String = ExtractDetailValue";
-_sourcetext = __ref._extractdetailvalue /*String*/ (null,_details,"source");
-RDebugUtils.currentLine=60948573;
- //BA.debugLineNum = 60948573;BA.debugLine="If sourceText <> \"\" Then";
-if ((_sourcetext).equals("") == false) { 
-RDebugUtils.currentLine=60948574;
- //BA.debugLineNum = 60948574;BA.debugLine="Return \"Старт трека \" & ExtractDetailValue(d";
-if (true) return "Старт трека "+__ref._extractdetailvalue /*String*/ (null,_details,"trackId")+". Источник: "+_sourcetext;
- };
-RDebugUtils.currentLine=60948576;
- //BA.debugLineNum = 60948576;BA.debugLine="Return \"Старт трека \" & ExtractDetailValue(de";
-if (true) return "Старт трека "+__ref._extractdetailvalue /*String*/ (null,_details,"trackId");
- break; }
-case 14: {
-RDebugUtils.currentLine=60948578;
- //BA.debugLineNum = 60948578;BA.debugLine="Return \"Переход после трека \" & ExtractDetail";
-if (true) return "Переход после трека "+__ref._extractdetailvalue /*String*/ (null,_details,"trackId");
- break; }
-case 15: {
-RDebugUtils.currentLine=60948580;
- //BA.debugLineNum = 60948580;BA.debugLine="Return \"Воспроизведение зависло на треке \" &";
-if (true) return "Воспроизведение зависло на треке "+__ref._defaultifempty /*String*/ (null,__ref._extractdetailvalue /*String*/ (null,_details,"trackId"),"без идентификатора")+". Запускаю восстановление.";
- break; }
-case 16: {
-RDebugUtils.currentLine=60948582;
- //BA.debugLineNum = 60948582;BA.debugLine="Return \"Восстановление воспроизведения. \" & B";
-if (true) return "Восстановление воспроизведения. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 17: {
-RDebugUtils.currentLine=60948584;
- //BA.debugLineNum = 60948584;BA.debugLine="Return \"Начат переход на break.\"";
-if (true) return "Начат переход на break.";
- break; }
-case 18: {
-RDebugUtils.currentLine=60948586;
- //BA.debugLineNum = 60948586;BA.debugLine="Return \"Переход на break завершен. \" & BuildR";
-if (true) return "Переход на break завершен. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 19: {
-RDebugUtils.currentLine=60948588;
- //BA.debugLineNum = 60948588;BA.debugLine="Return \"Плавное завершение текущего элемента.";
-if (true) return "Плавное завершение текущего элемента.";
- break; }
-case 20: {
-RDebugUtils.currentLine=60948590;
- //BA.debugLineNum = 60948590;BA.debugLine="Return \"Переход на break пропущен. \" & BuildR";
-if (true) return "Переход на break пропущен. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 21: {
-RDebugUtils.currentLine=60948592;
- //BA.debugLineNum = 60948592;BA.debugLine="Return \"В очередь вставлен break.\"";
-if (true) return "В очередь вставлен break.";
- break; }
-case 22: {
-RDebugUtils.currentLine=60948594;
- //BA.debugLineNum = 60948594;BA.debugLine="Return \"Подготовлен переход на рекламу.\"";
-if (true) return "Подготовлен переход на рекламу.";
- break; }
-case 23: {
-RDebugUtils.currentLine=60948596;
- //BA.debugLineNum = 60948596;BA.debugLine="Return \"Очередь пуста. \" & BuildReasonText(de";
-if (true) return "Очередь пуста. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 24: {
-RDebugUtils.currentLine=60948598;
- //BA.debugLineNum = 60948598;BA.debugLine="Return \"Событие завершения проигнорировано. \"";
-if (true) return "Событие завершения проигнорировано. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-}
-;
- break; }
-case 4: {
-RDebugUtils.currentLine=60948601;
- //BA.debugLineNum = 60948601;BA.debugLine="Select message";
-switch (BA.switchObjectToInt(_message,"старт завершен","старт не завершен","автостарт воспроизведение начало","воспроизведение остановлено","плеер заблокирован")) {
-case 0: {
-RDebugUtils.currentLine=60948603;
- //BA.debugLineNum = 60948603;BA.debugLine="Return \"Старт плеера завершен.\"";
-if (true) return "Старт плеера завершен.";
- break; }
-case 1: {
-RDebugUtils.currentLine=60948605;
- //BA.debugLineNum = 60948605;BA.debugLine="Return \"Старт плеера не завершен. \" & BuildRe";
-if (true) return "Старт плеера не завершен. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 2: {
-RDebugUtils.currentLine=60948607;
- //BA.debugLineNum = 60948607;BA.debugLine="Return \"Автостарт воспроизведения.\"";
-if (true) return "Автостарт воспроизведения.";
- break; }
-case 3: {
-RDebugUtils.currentLine=60948609;
- //BA.debugLineNum = 60948609;BA.debugLine="Return \"Воспроизведение остановлено. \" & Buil";
-if (true) return "Воспроизведение остановлено. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 4: {
-RDebugUtils.currentLine=60948611;
- //BA.debugLineNum = 60948611;BA.debugLine="Return \"Плеер заблокирован.\"";
-if (true) return "Плеер заблокирован.";
- break; }
-}
-;
- break; }
-case 5: {
-RDebugUtils.currentLine=60948614;
- //BA.debugLineNum = 60948614;BA.debugLine="Select message";
-switch (BA.switchObjectToInt(_message,"трек загружен в кэш","ошибка загрузки трека","кэш треков обновлен","кэш рекламы обновлен","аудит кэша","очистка кэша","реклама удалена из кэша","ошибка подготовки трека","нет локального файла")) {
-case 0: {
-RDebugUtils.currentLine=60948616;
- //BA.debugLineNum = 60948616;BA.debugLine="Return \"Кэш: Загружен трек \" & DefaultIfEmpty";
-if (true) return "Кэш: Загружен трек "+__ref._defaultifempty /*String*/ (null,__ref._extractdetailvalue /*String*/ (null,_details,"id"),"без идентификатора");
- break; }
-case 1: {
-RDebugUtils.currentLine=60948618;
- //BA.debugLineNum = 60948618;BA.debugLine="Return \"Кэш: Не удалось загрузить трек. \" & B";
-if (true) return "Кэш: Не удалось загрузить трек. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 2: {
-RDebugUtils.currentLine=60948620;
- //BA.debugLineNum = 60948620;BA.debugLine="Return \"Кэш треков проверен. \" & BuildCountsT";
-if (true) return "Кэш треков проверен. "+__ref._buildcountstext /*String*/ (null,_details);
- break; }
-case 3: {
-RDebugUtils.currentLine=60948622;
- //BA.debugLineNum = 60948622;BA.debugLine="Return \"Кэш рекламы проверен. \" & BuildCounts";
-if (true) return "Кэш рекламы проверен. "+__ref._buildcountstext /*String*/ (null,_details);
- break; }
-case 4: {
-RDebugUtils.currentLine=60948624;
- //BA.debugLineNum = 60948624;BA.debugLine="Return \"Кэш проверен. \" & BuildCountsText(det";
-if (true) return "Кэш проверен. "+__ref._buildcountstext /*String*/ (null,_details);
- break; }
-case 5: {
-RDebugUtils.currentLine=60948626;
- //BA.debugLineNum = 60948626;BA.debugLine="Return \"Очистка кэша завершена. \" & BuildCoun";
-if (true) return "Очистка кэша завершена. "+__ref._buildcountstext /*String*/ (null,_details);
- break; }
-case 6: {
-RDebugUtils.currentLine=60948628;
- //BA.debugLineNum = 60948628;BA.debugLine="Return \"Кэш: Удалена устаревшая реклама \" & E";
-if (true) return "Кэш: Удалена устаревшая реклама "+__ref._extractdetailvalue /*String*/ (null,_details,"id");
- break; }
-case 7: {
-RDebugUtils.currentLine=60948630;
- //BA.debugLineNum = 60948630;BA.debugLine="Return \"Кэш: Ошибка подготовки трека. \" & Bui";
-if (true) return "Кэш: Ошибка подготовки трека. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 8: {
-RDebugUtils.currentLine=60948632;
- //BA.debugLineNum = 60948632;BA.debugLine="Return \"Кэш: Локальный файл не найден для тре";
-if (true) return "Кэш: Локальный файл не найден для трека "+__ref._extractdetailvalue /*String*/ (null,_details,"trackId");
- break; }
-}
-;
- break; }
-case 6: {
-RDebugUtils.currentLine=60948635;
- //BA.debugLineNum = 60948635;BA.debugLine="Select message";
-switch (BA.switchObjectToInt(_message,"история отправлена","история не отправлена","ошибка отправки","ошибка истории","не удалось прочитать файл истории")) {
-case 0: {
-RDebugUtils.currentLine=60948637;
- //BA.debugLineNum = 60948637;BA.debugLine="Return \"История отправлена. Записей: \" & Defa";
-if (true) return "История отправлена. Записей: "+__ref._defaultifempty /*String*/ (null,__ref._extractdetailvalue /*String*/ (null,_details,"records"),"0");
- break; }
-case 1: {
-RDebugUtils.currentLine=60948639;
- //BA.debugLineNum = 60948639;BA.debugLine="Return \"История не отправлена. Записей: \" & D";
-if (true) return "История не отправлена. Записей: "+__ref._defaultifempty /*String*/ (null,__ref._extractdetailvalue /*String*/ (null,_details,"records"),"0");
- break; }
-case 2: {
-RDebugUtils.currentLine=60948641;
- //BA.debugLineNum = 60948641;BA.debugLine="Return \"Ошибка отправки истории. \" & BuildRea";
-if (true) return "Ошибка отправки истории. "+__ref._buildreasontext /*String*/ (null,_details);
- break; }
-case 3: {
-RDebugUtils.currentLine=60948643;
- //BA.debugLineNum = 60948643;BA.debugLine="Return \"Ошибка чтения истории.\"";
-if (true) return "Ошибка чтения истории.";
- break; }
-case 4: {
-RDebugUtils.currentLine=60948645;
- //BA.debugLineNum = 60948645;BA.debugLine="Return \"Не удалось прочитать файл истории \" &";
-if (true) return "Не удалось прочитать файл истории "+__ref._extractdetailvalue /*String*/ (null,_details,"file");
- break; }
-}
-;
- break; }
-case 7: {
-RDebugUtils.currentLine=60948648;
- //BA.debugLineNum = 60948648;BA.debugLine="Select message";
-switch (BA.switchObjectToInt(_message,"воспроизведение","кэш","устройство","ресурсы","сеть")) {
-case 0: {
-RDebugUtils.currentLine=60948650;
- //BA.debugLineNum = 60948650;BA.debugLine="Return \"Состояние воспроизведения: этап=\" & E";
-if (true) return "Состояние воспроизведения: этап="+__ref._extractdetailvalue /*String*/ (null,_details,"stage")+", играет="+__ref._extractdetailvalue /*String*/ (null,_details,"playing")+", трек="+__ref._extractdetailvalue /*String*/ (null,_details,"currentTrackId")+", очередь="+__ref._extractdetailvalue /*String*/ (null,_details,"queue")+__ref._buildhealthaudiosettingstext /*String*/ (null,_details);
- break; }
-case 1: {
-RDebugUtils.currentLine=60948656;
- //BA.debugLineNum = 60948656;BA.debugLine="Return \"Состояние кэша: треков=\" & ExtractDet";
-if (true) return "Состояние кэша: треков="+__ref._extractdetailvalue /*String*/ (null,_details,"trackCache")+", рекламы="+__ref._extractdetailvalue /*String*/ (null,_details,"adCache")+", индекс треков="+__ref._extractdetailvalue /*String*/ (null,_details,"trackIndex")+", индекс рекламы="+__ref._extractdetailvalue /*String*/ (null,_details,"adIndex");
- break; }
-case 2: {
-RDebugUtils.currentLine=60948661;
- //BA.debugLineNum = 60948661;BA.debugLine="Return \"Состояние устройства: \" & ExtractDeta";
-if (true) return "Состояние устройства: "+__ref._extractdetailvalue /*String*/ (null,_details,"device")+", id="+__ref._extractdetailvalue /*String*/ (null,_details,"deviceId")+", ОС="+__ref._extractdetailtail /*String*/ (null,_details,"os");
- break; }
-case 3: {
-RDebugUtils.currentLine=60948665;
- //BA.debugLineNum = 60948665;BA.debugLine="Return \"Состояние ресурсов: RAM=\" & ExtractDe";
-if (true) return "Состояние ресурсов: RAM="+__ref._extractdetailvalue /*String*/ (null,_details,"ramFreeMb")+" МБ"+", диск="+__ref._extractdetailvalue /*String*/ (null,_details,"diskFreeMb")+"/"+__ref._extractdetailvalue /*String*/ (null,_details,"diskTotalMb")+" МБ";
- break; }
-case 4: {
-RDebugUtils.currentLine=60948668;
- //BA.debugLineNum = 60948668;BA.debugLine="Return \"Состояние сети: ошибок=\" & ExtractDet";
-if (true) return "Состояние сети: ошибок="+__ref._extractdetailvalue /*String*/ (null,_details,"netErrors")+", данные ок "+__ref._extractdetailvalue /*String*/ (null,_details,"lastDataOkAgoSec")+" сек назад"+", история ок "+__ref._extractdetailvalue /*String*/ (null,_details,"lastHistoryOkAgoSec")+" сек назад";
- break; }
-}
-;
- break; }
-case 8: {
-RDebugUtils.currentLine=60948673;
- //BA.debugLineNum = 60948673;BA.debugLine="Select message";
-switch (BA.switchObjectToInt(_message,"источник","устройство","платформа","память","память доступно","диск","кэш треков","кэш рекламы","история")) {
-case 0: {
-RDebugUtils.currentLine=60948675;
- //BA.debugLineNum = 60948675;BA.debugLine="Return \"Системный снимок. Источник: \" & detai";
-if (true) return "Системный снимок. Источник: "+_details;
- break; }
-case 1: {
-RDebugUtils.currentLine=60948677;
- //BA.debugLineNum = 60948677;BA.debugLine="Return \"Устройство: \" & ExtractDetailValue(de";
-if (true) return "Устройство: "+__ref._extractdetailvalue /*String*/ (null,_details,"name")+", id="+__ref._extractdetailvalue /*String*/ (null,_details,"id");
- break; }
-case 2: {
-RDebugUtils.currentLine=60948679;
- //BA.debugLineNum = 60948679;BA.debugLine="Return \"Платформа: \" & ExtractDetailTail(deta";
-if (true) return "Платформа: "+__ref._extractdetailtail /*String*/ (null,_details,"os");
- break; }
-case 3: {
-RDebugUtils.currentLine=60948681;
- //BA.debugLineNum = 60948681;BA.debugLine="Return \"Память: свободно \" & ExtractDetailVal";
-if (true) return "Память: свободно "+__ref._extractdetailvalue /*String*/ (null,_details,"ramFreeMb")+" МБ";
- break; }
-case 4: {
-RDebugUtils.currentLine=60948683;
- //BA.debugLineNum = 60948683;BA.debugLine="Return \"Память: доступно приложению \" & Extra";
-if (true) return "Память: доступно приложению "+__ref._extractdetailvalue /*String*/ (null,_details,"ramTotalMb")+" МБ";
- break; }
-case 5: {
-RDebugUtils.currentLine=60948685;
- //BA.debugLineNum = 60948685;BA.debugLine="Return \"Диск: свободно \" & ExtractDetailValue";
-if (true) return "Диск: свободно "+__ref._extractdetailvalue /*String*/ (null,_details,"diskFreeMb")+" МБ из "+__ref._extractdetailvalue /*String*/ (null,_details,"diskTotalMb")+" МБ";
- break; }
-case 6: {
-RDebugUtils.currentLine=60948687;
- //BA.debugLineNum = 60948687;BA.debugLine="Return \"Кэш треков: \" & ExtractDetailValue(de";
-if (true) return "Кэш треков: "+__ref._extractdetailvalue /*String*/ (null,_details,"trackCount")+" файлов, "+__ref._extractdetailvalue /*String*/ (null,_details,"trackMb")+" МБ, в индексе "+__ref._extractdetailvalue /*String*/ (null,_details,"trackIndex");
- break; }
-case 7: {
-RDebugUtils.currentLine=60948689;
- //BA.debugLineNum = 60948689;BA.debugLine="Return \"Кэш рекламы: \" & ExtractDetailValue(d";
-if (true) return "Кэш рекламы: "+__ref._extractdetailvalue /*String*/ (null,_details,"adCount")+" файлов, "+__ref._extractdetailvalue /*String*/ (null,_details,"adMb")+" МБ, в индексе "+__ref._extractdetailvalue /*String*/ (null,_details,"adIndex");
- break; }
-case 8: {
-RDebugUtils.currentLine=60948691;
- //BA.debugLineNum = 60948691;BA.debugLine="Return \"История: ожидает отправки \" & Extract";
-if (true) return "История: ожидает отправки "+__ref._extractdetailvalue /*String*/ (null,_details,"pendingHistory")+" записей";
- break; }
-}
-;
- break; }
-}
-;
-RDebugUtils.currentLine=60948694;
- //BA.debugLineNum = 60948694;BA.debugLine="Dim genericText As String = message";
-_generictext = _message;
-RDebugUtils.currentLine=60948695;
- //BA.debugLineNum = 60948695;BA.debugLine="If details <> \"\" Then genericText = genericText &";
-if ((_details).equals("") == false) { 
-_generictext = _generictext+". "+_details;};
-RDebugUtils.currentLine=60948696;
- //BA.debugLineNum = 60948696;BA.debugLine="Return genericText";
-if (true) return _generictext;
-RDebugUtils.currentLine=60948697;
- //BA.debugLineNum = 60948697;BA.debugLine="End Sub";
-return "";
-}
-public String  _buildversionplayertext(b4j.example.b4xmainpage __ref,String _details) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "buildversionplayertext", false))
-	 {return ((String) Debug.delegate(ba, "buildversionplayertext", new Object[] {_details}));}
-String _versiontext = "";
-String _playertext = "";
-anywheresoftware.b4a.objects.collections.List _parts = null;
-RDebugUtils.currentLine=61014016;
- //BA.debugLineNum = 61014016;BA.debugLine="Private Sub BuildVersionPlayerText(details As Stri";
-RDebugUtils.currentLine=61014017;
- //BA.debugLineNum = 61014017;BA.debugLine="Dim versionText As String = ExtractDetailValue(de";
-_versiontext = __ref._extractdetailvalue /*String*/ (null,_details,"version");
-RDebugUtils.currentLine=61014018;
- //BA.debugLineNum = 61014018;BA.debugLine="Dim playerText As String = ExtractDetailValue(det";
-_playertext = __ref._extractdetailvalue /*String*/ (null,_details,"player");
-RDebugUtils.currentLine=61014019;
- //BA.debugLineNum = 61014019;BA.debugLine="Dim parts As List";
-_parts = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=61014020;
- //BA.debugLineNum = 61014020;BA.debugLine="parts.Initialize";
-_parts.Initialize();
-RDebugUtils.currentLine=61014021;
- //BA.debugLineNum = 61014021;BA.debugLine="If versionText <> \"\" Then parts.Add(\"Версия \" & v";
-if ((_versiontext).equals("") == false) { 
-_parts.Add((Object)("Версия "+_versiontext));};
-RDebugUtils.currentLine=61014022;
- //BA.debugLineNum = 61014022;BA.debugLine="If playerText <> \"\" Then parts.Add(\"Плеер \" & pla";
-if ((_playertext).equals("") == false) { 
-_parts.Add((Object)("Плеер "+_playertext));};
-RDebugUtils.currentLine=61014023;
- //BA.debugLineNum = 61014023;BA.debugLine="If parts.Size = 0 Then Return \"Запуск\"";
-if (_parts.getSize()==0) { 
-if (true) return "Запуск";};
-RDebugUtils.currentLine=61014024;
- //BA.debugLineNum = 61014024;BA.debugLine="Return JoinWords(parts)";
-if (true) return __ref._joinwords /*String*/ (null,_parts);
-RDebugUtils.currentLine=61014025;
- //BA.debugLineNum = 61014025;BA.debugLine="End Sub";
-return "";
-}
-public String  _traceitemlabelfromdetails(b4j.example.b4xmainpage __ref,String _details) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "traceitemlabelfromdetails", false))
-	 {return ((String) Debug.delegate(ba, "traceitemlabelfromdetails", new Object[] {_details}));}
-String _itemtype = "";
-String _itemid = "";
-RDebugUtils.currentLine=61079552;
- //BA.debugLineNum = 61079552;BA.debugLine="Private Sub TraceItemLabelFromDetails(details As S";
-RDebugUtils.currentLine=61079553;
- //BA.debugLineNum = 61079553;BA.debugLine="Dim itemType As String = ExtractDetailValue(detai";
-_itemtype = __ref._extractdetailvalue /*String*/ (null,_details,"type");
-RDebugUtils.currentLine=61079554;
- //BA.debugLineNum = 61079554;BA.debugLine="Dim itemId As String = DefaultIfEmpty(ExtractDeta";
-_itemid = __ref._defaultifempty /*String*/ (null,__ref._extractdetailvalue /*String*/ (null,_details,"id"),__ref._extractdetailvalue /*String*/ (null,_details,"trackId"));
-RDebugUtils.currentLine=61079555;
- //BA.debugLineNum = 61079555;BA.debugLine="If itemType = \"ad\" Then";
-if ((_itemtype).equals("ad")) { 
-RDebugUtils.currentLine=61079556;
- //BA.debugLineNum = 61079556;BA.debugLine="If itemId <> \"\" Then Return \"рекламу \" & itemId";
-if ((_itemid).equals("") == false) { 
-if (true) return "рекламу "+_itemid;};
-RDebugUtils.currentLine=61079557;
- //BA.debugLineNum = 61079557;BA.debugLine="Return \"рекламу\"";
-if (true) return "рекламу";
- };
-RDebugUtils.currentLine=61079559;
- //BA.debugLineNum = 61079559;BA.debugLine="If itemId <> \"\" Then Return \"трек \" & itemId";
-if ((_itemid).equals("") == false) { 
-if (true) return "трек "+_itemid;};
-RDebugUtils.currentLine=61079560;
- //BA.debugLineNum = 61079560;BA.debugLine="Return \"трек\"";
-if (true) return "трек";
-RDebugUtils.currentLine=61079561;
- //BA.debugLineNum = 61079561;BA.debugLine="End Sub";
-return "";
-}
-public String  _defaultifempty(b4j.example.b4xmainpage __ref,String _value,String _fallback) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "defaultifempty", false))
-	 {return ((String) Debug.delegate(ba, "defaultifempty", new Object[] {_value,_fallback}));}
-RDebugUtils.currentLine=61407232;
- //BA.debugLineNum = 61407232;BA.debugLine="Private Sub DefaultIfEmpty(value As String, fallba";
-RDebugUtils.currentLine=61407233;
- //BA.debugLineNum = 61407233;BA.debugLine="If value = \"\" Then Return fallback";
-if ((_value).equals("")) { 
-if (true) return _fallback;};
-RDebugUtils.currentLine=61407234;
- //BA.debugLineNum = 61407234;BA.debugLine="Return value";
-if (true) return _value;
-RDebugUtils.currentLine=61407235;
- //BA.debugLineNum = 61407235;BA.debugLine="End Sub";
-return "";
-}
-public String  _extractdetailtail(b4j.example.b4xmainpage __ref,String _details,String _key) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "extractdetailtail", false))
-	 {return ((String) Debug.delegate(ba, "extractdetailtail", new Object[] {_details,_key}));}
-String _marker = "";
-int _startindex = 0;
-RDebugUtils.currentLine=61538304;
- //BA.debugLineNum = 61538304;BA.debugLine="Private Sub ExtractDetailTail(details As String, k";
-RDebugUtils.currentLine=61538305;
- //BA.debugLineNum = 61538305;BA.debugLine="Dim marker As String = key & \"=\"";
-_marker = _key+"=";
-RDebugUtils.currentLine=61538306;
- //BA.debugLineNum = 61538306;BA.debugLine="Dim startIndex As Int = details.IndexOf(marker)";
-_startindex = _details.indexOf(_marker);
-RDebugUtils.currentLine=61538307;
- //BA.debugLineNum = 61538307;BA.debugLine="If startIndex < 0 Then Return \"\"";
-if (_startindex<0) { 
-if (true) return "";};
-RDebugUtils.currentLine=61538308;
- //BA.debugLineNum = 61538308;BA.debugLine="Return details.SubString(startIndex + marker.Leng";
-if (true) return _details.substring((int) (_startindex+_marker.length())).trim();
-RDebugUtils.currentLine=61538309;
- //BA.debugLineNum = 61538309;BA.debugLine="End Sub";
-return "";
-}
 public String  _buildparams(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _params) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "buildparams", false))
 	 {return ((String) Debug.delegate(ba, "buildparams", new Object[] {_params}));}
-anywheresoftware.b4a.keywords.StringBuilderWrapper _sb = null;
-String _key = "";
 RDebugUtils.currentLine=16515072;
  //BA.debugLineNum = 16515072;BA.debugLine="Private Sub BuildParams(params As Map) As String";
 RDebugUtils.currentLine=16515073;
- //BA.debugLineNum = 16515073;BA.debugLine="Dim sb As StringBuilder";
-_sb = new anywheresoftware.b4a.keywords.StringBuilderWrapper();
+ //BA.debugLineNum = 16515073;BA.debugLine="Return syncService.BuildParams(params)";
+if (true) return __ref._syncservice /*b4j.example.networksyncservice*/ ._buildparams /*String*/ (null,_params);
 RDebugUtils.currentLine=16515074;
- //BA.debugLineNum = 16515074;BA.debugLine="sb.Initialize";
-_sb.Initialize();
-RDebugUtils.currentLine=16515075;
- //BA.debugLineNum = 16515075;BA.debugLine="For Each key As String In params.Keys";
-{
-final anywheresoftware.b4a.BA.IterableList group3 = _params.Keys();
-final int groupLen3 = group3.getSize()
-;int index3 = 0;
-;
-for (; index3 < groupLen3;index3++){
-_key = BA.ObjectToString(group3.Get(index3));
-RDebugUtils.currentLine=16515076;
- //BA.debugLineNum = 16515076;BA.debugLine="If sb.Length > 0 Then sb.Append(\"&\")";
-if (_sb.getLength()>0) { 
-_sb.Append("&");};
-RDebugUtils.currentLine=16515077;
- //BA.debugLineNum = 16515077;BA.debugLine="sb.Append(UrlEncode(key)).Append(\"=\").Append(Url";
-_sb.Append(__ref._urlencode /*String*/ (null,(Object)(_key))).Append("=").Append(__ref._urlencode /*String*/ (null,_params.Get((Object)(_key))));
- }
-};
-RDebugUtils.currentLine=16515079;
- //BA.debugLineNum = 16515079;BA.debugLine="Return sb.ToString";
-if (true) return _sb.ToString();
-RDebugUtils.currentLine=16515080;
- //BA.debugLineNum = 16515080;BA.debugLine="End Sub";
+ //BA.debugLineNum = 16515074;BA.debugLine="End Sub";
 return "";
 }
-public String  _urlencode(b4j.example.b4xmainpage __ref,Object _value) throws Exception{
+public long  _resolveplanneddurationms(b4j.example.b4xmainpage __ref,String _audiokey,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "urlencode", false))
-	 {return ((String) Debug.delegate(ba, "urlencode", new Object[] {_value}));}
-anywheresoftware.b4j.object.JavaObject _jo = null;
-RDebugUtils.currentLine=16580608;
- //BA.debugLineNum = 16580608;BA.debugLine="Private Sub UrlEncode(value As Object) As String";
-RDebugUtils.currentLine=16580609;
- //BA.debugLineNum = 16580609;BA.debugLine="Dim jo As JavaObject";
-_jo = new anywheresoftware.b4j.object.JavaObject();
-RDebugUtils.currentLine=16580610;
- //BA.debugLineNum = 16580610;BA.debugLine="jo.InitializeStatic(\"java.net.URLEncoder\")";
-_jo.InitializeStatic("java.net.URLEncoder");
-RDebugUtils.currentLine=16580611;
- //BA.debugLineNum = 16580611;BA.debugLine="Return jo.RunMethod(\"encode\", Array As Object(\"\"";
-if (true) return BA.ObjectToString(_jo.RunMethod("encode",new Object[]{(Object)(""+BA.ObjectToString(_value)),(Object)("UTF-8")}));
-RDebugUtils.currentLine=16580612;
- //BA.debugLineNum = 16580612;BA.debugLine="End Sub";
-return "";
-}
-public String  _buildqueuesignature(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "buildqueuesignature", false))
-	 {return ((String) Debug.delegate(ba, "buildqueuesignature", null));}
-RDebugUtils.currentLine=2686976;
- //BA.debugLineNum = 2686976;BA.debugLine="Private Sub BuildQueueSignature As String";
-RDebugUtils.currentLine=2686977;
- //BA.debugLineNum = 2686977;BA.debugLine="Return queueBuilder.BuildQueueSignature(offlineDa";
-if (true) return __ref._queuebuilder /*b4j.example.playbackqueuebuilder*/ ._buildqueuesignature /*String*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ,__ref._effectivenowticks /*long*/ (null),__ref._dataresolver /*b4j.example.dataplaybackresolver*/ );
-RDebugUtils.currentLine=2686978;
- //BA.debugLineNum = 2686978;BA.debugLine="End Sub";
-return "";
-}
-public long  _effectivenowticks(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "effectivenowticks", false))
-	 {return ((Long) Debug.delegate(ba, "effectivenowticks", null));}
-long _devicenow = 0L;
-long _trustednow = 0L;
-RDebugUtils.currentLine=18087936;
- //BA.debugLineNum = 18087936;BA.debugLine="Private Sub EffectiveNowTicks As Long";
-RDebugUtils.currentLine=18087937;
- //BA.debugLineNum = 18087937;BA.debugLine="Dim deviceNow As Long = DateTime.Now";
-_devicenow = __c.DateTime.getNow();
-RDebugUtils.currentLine=18087938;
- //BA.debugLineNum = 18087938;BA.debugLine="Dim trustedNow As Long = storage.GetDefault(trust";
-_trustednow = BA.ObjectToLongNumber(__ref._storage /*b4j.example.keyvaluestore*/ ._getdefault /*Object*/ (null,__ref._trustedsynctimekey /*String*/ ,(Object)(0)));
-RDebugUtils.currentLine=18087939;
- //BA.debugLineNum = 18087939;BA.debugLine="If trustedNow > deviceNow Then Return trustedNow";
-if (_trustednow>_devicenow) { 
-if (true) return _trustednow;};
-RDebugUtils.currentLine=18087940;
- //BA.debugLineNum = 18087940;BA.debugLine="Return deviceNow";
-if (true) return _devicenow;
-RDebugUtils.currentLine=18087941;
- //BA.debugLineNum = 18087941;BA.debugLine="End Sub";
+if (Debug.shouldDelegate(ba, "resolveplanneddurationms", false))
+	 {return ((Long) Debug.delegate(ba, "resolveplanneddurationms", new Object[] {_audiokey,_item}));}
+b4j.example.audioplayer _audio = null;
+long _audioduration = 0L;
+long _itemduration = 0L;
+RDebugUtils.currentLine=67895296;
+ //BA.debugLineNum = 67895296;BA.debugLine="Private Sub ResolvePlannedDurationMs(audioKey As S";
+RDebugUtils.currentLine=67895297;
+ //BA.debugLineNum = 67895297;BA.debugLine="Dim audio As AudioPlayer = GetAudioByKey(audioKey";
+_audio = __ref._getaudiobykey /*b4j.example.audioplayer*/ (null,_audiokey);
+RDebugUtils.currentLine=67895298;
+ //BA.debugLineNum = 67895298;BA.debugLine="If audio.IsInitialized Then";
+if (_audio.IsInitialized /*boolean*/ ()) { 
+RDebugUtils.currentLine=67895299;
+ //BA.debugLineNum = 67895299;BA.debugLine="Dim audioDuration As Long = audio.Duration";
+_audioduration = _audio._duration /*long*/ (null);
+RDebugUtils.currentLine=67895300;
+ //BA.debugLineNum = 67895300;BA.debugLine="If audioDuration > 0 Then Return audioDuration";
+if (_audioduration>0) { 
+if (true) return _audioduration;};
+ };
+RDebugUtils.currentLine=67895302;
+ //BA.debugLineNum = 67895302;BA.debugLine="Dim itemDuration As Long = ToLongDefault(item.Get";
+_itemduration = __ref._tolongdefault /*long*/ (null,_item.GetDefault((Object)("duration"),(Object)(0)),(long) (0));
+RDebugUtils.currentLine=67895303;
+ //BA.debugLineNum = 67895303;BA.debugLine="If itemDuration <= 0 Then Return 0";
+if (_itemduration<=0) { 
+if (true) return (long) (0);};
+RDebugUtils.currentLine=67895304;
+ //BA.debugLineNum = 67895304;BA.debugLine="If itemDuration < 1000 Then Return itemDuration *";
+if (_itemduration<1000) { 
+if (true) return (long) (_itemduration*1000);};
+RDebugUtils.currentLine=67895305;
+ //BA.debugLineNum = 67895305;BA.debugLine="Return itemDuration";
+if (true) return _itemduration;
+RDebugUtils.currentLine=67895306;
+ //BA.debugLineNum = 67895306;BA.debugLine="End Sub";
 return 0L;
+}
+public String  _formattickstimefortrace(b4j.example.b4xmainpage __ref,long _targetticks) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "formattickstimefortrace", false))
+	 {return ((String) Debug.delegate(ba, "formattickstimefortrace", new Object[] {_targetticks}));}
+String _previousdateformat = "";
+String _previoustimeformat = "";
+String _value = "";
+RDebugUtils.currentLine=67960832;
+ //BA.debugLineNum = 67960832;BA.debugLine="Private Sub FormatTicksTimeForTrace(targetTicks As";
+RDebugUtils.currentLine=67960833;
+ //BA.debugLineNum = 67960833;BA.debugLine="Dim previousDateFormat As String = DateTime.DateF";
+_previousdateformat = __c.DateTime.getDateFormat();
+RDebugUtils.currentLine=67960834;
+ //BA.debugLineNum = 67960834;BA.debugLine="Dim previousTimeFormat As String = DateTime.TimeF";
+_previoustimeformat = __c.DateTime.getTimeFormat();
+RDebugUtils.currentLine=67960835;
+ //BA.debugLineNum = 67960835;BA.debugLine="DateTime.DateFormat = \"dd.MM.yyyy\"";
+__c.DateTime.setDateFormat("dd.MM.yyyy");
+RDebugUtils.currentLine=67960836;
+ //BA.debugLineNum = 67960836;BA.debugLine="DateTime.TimeFormat = \"HH:mm:ss\"";
+__c.DateTime.setTimeFormat("HH:mm:ss");
+RDebugUtils.currentLine=67960837;
+ //BA.debugLineNum = 67960837;BA.debugLine="Dim value As String = DateTime.Date(targetTicks)";
+_value = __c.DateTime.Date(_targetticks)+" "+__c.DateTime.Time(_targetticks);
+RDebugUtils.currentLine=67960838;
+ //BA.debugLineNum = 67960838;BA.debugLine="DateTime.DateFormat = previousDateFormat";
+__c.DateTime.setDateFormat(_previousdateformat);
+RDebugUtils.currentLine=67960839;
+ //BA.debugLineNum = 67960839;BA.debugLine="DateTime.TimeFormat = previousTimeFormat";
+__c.DateTime.setTimeFormat(_previoustimeformat);
+RDebugUtils.currentLine=67960840;
+ //BA.debugLineNum = 67960840;BA.debugLine="Return value";
+if (true) return _value;
+RDebugUtils.currentLine=67960841;
+ //BA.debugLineNum = 67960841;BA.debugLine="End Sub";
+return "";
 }
 public anywheresoftware.b4a.objects.B4XViewWrapper  _createlabel(b4j.example.b4xmainpage __ref,String _text,float _fontsize,int _textcolor,boolean _bold,boolean _wraptext) throws Exception{
 __ref = this;
@@ -6974,51 +5201,61 @@ int _textcolor = 0;
 RDebugUtils.currentLine=14614528;
  //BA.debugLineNum = 14614528;BA.debugLine="Private Sub UpdateHeaderActionAppearance(isHovered";
 RDebugUtils.currentLine=14614529;
- //BA.debugLineNum = 14614529;BA.debugLine="Dim fillColor As Int";
-_fillcolor = 0;
+ //BA.debugLineNum = 14614529;BA.debugLine="If uiController.IsInitialized Then";
+if (__ref._uicontroller /*b4j.example.playeruicontroller*/ .IsInitialized /*boolean*/ ()) { 
 RDebugUtils.currentLine=14614530;
- //BA.debugLineNum = 14614530;BA.debugLine="Dim borderColor As Int";
-_bordercolor = 0;
+ //BA.debugLineNum = 14614530;BA.debugLine="uiController.UpdateHeaderActionAppearance(isHove";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._updateheaderactionappearance /*String*/ (null,_ishovered);
 RDebugUtils.currentLine=14614531;
- //BA.debugLineNum = 14614531;BA.debugLine="Dim textColor As Int";
-_textcolor = 0;
-RDebugUtils.currentLine=14614532;
- //BA.debugLineNum = 14614532;BA.debugLine="If isHovered Then";
-if (_ishovered) { 
+ //BA.debugLineNum = 14614531;BA.debugLine="Return";
+if (true) return "";
+ };
 RDebugUtils.currentLine=14614533;
- //BA.debugLineNum = 14614533;BA.debugLine="fillColor = 0x14FFFFFF";
-_fillcolor = ((int)0x14ffffff);
+ //BA.debugLineNum = 14614533;BA.debugLine="Dim fillColor As Int";
+_fillcolor = 0;
 RDebugUtils.currentLine=14614534;
- //BA.debugLineNum = 14614534;BA.debugLine="borderColor = 0x30FFFFFF";
-_bordercolor = ((int)0x30ffffff);
+ //BA.debugLineNum = 14614534;BA.debugLine="Dim borderColor As Int";
+_bordercolor = 0;
 RDebugUtils.currentLine=14614535;
- //BA.debugLineNum = 14614535;BA.debugLine="textColor = 0xFFDDE6EF";
+ //BA.debugLineNum = 14614535;BA.debugLine="Dim textColor As Int";
+_textcolor = 0;
+RDebugUtils.currentLine=14614536;
+ //BA.debugLineNum = 14614536;BA.debugLine="If isHovered Then";
+if (_ishovered) { 
+RDebugUtils.currentLine=14614537;
+ //BA.debugLineNum = 14614537;BA.debugLine="fillColor = 0x14FFFFFF";
+_fillcolor = ((int)0x14ffffff);
+RDebugUtils.currentLine=14614538;
+ //BA.debugLineNum = 14614538;BA.debugLine="borderColor = 0x30FFFFFF";
+_bordercolor = ((int)0x30ffffff);
+RDebugUtils.currentLine=14614539;
+ //BA.debugLineNum = 14614539;BA.debugLine="textColor = 0xFFDDE6EF";
 _textcolor = ((int)0xffdde6ef);
  }else {
-RDebugUtils.currentLine=14614537;
- //BA.debugLineNum = 14614537;BA.debugLine="fillColor = 0x08FFFFFF";
+RDebugUtils.currentLine=14614541;
+ //BA.debugLineNum = 14614541;BA.debugLine="fillColor = 0x08FFFFFF";
 _fillcolor = ((int)0x08ffffff);
-RDebugUtils.currentLine=14614538;
- //BA.debugLineNum = 14614538;BA.debugLine="borderColor = 0x18FFFFFF";
+RDebugUtils.currentLine=14614542;
+ //BA.debugLineNum = 14614542;BA.debugLine="borderColor = 0x18FFFFFF";
 _bordercolor = ((int)0x18ffffff);
-RDebugUtils.currentLine=14614539;
- //BA.debugLineNum = 14614539;BA.debugLine="textColor = 0xFFB9C0C9";
+RDebugUtils.currentLine=14614543;
+ //BA.debugLineNum = 14614543;BA.debugLine="textColor = 0xFFB9C0C9";
 _textcolor = ((int)0xffb9c0c9);
  };
-RDebugUtils.currentLine=14614541;
- //BA.debugLineNum = 14614541;BA.debugLine="headerActionPane.SetColorAndBorder(fillColor, 1di";
-__ref._headeractionpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(_fillcolor,__c.DipToCurrent((int) (1)),_bordercolor,__c.DipToCurrent((int) (999)));
-RDebugUtils.currentLine=14614542;
- //BA.debugLineNum = 14614542;BA.debugLine="SetPaneStyle(headerActionPane, \"-fx-cursor: hand;";
-__ref._setpanestyle /*String*/ (null,__ref._headeractionpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-cursor: hand; -fx-background-radius: 999; -fx-border-radius: 999;");
-RDebugUtils.currentLine=14614543;
- //BA.debugLineNum = 14614543;BA.debugLine="SetLabelStyle(lblHeaderAction, \"-fx-alignment: ce";
-__ref._setlabelstyle /*String*/ (null,__ref._lblheaderaction /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-alignment: center; -fx-text-fill: "+__ref._colortocss /*String*/ (null,_textcolor)+";");
-RDebugUtils.currentLine=14614544;
- //BA.debugLineNum = 14614544;BA.debugLine="ApplyMaterialIconFont(lblHeaderAction, headerActi";
-__ref._applymaterialiconfont /*String*/ (null,__ref._lblheaderaction /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._headeractionfontsize /*float*/ );
 RDebugUtils.currentLine=14614545;
- //BA.debugLineNum = 14614545;BA.debugLine="End Sub";
+ //BA.debugLineNum = 14614545;BA.debugLine="headerActionPane.SetColorAndBorder(fillColor, 1di";
+__ref._headeractionpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(_fillcolor,__c.DipToCurrent((int) (1)),_bordercolor,__c.DipToCurrent((int) (999)));
+RDebugUtils.currentLine=14614546;
+ //BA.debugLineNum = 14614546;BA.debugLine="UiStyle.SetPaneStyle(headerActionPane, \"-fx-curso";
+_uistyle._setpanestyle /*String*/ (__ref._headeractionpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-cursor: hand; -fx-background-radius: 999; -fx-border-radius: 999;");
+RDebugUtils.currentLine=14614547;
+ //BA.debugLineNum = 14614547;BA.debugLine="UiStyle.SetLabelStyle(lblHeaderAction, \"-fx-align";
+_uistyle._setlabelstyle /*String*/ (__ref._lblheaderaction /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-alignment: center; -fx-text-fill: "+_uistyle._colortocss /*String*/ (_textcolor)+";");
+RDebugUtils.currentLine=14614548;
+ //BA.debugLineNum = 14614548;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblHeaderActio";
+_uistyle._applymaterialiconfont /*String*/ (__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ ,__ref._lblheaderaction /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._headeractionfontsize /*float*/ );
+RDebugUtils.currentLine=14614549;
+ //BA.debugLineNum = 14614549;BA.debugLine="End Sub";
 return "";
 }
 public String  _updateplaybuttonappearance(b4j.example.b4xmainpage __ref,boolean _ishovered) throws Exception{
@@ -7032,72 +5269,82 @@ int _orbitbordercolor = 0;
 RDebugUtils.currentLine=14221312;
  //BA.debugLineNum = 14221312;BA.debugLine="Private Sub UpdatePlayButtonAppearance(isHovered A";
 RDebugUtils.currentLine=14221313;
- //BA.debugLineNum = 14221313;BA.debugLine="Dim backgroundColor As Int";
-_backgroundcolor = 0;
+ //BA.debugLineNum = 14221313;BA.debugLine="If uiController.IsInitialized Then";
+if (__ref._uicontroller /*b4j.example.playeruicontroller*/ .IsInitialized /*boolean*/ ()) { 
 RDebugUtils.currentLine=14221314;
- //BA.debugLineNum = 14221314;BA.debugLine="Dim borderColor As Int";
-_bordercolor = 0;
+ //BA.debugLineNum = 14221314;BA.debugLine="uiController.UpdatePlayButtonAppearance(isHovere";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._updateplaybuttonappearance /*String*/ (null,_ishovered,__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ );
 RDebugUtils.currentLine=14221315;
- //BA.debugLineNum = 14221315;BA.debugLine="Dim orbitBorderColor As Int";
-_orbitbordercolor = 0;
-RDebugUtils.currentLine=14221316;
- //BA.debugLineNum = 14221316;BA.debugLine="If orchestrationState.IsStarted Then";
-if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ ) { 
+ //BA.debugLineNum = 14221315;BA.debugLine="Return";
+if (true) return "";
+ };
 RDebugUtils.currentLine=14221317;
- //BA.debugLineNum = 14221317;BA.debugLine="If isHovered Then";
-if (_ishovered) { 
+ //BA.debugLineNum = 14221317;BA.debugLine="Dim backgroundColor As Int";
+_backgroundcolor = 0;
 RDebugUtils.currentLine=14221318;
- //BA.debugLineNum = 14221318;BA.debugLine="backgroundColor = 0x12FFFFFF";
-_backgroundcolor = ((int)0x12ffffff);
+ //BA.debugLineNum = 14221318;BA.debugLine="Dim borderColor As Int";
+_bordercolor = 0;
 RDebugUtils.currentLine=14221319;
- //BA.debugLineNum = 14221319;BA.debugLine="borderColor = 0x77FFFFFF";
+ //BA.debugLineNum = 14221319;BA.debugLine="Dim orbitBorderColor As Int";
+_orbitbordercolor = 0;
+RDebugUtils.currentLine=14221320;
+ //BA.debugLineNum = 14221320;BA.debugLine="If orchestrationState.IsStarted Then";
+if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ ) { 
+RDebugUtils.currentLine=14221321;
+ //BA.debugLineNum = 14221321;BA.debugLine="If isHovered Then";
+if (_ishovered) { 
+RDebugUtils.currentLine=14221322;
+ //BA.debugLineNum = 14221322;BA.debugLine="backgroundColor = 0x12FFFFFF";
+_backgroundcolor = ((int)0x12ffffff);
+RDebugUtils.currentLine=14221323;
+ //BA.debugLineNum = 14221323;BA.debugLine="borderColor = 0x77FFFFFF";
 _bordercolor = ((int)0x77ffffff);
  }else {
-RDebugUtils.currentLine=14221321;
- //BA.debugLineNum = 14221321;BA.debugLine="backgroundColor = 0x08FFFFFF";
+RDebugUtils.currentLine=14221325;
+ //BA.debugLineNum = 14221325;BA.debugLine="backgroundColor = 0x08FFFFFF";
 _backgroundcolor = ((int)0x08ffffff);
-RDebugUtils.currentLine=14221322;
- //BA.debugLineNum = 14221322;BA.debugLine="borderColor = 0x55FFFFFF";
+RDebugUtils.currentLine=14221326;
+ //BA.debugLineNum = 14221326;BA.debugLine="borderColor = 0x55FFFFFF";
 _bordercolor = ((int)0x55ffffff);
  };
  }else {
-RDebugUtils.currentLine=14221325;
- //BA.debugLineNum = 14221325;BA.debugLine="If isHovered Then";
+RDebugUtils.currentLine=14221329;
+ //BA.debugLineNum = 14221329;BA.debugLine="If isHovered Then";
 if (_ishovered) { 
-RDebugUtils.currentLine=14221326;
- //BA.debugLineNum = 14221326;BA.debugLine="backgroundColor = 0x12FFFFFF";
+RDebugUtils.currentLine=14221330;
+ //BA.debugLineNum = 14221330;BA.debugLine="backgroundColor = 0x12FFFFFF";
 _backgroundcolor = ((int)0x12ffffff);
-RDebugUtils.currentLine=14221327;
- //BA.debugLineNum = 14221327;BA.debugLine="borderColor = 0x55D0FF71";
+RDebugUtils.currentLine=14221331;
+ //BA.debugLineNum = 14221331;BA.debugLine="borderColor = 0x55D0FF71";
 _bordercolor = ((int)0x55d0ff71);
  }else {
-RDebugUtils.currentLine=14221329;
- //BA.debugLineNum = 14221329;BA.debugLine="backgroundColor = 0x07FFFFFF";
+RDebugUtils.currentLine=14221333;
+ //BA.debugLineNum = 14221333;BA.debugLine="backgroundColor = 0x07FFFFFF";
 _backgroundcolor = ((int)0x07ffffff);
-RDebugUtils.currentLine=14221330;
- //BA.debugLineNum = 14221330;BA.debugLine="borderColor = 0x40FFFFFF";
+RDebugUtils.currentLine=14221334;
+ //BA.debugLineNum = 14221334;BA.debugLine="borderColor = 0x40FFFFFF";
 _bordercolor = ((int)0x40ffffff);
  };
  };
-RDebugUtils.currentLine=14221333;
- //BA.debugLineNum = 14221333;BA.debugLine="If orchestrationState.IsStarted Or isHovered Then";
+RDebugUtils.currentLine=14221337;
+ //BA.debugLineNum = 14221337;BA.debugLine="If orchestrationState.IsStarted Or isHovered Then";
 if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/  || _ishovered) { 
-RDebugUtils.currentLine=14221334;
- //BA.debugLineNum = 14221334;BA.debugLine="orbitBorderColor = 0x66D0FF71";
+RDebugUtils.currentLine=14221338;
+ //BA.debugLineNum = 14221338;BA.debugLine="orbitBorderColor = 0x66D0FF71";
 _orbitbordercolor = ((int)0x66d0ff71);
  }else {
-RDebugUtils.currentLine=14221336;
- //BA.debugLineNum = 14221336;BA.debugLine="orbitBorderColor = 0x22D0FF71";
+RDebugUtils.currentLine=14221340;
+ //BA.debugLineNum = 14221340;BA.debugLine="orbitBorderColor = 0x22D0FF71";
 _orbitbordercolor = ((int)0x22d0ff71);
  };
-RDebugUtils.currentLine=14221338;
- //BA.debugLineNum = 14221338;BA.debugLine="playButtonPane.SetColorAndBorder(backgroundColor,";
+RDebugUtils.currentLine=14221342;
+ //BA.debugLineNum = 14221342;BA.debugLine="playButtonPane.SetColorAndBorder(backgroundColor,";
 __ref._playbuttonpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(_backgroundcolor,__c.DipToCurrent((int) (4)),_bordercolor,__c.DipToCurrent((int) (999)));
-RDebugUtils.currentLine=14221339;
- //BA.debugLineNum = 14221339;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
+RDebugUtils.currentLine=14221343;
+ //BA.debugLineNum = 14221343;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
 __ref._orbitpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,__c.DipToCurrent((int) (2)),_orbitbordercolor,__c.DipToCurrent((int) (999)));
-RDebugUtils.currentLine=14221340;
- //BA.debugLineNum = 14221340;BA.debugLine="End Sub";
+RDebugUtils.currentLine=14221344;
+ //BA.debugLineNum = 14221344;BA.debugLine="End Sub";
 return "";
 }
 public String  _updatecodeinputappearance(b4j.example.b4xmainpage __ref,boolean _isfocused) throws Exception{
@@ -7111,60 +5358,70 @@ int _orbitbordercolor = 0;
 RDebugUtils.currentLine=14745600;
  //BA.debugLineNum = 14745600;BA.debugLine="Private Sub UpdateCodeInputAppearance(isFocused As";
 RDebugUtils.currentLine=14745601;
- //BA.debugLineNum = 14745601;BA.debugLine="Dim fillColor As Int";
-_fillcolor = 0;
+ //BA.debugLineNum = 14745601;BA.debugLine="If uiController.IsInitialized Then";
+if (__ref._uicontroller /*b4j.example.playeruicontroller*/ .IsInitialized /*boolean*/ ()) { 
 RDebugUtils.currentLine=14745602;
- //BA.debugLineNum = 14745602;BA.debugLine="Dim borderColor As Int";
-_bordercolor = 0;
+ //BA.debugLineNum = 14745602;BA.debugLine="uiController.UpdateCodeInputAppearance(isFocused";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._updatecodeinputappearance /*String*/ (null,_isfocused);
 RDebugUtils.currentLine=14745603;
- //BA.debugLineNum = 14745603;BA.debugLine="Dim orbitBorderColor As Int";
-_orbitbordercolor = 0;
-RDebugUtils.currentLine=14745604;
- //BA.debugLineNum = 14745604;BA.debugLine="If isFocused Then";
-if (_isfocused) { 
+ //BA.debugLineNum = 14745603;BA.debugLine="Return";
+if (true) return "";
+ };
 RDebugUtils.currentLine=14745605;
- //BA.debugLineNum = 14745605;BA.debugLine="fillColor = 0x10FFFFFF";
-_fillcolor = ((int)0x10ffffff);
+ //BA.debugLineNum = 14745605;BA.debugLine="Dim fillColor As Int";
+_fillcolor = 0;
 RDebugUtils.currentLine=14745606;
- //BA.debugLineNum = 14745606;BA.debugLine="borderColor = 0x77FFFFFF";
-_bordercolor = ((int)0x77ffffff);
+ //BA.debugLineNum = 14745606;BA.debugLine="Dim borderColor As Int";
+_bordercolor = 0;
 RDebugUtils.currentLine=14745607;
- //BA.debugLineNum = 14745607;BA.debugLine="orbitBorderColor = 0x88FFFFFF";
+ //BA.debugLineNum = 14745607;BA.debugLine="Dim orbitBorderColor As Int";
+_orbitbordercolor = 0;
+RDebugUtils.currentLine=14745608;
+ //BA.debugLineNum = 14745608;BA.debugLine="If isFocused Then";
+if (_isfocused) { 
+RDebugUtils.currentLine=14745609;
+ //BA.debugLineNum = 14745609;BA.debugLine="fillColor = 0x10FFFFFF";
+_fillcolor = ((int)0x10ffffff);
+RDebugUtils.currentLine=14745610;
+ //BA.debugLineNum = 14745610;BA.debugLine="borderColor = 0x77FFFFFF";
+_bordercolor = ((int)0x77ffffff);
+RDebugUtils.currentLine=14745611;
+ //BA.debugLineNum = 14745611;BA.debugLine="orbitBorderColor = 0x88FFFFFF";
 _orbitbordercolor = ((int)0x88ffffff);
  }else {
-RDebugUtils.currentLine=14745609;
- //BA.debugLineNum = 14745609;BA.debugLine="fillColor = 0x07FFFFFF";
+RDebugUtils.currentLine=14745613;
+ //BA.debugLineNum = 14745613;BA.debugLine="fillColor = 0x07FFFFFF";
 _fillcolor = ((int)0x07ffffff);
-RDebugUtils.currentLine=14745610;
- //BA.debugLineNum = 14745610;BA.debugLine="borderColor = 0x55FFFFFF";
+RDebugUtils.currentLine=14745614;
+ //BA.debugLineNum = 14745614;BA.debugLine="borderColor = 0x55FFFFFF";
 _bordercolor = ((int)0x55ffffff);
-RDebugUtils.currentLine=14745611;
- //BA.debugLineNum = 14745611;BA.debugLine="orbitBorderColor = 0x66FFFFFF";
+RDebugUtils.currentLine=14745615;
+ //BA.debugLineNum = 14745615;BA.debugLine="orbitBorderColor = 0x66FFFFFF";
 _orbitbordercolor = ((int)0x66ffffff);
  };
-RDebugUtils.currentLine=14745613;
- //BA.debugLineNum = 14745613;BA.debugLine="accessCirclePane.SetColorAndBorder(fillColor, 4di";
-__ref._accesscirclepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(_fillcolor,__c.DipToCurrent((int) (4)),_bordercolor,__c.DipToCurrent((int) (999)));
-RDebugUtils.currentLine=14745614;
- //BA.debugLineNum = 14745614;BA.debugLine="accessCorePane.SetColorAndBorder(xui.Color_Transp";
-__ref._accesscorepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,__c.DipToCurrent((int) (2)),_orbitbordercolor,__c.DipToCurrent((int) (999)));
-RDebugUtils.currentLine=14745615;
- //BA.debugLineNum = 14745615;BA.debugLine="accessInputPane.SetColorAndBorder(xui.Color_Trans";
-__ref._accessinputpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,0,__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,0);
-RDebugUtils.currentLine=14745616;
- //BA.debugLineNum = 14745616;BA.debugLine="SetPaneStyle(accessCirclePane, \"-fx-background-ra";
-__ref._setpanestyle /*String*/ (null,__ref._accesscirclepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-background-radius: 999; -fx-border-radius: 999;");
 RDebugUtils.currentLine=14745617;
- //BA.debugLineNum = 14745617;BA.debugLine="SetPaneStyle(accessCorePane, \"-fx-background-radi";
-__ref._setpanestyle /*String*/ (null,__ref._accesscorepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-background-radius: 999; -fx-border-radius: 999;");
+ //BA.debugLineNum = 14745617;BA.debugLine="accessCirclePane.SetColorAndBorder(fillColor, 4di";
+__ref._accesscirclepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(_fillcolor,__c.DipToCurrent((int) (4)),_bordercolor,__c.DipToCurrent((int) (999)));
 RDebugUtils.currentLine=14745618;
- //BA.debugLineNum = 14745618;BA.debugLine="SetPaneStyle(accessInputPane, \"-fx-background-col";
-__ref._setpanestyle /*String*/ (null,__ref._accessinputpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-background-color: transparent; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0;");
+ //BA.debugLineNum = 14745618;BA.debugLine="accessCorePane.SetColorAndBorder(xui.Color_Transp";
+__ref._accesscorepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,__c.DipToCurrent((int) (2)),_orbitbordercolor,__c.DipToCurrent((int) (999)));
 RDebugUtils.currentLine=14745619;
- //BA.debugLineNum = 14745619;BA.debugLine="SetPaneStyle(txtPlayerCodeView, \"-fx-background-c";
-__ref._setpanestyle /*String*/ (null,__ref._txtplayercodeview /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-background-color: transparent; -fx-text-fill: "+__ref._colortocss /*String*/ (null,((int)0xfff2f7fb))+"; -fx-prompt-text-fill: "+__ref._colortocss /*String*/ (null,((int)0x66ffffff))+"; -fx-highlight-fill: transparent; -fx-highlight-text-fill: "+__ref._colortocss /*String*/ (null,((int)0xfff2f7fb))+"; -fx-display-caret: true; -fx-alignment: center; -fx-background-insets: 0; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0; -fx-font-size: "+BA.NumberToString(__ref._codefontsize /*float*/ )+"px; -fx-font-weight: bold; -fx-padding: 0 0 2 0;");
+ //BA.debugLineNum = 14745619;BA.debugLine="accessInputPane.SetColorAndBorder(xui.Color_Trans";
+__ref._accessinputpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,0,__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,0);
 RDebugUtils.currentLine=14745620;
- //BA.debugLineNum = 14745620;BA.debugLine="End Sub";
+ //BA.debugLineNum = 14745620;BA.debugLine="UiStyle.SetPaneStyle(accessCirclePane, \"-fx-backg";
+_uistyle._setpanestyle /*String*/ (__ref._accesscirclepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-background-radius: 999; -fx-border-radius: 999;");
+RDebugUtils.currentLine=14745621;
+ //BA.debugLineNum = 14745621;BA.debugLine="UiStyle.SetPaneStyle(accessCorePane, \"-fx-backgro";
+_uistyle._setpanestyle /*String*/ (__ref._accesscorepane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-background-radius: 999; -fx-border-radius: 999;");
+RDebugUtils.currentLine=14745622;
+ //BA.debugLineNum = 14745622;BA.debugLine="UiStyle.SetPaneStyle(accessInputPane, \"-fx-backgr";
+_uistyle._setpanestyle /*String*/ (__ref._accessinputpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-background-color: transparent; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0;");
+RDebugUtils.currentLine=14745623;
+ //BA.debugLineNum = 14745623;BA.debugLine="UiStyle.SetPaneStyle(txtPlayerCodeView, \"-fx-back";
+_uistyle._setpanestyle /*String*/ (__ref._txtplayercodeview /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-background-color: transparent; -fx-text-fill: "+_uistyle._colortocss /*String*/ (((int)0xfff2f7fb))+"; -fx-prompt-text-fill: "+_uistyle._colortocss /*String*/ (((int)0x66ffffff))+"; -fx-highlight-fill: transparent; -fx-highlight-text-fill: "+_uistyle._colortocss /*String*/ (((int)0xfff2f7fb))+"; -fx-display-caret: true; -fx-alignment: center; -fx-background-insets: 0; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0; -fx-font-size: "+BA.NumberToString(__ref._codefontsize /*float*/ )+"px; -fx-font-weight: bold; -fx-padding: 0 0 2 0;");
+RDebugUtils.currentLine=14745624;
+ //BA.debugLineNum = 14745624;BA.debugLine="End Sub";
 return "";
 }
 public String  _cacheaudittimer_tick(b4j.example.b4xmainpage __ref) throws Exception{
@@ -7724,253 +5981,28 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "capturestoppedreservequeue", false))
 	 {return ((String) Debug.delegate(ba, "capturestoppedreservequeue", null));}
-String _currentsignature = "";
-anywheresoftware.b4a.objects.collections.List _reservequeue = null;
-Object _itemobject = null;
-anywheresoftware.b4a.objects.collections.Map _item = null;
 RDebugUtils.currentLine=12582912;
  //BA.debugLineNum = 12582912;BA.debugLine="Private Sub CaptureStoppedReserveQueue";
 RDebugUtils.currentLine=12582913;
- //BA.debugLineNum = 12582913;BA.debugLine="If playQueue.IsInitialized = False Or playQueue.S";
-if (__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .IsInitialized()==__c.False || __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()==0) { 
-if (true) return "";};
+ //BA.debugLineNum = 12582913;BA.debugLine="stateStore.CaptureStoppedReserveQueue(playQueue)";
+__ref._statestore /*b4j.example.playerstatestore*/ ._capturestoppedreservequeue /*String*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ );
 RDebugUtils.currentLine=12582914;
- //BA.debugLineNum = 12582914;BA.debugLine="Dim currentSignature As String = BuildQueueSignat";
-_currentsignature = __ref._buildqueuesignature /*String*/ (null);
-RDebugUtils.currentLine=12582915;
- //BA.debugLineNum = 12582915;BA.debugLine="If currentSignature = \"\" Then Return";
-if ((_currentsignature).equals("")) { 
-if (true) return "";};
-RDebugUtils.currentLine=12582916;
- //BA.debugLineNum = 12582916;BA.debugLine="Dim reserveQueue As List";
-_reservequeue = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=12582917;
- //BA.debugLineNum = 12582917;BA.debugLine="reserveQueue.Initialize";
-_reservequeue.Initialize();
-RDebugUtils.currentLine=12582918;
- //BA.debugLineNum = 12582918;BA.debugLine="For Each itemObject As Object In playQueue";
-{
-final anywheresoftware.b4a.BA.IterableList group6 = __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ;
-final int groupLen6 = group6.getSize()
-;int index6 = 0;
-;
-for (; index6 < groupLen6;index6++){
-_itemobject = group6.Get(index6);
-RDebugUtils.currentLine=12582919;
- //BA.debugLineNum = 12582919;BA.debugLine="If itemObject Is Map Then";
-if (_itemobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=12582920;
- //BA.debugLineNum = 12582920;BA.debugLine="Dim item As Map = itemObject";
-_item = new anywheresoftware.b4a.objects.collections.Map();
-_item = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_itemobject));
-RDebugUtils.currentLine=12582921;
- //BA.debugLineNum = 12582921;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
-if (__ref._isvaliddatatrackitem /*boolean*/ (null,_item)==__c.False) { 
-if (true) continue;};
-RDebugUtils.currentLine=12582922;
- //BA.debugLineNum = 12582922;BA.debugLine="If mediaCacheService.IsTrackCached(item.GetDefa";
-if (__ref._mediacacheservice /*b4j.example.mediacache*/ ._istrackcached /*boolean*/ (null,BA.ObjectToString(_item.GetDefault((Object)("id"),(Object)(""))))==__c.False) { 
-if (true) continue;};
-RDebugUtils.currentLine=12582923;
- //BA.debugLineNum = 12582923;BA.debugLine="reserveQueue.Add(CloneMap(item))";
-_reservequeue.Add((Object)(__ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_item).getObject()));
- };
- }
-};
-RDebugUtils.currentLine=12582926;
- //BA.debugLineNum = 12582926;BA.debugLine="queueState.CaptureStoppedReserve(reserveQueue, cu";
-__ref._queuestate /*b4j.example.playbackqueuestate*/ ._capturestoppedreserve /*String*/ (null,_reservequeue,_currentsignature);
-RDebugUtils.currentLine=12582927;
- //BA.debugLineNum = 12582927;BA.debugLine="If queueState.StoppedReserveQueue.Size = 0 Then R";
-if (__ref._queuestate /*b4j.example.playbackqueuestate*/ ._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()==0) { 
-if (true) return "";};
-RDebugUtils.currentLine=12582928;
- //BA.debugLineNum = 12582928;BA.debugLine="TraceLog(\"резерв очереди save tracks=\" & queueSta";
-__ref._tracelog /*String*/ (null,"резерв очереди save tracks="+BA.NumberToString(__ref._queuestate /*b4j.example.playbackqueuestate*/ ._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()));
-RDebugUtils.currentLine=12582929;
- //BA.debugLineNum = 12582929;BA.debugLine="End Sub";
+ //BA.debugLineNum = 12582914;BA.debugLine="End Sub";
 return "";
 }
-public boolean  _isvaliddatatrackitem(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
+public String  _claimurlvalue(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "isvaliddatatrackitem", false))
-	 {return ((Boolean) Debug.delegate(ba, "isvaliddatatrackitem", new Object[] {_item}));}
-RDebugUtils.currentLine=2490368;
- //BA.debugLineNum = 2490368;BA.debugLine="Private Sub IsValidDataTrackItem(item As Map) As B";
-RDebugUtils.currentLine=2490369;
- //BA.debugLineNum = 2490369;BA.debugLine="If item.IsInitialized = False Or item.Size = 0 Th";
-if (_item.IsInitialized()==__c.False || _item.getSize()==0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=2490370;
- //BA.debugLineNum = 2490370;BA.debugLine="If item.GetDefault(\"type\", \"\") <> \"track\" Then Re";
-if ((_item.GetDefault((Object)("type"),(Object)(""))).equals((Object)("track")) == false) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=2490371;
- //BA.debugLineNum = 2490371;BA.debugLine="If item.GetDefault(\"id\", \"\") = \"\" Then Return Fal";
-if ((_item.GetDefault((Object)("id"),(Object)(""))).equals((Object)(""))) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=2490372;
- //BA.debugLineNum = 2490372;BA.debugLine="Return True";
-if (true) return __c.True;
-RDebugUtils.currentLine=2490373;
- //BA.debugLineNum = 2490373;BA.debugLine="End Sub";
-return false;
-}
-public anywheresoftware.b4a.objects.collections.Map  _clonemap(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _sourcemap) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "clonemap", false))
-	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "clonemap", new Object[] {_sourcemap}));}
-anywheresoftware.b4a.objects.collections.Map _clonedmap = null;
-Object _key = null;
-RDebugUtils.currentLine=6356992;
- //BA.debugLineNum = 6356992;BA.debugLine="Private Sub CloneMap(sourceMap As Map) As Map";
-RDebugUtils.currentLine=6356993;
- //BA.debugLineNum = 6356993;BA.debugLine="Dim clonedMap As Map";
-_clonedmap = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=6356994;
- //BA.debugLineNum = 6356994;BA.debugLine="clonedMap.Initialize";
-_clonedmap.Initialize();
-RDebugUtils.currentLine=6356995;
- //BA.debugLineNum = 6356995;BA.debugLine="If sourceMap.IsInitialized = False Then Return cl";
-if (_sourcemap.IsInitialized()==__c.False) { 
-if (true) return _clonedmap;};
-RDebugUtils.currentLine=6356996;
- //BA.debugLineNum = 6356996;BA.debugLine="For Each key As Object In sourceMap.Keys";
-{
-final anywheresoftware.b4a.BA.IterableList group4 = _sourcemap.Keys();
-final int groupLen4 = group4.getSize()
-;int index4 = 0;
-;
-for (; index4 < groupLen4;index4++){
-_key = group4.Get(index4);
-RDebugUtils.currentLine=6356997;
- //BA.debugLineNum = 6356997;BA.debugLine="clonedMap.Put(key, sourceMap.Get(key))";
-_clonedmap.Put(_key,_sourcemap.Get(_key));
- }
-};
-RDebugUtils.currentLine=6356999;
- //BA.debugLineNum = 6356999;BA.debugLine="Return clonedMap";
-if (true) return _clonedmap;
-RDebugUtils.currentLine=6357000;
- //BA.debugLineNum = 6357000;BA.debugLine="End Sub";
-return null;
-}
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _checkserviceavailability(b4j.example.b4xmainpage __ref) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "checkserviceavailability", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "checkserviceavailability", null));}
-ResumableSub_CheckServiceAvailability rsub = new ResumableSub_CheckServiceAvailability(this,__ref);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_CheckServiceAvailability extends BA.ResumableSub {
-public ResumableSub_CheckServiceAvailability(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-b4j.example.httpjob _j = null;
-anywheresoftware.b4a.objects.collections.Map _params = null;
-boolean _ok = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = -1;
-RDebugUtils.currentLine=8716289;
- //BA.debugLineNum = 8716289;BA.debugLine="Dim j As HttpJob";
-_j = new b4j.example.httpjob();
-RDebugUtils.currentLine=8716290;
- //BA.debugLineNum = 8716290;BA.debugLine="j.Initialize(\"\", Me)";
-_j._initialize /*String*/ (null,ba,"",parent);
-RDebugUtils.currentLine=8716291;
- //BA.debugLineNum = 8716291;BA.debugLine="Dim params As Map = CreateDataParams";
-_params = new anywheresoftware.b4a.objects.collections.Map();
-_params = __ref._createdataparams /*anywheresoftware.b4a.objects.collections.Map*/ (null);
-RDebugUtils.currentLine=8716292;
- //BA.debugLineNum = 8716292;BA.debugLine="params.Put(\"t\", DateTime.Now)";
-_params.Put((Object)("t"),(Object)(parent.__c.DateTime.getNow()));
-RDebugUtils.currentLine=8716293;
- //BA.debugLineNum = 8716293;BA.debugLine="j.Download(SERVICE_CHECK_URL & \"?\" & BuildParams(";
-_j._download /*String*/ (null,__ref._service_check_url /*String*/ +"?"+__ref._buildparams /*String*/ (null,_params));
-RDebugUtils.currentLine=8716294;
- //BA.debugLineNum = 8716294;BA.debugLine="ApplyClientRequestHeaders(j)";
-__ref._applyclientrequestheaders /*String*/ (null,_j);
-RDebugUtils.currentLine=8716295;
- //BA.debugLineNum = 8716295;BA.debugLine="j.GetRequest.Timeout = CONNECTIVITY_CHECK_TIMEOUT";
-_j._getrequest /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ (null).setTimeout(__ref._connectivity_check_timeout_ms /*int*/ );
-RDebugUtils.currentLine=8716296;
- //BA.debugLineNum = 8716296;BA.debugLine="Wait For (j) JobDone(j As HttpJob)";
-parent.__c.WaitFor("jobdone", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "checkserviceavailability"), (Object)(_j));
-this.state = 1;
-return;
-case 1:
-//C
-this.state = -1;
-_j = (b4j.example.httpjob) result[1];
-;
-RDebugUtils.currentLine=8716297;
- //BA.debugLineNum = 8716297;BA.debugLine="Dim ok As Boolean = j.Success";
-_ok = _j._success /*boolean*/ ;
-RDebugUtils.currentLine=8716298;
- //BA.debugLineNum = 8716298;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=8716299;
- //BA.debugLineNum = 8716299;BA.debugLine="Return ok";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_ok));return;};
-RDebugUtils.currentLine=8716300;
- //BA.debugLineNum = 8716300;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
-public anywheresoftware.b4a.objects.collections.Map  _createdataparams(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "createdataparams", false))
-	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "createdataparams", null));}
-anywheresoftware.b4a.objects.collections.Map _params = null;
-RDebugUtils.currentLine=16449536;
- //BA.debugLineNum = 16449536;BA.debugLine="Private Sub CreateDataParams As Map";
-RDebugUtils.currentLine=16449537;
- //BA.debugLineNum = 16449537;BA.debugLine="Dim params As Map";
-_params = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=16449538;
- //BA.debugLineNum = 16449538;BA.debugLine="params.Initialize";
-_params.Initialize();
-RDebugUtils.currentLine=16449539;
- //BA.debugLineNum = 16449539;BA.debugLine="params.Put(\"player\", playerCode)";
-_params.Put((Object)("player"),(Object)(__ref._playercode /*String*/ ));
-RDebugUtils.currentLine=16449540;
- //BA.debugLineNum = 16449540;BA.debugLine="params.Put(\"device\", deviceId)";
-_params.Put((Object)("device"),(Object)(__ref._deviceid /*String*/ ));
-RDebugUtils.currentLine=16449541;
- //BA.debugLineNum = 16449541;BA.debugLine="params.Put(\"tz\", TimezoneOffsetMinutes)";
-_params.Put((Object)("tz"),(Object)(__ref._timezoneoffsetminutes /*int*/ (null)));
-RDebugUtils.currentLine=16449542;
- //BA.debugLineNum = 16449542;BA.debugLine="params.Put(\"os\", ResolveClientOsName)";
-_params.Put((Object)("os"),(Object)(__ref._resolveclientosname /*String*/ (null)));
-RDebugUtils.currentLine=16449543;
- //BA.debugLineNum = 16449543;BA.debugLine="Return params";
-if (true) return _params;
-RDebugUtils.currentLine=16449544;
- //BA.debugLineNum = 16449544;BA.debugLine="End Sub";
-return null;
+if (Debug.shouldDelegate(ba, "claimurlvalue", false))
+	 {return ((String) Debug.delegate(ba, "claimurlvalue", null));}
+RDebugUtils.currentLine=79101952;
+ //BA.debugLineNum = 79101952;BA.debugLine="Public Sub ClaimUrlValue As String";
+RDebugUtils.currentLine=79101953;
+ //BA.debugLineNum = 79101953;BA.debugLine="Return CLAIM_BASE_URL";
+if (true) return __ref._claim_base_url /*String*/ ;
+RDebugUtils.currentLine=79101954;
+ //BA.debugLineNum = 79101954;BA.debugLine="End Sub";
+return "";
 }
 public String  _class_globals(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
@@ -8107,218 +6139,218 @@ RDebugUtils.currentLine=196653;
  //BA.debugLineNum = 196653;BA.debugLine="Private Const TRACE_ERROR_DEBUG_CONTEXT_LINES As";
 _trace_error_debug_context_lines = (int) (8);
 RDebugUtils.currentLine=196654;
- //BA.debugLineNum = 196654;BA.debugLine="Private Const CONNECTIVITY_CHECK_TIMEOUT_MS As In";
-_connectivity_check_timeout_ms = (int) (2500);
-RDebugUtils.currentLine=196655;
- //BA.debugLineNum = 196655;BA.debugLine="Private Const PAUSE_RETRY_DELAY As Int = 300000";
+ //BA.debugLineNum = 196654;BA.debugLine="Private Const PAUSE_RETRY_DELAY As Int = 300000";
 _pause_retry_delay = (int) (300000);
-RDebugUtils.currentLine=196656;
- //BA.debugLineNum = 196656;BA.debugLine="Private Const LOCAL_RETRY_DELAY_INITIAL As Int =";
+RDebugUtils.currentLine=196655;
+ //BA.debugLineNum = 196655;BA.debugLine="Private Const LOCAL_RETRY_DELAY_INITIAL As Int =";
 _local_retry_delay_initial = (int) (5000);
-RDebugUtils.currentLine=196657;
- //BA.debugLineNum = 196657;BA.debugLine="Private Const LOCAL_RETRY_DELAY_MAX As Int = 3000";
+RDebugUtils.currentLine=196656;
+ //BA.debugLineNum = 196656;BA.debugLine="Private Const LOCAL_RETRY_DELAY_MAX As Int = 3000";
 _local_retry_delay_max = (int) (30000);
-RDebugUtils.currentLine=196658;
- //BA.debugLineNum = 196658;BA.debugLine="Private Const SERVER_RETRY_DELAY_INITIAL As Int =";
+RDebugUtils.currentLine=196657;
+ //BA.debugLineNum = 196657;BA.debugLine="Private Const SERVER_RETRY_DELAY_INITIAL As Int =";
 _server_retry_delay_initial = (int) (10000);
-RDebugUtils.currentLine=196659;
- //BA.debugLineNum = 196659;BA.debugLine="Private Const SERVER_RETRY_DELAY_MAX As Int = 600";
+RDebugUtils.currentLine=196658;
+ //BA.debugLineNum = 196658;BA.debugLine="Private Const SERVER_RETRY_DELAY_MAX As Int = 600";
 _server_retry_delay_max = (int) (60000);
-RDebugUtils.currentLine=196660;
- //BA.debugLineNum = 196660;BA.debugLine="Private Const BLOCKED_RETRY_DELAY As Int = 60000";
+RDebugUtils.currentLine=196659;
+ //BA.debugLineNum = 196659;BA.debugLine="Private Const BLOCKED_RETRY_DELAY As Int = 60000";
 _blocked_retry_delay = (int) (60000);
-RDebugUtils.currentLine=196661;
- //BA.debugLineNum = 196661;BA.debugLine="Private Const FLOW_IDLE As String = \"idle\"";
+RDebugUtils.currentLine=196660;
+ //BA.debugLineNum = 196660;BA.debugLine="Private Const FLOW_IDLE As String = \"idle\"";
 _flow_idle = "idle";
-RDebugUtils.currentLine=196662;
- //BA.debugLineNum = 196662;BA.debugLine="Private Const FLOW_STARTING As String = \"starting";
+RDebugUtils.currentLine=196661;
+ //BA.debugLineNum = 196661;BA.debugLine="Private Const FLOW_STARTING As String = \"starting";
 _flow_starting = "starting";
-RDebugUtils.currentLine=196663;
- //BA.debugLineNum = 196663;BA.debugLine="Private Const FLOW_PLAYING As String = \"playing\"";
+RDebugUtils.currentLine=196662;
+ //BA.debugLineNum = 196662;BA.debugLine="Private Const FLOW_PLAYING As String = \"playing\"";
 _flow_playing = "playing";
-RDebugUtils.currentLine=196664;
- //BA.debugLineNum = 196664;BA.debugLine="Private Const FLOW_PREPARING As String = \"prepari";
+RDebugUtils.currentLine=196663;
+ //BA.debugLineNum = 196663;BA.debugLine="Private Const FLOW_PREPARING As String = \"prepari";
 _flow_preparing = "preparing";
-RDebugUtils.currentLine=196665;
- //BA.debugLineNum = 196665;BA.debugLine="Private Const FLOW_TRANSITIONING As String = \"tra";
+RDebugUtils.currentLine=196664;
+ //BA.debugLineNum = 196664;BA.debugLine="Private Const FLOW_TRANSITIONING As String = \"tra";
 _flow_transitioning = "transitioning";
-RDebugUtils.currentLine=196666;
- //BA.debugLineNum = 196666;BA.debugLine="Private Const FLOW_STOPPING As String = \"stopping";
+RDebugUtils.currentLine=196665;
+ //BA.debugLineNum = 196665;BA.debugLine="Private Const FLOW_STOPPING As String = \"stopping";
 _flow_stopping = "stopping";
-RDebugUtils.currentLine=196667;
- //BA.debugLineNum = 196667;BA.debugLine="Private Const FLOW_PAUSED_POLICY As String = \"pau";
+RDebugUtils.currentLine=196666;
+ //BA.debugLineNum = 196666;BA.debugLine="Private Const FLOW_PAUSED_POLICY As String = \"pau";
 _flow_paused_policy = "paused_policy";
-RDebugUtils.currentLine=196668;
- //BA.debugLineNum = 196668;BA.debugLine="Private Const FLOW_ERROR As String = \"error\"";
+RDebugUtils.currentLine=196667;
+ //BA.debugLineNum = 196667;BA.debugLine="Private Const FLOW_ERROR As String = \"error\"";
 _flow_error = "error";
-RDebugUtils.currentLine=196669;
- //BA.debugLineNum = 196669;BA.debugLine="Private rootView As B4XView";
+RDebugUtils.currentLine=196668;
+ //BA.debugLineNum = 196668;BA.debugLine="Private rootView As B4XView";
 _rootview = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196670;
- //BA.debugLineNum = 196670;BA.debugLine="Private xui As XUI";
+RDebugUtils.currentLine=196669;
+ //BA.debugLineNum = 196669;BA.debugLine="Private xui As XUI";
 _xui = new anywheresoftware.b4a.objects.B4XViewWrapper.XUI();
-RDebugUtils.currentLine=196671;
- //BA.debugLineNum = 196671;BA.debugLine="Private storageDir As String";
+RDebugUtils.currentLine=196670;
+ //BA.debugLineNum = 196670;BA.debugLine="Private storageDir As String";
 _storagedir = "";
-RDebugUtils.currentLine=196672;
- //BA.debugLineNum = 196672;BA.debugLine="Private storageFile As String = \"player_state.jso";
+RDebugUtils.currentLine=196671;
+ //BA.debugLineNum = 196671;BA.debugLine="Private storageFile As String = \"player_state.jso";
 _storagefile = "player_state.json";
-RDebugUtils.currentLine=196673;
- //BA.debugLineNum = 196673;BA.debugLine="Private localStateDbName As String = \"LocalState\"";
+RDebugUtils.currentLine=196672;
+ //BA.debugLineNum = 196672;BA.debugLine="Private localStateDbName As String = \"LocalState\"";
 _localstatedbname = "LocalState";
-RDebugUtils.currentLine=196674;
- //BA.debugLineNum = 196674;BA.debugLine="Private trustedSyncTimeKey As String = \"trusted_s";
+RDebugUtils.currentLine=196673;
+ //BA.debugLineNum = 196673;BA.debugLine="Private trustedSyncTimeKey As String = \"trusted_s";
 _trustedsynctimekey = "trusted_sync_time_ticks";
-RDebugUtils.currentLine=196675;
- //BA.debugLineNum = 196675;BA.debugLine="Private playerDataFile As String = \"player_data.j";
+RDebugUtils.currentLine=196674;
+ //BA.debugLineNum = 196674;BA.debugLine="Private playerDataFile As String = \"player_data.j";
 _playerdatafile = "player_data.json";
-RDebugUtils.currentLine=196676;
- //BA.debugLineNum = 196676;BA.debugLine="Private playlistRequirementsFile As String = \"pla";
+RDebugUtils.currentLine=196675;
+ //BA.debugLineNum = 196675;BA.debugLine="Private playlistRequirementsFile As String = \"pla";
 _playlistrequirementsfile = "playlist_requirements.json";
-RDebugUtils.currentLine=196677;
- //BA.debugLineNum = 196677;BA.debugLine="Private localPlaylistsDirName As String = \"playli";
+RDebugUtils.currentLine=196676;
+ //BA.debugLineNum = 196676;BA.debugLine="Private localPlaylistsDirName As String = \"playli";
 _localplaylistsdirname = "playlists";
-RDebugUtils.currentLine=196678;
- //BA.debugLineNum = 196678;BA.debugLine="Private historyDirName As String = \"history\"";
+RDebugUtils.currentLine=196677;
+ //BA.debugLineNum = 196677;BA.debugLine="Private historyDirName As String = \"history\"";
 _historydirname = "history";
-RDebugUtils.currentLine=196679;
- //BA.debugLineNum = 196679;BA.debugLine="Private debugResponsesDir As String";
+RDebugUtils.currentLine=196678;
+ //BA.debugLineNum = 196678;BA.debugLine="Private debugResponsesDir As String";
 _debugresponsesdir = "";
-RDebugUtils.currentLine=196681;
- //BA.debugLineNum = 196681;BA.debugLine="Private card As B4XView";
+RDebugUtils.currentLine=196680;
+ //BA.debugLineNum = 196680;BA.debugLine="Private card As B4XView";
 _card = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196682;
- //BA.debugLineNum = 196682;BA.debugLine="Private headerPane As B4XView";
+RDebugUtils.currentLine=196681;
+ //BA.debugLineNum = 196681;BA.debugLine="Private headerPane As B4XView";
 _headerpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196683;
- //BA.debugLineNum = 196683;BA.debugLine="Private headerActionPane As B4XView";
+RDebugUtils.currentLine=196682;
+ //BA.debugLineNum = 196682;BA.debugLine="Private headerActionPane As B4XView";
 _headeractionpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196684;
- //BA.debugLineNum = 196684;BA.debugLine="Private contentPane As B4XView";
+RDebugUtils.currentLine=196683;
+ //BA.debugLineNum = 196683;BA.debugLine="Private contentPane As B4XView";
 _contentpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196685;
- //BA.debugLineNum = 196685;BA.debugLine="Private footerPane As B4XView";
+RDebugUtils.currentLine=196684;
+ //BA.debugLineNum = 196684;BA.debugLine="Private footerPane As B4XView";
 _footerpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196686;
- //BA.debugLineNum = 196686;BA.debugLine="Private setupPane As B4XView";
+RDebugUtils.currentLine=196685;
+ //BA.debugLineNum = 196685;BA.debugLine="Private setupPane As B4XView";
 _setuppane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196687;
- //BA.debugLineNum = 196687;BA.debugLine="Private playerPane As B4XView";
+RDebugUtils.currentLine=196686;
+ //BA.debugLineNum = 196686;BA.debugLine="Private playerPane As B4XView";
 _playerpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196688;
- //BA.debugLineNum = 196688;BA.debugLine="Private setupHeroPane As B4XView";
+RDebugUtils.currentLine=196687;
+ //BA.debugLineNum = 196687;BA.debugLine="Private setupHeroPane As B4XView";
 _setupheropane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196689;
- //BA.debugLineNum = 196689;BA.debugLine="Private setupDetailPane As B4XView";
+RDebugUtils.currentLine=196688;
+ //BA.debugLineNum = 196688;BA.debugLine="Private setupDetailPane As B4XView";
 _setupdetailpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196690;
- //BA.debugLineNum = 196690;BA.debugLine="Private setupPrimaryPane As B4XView";
+RDebugUtils.currentLine=196689;
+ //BA.debugLineNum = 196689;BA.debugLine="Private setupPrimaryPane As B4XView";
 _setupprimarypane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196691;
- //BA.debugLineNum = 196691;BA.debugLine="Private setupStatusPane As B4XView";
+RDebugUtils.currentLine=196690;
+ //BA.debugLineNum = 196690;BA.debugLine="Private setupStatusPane As B4XView";
 _setupstatuspane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196692;
- //BA.debugLineNum = 196692;BA.debugLine="Private playerHeroPane As B4XView";
+RDebugUtils.currentLine=196691;
+ //BA.debugLineNum = 196691;BA.debugLine="Private playerHeroPane As B4XView";
 _playerheropane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196693;
- //BA.debugLineNum = 196693;BA.debugLine="Private playerDetailPane As B4XView";
+RDebugUtils.currentLine=196692;
+ //BA.debugLineNum = 196692;BA.debugLine="Private playerDetailPane As B4XView";
 _playerdetailpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196694;
- //BA.debugLineNum = 196694;BA.debugLine="Private playerPrimaryPane As B4XView";
+RDebugUtils.currentLine=196693;
+ //BA.debugLineNum = 196693;BA.debugLine="Private playerPrimaryPane As B4XView";
 _playerprimarypane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196695;
- //BA.debugLineNum = 196695;BA.debugLine="Private playerStatusPane As B4XView";
+RDebugUtils.currentLine=196694;
+ //BA.debugLineNum = 196694;BA.debugLine="Private playerStatusPane As B4XView";
 _playerstatuspane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196696;
- //BA.debugLineNum = 196696;BA.debugLine="Private orbitPane As B4XView";
+RDebugUtils.currentLine=196695;
+ //BA.debugLineNum = 196695;BA.debugLine="Private orbitPane As B4XView";
 _orbitpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196697;
- //BA.debugLineNum = 196697;BA.debugLine="Private playButtonPane As B4XView";
+RDebugUtils.currentLine=196696;
+ //BA.debugLineNum = 196696;BA.debugLine="Private playButtonPane As B4XView";
 _playbuttonpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196698;
- //BA.debugLineNum = 196698;BA.debugLine="Private confirmPane As B4XView";
+RDebugUtils.currentLine=196697;
+ //BA.debugLineNum = 196697;BA.debugLine="Private confirmPane As B4XView";
 _confirmpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196699;
- //BA.debugLineNum = 196699;BA.debugLine="Private accessCirclePane As B4XView";
+RDebugUtils.currentLine=196698;
+ //BA.debugLineNum = 196698;BA.debugLine="Private accessCirclePane As B4XView";
 _accesscirclepane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196700;
- //BA.debugLineNum = 196700;BA.debugLine="Private accessCorePane As B4XView";
+RDebugUtils.currentLine=196699;
+ //BA.debugLineNum = 196699;BA.debugLine="Private accessCorePane As B4XView";
 _accesscorepane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196701;
- //BA.debugLineNum = 196701;BA.debugLine="Private accessInputPane As B4XView";
+RDebugUtils.currentLine=196700;
+ //BA.debugLineNum = 196700;BA.debugLine="Private accessInputPane As B4XView";
 _accessinputpane = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196703;
- //BA.debugLineNum = 196703;BA.debugLine="Private lblHeader As B4XView";
+RDebugUtils.currentLine=196702;
+ //BA.debugLineNum = 196702;BA.debugLine="Private lblHeader As B4XView";
 _lblheader = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196704;
- //BA.debugLineNum = 196704;BA.debugLine="Private lblHeaderAction As B4XView";
+RDebugUtils.currentLine=196703;
+ //BA.debugLineNum = 196703;BA.debugLine="Private lblHeaderAction As B4XView";
 _lblheaderaction = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196705;
- //BA.debugLineNum = 196705;BA.debugLine="Private lblPlayIcon As B4XView";
+RDebugUtils.currentLine=196704;
+ //BA.debugLineNum = 196704;BA.debugLine="Private lblPlayIcon As B4XView";
 _lblplayicon = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196706;
- //BA.debugLineNum = 196706;BA.debugLine="Private lblStream As B4XView";
+RDebugUtils.currentLine=196705;
+ //BA.debugLineNum = 196705;BA.debugLine="Private lblStream As B4XView";
 _lblstream = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196707;
- //BA.debugLineNum = 196707;BA.debugLine="Private lblInfo As B4XView";
+RDebugUtils.currentLine=196706;
+ //BA.debugLineNum = 196706;BA.debugLine="Private lblInfo As B4XView";
 _lblinfo = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196708;
- //BA.debugLineNum = 196708;BA.debugLine="Private lblFooter As B4XView";
+RDebugUtils.currentLine=196707;
+ //BA.debugLineNum = 196707;BA.debugLine="Private lblFooter As B4XView";
 _lblfooter = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196709;
- //BA.debugLineNum = 196709;BA.debugLine="Private lblConnectionIcon As B4XView";
+RDebugUtils.currentLine=196708;
+ //BA.debugLineNum = 196708;BA.debugLine="Private lblConnectionIcon As B4XView";
 _lblconnectionicon = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196710;
- //BA.debugLineNum = 196710;BA.debugLine="Private lblSetupMessage As B4XView";
+RDebugUtils.currentLine=196709;
+ //BA.debugLineNum = 196709;BA.debugLine="Private lblSetupMessage As B4XView";
 _lblsetupmessage = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196712;
- //BA.debugLineNum = 196712;BA.debugLine="Private txtPlayerCode As TextField";
+RDebugUtils.currentLine=196711;
+ //BA.debugLineNum = 196711;BA.debugLine="Private txtPlayerCode As TextField";
 _txtplayercode = new anywheresoftware.b4j.objects.TextInputControlWrapper.TextFieldWrapper();
-RDebugUtils.currentLine=196713;
- //BA.debugLineNum = 196713;BA.debugLine="Private txtPlayerCodeView As B4XView";
+RDebugUtils.currentLine=196712;
+ //BA.debugLineNum = 196712;BA.debugLine="Private txtPlayerCodeView As B4XView";
 _txtplayercodeview = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196714;
- //BA.debugLineNum = 196714;BA.debugLine="Private btnSetupSubmit As B4XView";
+RDebugUtils.currentLine=196713;
+ //BA.debugLineNum = 196713;BA.debugLine="Private btnSetupSubmit As B4XView";
 _btnsetupsubmit = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196715;
- //BA.debugLineNum = 196715;BA.debugLine="Private btnConfirmYes As B4XView";
+RDebugUtils.currentLine=196714;
+ //BA.debugLineNum = 196714;BA.debugLine="Private btnConfirmYes As B4XView";
 _btnconfirmyes = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196716;
- //BA.debugLineNum = 196716;BA.debugLine="Private btnConfirmNo As B4XView";
+RDebugUtils.currentLine=196715;
+ //BA.debugLineNum = 196715;BA.debugLine="Private btnConfirmNo As B4XView";
 _btnconfirmno = new anywheresoftware.b4a.objects.B4XViewWrapper();
-RDebugUtils.currentLine=196717;
- //BA.debugLineNum = 196717;BA.debugLine="Private playIconBaseSize As Float";
-_playiconbasesize = 0f;
-RDebugUtils.currentLine=196718;
- //BA.debugLineNum = 196718;BA.debugLine="Private stopIconBaseSize As Float";
-_stopiconbasesize = 0f;
-RDebugUtils.currentLine=196719;
- //BA.debugLineNum = 196719;BA.debugLine="Private headerActionFontSize As Float";
+RDebugUtils.currentLine=196716;
+ //BA.debugLineNum = 196716;BA.debugLine="Private headerActionFontSize As Float";
 _headeractionfontsize = 0f;
-RDebugUtils.currentLine=196720;
- //BA.debugLineNum = 196720;BA.debugLine="Private codeFontSize As Float";
+RDebugUtils.currentLine=196717;
+ //BA.debugLineNum = 196717;BA.debugLine="Private codeFontSize As Float";
 _codefontsize = 0f;
-RDebugUtils.currentLine=196721;
- //BA.debugLineNum = 196721;BA.debugLine="Private isCodeInputFocused As Boolean";
+RDebugUtils.currentLine=196718;
+ //BA.debugLineNum = 196718;BA.debugLine="Private isCodeInputFocused As Boolean";
 _iscodeinputfocused = false;
-RDebugUtils.currentLine=196723;
- //BA.debugLineNum = 196723;BA.debugLine="Private audioPrimary As AudioPlayer";
+RDebugUtils.currentLine=196720;
+ //BA.debugLineNum = 196720;BA.debugLine="Private audioPrimary As AudioPlayer";
 _audioprimary = new b4j.example.audioplayer();
-RDebugUtils.currentLine=196724;
- //BA.debugLineNum = 196724;BA.debugLine="Private audioSecondary As AudioPlayer";
+RDebugUtils.currentLine=196721;
+ //BA.debugLineNum = 196721;BA.debugLine="Private audioSecondary As AudioPlayer";
 _audiosecondary = new b4j.example.audioplayer();
-RDebugUtils.currentLine=196725;
- //BA.debugLineNum = 196725;BA.debugLine="Private localAdScheduler As AdScheduler";
+RDebugUtils.currentLine=196722;
+ //BA.debugLineNum = 196722;BA.debugLine="Private localAdScheduler As AdScheduler";
 _localadscheduler = new b4j.example.adscheduler();
-RDebugUtils.currentLine=196726;
- //BA.debugLineNum = 196726;BA.debugLine="Private dataResolver As DataPlaybackResolver";
+RDebugUtils.currentLine=196723;
+ //BA.debugLineNum = 196723;BA.debugLine="Private dataResolver As DataPlaybackResolver";
 _dataresolver = new b4j.example.dataplaybackresolver();
-RDebugUtils.currentLine=196727;
- //BA.debugLineNum = 196727;BA.debugLine="Private offlineStoreService As OfflineStore";
+RDebugUtils.currentLine=196724;
+ //BA.debugLineNum = 196724;BA.debugLine="Private offlineStoreService As OfflineStore";
 _offlinestoreservice = new b4j.example.offlinestore();
-RDebugUtils.currentLine=196728;
- //BA.debugLineNum = 196728;BA.debugLine="Private appTraceService As TraceService";
+RDebugUtils.currentLine=196725;
+ //BA.debugLineNum = 196725;BA.debugLine="Private appTraceService As TraceService";
 _apptraceservice = new b4j.example.traceservice();
+RDebugUtils.currentLine=196726;
+ //BA.debugLineNum = 196726;BA.debugLine="Private traceFormatter As PlaybackTraceFormatter";
+_traceformatter = new b4j.example.playbacktraceformatter();
+RDebugUtils.currentLine=196727;
+ //BA.debugLineNum = 196727;BA.debugLine="Private traceRouter As PlaybackTraceRouter";
+_tracerouter = new b4j.example.playbacktracerouter();
+RDebugUtils.currentLine=196728;
+ //BA.debugLineNum = 196728;BA.debugLine="Private traceUploader As PlaybackTraceUploader";
+_traceuploader = new b4j.example.playbacktraceuploader();
 RDebugUtils.currentLine=196729;
  //BA.debugLineNum = 196729;BA.debugLine="Private mediaCacheService As MediaCache";
 _mediacacheservice = new b4j.example.mediacache();
@@ -8338,107 +6370,110 @@ RDebugUtils.currentLine=196734;
  //BA.debugLineNum = 196734;BA.debugLine="Private serverSnapshotLimit As Int = 30";
 _serversnapshotlimit = (int) (30);
 RDebugUtils.currentLine=196735;
- //BA.debugLineNum = 196735;BA.debugLine="Private offlineData As Map";
-_offlinedata = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=196737;
- //BA.debugLineNum = 196737;BA.debugLine="Private retryTimer As Timer";
+ //BA.debugLineNum = 196735;BA.debugLine="Private retryTimer As Timer";
 _retrytimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196738;
- //BA.debugLineNum = 196738;BA.debugLine="Private breakTimer As Timer";
+RDebugUtils.currentLine=196736;
+ //BA.debugLineNum = 196736;BA.debugLine="Private breakTimer As Timer";
 _breaktimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196739;
- //BA.debugLineNum = 196739;BA.debugLine="Private historyFlushTimer As Timer";
+RDebugUtils.currentLine=196737;
+ //BA.debugLineNum = 196737;BA.debugLine="Private historyFlushTimer As Timer";
 _historyflushtimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196740;
- //BA.debugLineNum = 196740;BA.debugLine="Private traceUploadTimer As Timer";
+RDebugUtils.currentLine=196738;
+ //BA.debugLineNum = 196738;BA.debugLine="Private traceUploadTimer As Timer";
 _traceuploadtimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196741;
- //BA.debugLineNum = 196741;BA.debugLine="Private orbitTimer As Timer";
+RDebugUtils.currentLine=196739;
+ //BA.debugLineNum = 196739;BA.debugLine="Private orbitTimer As Timer";
 _orbittimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196742;
- //BA.debugLineNum = 196742;BA.debugLine="Private offlineDataRefreshTimer As Timer";
+RDebugUtils.currentLine=196740;
+ //BA.debugLineNum = 196740;BA.debugLine="Private offlineDataRefreshTimer As Timer";
 _offlinedatarefreshtimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196743;
- //BA.debugLineNum = 196743;BA.debugLine="Private localAdMinuteTimer As Timer";
+RDebugUtils.currentLine=196741;
+ //BA.debugLineNum = 196741;BA.debugLine="Private localAdMinuteTimer As Timer";
 _localadminutetimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196744;
- //BA.debugLineNum = 196744;BA.debugLine="Private trackCacheWarmupTimer As Timer";
+RDebugUtils.currentLine=196742;
+ //BA.debugLineNum = 196742;BA.debugLine="Private trackCacheWarmupTimer As Timer";
 _trackcachewarmuptimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196745;
- //BA.debugLineNum = 196745;BA.debugLine="Private cacheAuditTimer As Timer";
+RDebugUtils.currentLine=196743;
+ //BA.debugLineNum = 196743;BA.debugLine="Private cacheAuditTimer As Timer";
 _cacheaudittimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196746;
- //BA.debugLineNum = 196746;BA.debugLine="Private playbackWatchdogTimer As Timer";
+RDebugUtils.currentLine=196744;
+ //BA.debugLineNum = 196744;BA.debugLine="Private playbackWatchdogTimer As Timer";
 _playbackwatchdogtimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196747;
- //BA.debugLineNum = 196747;BA.debugLine="Private playbackDirectorTimer As Timer";
+RDebugUtils.currentLine=196745;
+ //BA.debugLineNum = 196745;BA.debugLine="Private playbackDirectorTimer As Timer";
 _playbackdirectortimer = new anywheresoftware.b4a.objects.Timer();
-RDebugUtils.currentLine=196748;
- //BA.debugLineNum = 196748;BA.debugLine="Private machineGuidShell As Shell";
+RDebugUtils.currentLine=196746;
+ //BA.debugLineNum = 196746;BA.debugLine="Private machineGuidShell As Shell";
 _machineguidshell = new anywheresoftware.b4j.objects.Shell();
-RDebugUtils.currentLine=196750;
- //BA.debugLineNum = 196750;BA.debugLine="Private playerCode As String";
+RDebugUtils.currentLine=196748;
+ //BA.debugLineNum = 196748;BA.debugLine="Private playerCode As String";
 _playercode = "";
-RDebugUtils.currentLine=196751;
- //BA.debugLineNum = 196751;BA.debugLine="Private deviceId As String";
+RDebugUtils.currentLine=196749;
+ //BA.debugLineNum = 196749;BA.debugLine="Private deviceId As String";
 _deviceid = "";
-RDebugUtils.currentLine=196752;
- //BA.debugLineNum = 196752;BA.debugLine="Private appScreenMode As String";
+RDebugUtils.currentLine=196750;
+ //BA.debugLineNum = 196750;BA.debugLine="Private appScreenMode As String";
 _appscreenmode = "";
-RDebugUtils.currentLine=196753;
- //BA.debugLineNum = 196753;BA.debugLine="Private nextStartMode As String";
+RDebugUtils.currentLine=196751;
+ //BA.debugLineNum = 196751;BA.debugLine="Private nextStartMode As String";
 _nextstartmode = "";
-RDebugUtils.currentLine=196754;
- //BA.debugLineNum = 196754;BA.debugLine="Private runtimeState As PlaybackRuntimeState";
+RDebugUtils.currentLine=196752;
+ //BA.debugLineNum = 196752;BA.debugLine="Private runtimeState As PlaybackRuntimeState";
 _runtimestate = new b4j.example.playbackruntimestate();
-RDebugUtils.currentLine=196755;
- //BA.debugLineNum = 196755;BA.debugLine="Private metaState As PlaybackMetaState";
+RDebugUtils.currentLine=196753;
+ //BA.debugLineNum = 196753;BA.debugLine="Private metaState As PlaybackMetaState";
 _metastate = new b4j.example.playbackmetastate();
-RDebugUtils.currentLine=196756;
- //BA.debugLineNum = 196756;BA.debugLine="Private orchestrationState As PlaybackOrchestrati";
+RDebugUtils.currentLine=196754;
+ //BA.debugLineNum = 196754;BA.debugLine="Private orchestrationState As PlaybackOrchestrati";
 _orchestrationstate = new b4j.example.playbackorchestrationstate();
-RDebugUtils.currentLine=196757;
- //BA.debugLineNum = 196757;BA.debugLine="Private dataPolicyState As PlaybackDataPolicyStat";
+RDebugUtils.currentLine=196755;
+ //BA.debugLineNum = 196755;BA.debugLine="Private dataPolicyState As PlaybackDataPolicyStat";
 _datapolicystate = new b4j.example.playbackdatapolicystate();
-RDebugUtils.currentLine=196758;
- //BA.debugLineNum = 196758;BA.debugLine="Private retryFallbackState As PlaybackRetryFallba";
+RDebugUtils.currentLine=196756;
+ //BA.debugLineNum = 196756;BA.debugLine="Private retryFallbackState As PlaybackRetryFallba";
 _retryfallbackstate = new b4j.example.playbackretryfallbackstate();
-RDebugUtils.currentLine=196759;
- //BA.debugLineNum = 196759;BA.debugLine="Private queueState As PlaybackQueueState";
+RDebugUtils.currentLine=196757;
+ //BA.debugLineNum = 196757;BA.debugLine="Private queueState As PlaybackQueueState";
 _queuestate = new b4j.example.playbackqueuestate();
-RDebugUtils.currentLine=196760;
- //BA.debugLineNum = 196760;BA.debugLine="Private queueBuilder As PlaybackQueueBuilder";
+RDebugUtils.currentLine=196758;
+ //BA.debugLineNum = 196758;BA.debugLine="Private queueBuilder As PlaybackQueueBuilder";
 _queuebuilder = new b4j.example.playbackqueuebuilder();
-RDebugUtils.currentLine=196761;
- //BA.debugLineNum = 196761;BA.debugLine="Private transitionCoordinator As PlaybackTransiti";
+RDebugUtils.currentLine=196759;
+ //BA.debugLineNum = 196759;BA.debugLine="Private transitionCoordinator As PlaybackTransiti";
 _transitioncoordinator = new b4j.example.playbacktransitioncoordinator();
-RDebugUtils.currentLine=196762;
- //BA.debugLineNum = 196762;BA.debugLine="Private facade As PlaybackFacade";
+RDebugUtils.currentLine=196760;
+ //BA.debugLineNum = 196760;BA.debugLine="Private facade As PlaybackFacade";
 _facade = new b4j.example.playbackfacade();
-RDebugUtils.currentLine=196763;
- //BA.debugLineNum = 196763;BA.debugLine="Private responseAdapter As PlaybackResponseAdapte";
+RDebugUtils.currentLine=196761;
+ //BA.debugLineNum = 196761;BA.debugLine="Private responseAdapter As PlaybackResponseAdapte";
 _responseadapter = new b4j.example.playbackresponseadapter();
+RDebugUtils.currentLine=196762;
+ //BA.debugLineNum = 196762;BA.debugLine="Private playerDataCoordinator As PlaybackDataCoor";
+_playerdatacoordinator = new b4j.example.playbackdatacoordinator();
+RDebugUtils.currentLine=196763;
+ //BA.debugLineNum = 196763;BA.debugLine="Private stateStore As PlayerStateStore";
+_statestore = new b4j.example.playerstatestore();
 RDebugUtils.currentLine=196764;
- //BA.debugLineNum = 196764;BA.debugLine="Private directorState As PlaybackDirectorState";
-_directorstate = new b4j.example.playbackdirectorstate();
+ //BA.debugLineNum = 196764;BA.debugLine="Private syncService As NetworkSyncService";
+_syncservice = new b4j.example.networksyncservice();
 RDebugUtils.currentLine=196765;
- //BA.debugLineNum = 196765;BA.debugLine="Private initialStartFadePending As Boolean";
-_initialstartfadepending = false;
+ //BA.debugLineNum = 196765;BA.debugLine="Private uiController As PlayerUiController";
+_uicontroller = new b4j.example.playeruicontroller();
 RDebugUtils.currentLine=196766;
- //BA.debugLineNum = 196766;BA.debugLine="Private isHistoryFlushInProgress As Boolean";
-_ishistoryflushinprogress = false;
+ //BA.debugLineNum = 196766;BA.debugLine="Private directorState As PlaybackDirectorState";
+_directorstate = new b4j.example.playbackdirectorstate();
 RDebugUtils.currentLine=196767;
- //BA.debugLineNum = 196767;BA.debugLine="Private isTraceUploadInProgress As Boolean";
-_istraceuploadinprogress = false;
+ //BA.debugLineNum = 196767;BA.debugLine="Private initialStartFadePending As Boolean";
+_initialstartfadepending = false;
 RDebugUtils.currentLine=196768;
- //BA.debugLineNum = 196768;BA.debugLine="Private cachedRelevantTrackIds As List";
-_cachedrelevanttrackids = new anywheresoftware.b4a.objects.collections.List();
+ //BA.debugLineNum = 196768;BA.debugLine="Private isHistoryFlushInProgress As Boolean";
+_ishistoryflushinprogress = false;
 RDebugUtils.currentLine=196769;
- //BA.debugLineNum = 196769;BA.debugLine="Private lastTrackCachePruneAt As Long";
-_lasttrackcachepruneat = 0L;
+ //BA.debugLineNum = 196769;BA.debugLine="Private cachedRelevantTrackIds As List";
+_cachedrelevanttrackids = new anywheresoftware.b4a.objects.collections.List();
 RDebugUtils.currentLine=196770;
- //BA.debugLineNum = 196770;BA.debugLine="Private consecutiveNetworkErrors As Int";
-_consecutivenetworkerrors = 0;
+ //BA.debugLineNum = 196770;BA.debugLine="Private lastTrackCachePruneAt As Long";
+_lasttrackcachepruneat = 0L;
 RDebugUtils.currentLine=196771;
  //BA.debugLineNum = 196771;BA.debugLine="Private consecutiveAudioOutputErrors As Int";
 _consecutiveaudiooutputerrors = 0;
@@ -8446,131 +6481,44 @@ RDebugUtils.currentLine=196772;
  //BA.debugLineNum = 196772;BA.debugLine="Private isAudioOutputRecoveryPause As Boolean";
 _isaudiooutputrecoverypause = false;
 RDebugUtils.currentLine=196773;
- //BA.debugLineNum = 196773;BA.debugLine="Private lastRetryMode As String";
-_lastretrymode = "";
-RDebugUtils.currentLine=196774;
- //BA.debugLineNum = 196774;BA.debugLine="Private lastDataOkAt As Long";
-_lastdataokat = 0L;
-RDebugUtils.currentLine=196775;
- //BA.debugLineNum = 196775;BA.debugLine="Private lastHistoryOkAt As Long";
-_lasthistoryokat = 0L;
-RDebugUtils.currentLine=196776;
- //BA.debugLineNum = 196776;BA.debugLine="Private lastPlaybackWatchdogPositionMs As Long";
+ //BA.debugLineNum = 196773;BA.debugLine="Private lastPlaybackWatchdogPositionMs As Long";
 _lastplaybackwatchdogpositionms = 0L;
-RDebugUtils.currentLine=196777;
- //BA.debugLineNum = 196777;BA.debugLine="Private lastPlaybackWatchdogTrackId As String";
+RDebugUtils.currentLine=196774;
+ //BA.debugLineNum = 196774;BA.debugLine="Private lastPlaybackWatchdogTrackId As String";
 _lastplaybackwatchdogtrackid = "";
-RDebugUtils.currentLine=196778;
- //BA.debugLineNum = 196778;BA.debugLine="Private lastPlaybackWatchdogProgressAt As Long";
+RDebugUtils.currentLine=196775;
+ //BA.debugLineNum = 196775;BA.debugLine="Private lastPlaybackWatchdogProgressAt As Long";
 _lastplaybackwatchdogprogressat = 0L;
-RDebugUtils.currentLine=196779;
- //BA.debugLineNum = 196779;BA.debugLine="Private lastPlaybackWatchdogRecoveryAt As Long";
+RDebugUtils.currentLine=196776;
+ //BA.debugLineNum = 196776;BA.debugLine="Private lastPlaybackWatchdogRecoveryAt As Long";
 _lastplaybackwatchdogrecoveryat = 0L;
-RDebugUtils.currentLine=196780;
- //BA.debugLineNum = 196780;BA.debugLine="Private isPlaybackWatchdogTickInProgress As Boole";
+RDebugUtils.currentLine=196777;
+ //BA.debugLineNum = 196777;BA.debugLine="Private isPlaybackWatchdogTickInProgress As Boole";
 _isplaybackwatchdogtickinprogress = false;
-RDebugUtils.currentLine=196781;
- //BA.debugLineNum = 196781;BA.debugLine="Private playbackActivationToken As Long";
+RDebugUtils.currentLine=196778;
+ //BA.debugLineNum = 196778;BA.debugLine="Private playbackActivationToken As Long";
 _playbackactivationtoken = 0L;
-RDebugUtils.currentLine=196783;
- //BA.debugLineNum = 196783;BA.debugLine="Private playlistIndex As Int = -1";
+RDebugUtils.currentLine=196780;
+ //BA.debugLineNum = 196780;BA.debugLine="Private playlistIndex As Int = -1";
 _playlistindex = (int) (-1);
-RDebugUtils.currentLine=196784;
- //BA.debugLineNum = 196784;BA.debugLine="Private orbitPulseStep As Int";
+RDebugUtils.currentLine=196781;
+ //BA.debugLineNum = 196781;BA.debugLine="Private orbitPulseStep As Int";
 _orbitpulsestep = 0;
-RDebugUtils.currentLine=196785;
- //BA.debugLineNum = 196785;BA.debugLine="Private orbitFadeValue As Double";
-_orbitfadevalue = 0;
-RDebugUtils.currentLine=196786;
- //BA.debugLineNum = 196786;BA.debugLine="Private orbitFadeTarget As Double";
-_orbitfadetarget = 0;
-RDebugUtils.currentLine=196787;
- //BA.debugLineNum = 196787;BA.debugLine="Private isStartupSequenceInProgress As Boolean";
+RDebugUtils.currentLine=196782;
+ //BA.debugLineNum = 196782;BA.debugLine="Private isStartupSequenceInProgress As Boolean";
 _isstartupsequenceinprogress = false;
-RDebugUtils.currentLine=196788;
- //BA.debugLineNum = 196788;BA.debugLine="Private isAdWarmupDeferredAfterStartup As Boolean";
+RDebugUtils.currentLine=196783;
+ //BA.debugLineNum = 196783;BA.debugLine="Private isAdWarmupDeferredAfterStartup As Boolean";
 _isadwarmupdeferredafterstartup = false;
-RDebugUtils.currentLine=196789;
- //BA.debugLineNum = 196789;BA.debugLine="Private isPostStartTasksDeferredAfterStartup As B";
+RDebugUtils.currentLine=196784;
+ //BA.debugLineNum = 196784;BA.debugLine="Private isPostStartTasksDeferredAfterStartup As B";
 _ispoststarttasksdeferredafterstartup = false;
-RDebugUtils.currentLine=196790;
- //BA.debugLineNum = 196790;BA.debugLine="Private playbackFlowState As String";
+RDebugUtils.currentLine=196785;
+ //BA.debugLineNum = 196785;BA.debugLine="Private playbackFlowState As String";
 _playbackflowstate = "";
-RDebugUtils.currentLine=196791;
- //BA.debugLineNum = 196791;BA.debugLine="End Sub";
+RDebugUtils.currentLine=196786;
+ //BA.debugLineNum = 196786;BA.debugLine="End Sub";
 return "";
-}
-public String  _classifyhttpfailure(b4j.example.b4xmainpage __ref,String _errormessage) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "classifyhttpfailure", false))
-	 {return ((String) Debug.delegate(ba, "classifyhttpfailure", new Object[] {_errormessage}));}
-RDebugUtils.currentLine=7733248;
- //BA.debugLineNum = 7733248;BA.debugLine="Private Sub ClassifyHttpFailure(errorMessage As St";
-RDebugUtils.currentLine=7733249;
- //BA.debugLineNum = 7733249;BA.debugLine="If IsOfflineHttpError(errorMessage) Then Return \"";
-if (__ref._isofflinehttperror /*boolean*/ (null,_errormessage)) { 
-if (true) return "offline";};
-RDebugUtils.currentLine=7733250;
- //BA.debugLineNum = 7733250;BA.debugLine="Return \"server\"";
-if (true) return "server";
-RDebugUtils.currentLine=7733251;
- //BA.debugLineNum = 7733251;BA.debugLine="End Sub";
-return "";
-}
-public boolean  _isofflinehttperror(b4j.example.b4xmainpage __ref,String _errormessage) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "isofflinehttperror", false))
-	 {return ((Boolean) Debug.delegate(ba, "isofflinehttperror", new Object[] {_errormessage}));}
-String _text = "";
-RDebugUtils.currentLine=7864320;
- //BA.debugLineNum = 7864320;BA.debugLine="Private Sub IsOfflineHttpError(errorMessage As Str";
-RDebugUtils.currentLine=7864321;
- //BA.debugLineNum = 7864321;BA.debugLine="Dim text As String = errorMessage.ToLowerCase";
-_text = _errormessage.toLowerCase(anywheresoftware.b4a.keywords.Common.stringLocale);
-RDebugUtils.currentLine=7864322;
- //BA.debugLineNum = 7864322;BA.debugLine="If text.Contains(\"timed out\") Then Return True";
-if (_text.contains("timed out")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864323;
- //BA.debugLineNum = 7864323;BA.debugLine="If text.Contains(\"unknownhost\") Then Return True";
-if (_text.contains("unknownhost")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864324;
- //BA.debugLineNum = 7864324;BA.debugLine="If text.Contains(\"refused\") Then Return True";
-if (_text.contains("refused")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864325;
- //BA.debugLineNum = 7864325;BA.debugLine="If text.Contains(\"sslhandshakeexception\") Then Re";
-if (_text.contains("sslhandshakeexception")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864326;
- //BA.debugLineNum = 7864326;BA.debugLine="If text.Contains(\"pkix path building failed\") The";
-if (_text.contains("pkix path building failed")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864327;
- //BA.debugLineNum = 7864327;BA.debugLine="If text.Contains(\"unable to find valid certificat";
-if (_text.contains("unable to find valid certification path")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864328;
- //BA.debugLineNum = 7864328;BA.debugLine="If text.Contains(\"connectexception\") Then Return";
-if (_text.contains("connectexception")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864329;
- //BA.debugLineNum = 7864329;BA.debugLine="If text.Contains(\"socketexception\") Then Return T";
-if (_text.contains("socketexception")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864330;
- //BA.debugLineNum = 7864330;BA.debugLine="If text.Contains(\"sockettimeoutexception\") Then R";
-if (_text.contains("sockettimeoutexception")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=7864331;
- //BA.debugLineNum = 7864331;BA.debugLine="Return False";
-if (true) return __c.False;
-RDebugUtils.currentLine=7864332;
- //BA.debugLineNum = 7864332;BA.debugLine="End Sub";
-return false;
 }
 public String  _clearexactbreakstate(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
@@ -8703,8 +6651,8 @@ RDebugUtils.currentLine=12714003;
  //BA.debugLineNum = 12714003;BA.debugLine="orchestrationState.EndDispatch";
 __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enddispatch /*String*/ (null);
 RDebugUtils.currentLine=12714004;
- //BA.debugLineNum = 12714004;BA.debugLine="retryFallbackState.ClearDispatchRetryAfter";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._cleardispatchretryafter /*String*/ (null);
+ //BA.debugLineNum = 12714004;BA.debugLine="stateStore.ClearDispatchRetryAfter";
+__ref._statestore /*b4j.example.playerstatestore*/ ._cleardispatchretryafter /*String*/ (null);
 RDebugUtils.currentLine=12714005;
  //BA.debugLineNum = 12714005;BA.debugLine="ClearRetryTimer";
 __ref._clearretrytimer /*String*/ (null);
@@ -8718,8 +6666,8 @@ RDebugUtils.currentLine=12714008;
  //BA.debugLineNum = 12714008;BA.debugLine="ResetPlaybackWatchdogState";
 __ref._resetplaybackwatchdogstate /*String*/ (null);
 RDebugUtils.currentLine=12714009;
- //BA.debugLineNum = 12714009;BA.debugLine="SetStatusText(\"\")";
-__ref._setstatustext /*String*/ (null,"");
+ //BA.debugLineNum = 12714009;BA.debugLine="uiController.SetStatusText(\"\")";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._setstatustext /*String*/ (null,"");
 RDebugUtils.currentLine=12714010;
  //BA.debugLineNum = 12714010;BA.debugLine="End Sub";
 return "";
@@ -8804,8 +6752,8 @@ RDebugUtils.currentLine=10551297;
  //BA.debugLineNum = 10551297;BA.debugLine="retryTimer.Enabled = False";
 __ref._retrytimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
 RDebugUtils.currentLine=10551298;
- //BA.debugLineNum = 10551298;BA.debugLine="lastRetryMode = \"\"";
-__ref._lastretrymode /*String*/  = "";
+ //BA.debugLineNum = 10551298;BA.debugLine="stateStore.ClearLastRetryMode";
+__ref._statestore /*b4j.example.playerstatestore*/ ._clearlastretrymode /*String*/ (null);
 RDebugUtils.currentLine=10551299;
  //BA.debugLineNum = 10551299;BA.debugLine="End Sub";
 return "";
@@ -8870,13 +6818,38 @@ if (Debug.shouldDelegate(ba, "clearqueuesnapshotstate", false))
 RDebugUtils.currentLine=12648448;
  //BA.debugLineNum = 12648448;BA.debugLine="Private Sub ClearQueueSnapshotState";
 RDebugUtils.currentLine=12648449;
- //BA.debugLineNum = 12648449;BA.debugLine="queueState.ClearQueueSnapshot(storage)";
-__ref._queuestate /*b4j.example.playbackqueuestate*/ ._clearqueuesnapshot /*String*/ (null,__ref._storage /*b4j.example.keyvaluestore*/ );
+ //BA.debugLineNum = 12648449;BA.debugLine="stateStore.ClearQueueSnapshotState";
+__ref._statestore /*b4j.example.playerstatestore*/ ._clearqueuesnapshotstate /*String*/ (null);
 RDebugUtils.currentLine=12648450;
- //BA.debugLineNum = 12648450;BA.debugLine="TraceLog(\"снимок очереди clear\")";
-__ref._tracelog /*String*/ (null,"снимок очереди clear");
-RDebugUtils.currentLine=12648451;
- //BA.debugLineNum = 12648451;BA.debugLine="End Sub";
+ //BA.debugLineNum = 12648450;BA.debugLine="End Sub";
+return "";
+}
+public String  _clientosnamevalue(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "clientosnamevalue", false))
+	 {return ((String) Debug.delegate(ba, "clientosnamevalue", null));}
+RDebugUtils.currentLine=76808192;
+ //BA.debugLineNum = 76808192;BA.debugLine="Public Sub ClientOsNameValue As String";
+RDebugUtils.currentLine=76808193;
+ //BA.debugLineNum = 76808193;BA.debugLine="Return ResolveClientOsName";
+if (true) return __ref._resolveclientosname /*String*/ (null);
+RDebugUtils.currentLine=76808194;
+ //BA.debugLineNum = 76808194;BA.debugLine="End Sub";
+return "";
+}
+public String  _resolveclientosname(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "resolveclientosname", false))
+	 {return ((String) Debug.delegate(ba, "resolveclientosname", null));}
+RDebugUtils.currentLine=59375616;
+ //BA.debugLineNum = 59375616;BA.debugLine="Private Sub ResolveClientOsName As String";
+RDebugUtils.currentLine=59375617;
+ //BA.debugLineNum = 59375617;BA.debugLine="Return \"windows\"";
+if (true) return "windows";
+RDebugUtils.currentLine=59375618;
+ //BA.debugLineNum = 59375618;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.List  _clonelist(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.List _source) throws Exception{
@@ -8917,6 +6890,46 @@ RDebugUtils.currentLine=57475079;
 if (true) return _copy;
 RDebugUtils.currentLine=57475080;
  //BA.debugLineNum = 57475080;BA.debugLine="End Sub";
+return null;
+}
+public anywheresoftware.b4a.objects.collections.Map  _clonemap(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _sourcemap) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "clonemap", false))
+	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "clonemap", new Object[] {_sourcemap}));}
+anywheresoftware.b4a.objects.collections.Map _clonedmap = null;
+Object _key = null;
+RDebugUtils.currentLine=6356992;
+ //BA.debugLineNum = 6356992;BA.debugLine="Private Sub CloneMap(sourceMap As Map) As Map";
+RDebugUtils.currentLine=6356993;
+ //BA.debugLineNum = 6356993;BA.debugLine="Dim clonedMap As Map";
+_clonedmap = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=6356994;
+ //BA.debugLineNum = 6356994;BA.debugLine="clonedMap.Initialize";
+_clonedmap.Initialize();
+RDebugUtils.currentLine=6356995;
+ //BA.debugLineNum = 6356995;BA.debugLine="If sourceMap.IsInitialized = False Then Return cl";
+if (_sourcemap.IsInitialized()==__c.False) { 
+if (true) return _clonedmap;};
+RDebugUtils.currentLine=6356996;
+ //BA.debugLineNum = 6356996;BA.debugLine="For Each key As Object In sourceMap.Keys";
+{
+final anywheresoftware.b4a.BA.IterableList group4 = _sourcemap.Keys();
+final int groupLen4 = group4.getSize()
+;int index4 = 0;
+;
+for (; index4 < groupLen4;index4++){
+_key = group4.Get(index4);
+RDebugUtils.currentLine=6356997;
+ //BA.debugLineNum = 6356997;BA.debugLine="clonedMap.Put(key, sourceMap.Get(key))";
+_clonedmap.Put(_key,_sourcemap.Get(_key));
+ }
+};
+RDebugUtils.currentLine=6356999;
+ //BA.debugLineNum = 6356999;BA.debugLine="Return clonedMap";
+if (true) return _clonedmap;
+RDebugUtils.currentLine=6357000;
+ //BA.debugLineNum = 6357000;BA.debugLine="End Sub";
 return null;
 }
 public anywheresoftware.b4a.objects.collections.List  _collectprotectedtrackids(b4j.example.b4xmainpage __ref) throws Exception{
@@ -9282,13 +7295,10 @@ if (Debug.shouldDelegate(ba, "configureplayerheader", false))
 RDebugUtils.currentLine=3145728;
  //BA.debugLineNum = 3145728;BA.debugLine="Private Sub ConfigurePlayerHeader";
 RDebugUtils.currentLine=3145729;
- //BA.debugLineNum = 3145729;BA.debugLine="headerActionPane.Visible = True";
-__ref._headeractionpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible(__c.True);
+ //BA.debugLineNum = 3145729;BA.debugLine="uiController.ConfigurePlayerHeader";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._configureplayerheader /*String*/ (null);
 RDebugUtils.currentLine=3145730;
- //BA.debugLineNum = 3145730;BA.debugLine="lblHeaderAction.Text = ICON_MORE";
-__ref._lblheaderaction /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._icon_more /*String*/ );
-RDebugUtils.currentLine=3145731;
- //BA.debugLineNum = 3145731;BA.debugLine="End Sub";
+ //BA.debugLineNum = 3145730;BA.debugLine="End Sub";
 return "";
 }
 public String  _configuresetupscreen(b4j.example.b4xmainpage __ref,String _mode,String _text) throws Exception{
@@ -9296,76 +7306,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "configuresetupscreen", false))
 	 {return ((String) Debug.delegate(ba, "configuresetupscreen", new Object[] {_mode,_text}));}
-boolean _issettingsmode = false;
 RDebugUtils.currentLine=3080192;
  //BA.debugLineNum = 3080192;BA.debugLine="Private Sub ConfigureSetupScreen(mode As String, t";
 RDebugUtils.currentLine=3080193;
- //BA.debugLineNum = 3080193;BA.debugLine="Dim isSettingsMode As Boolean = mode = \"settings\"";
-_issettingsmode = (_mode).equals("settings");
+ //BA.debugLineNum = 3080193;BA.debugLine="uiController.ConfigureSetupScreen(mode, FormatPla";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._configuresetupscreen /*String*/ (null,_mode,__ref._formatplayercodefordisplay /*String*/ (null,__ref._playercode /*String*/ ),_text,__ref._messagevalue /*String*/ (null,"setup_title"),__ref._messagevalue /*String*/ (null,"settings_thanks"),__ref._messagevalue /*String*/ (null,"setup_submit"),__ref._messagevalue /*String*/ (null,"logout"));
 RDebugUtils.currentLine=3080194;
- //BA.debugLineNum = 3080194;BA.debugLine="headerActionPane.Visible = mode <> \"setup\"";
-__ref._headeractionpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible((_mode).equals("setup") == false);
-RDebugUtils.currentLine=3080195;
- //BA.debugLineNum = 3080195;BA.debugLine="If isSettingsMode Then";
-if (_issettingsmode) { 
-RDebugUtils.currentLine=3080196;
- //BA.debugLineNum = 3080196;BA.debugLine="lblHeaderAction.Text = ICON_CLOSE";
-__ref._lblheaderaction /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._icon_close /*String*/ );
- }else {
-RDebugUtils.currentLine=3080198;
- //BA.debugLineNum = 3080198;BA.debugLine="lblHeaderAction.Text = ICON_MORE";
-__ref._lblheaderaction /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._icon_more /*String*/ );
- };
-RDebugUtils.currentLine=3080200;
- //BA.debugLineNum = 3080200;BA.debugLine="If isSettingsMode Then";
-if (_issettingsmode) { 
-RDebugUtils.currentLine=3080201;
- //BA.debugLineNum = 3080201;BA.debugLine="txtPlayerCode.Editable = False";
-__ref._txtplayercode /*anywheresoftware.b4j.objects.TextInputControlWrapper.TextFieldWrapper*/ .setEditable(__c.False);
- }else {
-RDebugUtils.currentLine=3080203;
- //BA.debugLineNum = 3080203;BA.debugLine="txtPlayerCode.Editable = True";
-__ref._txtplayercode /*anywheresoftware.b4j.objects.TextInputControlWrapper.TextFieldWrapper*/ .setEditable(__c.True);
- };
-RDebugUtils.currentLine=3080205;
- //BA.debugLineNum = 3080205;BA.debugLine="txtPlayerCode.Text = FormatPlayerCodeForDisplay(p";
-__ref._txtplayercode /*anywheresoftware.b4j.objects.TextInputControlWrapper.TextFieldWrapper*/ .setText(__ref._formatplayercodefordisplay /*String*/ (null,__ref._playercode /*String*/ ));
-RDebugUtils.currentLine=3080206;
- //BA.debugLineNum = 3080206;BA.debugLine="If isSettingsMode Then";
-if (_issettingsmode) { 
-RDebugUtils.currentLine=3080207;
- //BA.debugLineNum = 3080207;BA.debugLine="btnSetupSubmit.Text = MessageValue(\"logout\").ToU";
-__ref._btnsetupsubmit /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._messagevalue /*String*/ (null,"logout").toUpperCase(anywheresoftware.b4a.keywords.Common.stringLocale));
- }else {
-RDebugUtils.currentLine=3080209;
- //BA.debugLineNum = 3080209;BA.debugLine="btnSetupSubmit.Text = MessageValue(\"setup_submit";
-__ref._btnsetupsubmit /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._messagevalue /*String*/ (null,"setup_submit").toUpperCase(anywheresoftware.b4a.keywords.Common.stringLocale));
- };
-RDebugUtils.currentLine=3080211;
- //BA.debugLineNum = 3080211;BA.debugLine="If text <> \"\" Then";
-if ((_text).equals("") == false) { 
-RDebugUtils.currentLine=3080212;
- //BA.debugLineNum = 3080212;BA.debugLine="lblSetupMessage.Text = text";
-__ref._lblsetupmessage /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(_text);
- }else 
-{RDebugUtils.currentLine=3080213;
- //BA.debugLineNum = 3080213;BA.debugLine="Else If isSettingsMode Then";
-if (_issettingsmode) { 
-RDebugUtils.currentLine=3080214;
- //BA.debugLineNum = 3080214;BA.debugLine="lblSetupMessage.Text = MessageValue(\"settings_th";
-__ref._lblsetupmessage /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._messagevalue /*String*/ (null,"settings_thanks"));
- }else {
-RDebugUtils.currentLine=3080216;
- //BA.debugLineNum = 3080216;BA.debugLine="lblSetupMessage.Text = MessageValue(\"setup_title";
-__ref._lblsetupmessage /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._messagevalue /*String*/ (null,"setup_title"));
- }}
-;
-RDebugUtils.currentLine=3080218;
- //BA.debugLineNum = 3080218;BA.debugLine="If playerCode = \"\" Then lblHeader.Text = \"\"";
-if ((__ref._playercode /*String*/ ).equals("")) { 
-__ref._lblheader /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText("");};
-RDebugUtils.currentLine=3080219;
- //BA.debugLineNum = 3080219;BA.debugLine="End Sub";
+ //BA.debugLineNum = 3080194;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _confirmpendinghistoryitem(b4j.example.b4xmainpage __ref,String _reason) throws Exception{
@@ -9705,8 +7652,8 @@ if (Debug.shouldDelegate(ba, "tracewarn", false))
 RDebugUtils.currentLine=58327040;
  //BA.debugLineNum = 58327040;BA.debugLine="Private Sub TraceWarn(category As String, message";
 RDebugUtils.currentLine=58327041;
- //BA.debugLineNum = 58327041;BA.debugLine="WriteTraceEntry(\"WARN\", category, message, detail";
-__ref._writetraceentry /*String*/ (null,"WARN",_category,_message,_details);
+ //BA.debugLineNum = 58327041;BA.debugLine="traceRouter.TraceWarn(category, message, details)";
+__ref._tracerouter /*b4j.example.playbacktracerouter*/ ._tracewarn /*String*/ (null,_category,_message,_details);
 RDebugUtils.currentLine=58327042;
  //BA.debugLineNum = 58327042;BA.debugLine="End Sub";
 return "";
@@ -9752,85 +7699,6 @@ RDebugUtils.currentLine=12058634;
  //BA.debugLineNum = 12058634;BA.debugLine="End Sub";
 return "";
 }
-public anywheresoftware.b4a.objects.collections.Map  _createclaimparams(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "createclaimparams", false))
-	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "createclaimparams", null));}
-anywheresoftware.b4a.objects.collections.Map _params = null;
-RDebugUtils.currentLine=16384000;
- //BA.debugLineNum = 16384000;BA.debugLine="Private Sub CreateClaimParams As Map";
-RDebugUtils.currentLine=16384001;
- //BA.debugLineNum = 16384001;BA.debugLine="Dim params As Map";
-_params = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=16384002;
- //BA.debugLineNum = 16384002;BA.debugLine="params.Initialize";
-_params.Initialize();
-RDebugUtils.currentLine=16384003;
- //BA.debugLineNum = 16384003;BA.debugLine="params.Put(\"player\", playerCode)";
-_params.Put((Object)("player"),(Object)(__ref._playercode /*String*/ ));
-RDebugUtils.currentLine=16384004;
- //BA.debugLineNum = 16384004;BA.debugLine="params.Put(\"device\", deviceId)";
-_params.Put((Object)("device"),(Object)(__ref._deviceid /*String*/ ));
-RDebugUtils.currentLine=16384005;
- //BA.debugLineNum = 16384005;BA.debugLine="params.Put(\"tz\", TimezoneOffsetMinutes)";
-_params.Put((Object)("tz"),(Object)(__ref._timezoneoffsetminutes /*int*/ (null)));
-RDebugUtils.currentLine=16384006;
- //BA.debugLineNum = 16384006;BA.debugLine="Return params";
-if (true) return _params;
-RDebugUtils.currentLine=16384007;
- //BA.debugLineNum = 16384007;BA.debugLine="End Sub";
-return null;
-}
-public int  _timezoneoffsetminutes(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "timezoneoffsetminutes", false))
-	 {return ((Integer) Debug.delegate(ba, "timezoneoffsetminutes", null));}
-anywheresoftware.b4j.object.JavaObject _jo = null;
-anywheresoftware.b4j.object.JavaObject _nowoffset = null;
-anywheresoftware.b4j.object.JavaObject _zoneoffset = null;
-int _totalseconds = 0;
-RDebugUtils.currentLine=17956864;
- //BA.debugLineNum = 17956864;BA.debugLine="Private Sub TimezoneOffsetMinutes As Int";
-RDebugUtils.currentLine=17956865;
- //BA.debugLineNum = 17956865;BA.debugLine="Dim jo As JavaObject";
-_jo = new anywheresoftware.b4j.object.JavaObject();
-RDebugUtils.currentLine=17956866;
- //BA.debugLineNum = 17956866;BA.debugLine="jo.InitializeStatic(\"java.time.OffsetDateTime\")";
-_jo.InitializeStatic("java.time.OffsetDateTime");
-RDebugUtils.currentLine=17956867;
- //BA.debugLineNum = 17956867;BA.debugLine="Dim nowOffset As JavaObject = jo.RunMethod(\"now\",";
-_nowoffset = new anywheresoftware.b4j.object.JavaObject();
-_nowoffset = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_jo.RunMethod("now",(Object[])(__c.Null))));
-RDebugUtils.currentLine=17956868;
- //BA.debugLineNum = 17956868;BA.debugLine="Dim zoneOffset As JavaObject = nowOffset.RunMetho";
-_zoneoffset = new anywheresoftware.b4j.object.JavaObject();
-_zoneoffset = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_nowoffset.RunMethod("getOffset",(Object[])(__c.Null))));
-RDebugUtils.currentLine=17956869;
- //BA.debugLineNum = 17956869;BA.debugLine="Dim totalSeconds As Int = zoneOffset.RunMethod(\"g";
-_totalseconds = (int)(BA.ObjectToNumber(_zoneoffset.RunMethod("getTotalSeconds",(Object[])(__c.Null))));
-RDebugUtils.currentLine=17956870;
- //BA.debugLineNum = 17956870;BA.debugLine="Return -Round(totalSeconds / 60)";
-if (true) return (int) (-__c.Round(_totalseconds/(double)60));
-RDebugUtils.currentLine=17956871;
- //BA.debugLineNum = 17956871;BA.debugLine="End Sub";
-return 0;
-}
-public String  _resolveclientosname(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "resolveclientosname", false))
-	 {return ((String) Debug.delegate(ba, "resolveclientosname", null));}
-RDebugUtils.currentLine=59375616;
- //BA.debugLineNum = 59375616;BA.debugLine="Private Sub ResolveClientOsName As String";
-RDebugUtils.currentLine=59375617;
- //BA.debugLineNum = 59375617;BA.debugLine="Return \"windows\"";
-if (true) return "windows";
-RDebugUtils.currentLine=59375618;
- //BA.debugLineNum = 59375618;BA.debugLine="End Sub";
-return "";
-}
 public anywheresoftware.b4a.objects.collections.Map  _createinitializedmap(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -9850,47 +7718,6 @@ RDebugUtils.currentLine=17694723;
 if (true) return _m;
 RDebugUtils.currentLine=17694724;
  //BA.debugLineNum = 17694724;BA.debugLine="End Sub";
-return null;
-}
-public anywheresoftware.b4a.objects.collections.Map  _createnextparams(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "createnextparams", false))
-	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "createnextparams", null));}
-anywheresoftware.b4a.objects.collections.Map _params = null;
-RDebugUtils.currentLine=16318464;
- //BA.debugLineNum = 16318464;BA.debugLine="Private Sub CreateNextParams As Map";
-RDebugUtils.currentLine=16318465;
- //BA.debugLineNum = 16318465;BA.debugLine="Dim params As Map";
-_params = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=16318466;
- //BA.debugLineNum = 16318466;BA.debugLine="params.Initialize";
-_params.Initialize();
-RDebugUtils.currentLine=16318467;
- //BA.debugLineNum = 16318467;BA.debugLine="params.Put(\"player\", playerCode)";
-_params.Put((Object)("player"),(Object)(__ref._playercode /*String*/ ));
-RDebugUtils.currentLine=16318468;
- //BA.debugLineNum = 16318468;BA.debugLine="params.Put(\"device\", deviceId)";
-_params.Put((Object)("device"),(Object)(__ref._deviceid /*String*/ ));
-RDebugUtils.currentLine=16318469;
- //BA.debugLineNum = 16318469;BA.debugLine="params.Put(\"tz\", TimezoneOffsetMinutes)";
-_params.Put((Object)("tz"),(Object)(__ref._timezoneoffsetminutes /*int*/ (null)));
-RDebugUtils.currentLine=16318470;
- //BA.debugLineNum = 16318470;BA.debugLine="params.Put(\"version\", ResolveAppVersion)";
-_params.Put((Object)("version"),(Object)(__ref._resolveappversion /*String*/ (null)));
-RDebugUtils.currentLine=16318471;
- //BA.debugLineNum = 16318471;BA.debugLine="If nextStartMode = \"manual\" Or nextStartMode = \"a";
-if ((__ref._nextstartmode /*String*/ ).equals("manual") || (__ref._nextstartmode /*String*/ ).equals("auto")) { 
-_params.Put((Object)("start"),(Object)(__ref._nextstartmode /*String*/ ));};
-RDebugUtils.currentLine=16318472;
- //BA.debugLineNum = 16318472;BA.debugLine="If playlistIndex >= 0 Then params.Put(\"playlist\",";
-if (__ref._playlistindex /*int*/ >=0) { 
-_params.Put((Object)("playlist"),(Object)(__ref._playlistindex /*int*/ ));};
-RDebugUtils.currentLine=16318473;
- //BA.debugLineNum = 16318473;BA.debugLine="Return params";
-if (true) return _params;
-RDebugUtils.currentLine=16318474;
- //BA.debugLineNum = 16318474;BA.debugLine="End Sub";
 return null;
 }
 public String  _createrandomdeviceid(b4j.example.b4xmainpage __ref) throws Exception{
@@ -9947,6 +7774,32 @@ RDebugUtils.currentLine=17498118;
  //BA.debugLineNum = 17498118;BA.debugLine="End Sub";
 return 0;
 }
+public long  _effectivenowticks(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "effectivenowticks", false))
+	 {return ((Long) Debug.delegate(ba, "effectivenowticks", null));}
+long _devicenow = 0L;
+long _trustednow = 0L;
+RDebugUtils.currentLine=18087936;
+ //BA.debugLineNum = 18087936;BA.debugLine="Private Sub EffectiveNowTicks As Long";
+RDebugUtils.currentLine=18087937;
+ //BA.debugLineNum = 18087937;BA.debugLine="Dim deviceNow As Long = DateTime.Now";
+_devicenow = __c.DateTime.getNow();
+RDebugUtils.currentLine=18087938;
+ //BA.debugLineNum = 18087938;BA.debugLine="Dim trustedNow As Long = storage.GetDefault(trust";
+_trustednow = BA.ObjectToLongNumber(__ref._storage /*b4j.example.keyvaluestore*/ ._getdefault /*Object*/ (null,__ref._trustedsynctimekey /*String*/ ,(Object)(0)));
+RDebugUtils.currentLine=18087939;
+ //BA.debugLineNum = 18087939;BA.debugLine="If trustedNow > deviceNow Then Return trustedNow";
+if (_trustednow>_devicenow) { 
+if (true) return _trustednow;};
+RDebugUtils.currentLine=18087940;
+ //BA.debugLineNum = 18087940;BA.debugLine="Return deviceNow";
+if (true) return _devicenow;
+RDebugUtils.currentLine=18087941;
+ //BA.debugLineNum = 18087941;BA.debugLine="End Sub";
+return 0L;
+}
 public double  _resolveitemvolume(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -9980,6 +7833,1275 @@ if (true) return __c.Max(0,__c.Min(1,_basefactor*__ref._dbtofactor /*double*/ (n
 RDebugUtils.currentLine=15925255;
  //BA.debugLineNum = 15925255;BA.debugLine="End Sub";
 return 0;
+}
+public String  _data_applyclientrequestheaders(b4j.example.b4xmainpage __ref,b4j.example.httpjob _j) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_applyclientrequestheaders", false))
+	 {return ((String) Debug.delegate(ba, "data_applyclientrequestheaders", new Object[] {_j}));}
+RDebugUtils.currentLine=74711040;
+ //BA.debugLineNum = 74711040;BA.debugLine="Public Sub Data_ApplyClientRequestHeaders(j As Htt";
+RDebugUtils.currentLine=74711041;
+ //BA.debugLineNum = 74711041;BA.debugLine="ApplyClientRequestHeaders(j)";
+__ref._applyclientrequestheaders /*String*/ (null,_j);
+RDebugUtils.currentLine=74711042;
+ //BA.debugLineNum = 74711042;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_applytemporarymode(b4j.example.b4xmainpage __ref,String _mode) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_applytemporarymode", false))
+	 {return ((String) Debug.delegate(ba, "data_applytemporarymode", new Object[] {_mode}));}
+RDebugUtils.currentLine=71434240;
+ //BA.debugLineNum = 71434240;BA.debugLine="Public Sub Data_ApplyTemporaryMode(mode As String)";
+RDebugUtils.currentLine=71434241;
+ //BA.debugLineNum = 71434241;BA.debugLine="dataPolicyState.ApplyTemporaryMode(mode)";
+__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._applytemporarymode /*String*/ (null,_mode);
+RDebugUtils.currentLine=71434242;
+ //BA.debugLineNum = 71434242;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_clearplaybackstate(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_clearplaybackstate", false))
+	 {return ((String) Debug.delegate(ba, "data_clearplaybackstate", null));}
+RDebugUtils.currentLine=71565312;
+ //BA.debugLineNum = 71565312;BA.debugLine="Public Sub Data_ClearPlaybackState";
+RDebugUtils.currentLine=71565313;
+ //BA.debugLineNum = 71565313;BA.debugLine="ClearPlaybackState";
+__ref._clearplaybackstate /*String*/ (null);
+RDebugUtils.currentLine=71565314;
+ //BA.debugLineNum = 71565314;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_clearpolicypause(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_clearpolicypause", false))
+	 {return ((String) Debug.delegate(ba, "data_clearpolicypause", null));}
+RDebugUtils.currentLine=78839808;
+ //BA.debugLineNum = 78839808;BA.debugLine="Public Sub Data_ClearPolicyPause";
+RDebugUtils.currentLine=78839809;
+ //BA.debugLineNum = 78839809;BA.debugLine="dataPolicyState.ClearPolicyPause";
+__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._clearpolicypause /*String*/ (null);
+RDebugUtils.currentLine=78839810;
+ //BA.debugLineNum = 78839810;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_clearpolicypauseandresumerequest(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_clearpolicypauseandresumerequest", false))
+	 {return ((String) Debug.delegate(ba, "data_clearpolicypauseandresumerequest", null));}
+RDebugUtils.currentLine=71958528;
+ //BA.debugLineNum = 71958528;BA.debugLine="Public Sub Data_ClearPolicyPauseAndResumeRequest";
+RDebugUtils.currentLine=71958529;
+ //BA.debugLineNum = 71958529;BA.debugLine="dataPolicyState.ClearPolicyPauseAndResumeRequest";
+__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._clearpolicypauseandresumerequest /*String*/ (null);
+RDebugUtils.currentLine=71958530;
+ //BA.debugLineNum = 71958530;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_consumelastexception(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_consumelastexception", false))
+	 {return ((String) Debug.delegate(ba, "data_consumelastexception", null));}
+RDebugUtils.currentLine=70909952;
+ //BA.debugLineNum = 70909952;BA.debugLine="Public Sub Data_ConsumeLastException";
+RDebugUtils.currentLine=70909953;
+ //BA.debugLineNum = 70909953;BA.debugLine="ConsumeLastException";
+__ref._consumelastexception /*String*/ (null);
+RDebugUtils.currentLine=70909954;
+ //BA.debugLineNum = 70909954;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_disablebackgroundrefreshtimers(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_disablebackgroundrefreshtimers", false))
+	 {return ((String) Debug.delegate(ba, "data_disablebackgroundrefreshtimers", null));}
+RDebugUtils.currentLine=72482816;
+ //BA.debugLineNum = 72482816;BA.debugLine="Public Sub Data_DisableBackgroundRefreshTimers";
+RDebugUtils.currentLine=72482817;
+ //BA.debugLineNum = 72482817;BA.debugLine="offlineDataRefreshTimer.Enabled = False";
+__ref._offlinedatarefreshtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+RDebugUtils.currentLine=72482818;
+ //BA.debugLineNum = 72482818;BA.debugLine="historyFlushTimer.Enabled = False";
+__ref._historyflushtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+RDebugUtils.currentLine=72482819;
+ //BA.debugLineNum = 72482819;BA.debugLine="localAdMinuteTimer.Enabled = False";
+__ref._localadminutetimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+RDebugUtils.currentLine=72482820;
+ //BA.debugLineNum = 72482820;BA.debugLine="trackCacheWarmupTimer.Enabled = False";
+__ref._trackcachewarmuptimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+RDebugUtils.currentLine=72482821;
+ //BA.debugLineNum = 72482821;BA.debugLine="cacheAuditTimer.Enabled = False";
+__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+RDebugUtils.currentLine=72482822;
+ //BA.debugLineNum = 72482822;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_ensureadcachesyncasync(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_ensureadcachesyncasync", false))
+	 {return ((String) Debug.delegate(ba, "data_ensureadcachesyncasync", null));}
+RDebugUtils.currentLine=78315520;
+ //BA.debugLineNum = 78315520;BA.debugLine="Public Sub Data_EnsureAdCacheSyncAsync";
+RDebugUtils.currentLine=78315521;
+ //BA.debugLineNum = 78315521;BA.debugLine="EnsureAdCacheSyncAsync";
+__ref._ensureadcachesyncasync /*void*/ (null);
+RDebugUtils.currentLine=78315522;
+ //BA.debugLineNum = 78315522;BA.debugLine="End Sub";
+return "";
+}
+public void  _ensureadcachesyncasync(b4j.example.b4xmainpage __ref) throws Exception{
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "ensureadcachesyncasync", false))
+	 {Debug.delegate(ba, "ensureadcachesyncasync", null); return;}
+ResumableSub_EnsureAdCacheSyncAsync rsub = new ResumableSub_EnsureAdCacheSyncAsync(this,__ref);
+rsub.resume(ba, null);
+}
+public static class ResumableSub_EnsureAdCacheSyncAsync extends BA.ResumableSub {
+public ResumableSub_EnsureAdCacheSyncAsync(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
+this.parent = parent;
+this.__ref = __ref;
+this.__ref = parent;
+}
+b4j.example.b4xmainpage __ref;
+b4j.example.b4xmainpage parent;
+anywheresoftware.b4a.objects.collections.Map _offlinedata = null;
+boolean _downloaded = false;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="b4xmainpage";
+
+    while (true) {
+        switch (state) {
+            case -1:
+return;
+
+case 0:
+//C
+this.state = 1;
+RDebugUtils.currentLine=1114113;
+ //BA.debugLineNum = 1114113;BA.debugLine="If isStartupSequenceInProgress Then";
+if (true) break;
+
+case 1:
+//if
+this.state = 4;
+if (__ref._isstartupsequenceinprogress /*boolean*/ ) { 
+this.state = 3;
+}if (true) break;
+
+case 3:
+//C
+this.state = 4;
+RDebugUtils.currentLine=1114114;
+ //BA.debugLineNum = 1114114;BA.debugLine="isAdWarmupDeferredAfterStartup = True";
+__ref._isadwarmupdeferredafterstartup /*boolean*/  = parent.__c.True;
+RDebugUtils.currentLine=1114115;
+ //BA.debugLineNum = 1114115;BA.debugLine="Return";
+if (true) return ;
+ if (true) break;
+
+case 4:
+//C
+this.state = 5;
+;
+RDebugUtils.currentLine=1114117;
+ //BA.debugLineNum = 1114117;BA.debugLine="Dim offlineData As Map = stateStore.OfflineData";
+_offlinedata = new anywheresoftware.b4a.objects.collections.Map();
+_offlinedata = __ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null);
+RDebugUtils.currentLine=1114118;
+ //BA.debugLineNum = 1114118;BA.debugLine="If offlineData.IsInitialized = False Then Return";
+if (true) break;
+
+case 5:
+//if
+this.state = 10;
+if (_offlinedata.IsInitialized()==parent.__c.False) { 
+this.state = 7;
+;}if (true) break;
+
+case 7:
+//C
+this.state = 10;
+if (true) return ;
+if (true) break;
+
+case 10:
+//C
+this.state = 11;
+;
+RDebugUtils.currentLine=1114119;
+ //BA.debugLineNum = 1114119;BA.debugLine="If offlineData.GetDefault(\"ok\", False) <> True Th";
+if (true) break;
+
+case 11:
+//if
+this.state = 16;
+if ((_offlinedata.GetDefault((Object)("ok"),(Object)(parent.__c.False))).equals((Object)(parent.__c.True)) == false) { 
+this.state = 13;
+;}if (true) break;
+
+case 13:
+//C
+this.state = 16;
+if (true) return ;
+if (true) break;
+
+case 16:
+//C
+this.state = -1;
+;
+RDebugUtils.currentLine=1114120;
+ //BA.debugLineNum = 1114120;BA.debugLine="Wait For (mediaCacheService.EnsureAdsCached(offli";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensureadcachesyncasync"), __ref._mediacacheservice /*b4j.example.mediacache*/ ._ensureadscached /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_offlinedata));
+this.state = 17;
+return;
+case 17:
+//C
+this.state = -1;
+_downloaded = (boolean) result[1];
+;
+RDebugUtils.currentLine=1114121;
+ //BA.debugLineNum = 1114121;BA.debugLine="UpdateMediaConnectivityStateFromCacheSync(downloa";
+__ref._updatemediaconnectivitystatefromcachesync /*String*/ (null,_downloaded);
+RDebugUtils.currentLine=1114122;
+ //BA.debugLineNum = 1114122;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
+}
+public String  _data_enterlocalplayback(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_enterlocalplayback", false))
+	 {return ((String) Debug.delegate(ba, "data_enterlocalplayback", null));}
+RDebugUtils.currentLine=72155136;
+ //BA.debugLineNum = 72155136;BA.debugLine="Public Sub Data_EnterLocalPlayback";
+RDebugUtils.currentLine=72155137;
+ //BA.debugLineNum = 72155137;BA.debugLine="dataPolicyState.EnterLocalPlayback";
+__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._enterlocalplayback /*String*/ (null);
+RDebugUtils.currentLine=72155138;
+ //BA.debugLineNum = 72155138;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_enterpolicypause(b4j.example.b4xmainpage __ref,String _reason,String _connectionmode) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_enterpolicypause", false))
+	 {return ((String) Debug.delegate(ba, "data_enterpolicypause", new Object[] {_reason,_connectionmode}));}
+RDebugUtils.currentLine=71827456;
+ //BA.debugLineNum = 71827456;BA.debugLine="Public Sub Data_EnterPolicyPause(reason As String,";
+RDebugUtils.currentLine=71827457;
+ //BA.debugLineNum = 71827457;BA.debugLine="EnterPolicyPauseState(reason, connectionMode)";
+__ref._enterpolicypausestate /*String*/ (null,_reason,_connectionmode);
+RDebugUtils.currentLine=71827458;
+ //BA.debugLineNum = 71827458;BA.debugLine="End Sub";
+return "";
+}
+public String  _enterpolicypausestate(b4j.example.b4xmainpage __ref,String _reason,String _connectionmode) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "enterpolicypausestate", false))
+	 {return ((String) Debug.delegate(ba, "enterpolicypausestate", new Object[] {_reason,_connectionmode}));}
+RDebugUtils.currentLine=5832704;
+ //BA.debugLineNum = 5832704;BA.debugLine="Private Sub EnterPolicyPauseState(reason As String";
+RDebugUtils.currentLine=5832705;
+ //BA.debugLineNum = 5832705;BA.debugLine="TraceLog(\"policy pause reason=\" & reason & \" mode";
+__ref._tracelog /*String*/ (null,"policy pause reason="+_reason+" mode="+_connectionmode);
+RDebugUtils.currentLine=5832706;
+ //BA.debugLineNum = 5832706;BA.debugLine="SetPlaybackFlowState(FLOW_PAUSED_POLICY, \"policy_";
+__ref._setplaybackflowstate /*String*/ (null,__ref._flow_paused_policy /*String*/ ,"policy_pause");
+RDebugUtils.currentLine=5832707;
+ //BA.debugLineNum = 5832707;BA.debugLine="dataPolicyState.EnterPolicyPause(connectionMode)";
+__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._enterpolicypause /*String*/ (null,_connectionmode);
+RDebugUtils.currentLine=5832708;
+ //BA.debugLineNum = 5832708;BA.debugLine="orchestrationState.EnterPolicyPausedState";
+__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enterpolicypausedstate /*String*/ (null);
+RDebugUtils.currentLine=5832709;
+ //BA.debugLineNum = 5832709;BA.debugLine="RefreshConnectionIndicatorState";
+__ref._refreshconnectionindicatorstate /*String*/ (null);
+RDebugUtils.currentLine=5832710;
+ //BA.debugLineNum = 5832710;BA.debugLine="ClearPlaybackState";
+__ref._clearplaybackstate /*String*/ (null);
+RDebugUtils.currentLine=5832711;
+ //BA.debugLineNum = 5832711;BA.debugLine="HidePin";
+__ref._hidepin /*String*/ (null);
+RDebugUtils.currentLine=5832712;
+ //BA.debugLineNum = 5832712;BA.debugLine="SetStopIcon";
+__ref._setstopicon /*String*/ (null);
+RDebugUtils.currentLine=5832713;
+ //BA.debugLineNum = 5832713;BA.debugLine="ShowMessage(reason)";
+__ref._showmessage /*String*/ (null,_reason);
+RDebugUtils.currentLine=5832714;
+ //BA.debugLineNum = 5832714;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_enteruserstoppedstate(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_enteruserstoppedstate", false))
+	 {return ((String) Debug.delegate(ba, "data_enteruserstoppedstate", null));}
+RDebugUtils.currentLine=72024064;
+ //BA.debugLineNum = 72024064;BA.debugLine="Public Sub Data_EnterUserStoppedState";
+RDebugUtils.currentLine=72024065;
+ //BA.debugLineNum = 72024065;BA.debugLine="orchestrationState.EnterUserStoppedState";
+__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enteruserstoppedstate /*String*/ (null);
+RDebugUtils.currentLine=72024066;
+ //BA.debugLineNum = 72024066;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_flushtracebufferasync(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_flushtracebufferasync", false))
+	 {return ((String) Debug.delegate(ba, "data_flushtracebufferasync", null));}
+RDebugUtils.currentLine=78053376;
+ //BA.debugLineNum = 78053376;BA.debugLine="Public Sub Data_FlushTraceBufferAsync";
+RDebugUtils.currentLine=78053377;
+ //BA.debugLineNum = 78053377;BA.debugLine="FlushTraceBufferAsync";
+__ref._flushtracebufferasync /*String*/ (null);
+RDebugUtils.currentLine=78053378;
+ //BA.debugLineNum = 78053378;BA.debugLine="End Sub";
+return "";
+}
+public String  _flushtracebufferasync(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "flushtracebufferasync", false))
+	 {return ((String) Debug.delegate(ba, "flushtracebufferasync", null));}
+RDebugUtils.currentLine=58195968;
+ //BA.debugLineNum = 58195968;BA.debugLine="Private Sub FlushTraceBufferAsync";
+RDebugUtils.currentLine=58195969;
+ //BA.debugLineNum = 58195969;BA.debugLine="traceUploader.FlushTraceBufferAsync";
+__ref._traceuploader /*b4j.example.playbacktraceuploader*/ ._flushtracebufferasync /*void*/ (null);
+RDebugUtils.currentLine=58195970;
+ //BA.debugLineNum = 58195970;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_handlemessageitem(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_handlemessageitem", false))
+	 {return ((String) Debug.delegate(ba, "data_handlemessageitem", new Object[] {_item}));}
+RDebugUtils.currentLine=78905344;
+ //BA.debugLineNum = 78905344;BA.debugLine="Public Sub Data_HandleMessageItem(item As Map)";
+RDebugUtils.currentLine=78905345;
+ //BA.debugLineNum = 78905345;BA.debugLine="HandleMessageItem(item)";
+__ref._handlemessageitem /*String*/ (null,_item);
+RDebugUtils.currentLine=78905346;
+ //BA.debugLineNum = 78905346;BA.debugLine="End Sub";
+return "";
+}
+public String  _handlemessageitem(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "handlemessageitem", false))
+	 {return ((String) Debug.delegate(ba, "handlemessageitem", new Object[] {_item}));}
+String _action = "";
+RDebugUtils.currentLine=8060928;
+ //BA.debugLineNum = 8060928;BA.debugLine="Private Sub HandleMessageItem(item As Map)";
+RDebugUtils.currentLine=8060929;
+ //BA.debugLineNum = 8060929;BA.debugLine="Dim action As String = item.GetDefault(\"action\",";
+_action = BA.ObjectToString(_item.GetDefault((Object)("action"),(Object)("")));
+RDebugUtils.currentLine=8060930;
+ //BA.debugLineNum = 8060930;BA.debugLine="TraceLog(\"сообщение handle action=\" & action & \"";
+__ref._tracelog /*String*/ (null,"сообщение handle action="+_action+" text="+BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(""))));
+RDebugUtils.currentLine=8060931;
+ //BA.debugLineNum = 8060931;BA.debugLine="If action = \"claim\" Then";
+if ((_action).equals("claim")) { 
+RDebugUtils.currentLine=8060932;
+ //BA.debugLineNum = 8060932;BA.debugLine="dataPolicyState.ClearPolicyPause";
+__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._clearpolicypause /*String*/ (null);
+RDebugUtils.currentLine=8060933;
+ //BA.debugLineNum = 8060933;BA.debugLine="ClearPlaybackState";
+__ref._clearplaybackstate /*String*/ (null);
+RDebugUtils.currentLine=8060934;
+ //BA.debugLineNum = 8060934;BA.debugLine="orchestrationState.EnterUserStoppedState";
+__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enteruserstoppedstate /*String*/ (null);
+RDebugUtils.currentLine=8060935;
+ //BA.debugLineNum = 8060935;BA.debugLine="SetPlayIcon";
+__ref._setplayicon /*String*/ (null);
+RDebugUtils.currentLine=8060936;
+ //BA.debugLineNum = 8060936;BA.debugLine="ShowClaimPrompt(item.GetDefault(\"message\", Messa";
+__ref._showclaimprompt /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(__ref._messagevalue /*String*/ (null,"device_busy")))));
+ }else 
+{RDebugUtils.currentLine=8060937;
+ //BA.debugLineNum = 8060937;BA.debugLine="Else If action = \"shutdown\" Then";
+if ((_action).equals("shutdown")) { 
+RDebugUtils.currentLine=8060938;
+ //BA.debugLineNum = 8060938;BA.debugLine="HandleShutdownMessage(item.GetDefault(\"message\",";
+__ref._handleshutdownmessage /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(__ref._messagevalue /*String*/ (null,"server_wait")))));
+ }else 
+{RDebugUtils.currentLine=8060939;
+ //BA.debugLineNum = 8060939;BA.debugLine="Else If action = \"blocked\" Then";
+if ((_action).equals("blocked")) { 
+RDebugUtils.currentLine=8060940;
+ //BA.debugLineNum = 8060940;BA.debugLine="HandleBlockedState";
+__ref._handleblockedstate /*String*/ (null);
+ }else 
+{RDebugUtils.currentLine=8060941;
+ //BA.debugLineNum = 8060941;BA.debugLine="Else If action = \"not_found\" Then";
+if ((_action).equals("not_found")) { 
+RDebugUtils.currentLine=8060942;
+ //BA.debugLineNum = 8060942;BA.debugLine="StopForMissingData(item.GetDefault(\"message\", Me";
+__ref._stopformissingdata /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(__ref._messagevalue /*String*/ (null,"not_found")))));
+ }else {
+RDebugUtils.currentLine=8060944;
+ //BA.debugLineNum = 8060944;BA.debugLine="HandleTemporaryState(\"server\", item.GetDefault(\"";
+__ref._handletemporarystate /*String*/ (null,"server",BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(__ref._messagevalue /*String*/ (null,"server_wait")))));
+ }}}}
+;
+RDebugUtils.currentLine=8060946;
+ //BA.debugLineNum = 8060946;BA.debugLine="End Sub";
+return "";
+}
+public boolean  _data_haslocalplaybackfallback(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_haslocalplaybackfallback", false))
+	 {return ((Boolean) Debug.delegate(ba, "data_haslocalplaybackfallback", null));}
+RDebugUtils.currentLine=72351744;
+ //BA.debugLineNum = 72351744;BA.debugLine="Public Sub Data_HasLocalPlaybackFallback As Boolea";
+RDebugUtils.currentLine=72351745;
+ //BA.debugLineNum = 72351745;BA.debugLine="Return HasLocalPlaybackFallback";
+if (true) return __ref._haslocalplaybackfallback /*boolean*/ (null);
+RDebugUtils.currentLine=72351746;
+ //BA.debugLineNum = 72351746;BA.debugLine="End Sub";
+return false;
+}
+public String  _data_hidecontentblocks(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_hidecontentblocks", false))
+	 {return ((String) Debug.delegate(ba, "data_hidecontentblocks", null));}
+RDebugUtils.currentLine=78708736;
+ //BA.debugLineNum = 78708736;BA.debugLine="Public Sub Data_HideContentBlocks";
+RDebugUtils.currentLine=78708737;
+ //BA.debugLineNum = 78708737;BA.debugLine="HideContentBlocks";
+__ref._hidecontentblocks /*String*/ (null);
+RDebugUtils.currentLine=78708738;
+ //BA.debugLineNum = 78708738;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_hidepin(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_hidepin", false))
+	 {return ((String) Debug.delegate(ba, "data_hidepin", null));}
+RDebugUtils.currentLine=71630848;
+ //BA.debugLineNum = 71630848;BA.debugLine="Public Sub Data_HidePin";
+RDebugUtils.currentLine=71630849;
+ //BA.debugLineNum = 71630849;BA.debugLine="HidePin";
+__ref._hidepin /*String*/ (null);
+RDebugUtils.currentLine=71630850;
+ //BA.debugLineNum = 71630850;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_invalidaterelevanttrackidscache(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_invalidaterelevanttrackidscache", false))
+	 {return ((String) Debug.delegate(ba, "data_invalidaterelevanttrackidscache", null));}
+RDebugUtils.currentLine=78118912;
+ //BA.debugLineNum = 78118912;BA.debugLine="Public Sub Data_InvalidateRelevantTrackIdsCache";
+RDebugUtils.currentLine=78118913;
+ //BA.debugLineNum = 78118913;BA.debugLine="InvalidateRelevantTrackIdsCache";
+__ref._invalidaterelevanttrackidscache /*String*/ (null);
+RDebugUtils.currentLine=78118914;
+ //BA.debugLineNum = 78118914;BA.debugLine="End Sub";
+return "";
+}
+public String  _invalidaterelevanttrackidscache(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "invalidaterelevanttrackidscache", false))
+	 {return ((String) Debug.delegate(ba, "invalidaterelevanttrackidscache", null));}
+RDebugUtils.currentLine=57409536;
+ //BA.debugLineNum = 57409536;BA.debugLine="Private Sub InvalidateRelevantTrackIdsCache";
+RDebugUtils.currentLine=57409537;
+ //BA.debugLineNum = 57409537;BA.debugLine="If cachedRelevantTrackIds.IsInitialized = False T";
+if (__ref._cachedrelevanttrackids /*anywheresoftware.b4a.objects.collections.List*/ .IsInitialized()==__c.False) { 
+__ref._cachedrelevanttrackids /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();};
+RDebugUtils.currentLine=57409538;
+ //BA.debugLineNum = 57409538;BA.debugLine="cachedRelevantTrackIds.Clear";
+__ref._cachedrelevanttrackids /*anywheresoftware.b4a.objects.collections.List*/ .Clear();
+RDebugUtils.currentLine=57409539;
+ //BA.debugLineNum = 57409539;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_messagevalue(b4j.example.b4xmainpage __ref,String _key) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_messagevalue", false))
+	 {return ((String) Debug.delegate(ba, "data_messagevalue", new Object[] {_key}));}
+RDebugUtils.currentLine=70844416;
+ //BA.debugLineNum = 70844416;BA.debugLine="Public Sub Data_MessageValue(key As String) As Str";
+RDebugUtils.currentLine=70844417;
+ //BA.debugLineNum = 70844417;BA.debugLine="Return MessageValue(key)";
+if (true) return __ref._messagevalue /*String*/ (null,_key);
+RDebugUtils.currentLine=70844418;
+ //BA.debugLineNum = 70844418;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_refreshconnectionindicatorstate(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_refreshconnectionindicatorstate", false))
+	 {return ((String) Debug.delegate(ba, "data_refreshconnectionindicatorstate", null));}
+RDebugUtils.currentLine=71499776;
+ //BA.debugLineNum = 71499776;BA.debugLine="Public Sub Data_RefreshConnectionIndicatorState";
+RDebugUtils.currentLine=71499777;
+ //BA.debugLineNum = 71499777;BA.debugLine="RefreshConnectionIndicatorState";
+__ref._refreshconnectionindicatorstate /*String*/ (null);
+RDebugUtils.currentLine=71499778;
+ //BA.debugLineNum = 71499778;BA.debugLine="End Sub";
+return "";
+}
+public String  _refreshconnectionindicatorstate(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "refreshconnectionindicatorstate", false))
+	 {return ((String) Debug.delegate(ba, "refreshconnectionindicatorstate", null));}
+RDebugUtils.currentLine=15597568;
+ //BA.debugLineNum = 15597568;BA.debugLine="Private Sub RefreshConnectionIndicatorState";
+RDebugUtils.currentLine=15597569;
+ //BA.debugLineNum = 15597569;BA.debugLine="If dataPolicyState.IsLocalPlaybackMode Then";
+if (__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._islocalplaybackmode /*boolean*/ ) { 
+RDebugUtils.currentLine=15597570;
+ //BA.debugLineNum = 15597570;BA.debugLine="If stateStore.IsMediaPathDegraded Then";
+if (__ref._statestore /*b4j.example.playerstatestore*/ ._ismediapathdegraded /*boolean*/ (null)) { 
+RDebugUtils.currentLine=15597571;
+ //BA.debugLineNum = 15597571;BA.debugLine="UpdateConnectionIndicator(\"degraded\")";
+__ref._updateconnectionindicator /*String*/ (null,"degraded");
+ }else {
+RDebugUtils.currentLine=15597573;
+ //BA.debugLineNum = 15597573;BA.debugLine="UpdateConnectionIndicator(\"offline\")";
+__ref._updateconnectionindicator /*String*/ (null,"offline");
+ };
+RDebugUtils.currentLine=15597575;
+ //BA.debugLineNum = 15597575;BA.debugLine="Return";
+if (true) return "";
+ };
+RDebugUtils.currentLine=15597577;
+ //BA.debugLineNum = 15597577;BA.debugLine="If dataPolicyState.IsPlaybackPausedByPolicy Then";
+if (__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._isplaybackpausedbypolicy /*boolean*/ ) { 
+RDebugUtils.currentLine=15597578;
+ //BA.debugLineNum = 15597578;BA.debugLine="UpdateConnectionIndicator(\"server\")";
+__ref._updateconnectionindicator /*String*/ (null,"server");
+RDebugUtils.currentLine=15597579;
+ //BA.debugLineNum = 15597579;BA.debugLine="Return";
+if (true) return "";
+ };
+RDebugUtils.currentLine=15597581;
+ //BA.debugLineNum = 15597581;BA.debugLine="If stateStore.IsMediaPathDegraded Then";
+if (__ref._statestore /*b4j.example.playerstatestore*/ ._ismediapathdegraded /*boolean*/ (null)) { 
+RDebugUtils.currentLine=15597582;
+ //BA.debugLineNum = 15597582;BA.debugLine="UpdateConnectionIndicator(\"degraded\")";
+__ref._updateconnectionindicator /*String*/ (null,"degraded");
+RDebugUtils.currentLine=15597583;
+ //BA.debugLineNum = 15597583;BA.debugLine="Return";
+if (true) return "";
+ };
+RDebugUtils.currentLine=15597585;
+ //BA.debugLineNum = 15597585;BA.debugLine="UpdateConnectionIndicator(\"online\")";
+__ref._updateconnectionindicator /*String*/ (null,"online");
+RDebugUtils.currentLine=15597586;
+ //BA.debugLineNum = 15597586;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_requestskipqueuesnapshotrestore(b4j.example.b4xmainpage __ref,String _reason) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_requestskipqueuesnapshotrestore", false))
+	 {return ((String) Debug.delegate(ba, "data_requestskipqueuesnapshotrestore", new Object[] {_reason}));}
+RDebugUtils.currentLine=72286208;
+ //BA.debugLineNum = 72286208;BA.debugLine="Public Sub Data_RequestSkipQueueSnapshotRestore(re";
+RDebugUtils.currentLine=72286209;
+ //BA.debugLineNum = 72286209;BA.debugLine="RequestSkipQueueSnapshotRestore(reason)";
+__ref._requestskipqueuesnapshotrestore /*String*/ (null,_reason);
+RDebugUtils.currentLine=72286210;
+ //BA.debugLineNum = 72286210;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_resolveidleuntilmessage(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _data,long _targetticks) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_resolveidleuntilmessage", false))
+	 {return ((String) Debug.delegate(ba, "data_resolveidleuntilmessage", new Object[] {_data,_targetticks}));}
+RDebugUtils.currentLine=89128960;
+ //BA.debugLineNum = 89128960;BA.debugLine="Public Sub Data_ResolveIdleUntilMessage(data As Ma";
+RDebugUtils.currentLine=89128961;
+ //BA.debugLineNum = 89128961;BA.debugLine="Return playerDataCoordinator.ResolveIdleUntilMess";
+if (true) return __ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._resolveidleuntilmessage /*String*/ (null,_data,_targetticks);
+RDebugUtils.currentLine=89128962;
+ //BA.debugLineNum = 89128962;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_resumeplaybackafterpolicypauseasync(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_resumeplaybackafterpolicypauseasync", false))
+	 {return ((String) Debug.delegate(ba, "data_resumeplaybackafterpolicypauseasync", null));}
+RDebugUtils.currentLine=78774272;
+ //BA.debugLineNum = 78774272;BA.debugLine="Public Sub Data_ResumePlaybackAfterPolicyPauseAsyn";
+RDebugUtils.currentLine=78774273;
+ //BA.debugLineNum = 78774273;BA.debugLine="ResumePlaybackAfterPolicyPause";
+__ref._resumeplaybackafterpolicypause /*void*/ (null);
+RDebugUtils.currentLine=78774274;
+ //BA.debugLineNum = 78774274;BA.debugLine="End Sub";
+return "";
+}
+public void  _resumeplaybackafterpolicypause(b4j.example.b4xmainpage __ref) throws Exception{
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "resumeplaybackafterpolicypause", false))
+	 {Debug.delegate(ba, "resumeplaybackafterpolicypause", null); return;}
+ResumableSub_ResumePlaybackAfterPolicyPause rsub = new ResumableSub_ResumePlaybackAfterPolicyPause(this,__ref);
+rsub.resume(ba, null);
+}
+public static class ResumableSub_ResumePlaybackAfterPolicyPause extends BA.ResumableSub {
+public ResumableSub_ResumePlaybackAfterPolicyPause(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
+this.parent = parent;
+this.__ref = __ref;
+this.__ref = parent;
+}
+b4j.example.b4xmainpage __ref;
+b4j.example.b4xmainpage parent;
+boolean _unused = false;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="b4xmainpage";
+
+    while (true) {
+        switch (state) {
+            case -1:
+return;
+
+case 0:
+//C
+this.state = -1;
+RDebugUtils.currentLine=2162689;
+ //BA.debugLineNum = 2162689;BA.debugLine="Wait For (facade.ResumePlaybackAfterPolicyPause)";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "resumeplaybackafterpolicypause"), __ref._facade /*b4j.example.playbackfacade*/ ._resumeplaybackafterpolicypause /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
+this.state = 1;
+return;
+case 1:
+//C
+this.state = -1;
+_unused = (boolean) result[1];
+;
+RDebugUtils.currentLine=2162690;
+ //BA.debugLineNum = 2162690;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
+}
+public String  _data_saveserversnapshot(b4j.example.b4xmainpage __ref,String _method,String _url,boolean _success,String _body,String _errormessage) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_saveserversnapshot", false))
+	 {return ((String) Debug.delegate(ba, "data_saveserversnapshot", new Object[] {_method,_url,_success,_body,_errormessage}));}
+RDebugUtils.currentLine=75300864;
+ //BA.debugLineNum = 75300864;BA.debugLine="Public Sub Data_SaveServerSnapshot(method As Strin";
+RDebugUtils.currentLine=75300865;
+ //BA.debugLineNum = 75300865;BA.debugLine="SaveServerSnapshot(method, url, success, body, er";
+__ref._saveserversnapshot /*String*/ (null,_method,_url,_success,_body,_errormessage);
+RDebugUtils.currentLine=75300866;
+ //BA.debugLineNum = 75300866;BA.debugLine="End Sub";
+return "";
+}
+public String  _saveserversnapshot(b4j.example.b4xmainpage __ref,String _method,String _url,boolean _success,String _body,String _errormessage) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "saveserversnapshot", false))
+	 {return ((String) Debug.delegate(ba, "saveserversnapshot", new Object[] {_method,_url,_success,_body,_errormessage}));}
+RDebugUtils.currentLine=13959168;
+ //BA.debugLineNum = 13959168;BA.debugLine="Private Sub SaveServerSnapshot(method As String, u";
+RDebugUtils.currentLine=13959169;
+ //BA.debugLineNum = 13959169;BA.debugLine="appTraceService.SaveServerSnapshot(method, url, s";
+__ref._apptraceservice /*b4j.example.traceservice*/ ._saveserversnapshot /*String*/ (null,_method,_url,_success,_body,_errormessage);
+RDebugUtils.currentLine=13959170;
+ //BA.debugLineNum = 13959170;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_scheduleretry(b4j.example.b4xmainpage __ref,String _mode,int _delayms) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_scheduleretry", false))
+	 {return ((String) Debug.delegate(ba, "data_scheduleretry", new Object[] {_mode,_delayms}));}
+RDebugUtils.currentLine=71761920;
+ //BA.debugLineNum = 71761920;BA.debugLine="Public Sub Data_ScheduleRetry(mode As String, dela";
+RDebugUtils.currentLine=71761921;
+ //BA.debugLineNum = 71761921;BA.debugLine="ScheduleRetry(mode, delayMs)";
+__ref._scheduleretry /*String*/ (null,_mode,_delayms);
+RDebugUtils.currentLine=71761922;
+ //BA.debugLineNum = 71761922;BA.debugLine="End Sub";
+return "";
+}
+public String  _scheduleretry(b4j.example.b4xmainpage __ref,String _mode,int _delayms) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "scheduleretry", false))
+	 {return ((String) Debug.delegate(ba, "scheduleretry", new Object[] {_mode,_delayms}));}
+RDebugUtils.currentLine=10354688;
+ //BA.debugLineNum = 10354688;BA.debugLine="Private Sub ScheduleRetry(mode As String, delayMs";
+RDebugUtils.currentLine=10354689;
+ //BA.debugLineNum = 10354689;BA.debugLine="playerDataCoordinator.ScheduleRetry(mode, delayMs";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._scheduleretry /*String*/ (null,_mode,_delayms,__ref._local_retry_delay_max /*int*/ ,__ref._server_retry_delay_max /*int*/ ,__ref._blocked_retry_delay /*int*/ );
+RDebugUtils.currentLine=10354690;
+ //BA.debugLineNum = 10354690;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_secondsagotext(b4j.example.b4xmainpage __ref,long _ticksvalue) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_secondsagotext", false))
+	 {return ((String) Debug.delegate(ba, "data_secondsagotext", new Object[] {_ticksvalue}));}
+RDebugUtils.currentLine=75104256;
+ //BA.debugLineNum = 75104256;BA.debugLine="Public Sub Data_SecondsAgoText(ticksValue As Long)";
+RDebugUtils.currentLine=75104257;
+ //BA.debugLineNum = 75104257;BA.debugLine="Return SecondsAgoText(ticksValue)";
+if (true) return __ref._secondsagotext /*String*/ (null,_ticksvalue);
+RDebugUtils.currentLine=75104258;
+ //BA.debugLineNum = 75104258;BA.debugLine="End Sub";
+return "";
+}
+public String  _secondsagotext(b4j.example.b4xmainpage __ref,long _ticksvalue) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "secondsagotext", false))
+	 {return ((String) Debug.delegate(ba, "secondsagotext", new Object[] {_ticksvalue}));}
+RDebugUtils.currentLine=59310080;
+ //BA.debugLineNum = 59310080;BA.debugLine="Private Sub SecondsAgoText(ticksValue As Long) As";
+RDebugUtils.currentLine=59310081;
+ //BA.debugLineNum = 59310081;BA.debugLine="If ticksValue <= 0 Then Return \"unknown\"";
+if (_ticksvalue<=0) { 
+if (true) return "unknown";};
+RDebugUtils.currentLine=59310082;
+ //BA.debugLineNum = 59310082;BA.debugLine="Return \"\" & Max(0, Floor((DateTime.Now - ticksVal";
+if (true) return ""+BA.NumberToString(__c.Max(0,__c.Floor((__c.DateTime.getNow()-_ticksvalue)/(double)1000)));
+RDebugUtils.currentLine=59310083;
+ //BA.debugLineNum = 59310083;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_setlocalfallbackready(b4j.example.b4xmainpage __ref,boolean _fallbackready) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_setlocalfallbackready", false))
+	 {return ((String) Debug.delegate(ba, "data_setlocalfallbackready", new Object[] {_fallbackready}));}
+RDebugUtils.currentLine=72417280;
+ //BA.debugLineNum = 72417280;BA.debugLine="Public Sub Data_SetLocalFallbackReady(fallbackRead";
+RDebugUtils.currentLine=72417281;
+ //BA.debugLineNum = 72417281;BA.debugLine="dataPolicyState.SetLocalFallbackReady(fallbackRea";
+__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._setlocalfallbackready /*String*/ (null,_fallbackready);
+RDebugUtils.currentLine=72417282;
+ //BA.debugLineNum = 72417282;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_setmediapathdegraded(b4j.example.b4xmainpage __ref,boolean _value) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_setmediapathdegraded", false))
+	 {return ((String) Debug.delegate(ba, "data_setmediapathdegraded", new Object[] {_value}));}
+RDebugUtils.currentLine=72220672;
+ //BA.debugLineNum = 72220672;BA.debugLine="Public Sub Data_SetMediaPathDegraded(value As Bool";
+RDebugUtils.currentLine=72220673;
+ //BA.debugLineNum = 72220673;BA.debugLine="stateStore.SetMediaPathDegraded(value)";
+__ref._statestore /*b4j.example.playerstatestore*/ ._setmediapathdegraded /*String*/ (null,_value);
+RDebugUtils.currentLine=72220674;
+ //BA.debugLineNum = 72220674;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_setplaybackflowstate(b4j.example.b4xmainpage __ref,String _statevalue,String _reason) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_setplaybackflowstate", false))
+	 {return ((String) Debug.delegate(ba, "data_setplaybackflowstate", new Object[] {_statevalue,_reason}));}
+RDebugUtils.currentLine=71892992;
+ //BA.debugLineNum = 71892992;BA.debugLine="Public Sub Data_SetPlaybackFlowState(stateValue As";
+RDebugUtils.currentLine=71892993;
+ //BA.debugLineNum = 71892993;BA.debugLine="SetPlaybackFlowState(stateValue, reason)";
+__ref._setplaybackflowstate /*String*/ (null,_statevalue,_reason);
+RDebugUtils.currentLine=71892994;
+ //BA.debugLineNum = 71892994;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_setplayicon(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_setplayicon", false))
+	 {return ((String) Debug.delegate(ba, "data_setplayicon", null));}
+RDebugUtils.currentLine=72089600;
+ //BA.debugLineNum = 72089600;BA.debugLine="Public Sub Data_SetPlayIcon";
+RDebugUtils.currentLine=72089601;
+ //BA.debugLineNum = 72089601;BA.debugLine="SetPlayIcon";
+__ref._setplayicon /*String*/ (null);
+RDebugUtils.currentLine=72089602;
+ //BA.debugLineNum = 72089602;BA.debugLine="End Sub";
+return "";
+}
+public String  _setplayicon(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "setplayicon", false))
+	 {return ((String) Debug.delegate(ba, "setplayicon", null));}
+RDebugUtils.currentLine=14090240;
+ //BA.debugLineNum = 14090240;BA.debugLine="Private Sub SetPlayIcon";
+RDebugUtils.currentLine=14090241;
+ //BA.debugLineNum = 14090241;BA.debugLine="uiController.SetPlayIcon";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._setplayicon /*String*/ (null);
+RDebugUtils.currentLine=14090242;
+ //BA.debugLineNum = 14090242;BA.debugLine="If uiController.IsOrbitIdle Then";
+if (__ref._uicontroller /*b4j.example.playeruicontroller*/ ._isorbitidle /*boolean*/ (null)) { 
+RDebugUtils.currentLine=14090243;
+ //BA.debugLineNum = 14090243;BA.debugLine="orbitTimer.Enabled = False";
+__ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+ }else {
+RDebugUtils.currentLine=14090245;
+ //BA.debugLineNum = 14090245;BA.debugLine="orbitTimer.Enabled = True";
+__ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
+ };
+RDebugUtils.currentLine=14090247;
+ //BA.debugLineNum = 14090247;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_setstopicon(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_setstopicon", false))
+	 {return ((String) Debug.delegate(ba, "data_setstopicon", null));}
+RDebugUtils.currentLine=78643200;
+ //BA.debugLineNum = 78643200;BA.debugLine="Public Sub Data_SetStopIcon";
+RDebugUtils.currentLine=78643201;
+ //BA.debugLineNum = 78643201;BA.debugLine="SetStopIcon";
+__ref._setstopicon /*String*/ (null);
+RDebugUtils.currentLine=78643202;
+ //BA.debugLineNum = 78643202;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_showmessage(b4j.example.b4xmainpage __ref,String _text) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_showmessage", false))
+	 {return ((String) Debug.delegate(ba, "data_showmessage", new Object[] {_text}));}
+RDebugUtils.currentLine=71696384;
+ //BA.debugLineNum = 71696384;BA.debugLine="Public Sub Data_ShowMessage(text As String)";
+RDebugUtils.currentLine=71696385;
+ //BA.debugLineNum = 71696385;BA.debugLine="ShowMessage(text)";
+__ref._showmessage /*String*/ (null,_text);
+RDebugUtils.currentLine=71696386;
+ //BA.debugLineNum = 71696386;BA.debugLine="End Sub";
+return "";
+}
+public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _data_syncofflineplaylistmetadata(b4j.example.b4xmainpage __ref) throws Exception{
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_syncofflineplaylistmetadata", false))
+	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "data_syncofflineplaylistmetadata", null));}
+ResumableSub_Data_SyncOfflinePlaylistMetadata rsub = new ResumableSub_Data_SyncOfflinePlaylistMetadata(this,__ref);
+rsub.resume(ba, null);
+return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
+}
+public static class ResumableSub_Data_SyncOfflinePlaylistMetadata extends BA.ResumableSub {
+public ResumableSub_Data_SyncOfflinePlaylistMetadata(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
+this.parent = parent;
+this.__ref = __ref;
+this.__ref = parent;
+}
+b4j.example.b4xmainpage __ref;
+b4j.example.b4xmainpage parent;
+boolean _synced = false;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="b4xmainpage";
+
+    while (true) {
+        switch (state) {
+            case -1:
+{
+parent.__c.ReturnFromResumableSub(this,null);return;}
+case 0:
+//C
+this.state = -1;
+RDebugUtils.currentLine=78970881;
+ //BA.debugLineNum = 78970881;BA.debugLine="Wait For (SyncOfflinePlaylistMetadata) Complete (";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "data_syncofflineplaylistmetadata"), __ref._syncofflineplaylistmetadata /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
+this.state = 1;
+return;
+case 1:
+//C
+this.state = -1;
+_synced = (boolean) result[1];
+;
+RDebugUtils.currentLine=78970882;
+ //BA.debugLineNum = 78970882;BA.debugLine="Return synced";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(_synced));return;};
+RDebugUtils.currentLine=78970883;
+ //BA.debugLineNum = 78970883;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
+}
+public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _syncofflineplaylistmetadata(b4j.example.b4xmainpage __ref) throws Exception{
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "syncofflineplaylistmetadata", false))
+	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "syncofflineplaylistmetadata", null));}
+ResumableSub_SyncOfflinePlaylistMetadata rsub = new ResumableSub_SyncOfflinePlaylistMetadata(this,__ref);
+rsub.resume(ba, null);
+return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
+}
+public static class ResumableSub_SyncOfflinePlaylistMetadata extends BA.ResumableSub {
+public ResumableSub_SyncOfflinePlaylistMetadata(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
+this.parent = parent;
+this.__ref = __ref;
+this.__ref = parent;
+}
+b4j.example.b4xmainpage __ref;
+b4j.example.b4xmainpage parent;
+anywheresoftware.b4a.objects.collections.List _playlistdescriptors = null;
+anywheresoftware.b4a.objects.collections.Map _cachedplaylistindex = null;
+int _downloadedcount = 0;
+int _updatedcount = 0;
+int _failedcount = 0;
+Object _descriptorobject = null;
+anywheresoftware.b4a.objects.collections.Map _descriptor = null;
+String _syncaction = "";
+boolean _downloaded = false;
+int _actualcount = 0;
+anywheresoftware.b4a.BA.IterableList group11;
+int index11;
+int groupLen11;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="b4xmainpage";
+
+    while (true) {
+        switch (state) {
+            case -1:
+{
+parent.__c.ReturnFromResumableSub(this,null);return;}
+case 0:
+//C
+this.state = 1;
+RDebugUtils.currentLine=17563649;
+ //BA.debugLineNum = 17563649;BA.debugLine="Dim playlistDescriptors As List = offlineStoreSer";
+_playlistdescriptors = new anywheresoftware.b4a.objects.collections.List();
+_playlistdescriptors = __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._getstoredplaylistdescriptors /*anywheresoftware.b4a.objects.collections.List*/ (null);
+RDebugUtils.currentLine=17563650;
+ //BA.debugLineNum = 17563650;BA.debugLine="If playlistDescriptors.IsInitialized = False Or p";
+if (true) break;
+
+case 1:
+//if
+this.state = 4;
+if (_playlistdescriptors.IsInitialized()==parent.__c.False || _playlistdescriptors.getSize()==0) { 
+this.state = 3;
+}if (true) break;
+
+case 3:
+//C
+this.state = 4;
+RDebugUtils.currentLine=17563651;
+ //BA.debugLineNum = 17563651;BA.debugLine="TraceLog(\"метаданные плейлистов sync skip reason";
+__ref._tracelog /*String*/ (null,"метаданные плейлистов sync skip reason=nothing_to_sync");
+RDebugUtils.currentLine=17563652;
+ //BA.debugLineNum = 17563652;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+ if (true) break;
+
+case 4:
+//C
+this.state = 5;
+;
+RDebugUtils.currentLine=17563654;
+ //BA.debugLineNum = 17563654;BA.debugLine="EnsureDirectory(offlineStoreService.GetOfflinePla";
+__ref._ensuredirectory /*String*/ (null,__ref._offlinestoreservice /*b4j.example.offlinestore*/ ._getofflineplaylistsdir /*String*/ (null));
+RDebugUtils.currentLine=17563655;
+ //BA.debugLineNum = 17563655;BA.debugLine="Dim cachedPlaylistIndex As Map = offlineStoreServ";
+_cachedplaylistindex = new anywheresoftware.b4a.objects.collections.Map();
+_cachedplaylistindex = __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._getcachedplaylistindex /*anywheresoftware.b4a.objects.collections.Map*/ (null);
+RDebugUtils.currentLine=17563656;
+ //BA.debugLineNum = 17563656;BA.debugLine="Dim downloadedCount As Int = 0";
+_downloadedcount = (int) (0);
+RDebugUtils.currentLine=17563657;
+ //BA.debugLineNum = 17563657;BA.debugLine="Dim updatedCount As Int = 0";
+_updatedcount = (int) (0);
+RDebugUtils.currentLine=17563658;
+ //BA.debugLineNum = 17563658;BA.debugLine="Dim failedCount As Int = 0";
+_failedcount = (int) (0);
+RDebugUtils.currentLine=17563659;
+ //BA.debugLineNum = 17563659;BA.debugLine="For Each descriptorObject As Object In playlistDe";
+if (true) break;
+
+case 5:
+//for
+this.state = 30;
+group11 = _playlistdescriptors;
+index11 = 0;
+groupLen11 = group11.getSize();
+this.state = 31;
+if (true) break;
+
+case 31:
+//C
+this.state = 30;
+if (index11 < groupLen11) {
+this.state = 7;
+_descriptorobject = group11.Get(index11);}
+if (true) break;
+
+case 32:
+//C
+this.state = 31;
+index11++;
+if (true) break;
+
+case 7:
+//C
+this.state = 8;
+RDebugUtils.currentLine=17563660;
+ //BA.debugLineNum = 17563660;BA.debugLine="If descriptorObject Is Map Then";
+if (true) break;
+
+case 8:
+//if
+this.state = 29;
+if (_descriptorobject instanceof java.util.Map) { 
+this.state = 10;
+}if (true) break;
+
+case 10:
+//C
+this.state = 11;
+RDebugUtils.currentLine=17563661;
+ //BA.debugLineNum = 17563661;BA.debugLine="Dim descriptor As Map = descriptorObject";
+_descriptor = new anywheresoftware.b4a.objects.collections.Map();
+_descriptor = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_descriptorobject));
+RDebugUtils.currentLine=17563662;
+ //BA.debugLineNum = 17563662;BA.debugLine="Dim syncAction As String = offlineStoreService.";
+_syncaction = __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._resolveplaylistsyncaction /*String*/ (null,_descriptor,_cachedplaylistindex);
+RDebugUtils.currentLine=17563663;
+ //BA.debugLineNum = 17563663;BA.debugLine="If syncAction = \"skip\" Then Continue";
+if (true) break;
+
+case 11:
+//if
+this.state = 16;
+if ((_syncaction).equals("skip")) { 
+this.state = 13;
+;}if (true) break;
+
+case 13:
+//C
+this.state = 16;
+this.state = 32;
+if (true) break;;
+if (true) break;
+
+case 16:
+//C
+this.state = 17;
+;
+RDebugUtils.currentLine=17563664;
+ //BA.debugLineNum = 17563664;BA.debugLine="Wait For (DownloadOfflinePlaylistMetadata(descr";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "syncofflineplaylistmetadata"), __ref._downloadofflineplaylistmetadata /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_descriptor,_cachedplaylistindex));
+this.state = 33;
+return;
+case 33:
+//C
+this.state = 17;
+_downloaded = (boolean) result[1];
+;
+RDebugUtils.currentLine=17563665;
+ //BA.debugLineNum = 17563665;BA.debugLine="If downloaded Then";
+if (true) break;
+
+case 17:
+//if
+this.state = 28;
+if (_downloaded) { 
+this.state = 19;
+}else {
+this.state = 27;
+}if (true) break;
+
+case 19:
+//C
+this.state = 20;
+RDebugUtils.currentLine=17563666;
+ //BA.debugLineNum = 17563666;BA.debugLine="If syncAction = \"missing\" Then";
+if (true) break;
+
+case 20:
+//if
+this.state = 25;
+if ((_syncaction).equals("missing")) { 
+this.state = 22;
+}else {
+this.state = 24;
+}if (true) break;
+
+case 22:
+//C
+this.state = 25;
+RDebugUtils.currentLine=17563667;
+ //BA.debugLineNum = 17563667;BA.debugLine="downloadedCount = downloadedCount + 1";
+_downloadedcount = (int) (_downloadedcount+1);
+ if (true) break;
+
+case 24:
+//C
+this.state = 25;
+RDebugUtils.currentLine=17563669;
+ //BA.debugLineNum = 17563669;BA.debugLine="updatedCount = updatedCount + 1";
+_updatedcount = (int) (_updatedcount+1);
+ if (true) break;
+
+case 25:
+//C
+this.state = 28;
+;
+ if (true) break;
+
+case 27:
+//C
+this.state = 28;
+RDebugUtils.currentLine=17563672;
+ //BA.debugLineNum = 17563672;BA.debugLine="failedCount = failedCount + 1";
+_failedcount = (int) (_failedcount+1);
+ if (true) break;
+
+case 28:
+//C
+this.state = 29;
+;
+ if (true) break;
+
+case 29:
+//C
+this.state = 32;
+;
+ if (true) break;
+if (true) break;
+
+case 30:
+//C
+this.state = -1;
+;
+RDebugUtils.currentLine=17563676;
+ //BA.debugLineNum = 17563676;BA.debugLine="offlineStoreService.SaveCachedPlaylistIndex(cache";
+__ref._offlinestoreservice /*b4j.example.offlinestore*/ ._savecachedplaylistindex /*String*/ (null,_cachedplaylistindex);
+RDebugUtils.currentLine=17563677;
+ //BA.debugLineNum = 17563677;BA.debugLine="offlineStoreService.RefreshPlaylistCacheStatus(pl";
+__ref._offlinestoreservice /*b4j.example.offlinestore*/ ._refreshplaylistcachestatus /*String*/ (null,_playlistdescriptors);
+RDebugUtils.currentLine=17563678;
+ //BA.debugLineNum = 17563678;BA.debugLine="InvalidateRelevantTrackIdsCache";
+__ref._invalidaterelevanttrackidscache /*String*/ (null);
+RDebugUtils.currentLine=17563679;
+ //BA.debugLineNum = 17563679;BA.debugLine="Dim actualCount As Int = storage.GetDefault(\"play";
+_actualcount = (int)(BA.ObjectToNumber(__ref._storage /*b4j.example.keyvaluestore*/ ._getdefault /*Object*/ (null,"playlist_actual_count",(Object)(0))));
+RDebugUtils.currentLine=17563680;
+ //BA.debugLineNum = 17563680;BA.debugLine="TraceLog(\"метаданные плейлистов sync итог downloa";
+__ref._tracelog /*String*/ (null,"метаданные плейлистов sync итог downloaded="+BA.NumberToString(_downloadedcount)+" updated="+BA.NumberToString(_updatedcount)+" failed="+BA.NumberToString(_failedcount)+" actual="+BA.NumberToString(_actualcount));
+RDebugUtils.currentLine=17563681;
+ //BA.debugLineNum = 17563681;BA.debugLine="Return failedCount = 0";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(_failedcount==0));return;};
+RDebugUtils.currentLine=17563682;
+ //BA.debugLineNum = 17563682;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
+}
+public String  _data_traceinfo(b4j.example.b4xmainpage __ref,String _category,String _message,String _details) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_traceinfo", false))
+	 {return ((String) Debug.delegate(ba, "data_traceinfo", new Object[] {_category,_message,_details}));}
+RDebugUtils.currentLine=77070336;
+ //BA.debugLineNum = 77070336;BA.debugLine="Public Sub Data_TraceInfo(category As String, mess";
+RDebugUtils.currentLine=77070337;
+ //BA.debugLineNum = 77070337;BA.debugLine="TraceInfo(category, message, details)";
+__ref._traceinfo /*String*/ (null,_category,_message,_details);
+RDebugUtils.currentLine=77070338;
+ //BA.debugLineNum = 77070338;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_tracelog(b4j.example.b4xmainpage __ref,String _message) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_tracelog", false))
+	 {return ((String) Debug.delegate(ba, "data_tracelog", new Object[] {_message}));}
+RDebugUtils.currentLine=71368704;
+ //BA.debugLineNum = 71368704;BA.debugLine="Public Sub Data_TraceLog(message As String)";
+RDebugUtils.currentLine=71368705;
+ //BA.debugLineNum = 71368705;BA.debugLine="TraceLog(message)";
+__ref._tracelog /*String*/ (null,_message);
+RDebugUtils.currentLine=71368706;
+ //BA.debugLineNum = 71368706;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_tracewarn(b4j.example.b4xmainpage __ref,String _category,String _message,String _details) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_tracewarn", false))
+	 {return ((String) Debug.delegate(ba, "data_tracewarn", new Object[] {_category,_message,_details}));}
+RDebugUtils.currentLine=73465856;
+ //BA.debugLineNum = 73465856;BA.debugLine="Public Sub Data_TraceWarn(category As String, mess";
+RDebugUtils.currentLine=73465857;
+ //BA.debugLineNum = 73465857;BA.debugLine="TraceWarn(category, message, details)";
+__ref._tracewarn /*String*/ (null,_category,_message,_details);
+RDebugUtils.currentLine=73465858;
+ //BA.debugLineNum = 73465858;BA.debugLine="End Sub";
+return "";
+}
+public String  _data_writehealthsnapshot(b4j.example.b4xmainpage __ref,String _trigger) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "data_writehealthsnapshot", false))
+	 {return ((String) Debug.delegate(ba, "data_writehealthsnapshot", new Object[] {_trigger}));}
+RDebugUtils.currentLine=73531392;
+ //BA.debugLineNum = 73531392;BA.debugLine="Public Sub Data_WriteHealthSnapshot(trigger As Str";
+RDebugUtils.currentLine=73531393;
+ //BA.debugLineNum = 73531393;BA.debugLine="WriteHealthSnapshot(trigger)";
+__ref._writehealthsnapshot /*String*/ (null,_trigger);
+RDebugUtils.currentLine=73531394;
+ //BA.debugLineNum = 73531394;BA.debugLine="End Sub";
+return "";
+}
+public String  _dataurlvalue(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "dataurlvalue", false))
+	 {return ((String) Debug.delegate(ba, "dataurlvalue", null));}
+RDebugUtils.currentLine=77004800;
+ //BA.debugLineNum = 77004800;BA.debugLine="Public Sub DataUrlValue As String";
+RDebugUtils.currentLine=77004801;
+ //BA.debugLineNum = 77004801;BA.debugLine="Return DATA_BASE_URL";
+if (true) return __ref._data_base_url /*String*/ ;
+RDebugUtils.currentLine=77004802;
+ //BA.debugLineNum = 77004802;BA.debugLine="End Sub";
+return "";
 }
 public double  _dbtofactor(b4j.example.b4xmainpage __ref,double _db) throws Exception{
 __ref = this;
@@ -10129,6 +9251,20 @@ RDebugUtils.currentLine=18219015;
 if (true) return _sb.ToString();
 RDebugUtils.currentLine=18219016;
  //BA.debugLineNum = 18219016;BA.debugLine="End Sub";
+return "";
+}
+public String  _deviceidvalue(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "deviceidvalue", false))
+	 {return ((String) Debug.delegate(ba, "deviceidvalue", null));}
+RDebugUtils.currentLine=76677120;
+ //BA.debugLineNum = 76677120;BA.debugLine="Public Sub DeviceIdValue As String";
+RDebugUtils.currentLine=76677121;
+ //BA.debugLineNum = 76677121;BA.debugLine="Return deviceId";
+if (true) return __ref._deviceid /*String*/ ;
+RDebugUtils.currentLine=76677122;
+ //BA.debugLineNum = 76677122;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _dispatchplaybackadvance(b4j.example.b4xmainpage __ref,String _initiator,boolean _allowload) throws Exception{
@@ -10370,200 +9506,37 @@ b4j.example.b4xmainpage parent;
 String _url;
 int _timeoutms;
 anywheresoftware.b4a.objects.collections.Map _result = null;
-b4j.example.httpjob _j = null;
-String _responsetext = "";
-anywheresoftware.b4j.objects.collections.JSONParser _parser = null;
-String _errormessage = "";
-String _failurekind = "";
 
 @Override
 public void resume(BA ba, Object[] result) throws Exception{
 RDebugUtils.currentModule="b4xmainpage";
 
     while (true) {
-try {
-
         switch (state) {
             case -1:
 {
 parent.__c.ReturnFromResumableSub(this,null);return;}
 case 0:
 //C
-this.state = 1;
+this.state = -1;
 RDebugUtils.currentLine=7667713;
- //BA.debugLineNum = 7667713;BA.debugLine="Dim result As Map";
-_result = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=7667714;
- //BA.debugLineNum = 7667714;BA.debugLine="result.Initialize";
-_result.Initialize();
-RDebugUtils.currentLine=7667715;
- //BA.debugLineNum = 7667715;BA.debugLine="result.Put(\"Success\", False)";
-_result.Put((Object)("Success"),(Object)(parent.__c.False));
-RDebugUtils.currentLine=7667716;
- //BA.debugLineNum = 7667716;BA.debugLine="result.Put(\"Kind\", \"server\")";
-_result.Put((Object)("Kind"),(Object)("server"));
-RDebugUtils.currentLine=7667717;
- //BA.debugLineNum = 7667717;BA.debugLine="result.Put(\"Data\", Null)";
-_result.Put((Object)("Data"),parent.__c.Null);
-RDebugUtils.currentLine=7667718;
- //BA.debugLineNum = 7667718;BA.debugLine="result.Put(\"ErrorMessage\", \"\")";
-_result.Put((Object)("ErrorMessage"),(Object)(""));
-RDebugUtils.currentLine=7667719;
- //BA.debugLineNum = 7667719;BA.debugLine="Dim j As HttpJob";
-_j = new b4j.example.httpjob();
-RDebugUtils.currentLine=7667720;
- //BA.debugLineNum = 7667720;BA.debugLine="j.Initialize(\"\", Me)";
-_j._initialize /*String*/ (null,ba,"",parent);
-RDebugUtils.currentLine=7667721;
- //BA.debugLineNum = 7667721;BA.debugLine="TraceLog(\"http get начало timeoutMs=\" & timeoutMs";
-__ref._tracelog /*String*/ (null,"http get начало timeoutMs="+BA.NumberToString(_timeoutms)+" url="+_url);
-RDebugUtils.currentLine=7667722;
- //BA.debugLineNum = 7667722;BA.debugLine="j.Download(url)";
-_j._download /*String*/ (null,_url);
-RDebugUtils.currentLine=7667723;
- //BA.debugLineNum = 7667723;BA.debugLine="ApplyClientRequestHeaders(j)";
-__ref._applyclientrequestheaders /*String*/ (null,_j);
-RDebugUtils.currentLine=7667724;
- //BA.debugLineNum = 7667724;BA.debugLine="j.GetRequest.Timeout = timeoutMs";
-_j._getrequest /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ (null).setTimeout(_timeoutms);
-RDebugUtils.currentLine=7667725;
- //BA.debugLineNum = 7667725;BA.debugLine="Wait For (j) JobDone(j As HttpJob)";
-parent.__c.WaitFor("jobdone", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "fetchjsonwithtimeout"), (Object)(_j));
-this.state = 13;
-return;
-case 13:
-//C
+ //BA.debugLineNum = 7667713;BA.debugLine="Wait For (syncService.FetchJsonWithTimeout(url, t";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "fetchjsonwithtimeout"), __ref._syncservice /*b4j.example.networksyncservice*/ ._fetchjsonwithtimeout /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_url,_timeoutms));
 this.state = 1;
-_j = (b4j.example.httpjob) result[1];
-;
-RDebugUtils.currentLine=7667726;
- //BA.debugLineNum = 7667726;BA.debugLine="If j.Success Then";
-if (true) break;
-
+return;
 case 1:
-//if
-this.state = 12;
-if (_j._success /*boolean*/ ) { 
-this.state = 3;
-}else {
-this.state = 11;
-}if (true) break;
-
-case 3:
-//C
-this.state = 4;
-RDebugUtils.currentLine=7667727;
- //BA.debugLineNum = 7667727;BA.debugLine="Try";
-if (true) break;
-
-case 4:
-//try
-this.state = 9;
-this.catchState = 8;
-this.state = 6;
-if (true) break;
-
-case 6:
-//C
-this.state = 9;
-this.catchState = 8;
-RDebugUtils.currentLine=7667728;
- //BA.debugLineNum = 7667728;BA.debugLine="Dim responseText As String = j.GetString";
-_responsetext = _j._getstring /*String*/ (null);
-RDebugUtils.currentLine=7667729;
- //BA.debugLineNum = 7667729;BA.debugLine="SaveServerSnapshot(\"GET\", url, True, responseTe";
-__ref._saveserversnapshot /*String*/ (null,"GET",_url,parent.__c.True,_responsetext,"");
-RDebugUtils.currentLine=7667730;
- //BA.debugLineNum = 7667730;BA.debugLine="Dim parser As JSONParser";
-_parser = new anywheresoftware.b4j.objects.collections.JSONParser();
-RDebugUtils.currentLine=7667731;
- //BA.debugLineNum = 7667731;BA.debugLine="parser.Initialize(responseText)";
-_parser.Initialize(_responsetext);
-RDebugUtils.currentLine=7667732;
- //BA.debugLineNum = 7667732;BA.debugLine="result.Put(\"Data\", parser.NextObject)";
-_result.Put((Object)("Data"),(Object)(_parser.NextObject().getObject()));
-RDebugUtils.currentLine=7667733;
- //BA.debugLineNum = 7667733;BA.debugLine="result.Put(\"Success\", True)";
-_result.Put((Object)("Success"),(Object)(parent.__c.True));
-RDebugUtils.currentLine=7667734;
- //BA.debugLineNum = 7667734;BA.debugLine="result.Put(\"Kind\", \"\")";
-_result.Put((Object)("Kind"),(Object)(""));
-RDebugUtils.currentLine=7667735;
- //BA.debugLineNum = 7667735;BA.debugLine="TraceLog(\"http get итог success=true url=\" & ur";
-__ref._tracelog /*String*/ (null,"http get итог success=true url="+_url);
- if (true) break;
-
-case 8:
-//C
-this.state = 9;
-this.catchState = 0;
-RDebugUtils.currentLine=7667737;
- //BA.debugLineNum = 7667737;BA.debugLine="result.Put(\"Kind\", \"server\")";
-_result.Put((Object)("Kind"),(Object)("server"));
-RDebugUtils.currentLine=7667738;
- //BA.debugLineNum = 7667738;BA.debugLine="result.Put(\"ErrorMessage\", \"bad_json\")";
-_result.Put((Object)("ErrorMessage"),(Object)("bad_json"));
-RDebugUtils.currentLine=7667739;
- //BA.debugLineNum = 7667739;BA.debugLine="SaveServerSnapshot(\"GET\", url, False, \"\", \"bad_";
-__ref._saveserversnapshot /*String*/ (null,"GET",_url,parent.__c.False,"","bad_json");
-RDebugUtils.currentLine=7667740;
- //BA.debugLineNum = 7667740;BA.debugLine="TraceLog(\"http get ошибка kind=server url=\" & u";
-__ref._tracelog /*String*/ (null,"http get ошибка kind=server url="+_url+" message=bad_json");
- if (true) break;
-if (true) break;
-
-case 9:
-//C
-this.state = 12;
-this.catchState = 0;
-;
- if (true) break;
-
-case 11:
-//C
-this.state = 12;
-RDebugUtils.currentLine=7667743;
- //BA.debugLineNum = 7667743;BA.debugLine="Dim errorMessage As String = j.ErrorMessage";
-_errormessage = _j._errormessage /*String*/ ;
-RDebugUtils.currentLine=7667744;
- //BA.debugLineNum = 7667744;BA.debugLine="result.Put(\"ErrorMessage\", errorMessage)";
-_result.Put((Object)("ErrorMessage"),(Object)(_errormessage));
-RDebugUtils.currentLine=7667745;
- //BA.debugLineNum = 7667745;BA.debugLine="Dim failureKind As String = ClassifyHttpFailure(";
-_failurekind = __ref._classifyhttpfailure /*String*/ (null,_errormessage);
-RDebugUtils.currentLine=7667746;
- //BA.debugLineNum = 7667746;BA.debugLine="result.Put(\"Kind\", failureKind)";
-_result.Put((Object)("Kind"),(Object)(_failurekind));
-RDebugUtils.currentLine=7667747;
- //BA.debugLineNum = 7667747;BA.debugLine="SaveServerSnapshot(\"GET\", url, False, \"\", errorM";
-__ref._saveserversnapshot /*String*/ (null,"GET",_url,parent.__c.False,"",_errormessage);
-RDebugUtils.currentLine=7667748;
- //BA.debugLineNum = 7667748;BA.debugLine="LogHttpFailure(url, failureKind)";
-__ref._loghttpfailure /*String*/ (null,_url,_failurekind);
- if (true) break;
-
-case 12:
 //C
 this.state = -1;
+_result = (anywheresoftware.b4a.objects.collections.Map) result[1];
 ;
-RDebugUtils.currentLine=7667750;
- //BA.debugLineNum = 7667750;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=7667751;
- //BA.debugLineNum = 7667751;BA.debugLine="Return result";
+RDebugUtils.currentLine=7667714;
+ //BA.debugLineNum = 7667714;BA.debugLine="Return result";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(_result));return;};
-RDebugUtils.currentLine=7667752;
- //BA.debugLineNum = 7667752;BA.debugLine="End Sub";
+RDebugUtils.currentLine=7667715;
+ //BA.debugLineNum = 7667715;BA.debugLine="End Sub";
 if (true) break;
-}} 
-       catch (Exception e0) {
-			
-if (catchState == 0)
-    throw e0;
-else {
-    state = catchState;
-ba.setLastException(e0);}
+
             }
         }
     }
@@ -10642,119 +9615,6 @@ RDebugUtils.currentLine=18022402;
  //BA.debugLineNum = 18022402;BA.debugLine="End Sub";
 return 0L;
 }
-public void  _ensureadcachesyncasync(b4j.example.b4xmainpage __ref) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "ensureadcachesyncasync", false))
-	 {Debug.delegate(ba, "ensureadcachesyncasync", null); return;}
-ResumableSub_EnsureAdCacheSyncAsync rsub = new ResumableSub_EnsureAdCacheSyncAsync(this,__ref);
-rsub.resume(ba, null);
-}
-public static class ResumableSub_EnsureAdCacheSyncAsync extends BA.ResumableSub {
-public ResumableSub_EnsureAdCacheSyncAsync(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-boolean _downloaded = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-        switch (state) {
-            case -1:
-return;
-
-case 0:
-//C
-this.state = 1;
-RDebugUtils.currentLine=1114113;
- //BA.debugLineNum = 1114113;BA.debugLine="If isStartupSequenceInProgress Then";
-if (true) break;
-
-case 1:
-//if
-this.state = 4;
-if (__ref._isstartupsequenceinprogress /*boolean*/ ) { 
-this.state = 3;
-}if (true) break;
-
-case 3:
-//C
-this.state = 4;
-RDebugUtils.currentLine=1114114;
- //BA.debugLineNum = 1114114;BA.debugLine="isAdWarmupDeferredAfterStartup = True";
-__ref._isadwarmupdeferredafterstartup /*boolean*/  = parent.__c.True;
-RDebugUtils.currentLine=1114115;
- //BA.debugLineNum = 1114115;BA.debugLine="Return";
-if (true) return ;
- if (true) break;
-;
-RDebugUtils.currentLine=1114117;
- //BA.debugLineNum = 1114117;BA.debugLine="If offlineData.IsInitialized = False Then Return";
-
-case 4:
-//if
-this.state = 9;
-if (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()==parent.__c.False) { 
-this.state = 6;
-;}if (true) break;
-
-case 6:
-//C
-this.state = 9;
-if (true) return ;
-if (true) break;
-
-case 9:
-//C
-this.state = 10;
-;
-RDebugUtils.currentLine=1114118;
- //BA.debugLineNum = 1114118;BA.debugLine="If offlineData.GetDefault(\"ok\", False) <> True Th";
-if (true) break;
-
-case 10:
-//if
-this.state = 15;
-if ((__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)("ok"),(Object)(parent.__c.False))).equals((Object)(parent.__c.True)) == false) { 
-this.state = 12;
-;}if (true) break;
-
-case 12:
-//C
-this.state = 15;
-if (true) return ;
-if (true) break;
-
-case 15:
-//C
-this.state = -1;
-;
-RDebugUtils.currentLine=1114119;
- //BA.debugLineNum = 1114119;BA.debugLine="Wait For (mediaCacheService.EnsureAdsCached(offli";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensureadcachesyncasync"), __ref._mediacacheservice /*b4j.example.mediacache*/ ._ensureadscached /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ));
-this.state = 16;
-return;
-case 16:
-//C
-this.state = -1;
-_downloaded = (boolean) result[1];
-;
-RDebugUtils.currentLine=1114120;
- //BA.debugLineNum = 1114120;BA.debugLine="UpdateMediaConnectivityStateFromCacheSync(downloa";
-__ref._updatemediaconnectivitystatefromcachesync /*String*/ (null,_downloaded);
-RDebugUtils.currentLine=1114121;
- //BA.debugLineNum = 1114121;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
 public String  _updatemediaconnectivitystatefromcachesync(b4j.example.b4xmainpage __ref,boolean _downloaded) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -10817,46 +9677,23 @@ RDebugUtils.currentModule="b4xmainpage";
 parent.__c.ReturnFromResumableSub(this,null);return;}
 case 0:
 //C
-this.state = 1;
+this.state = -1;
 RDebugUtils.currentLine=2228225;
- //BA.debugLineNum = 2228225;BA.debugLine="Wait For (queueBuilder.EnsureDataPlaybackReady(of";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensuredataplaybackready"), __ref._queuebuilder /*b4j.example.playbackqueuebuilder*/ ._ensuredataplaybackready /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ));
-this.state = 5;
-return;
-case 5:
-//C
+ //BA.debugLineNum = 2228225;BA.debugLine="Wait For (stateStore.EnsureDataPlaybackReady) Com";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensuredataplaybackready"), __ref._statestore /*b4j.example.playerstatestore*/ ._ensuredataplaybackready /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
 this.state = 1;
+return;
+case 1:
+//C
+this.state = -1;
 _resolverready = (boolean) result[1];
 ;
 RDebugUtils.currentLine=2228226;
- //BA.debugLineNum = 2228226;BA.debugLine="If resolverReady = False Then";
-if (true) break;
-
-case 1:
-//if
-this.state = 4;
-if (_resolverready==parent.__c.False) { 
-this.state = 3;
-}if (true) break;
-
-case 3:
-//C
-this.state = 4;
-RDebugUtils.currentLine=2228227;
- //BA.debugLineNum = 2228227;BA.debugLine="TraceLog(\"подготовка data playback ошибка\")";
-__ref._tracelog /*String*/ (null,"подготовка data playback ошибка");
- if (true) break;
-
-case 4:
-//C
-this.state = -1;
-;
-RDebugUtils.currentLine=2228229;
- //BA.debugLineNum = 2228229;BA.debugLine="Return resolverReady";
+ //BA.debugLineNum = 2228226;BA.debugLine="Return resolverReady";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(_resolverready));return;};
-RDebugUtils.currentLine=2228230;
- //BA.debugLineNum = 2228230;BA.debugLine="End Sub";
+RDebugUtils.currentLine=2228227;
+ //BA.debugLineNum = 2228227;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -11235,139 +10072,6 @@ RDebugUtils.currentLine=67567622;
 __ref._scheduleretry /*String*/ (null,"audio_device",__ref._audio_output_retry_delay_ms /*int*/ );
 RDebugUtils.currentLine=67567623;
  //BA.debugLineNum = 67567623;BA.debugLine="End Sub";
-return "";
-}
-public String  _enterpolicypausestate(b4j.example.b4xmainpage __ref,String _reason,String _connectionmode) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "enterpolicypausestate", false))
-	 {return ((String) Debug.delegate(ba, "enterpolicypausestate", new Object[] {_reason,_connectionmode}));}
-RDebugUtils.currentLine=5832704;
- //BA.debugLineNum = 5832704;BA.debugLine="Private Sub EnterPolicyPauseState(reason As String";
-RDebugUtils.currentLine=5832705;
- //BA.debugLineNum = 5832705;BA.debugLine="TraceLog(\"policy pause reason=\" & reason & \" mode";
-__ref._tracelog /*String*/ (null,"policy pause reason="+_reason+" mode="+_connectionmode);
-RDebugUtils.currentLine=5832706;
- //BA.debugLineNum = 5832706;BA.debugLine="SetPlaybackFlowState(FLOW_PAUSED_POLICY, \"policy_";
-__ref._setplaybackflowstate /*String*/ (null,__ref._flow_paused_policy /*String*/ ,"policy_pause");
-RDebugUtils.currentLine=5832707;
- //BA.debugLineNum = 5832707;BA.debugLine="dataPolicyState.EnterPolicyPause(connectionMode)";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._enterpolicypause /*String*/ (null,_connectionmode);
-RDebugUtils.currentLine=5832708;
- //BA.debugLineNum = 5832708;BA.debugLine="orchestrationState.EnterPolicyPausedState";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enterpolicypausedstate /*String*/ (null);
-RDebugUtils.currentLine=5832709;
- //BA.debugLineNum = 5832709;BA.debugLine="RefreshConnectionIndicatorState";
-__ref._refreshconnectionindicatorstate /*String*/ (null);
-RDebugUtils.currentLine=5832710;
- //BA.debugLineNum = 5832710;BA.debugLine="ClearPlaybackState";
-__ref._clearplaybackstate /*String*/ (null);
-RDebugUtils.currentLine=5832711;
- //BA.debugLineNum = 5832711;BA.debugLine="HidePin";
-__ref._hidepin /*String*/ (null);
-RDebugUtils.currentLine=5832712;
- //BA.debugLineNum = 5832712;BA.debugLine="SetStopIcon";
-__ref._setstopicon /*String*/ (null);
-RDebugUtils.currentLine=5832713;
- //BA.debugLineNum = 5832713;BA.debugLine="ShowMessage(reason)";
-__ref._showmessage /*String*/ (null,_reason);
-RDebugUtils.currentLine=5832714;
- //BA.debugLineNum = 5832714;BA.debugLine="End Sub";
-return "";
-}
-public String  _scheduleretry(b4j.example.b4xmainpage __ref,String _mode,int _delayms) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "scheduleretry", false))
-	 {return ((String) Debug.delegate(ba, "scheduleretry", new Object[] {_mode,_delayms}));}
-RDebugUtils.currentLine=10354688;
- //BA.debugLineNum = 10354688;BA.debugLine="Private Sub ScheduleRetry(mode As String, delayMs";
-RDebugUtils.currentLine=10354689;
- //BA.debugLineNum = 10354689;BA.debugLine="ClearRetryTimer";
-__ref._clearretrytimer /*String*/ (null);
-RDebugUtils.currentLine=10354690;
- //BA.debugLineNum = 10354690;BA.debugLine="lastRetryMode = mode";
-__ref._lastretrymode /*String*/  = _mode;
-RDebugUtils.currentLine=10354691;
- //BA.debugLineNum = 10354691;BA.debugLine="retryTimer.Interval = ResolveRetryDelay(mode, del";
-__ref._retrytimer /*anywheresoftware.b4a.objects.Timer*/ .setInterval((long) (__ref._resolveretrydelay /*int*/ (null,_mode,_delayms)));
-RDebugUtils.currentLine=10354692;
- //BA.debugLineNum = 10354692;BA.debugLine="If orchestrationState.IsStarted = False Or orches";
-if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ ==__c.False || __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstoppedbyuser /*boolean*/ ) { 
-RDebugUtils.currentLine=10354693;
- //BA.debugLineNum = 10354693;BA.debugLine="Return";
-if (true) return "";
- };
-RDebugUtils.currentLine=10354695;
- //BA.debugLineNum = 10354695;BA.debugLine="If dataPolicyState.IsPlaybackPausedByPolicy And m";
-if (__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._isplaybackpausedbypolicy /*boolean*/  && (_mode).equals("blocked") == false && (_mode).equals("audio_device") == false) { 
-RDebugUtils.currentLine=10354696;
- //BA.debugLineNum = 10354696;BA.debugLine="Return";
-if (true) return "";
- };
-RDebugUtils.currentLine=10354698;
- //BA.debugLineNum = 10354698;BA.debugLine="TraceWarn(\"network\", \"переход в retry\", \"mode=\" &";
-__ref._tracewarn /*String*/ (null,"network","переход в retry","mode="+_mode+" delaySec="+BA.NumberToString(__c.Floor(__ref._retrytimer /*anywheresoftware.b4a.objects.Timer*/ .getInterval()/(double)1000)));
-RDebugUtils.currentLine=10354699;
- //BA.debugLineNum = 10354699;BA.debugLine="WriteHealthSnapshot(\"retry\")";
-__ref._writehealthsnapshot /*String*/ (null,"retry");
-RDebugUtils.currentLine=10354700;
- //BA.debugLineNum = 10354700;BA.debugLine="retryTimer.Enabled = True";
-__ref._retrytimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
-RDebugUtils.currentLine=10354701;
- //BA.debugLineNum = 10354701;BA.debugLine="End Sub";
-return "";
-}
-public String  _refreshconnectionindicatorstate(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "refreshconnectionindicatorstate", false))
-	 {return ((String) Debug.delegate(ba, "refreshconnectionindicatorstate", null));}
-RDebugUtils.currentLine=15597568;
- //BA.debugLineNum = 15597568;BA.debugLine="Private Sub RefreshConnectionIndicatorState";
-RDebugUtils.currentLine=15597569;
- //BA.debugLineNum = 15597569;BA.debugLine="If dataPolicyState.IsLocalPlaybackMode Then";
-if (__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._islocalplaybackmode /*boolean*/ ) { 
-RDebugUtils.currentLine=15597570;
- //BA.debugLineNum = 15597570;BA.debugLine="If retryFallbackState.IsMediaPathDegraded Then";
-if (__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._ismediapathdegraded /*boolean*/ ) { 
-RDebugUtils.currentLine=15597571;
- //BA.debugLineNum = 15597571;BA.debugLine="UpdateConnectionIndicator(\"degraded\")";
-__ref._updateconnectionindicator /*String*/ (null,"degraded");
- }else {
-RDebugUtils.currentLine=15597573;
- //BA.debugLineNum = 15597573;BA.debugLine="UpdateConnectionIndicator(\"offline\")";
-__ref._updateconnectionindicator /*String*/ (null,"offline");
- };
-RDebugUtils.currentLine=15597575;
- //BA.debugLineNum = 15597575;BA.debugLine="Return";
-if (true) return "";
- };
-RDebugUtils.currentLine=15597577;
- //BA.debugLineNum = 15597577;BA.debugLine="If dataPolicyState.IsPlaybackPausedByPolicy Then";
-if (__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._isplaybackpausedbypolicy /*boolean*/ ) { 
-RDebugUtils.currentLine=15597578;
- //BA.debugLineNum = 15597578;BA.debugLine="UpdateConnectionIndicator(\"server\")";
-__ref._updateconnectionindicator /*String*/ (null,"server");
-RDebugUtils.currentLine=15597579;
- //BA.debugLineNum = 15597579;BA.debugLine="Return";
-if (true) return "";
- };
-RDebugUtils.currentLine=15597581;
- //BA.debugLineNum = 15597581;BA.debugLine="If retryFallbackState.IsMediaPathDegraded Then";
-if (__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._ismediapathdegraded /*boolean*/ ) { 
-RDebugUtils.currentLine=15597582;
- //BA.debugLineNum = 15597582;BA.debugLine="UpdateConnectionIndicator(\"degraded\")";
-__ref._updateconnectionindicator /*String*/ (null,"degraded");
-RDebugUtils.currentLine=15597583;
- //BA.debugLineNum = 15597583;BA.debugLine="Return";
-if (true) return "";
- };
-RDebugUtils.currentLine=15597585;
- //BA.debugLineNum = 15597585;BA.debugLine="UpdateConnectionIndicator(\"online\")";
-__ref._updateconnectionindicator /*String*/ (null,"online");
-RDebugUtils.currentLine=15597586;
- //BA.debugLineNum = 15597586;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _executeplaybacktickdecision(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _decision) throws Exception{
@@ -12189,22 +10893,25 @@ RDebugUtils.currentLine=53215234;
  //BA.debugLineNum = 53215234;BA.debugLine="isStartupSequenceInProgress = False";
 __ref._isstartupsequenceinprogress /*boolean*/  = __c.False;
 RDebugUtils.currentLine=53215235;
- //BA.debugLineNum = 53215235;BA.debugLine="cacheAuditTimer.Interval = CACHE_AUDIT_START_DELA";
-__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setInterval((long) (__ref._cache_audit_start_delay_ms /*int*/ ));
+ //BA.debugLineNum = 53215235;BA.debugLine="stateStore.SetStartupSequenceInProgress(False)";
+__ref._statestore /*b4j.example.playerstatestore*/ ._setstartupsequenceinprogress /*String*/ (null,__c.False);
 RDebugUtils.currentLine=53215236;
- //BA.debugLineNum = 53215236;BA.debugLine="cacheAuditTimer.Enabled = True";
-__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
+ //BA.debugLineNum = 53215236;BA.debugLine="cacheAuditTimer.Interval = CACHE_AUDIT_START_DELA";
+__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setInterval((long) (__ref._cache_audit_start_delay_ms /*int*/ ));
 RDebugUtils.currentLine=53215237;
- //BA.debugLineNum = 53215237;BA.debugLine="TraceInfo(\"player\", \"старт завершен\", \"stage=\" &";
-__ref._traceinfo /*String*/ (null,"player","старт завершен","stage="+__ref._playbackflowstate /*String*/ );
+ //BA.debugLineNum = 53215237;BA.debugLine="cacheAuditTimer.Enabled = True";
+__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
 RDebugUtils.currentLine=53215238;
- //BA.debugLineNum = 53215238;BA.debugLine="RunDeferredPostStartTasksAsync";
-__ref._rundeferredpoststarttasksasync /*String*/ (null);
+ //BA.debugLineNum = 53215238;BA.debugLine="TraceInfo(\"player\", \"старт завершен\", \"stage=\" &";
+__ref._traceinfo /*String*/ (null,"player","старт завершен","stage="+__ref._playbackflowstate /*String*/ );
 RDebugUtils.currentLine=53215239;
- //BA.debugLineNum = 53215239;BA.debugLine="WriteHealthSnapshot(\"старт\")";
-__ref._writehealthsnapshot /*String*/ (null,"старт");
+ //BA.debugLineNum = 53215239;BA.debugLine="RunDeferredPostStartTasksAsync";
+__ref._rundeferredpoststarttasksasync /*String*/ (null);
 RDebugUtils.currentLine=53215240;
- //BA.debugLineNum = 53215240;BA.debugLine="End Sub";
+ //BA.debugLineNum = 53215240;BA.debugLine="WriteHealthSnapshot(\"старт\")";
+__ref._writehealthsnapshot /*String*/ (null,"старт");
+RDebugUtils.currentLine=53215241;
+ //BA.debugLineNum = 53215241;BA.debugLine="End Sub";
 return "";
 }
 public String  _rundeferredpoststarttasksasync(b4j.example.b4xmainpage __ref) throws Exception{
@@ -12418,8 +11125,8 @@ case 24:
 this.state = 25;
 ;
 RDebugUtils.currentLine=53608470;
- //BA.debugLineNum = 53608470;BA.debugLine="Dim retryAfter As Int = retryFallbackState.Con";
-_retryafter = __ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._consumedispatchretryafter /*int*/ (null);
+ //BA.debugLineNum = 53608470;BA.debugLine="Dim retryAfter As Int = stateStore.ConsumeDisp";
+_retryafter = __ref._statestore /*b4j.example.playerstatestore*/ ._consumedispatchretryafter /*int*/ (null);
 RDebugUtils.currentLine=53608471;
  //BA.debugLineNum = 53608471;BA.debugLine="Wait For (PlayQueueItem(nextObject, retryAfter";
 parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "facade_dispatchplaybackadvancecore"), __ref._playqueueitem /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_nextobject,_retryafter));
@@ -12954,8 +11661,8 @@ case 36:
 //C
 this.state = 37;
 RDebugUtils.currentLine=7995442;
- //BA.debugLineNum = 7995442;BA.debugLine="SwitchToLocalPlayback(retryFallbackState.IsMed";
-__ref._switchtolocalplayback /*String*/ (null,__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._ismediapathdegraded /*boolean*/ ,"missing_local_media");
+ //BA.debugLineNum = 7995442;BA.debugLine="SwitchToLocalPlayback(stateStore.IsMediaPathDe";
+__ref._switchtolocalplayback /*String*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._ismediapathdegraded /*boolean*/ (null),"missing_local_media");
  if (true) break;
 
 case 37:
@@ -13175,8 +11882,8 @@ this.__ref = parent;
 }
 b4j.example.b4xmainpage __ref;
 b4j.example.b4xmainpage parent;
-boolean _resolverready = false;
-boolean _queueprepared = false;
+anywheresoftware.b4a.objects.collections.Map _localplanresult = null;
+String _localplanstatus = "";
 String _idletext = "";
 anywheresoftware.b4a.objects.collections.Map _result = null;
 boolean _unused = false;
@@ -13211,7 +11918,7 @@ case 3:
 this.state = 4;
 RDebugUtils.currentLine=7405576;
  //BA.debugLineNum = 7405576;BA.debugLine="PausePlaybackByPolicy(ResolvePlaybackBlockReason";
-__ref._pauseplaybackbypolicy /*String*/ (null,__ref._resolveplaybackblockreason /*String*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ),"server");
+__ref._pauseplaybackbypolicy /*String*/ (null,__ref._resolveplaybackblockreason /*String*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null)),"server");
 RDebugUtils.currentLine=7405577;
  //BA.debugLineNum = 7405577;BA.debugLine="Return False";
 if (true) {
@@ -13223,7 +11930,7 @@ RDebugUtils.currentLine=7405579;
 
 case 4:
 //if
-this.state = 25;
+this.state = 19;
 if (__ref._use_data_playback_resolver /*boolean*/ ) { 
 this.state = 6;
 }if (true) break;
@@ -13232,19 +11939,26 @@ case 6:
 //C
 this.state = 7;
 RDebugUtils.currentLine=7405580;
- //BA.debugLineNum = 7405580;BA.debugLine="retryFallbackState.ClearDispatchRetryAfter";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._cleardispatchretryafter /*String*/ (null);
-RDebugUtils.currentLine=7405581;
- //BA.debugLineNum = 7405581;BA.debugLine="PreScanUpcomingAdMinute(True)";
+ //BA.debugLineNum = 7405580;BA.debugLine="PreScanUpcomingAdMinute(True)";
 __ref._prescanupcomingadminute /*String*/ (null,parent.__c.True);
+RDebugUtils.currentLine=7405581;
+ //BA.debugLineNum = 7405581;BA.debugLine="Wait For (stateStore.TryPopulateQueueFromLocalPl";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "populateplaybackqueue"), __ref._statestore /*b4j.example.playerstatestore*/ ._trypopulatequeuefromlocalplan /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,(int) (1)));
+this.state = 33;
+return;
+case 33:
+//C
+this.state = 7;
+_localplanresult = (anywheresoftware.b4a.objects.collections.Map) result[1];
+;
 RDebugUtils.currentLine=7405582;
- //BA.debugLineNum = 7405582;BA.debugLine="If CanUseDataPlaybackResolver = False Then";
+ //BA.debugLineNum = 7405582;BA.debugLine="If localPlanResult.GetDefault(\"success\", False)";
 if (true) break;
 
 case 7:
 //if
-this.state = 14;
-if (__ref._canusedataplaybackresolver /*boolean*/ (null)==parent.__c.False) { 
+this.state = 18;
+if ((_localplanresult.GetDefault((Object)("success"),(Object)(parent.__c.False))).equals((Object)(parent.__c.False))) { 
 this.state = 9;
 }if (true) break;
 
@@ -13252,32 +11966,25 @@ case 9:
 //C
 this.state = 10;
 RDebugUtils.currentLine=7405583;
- //BA.debugLineNum = 7405583;BA.debugLine="Wait For (EnsureDataPlaybackReady) Complete (re";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "populateplaybackqueue"), __ref._ensuredataplaybackready /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 39;
-return;
-case 39:
-//C
-this.state = 10;
-_resolverready = (boolean) result[1];
-;
-RDebugUtils.currentLine=7405584;
- //BA.debugLineNum = 7405584;BA.debugLine="If resolverReady = False Then";
+ //BA.debugLineNum = 7405583;BA.debugLine="Dim localPlanStatus As String = localPlanResult";
+_localplanstatus = BA.ObjectToString(_localplanresult.GetDefault((Object)("status"),(Object)("")));
+RDebugUtils.currentLine=7405587;
+ //BA.debugLineNum = 7405587;BA.debugLine="TraceLog(\"очередь запрос ошибка reason=\" & loca";
+__ref._tracelog /*String*/ (null,"очередь запрос ошибка reason="+_localplanstatus);
+RDebugUtils.currentLine=7405588;
+ //BA.debugLineNum = 7405588;BA.debugLine="If localPlanStatus = \"resolver_unavailable\" The";
 if (true) break;
 
 case 10:
 //if
 this.state = 13;
-if (_resolverready==parent.__c.False) { 
+if ((_localplanstatus).equals("resolver_unavailable")) { 
 this.state = 12;
 }if (true) break;
 
 case 12:
 //C
 this.state = 13;
-RDebugUtils.currentLine=7405588;
- //BA.debugLineNum = 7405588;BA.debugLine="TraceLog(\"очередь запрос ошибка reason=resolve";
-__ref._tracelog /*String*/ (null,"очередь запрос ошибка reason=resolver_unavailable");
 RDebugUtils.currentLine=7405589;
  //BA.debugLineNum = 7405589;BA.debugLine="HandleTemporaryState(\"server\", \"\")";
 __ref._handletemporarystate /*String*/ (null,"server","");
@@ -13291,215 +11998,175 @@ case 13:
 //C
 this.state = 14;
 ;
- if (true) break;
-
-case 14:
-//C
-this.state = 15;
-;
+RDebugUtils.currentLine=7405592;
+ //BA.debugLineNum = 7405592;BA.debugLine="Dim idleText As String = localPlanResult.GetDef";
+_idletext = BA.ObjectToString(_localplanresult.GetDefault((Object)("idle_text"),(Object)("")));
 RDebugUtils.currentLine=7405593;
- //BA.debugLineNum = 7405593;BA.debugLine="Wait For (EnsureDataPlaybackQueue(1)) Complete (";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "populateplaybackqueue"), __ref._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,(int) (1)));
-this.state = 40;
-return;
-case 40:
-//C
-this.state = 15;
-_queueprepared = (boolean) result[1];
-;
-RDebugUtils.currentLine=7405594;
- //BA.debugLineNum = 7405594;BA.debugLine="If queuePrepared = False Then";
+ //BA.debugLineNum = 7405593;BA.debugLine="If idleText <> \"\" Then";
 if (true) break;
 
-case 15:
+case 14:
 //if
-this.state = 24;
-if (_queueprepared==parent.__c.False) { 
 this.state = 17;
-}else {
-this.state = 23;
+if ((_idletext).equals("") == false) { 
+this.state = 16;
 }if (true) break;
+
+case 16:
+//C
+this.state = 17;
+RDebugUtils.currentLine=7405594;
+ //BA.debugLineNum = 7405594;BA.debugLine="HandleTemporaryState(\"server\", idleText)";
+__ref._handletemporarystate /*String*/ (null,"server",_idletext);
+RDebugUtils.currentLine=7405595;
+ //BA.debugLineNum = 7405595;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+ if (true) break;
 
 case 17:
 //C
 this.state = 18;
+;
+RDebugUtils.currentLine=7405597;
+ //BA.debugLineNum = 7405597;BA.debugLine="HandleTemporaryState(\"offline\", \"Нужен интернет";
+__ref._handletemporarystate /*String*/ (null,"offline","Нужен интернет");
 RDebugUtils.currentLine=7405598;
- //BA.debugLineNum = 7405598;BA.debugLine="TraceLog(\"очередь запрос ошибка reason=resolver";
-__ref._tracelog /*String*/ (null,"очередь запрос ошибка reason=resolver_queue_empty");
-RDebugUtils.currentLine=7405599;
- //BA.debugLineNum = 7405599;BA.debugLine="Dim idleText As String = ResolveIdleUntilMessag";
-_idletext = __ref._resolveidleuntilmessage /*String*/ (null);
-RDebugUtils.currentLine=7405600;
- //BA.debugLineNum = 7405600;BA.debugLine="If idleText <> \"\" Then";
-if (true) break;
+ //BA.debugLineNum = 7405598;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+ if (true) break;
 
 case 18:
-//if
-this.state = 21;
-if ((_idletext).equals("") == false) { 
-this.state = 20;
-}if (true) break;
-
-case 20:
 //C
-this.state = 21;
-RDebugUtils.currentLine=7405601;
- //BA.debugLineNum = 7405601;BA.debugLine="HandleTemporaryState(\"server\", idleText)";
-__ref._handletemporarystate /*String*/ (null,"server",_idletext);
-RDebugUtils.currentLine=7405602;
- //BA.debugLineNum = 7405602;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-
-case 21:
-//C
-this.state = 24;
+this.state = 19;
 ;
-RDebugUtils.currentLine=7405604;
- //BA.debugLineNum = 7405604;BA.debugLine="HandleTemporaryState(\"offline\", \"Нужен интернет";
-__ref._handletemporarystate /*String*/ (null,"offline","Нужен интернет");
-RDebugUtils.currentLine=7405605;
- //BA.debugLineNum = 7405605;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-
-case 23:
-//C
-this.state = 24;
-RDebugUtils.currentLine=7405607;
- //BA.debugLineNum = 7405607;BA.debugLine="SyncExactBreakState";
+RDebugUtils.currentLine=7405600;
+ //BA.debugLineNum = 7405600;BA.debugLine="SyncExactBreakState";
 __ref._syncexactbreakstate /*String*/ (null);
-RDebugUtils.currentLine=7405611;
- //BA.debugLineNum = 7405611;BA.debugLine="Return True";
+RDebugUtils.currentLine=7405604;
+ //BA.debugLineNum = 7405604;BA.debugLine="Return True";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
  if (true) break;
 
-case 24:
+case 19:
 //C
-this.state = 25;
+this.state = 20;
 ;
+RDebugUtils.currentLine=7405606;
+ //BA.debugLineNum = 7405606;BA.debugLine="Wait For (FetchNext) Complete (result As Map)";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "populateplaybackqueue"), __ref._fetchnext /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
+this.state = 34;
+return;
+case 34:
+//C
+this.state = 20;
+_result = (anywheresoftware.b4a.objects.collections.Map) result[1];
+;
+RDebugUtils.currentLine=7405607;
+ //BA.debugLineNum = 7405607;BA.debugLine="If result.GetDefault(\"Success\", False) = False Th";
+if (true) break;
+
+case 20:
+//if
+this.state = 23;
+if ((_result.GetDefault((Object)("Success"),(Object)(parent.__c.False))).equals((Object)(parent.__c.False))) { 
+this.state = 22;
+}if (true) break;
+
+case 22:
+//C
+this.state = 23;
+RDebugUtils.currentLine=7405611;
+ //BA.debugLineNum = 7405611;BA.debugLine="Wait For (HandleFetchFailure(result)) Complete (";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "populateplaybackqueue"), __ref._handlefetchfailure /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_result));
+this.state = 35;
+return;
+case 35:
+//C
+this.state = 23;
+_unused = (boolean) result[1];
+;
+RDebugUtils.currentLine=7405612;
+ //BA.debugLineNum = 7405612;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
  if (true) break;
+;
+RDebugUtils.currentLine=7405614;
+ //BA.debugLineNum = 7405614;BA.debugLine="If orchestrationState.IsStarted = False Or orches";
+
+case 23:
+//if
+this.state = 28;
+if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ ==parent.__c.False || __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstoppedbyuser /*boolean*/ ) { 
+this.state = 25;
+;}if (true) break;
 
 case 25:
 //C
-this.state = 26;
-;
-RDebugUtils.currentLine=7405614;
- //BA.debugLineNum = 7405614;BA.debugLine="Wait For (FetchNext) Complete (result As Map)";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "populateplaybackqueue"), __ref._fetchnext /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 41;
-return;
-case 41:
-//C
-this.state = 26;
-_result = (anywheresoftware.b4a.objects.collections.Map) result[1];
-;
-RDebugUtils.currentLine=7405615;
- //BA.debugLineNum = 7405615;BA.debugLine="If result.GetDefault(\"Success\", False) = False Th";
-if (true) break;
-
-case 26:
-//if
-this.state = 29;
-if ((_result.GetDefault((Object)("Success"),(Object)(parent.__c.False))).equals((Object)(parent.__c.False))) { 
 this.state = 28;
-}if (true) break;
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+if (true) break;
 
 case 28:
 //C
 this.state = 29;
-RDebugUtils.currentLine=7405619;
- //BA.debugLineNum = 7405619;BA.debugLine="Wait For (HandleFetchFailure(result)) Complete (";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "populateplaybackqueue"), __ref._handlefetchfailure /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_result));
-this.state = 42;
-return;
-case 42:
-//C
-this.state = 29;
-_unused = (boolean) result[1];
 ;
-RDebugUtils.currentLine=7405620;
- //BA.debugLineNum = 7405620;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-;
-RDebugUtils.currentLine=7405622;
- //BA.debugLineNum = 7405622;BA.debugLine="If orchestrationState.IsStarted = False Or orches";
+RDebugUtils.currentLine=7405615;
+ //BA.debugLineNum = 7405615;BA.debugLine="ResetRetryDelay";
+__ref._resetretrydelay /*String*/ (null);
+RDebugUtils.currentLine=7405616;
+ //BA.debugLineNum = 7405616;BA.debugLine="Dim queue As List = responseAdapter.NormalizeQueu";
+_queue = new anywheresoftware.b4a.objects.collections.List();
+_queue = __ref._responseadapter /*b4j.example.playbackresponseadapter*/ ._normalizequeueresponse /*anywheresoftware.b4a.objects.collections.List*/ (null,_result.Get((Object)("Data")));
+RDebugUtils.currentLine=7405617;
+ //BA.debugLineNum = 7405617;BA.debugLine="If queue.IsInitialized = False Or queue.Size = 0";
+if (true) break;
 
 case 29:
 //if
-this.state = 34;
-if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ ==parent.__c.False || __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstoppedbyuser /*boolean*/ ) { 
+this.state = 32;
+if (_queue.IsInitialized()==parent.__c.False || _queue.getSize()==0) { 
 this.state = 31;
-;}if (true) break;
+}if (true) break;
 
 case 31:
 //C
-this.state = 34;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 34:
-//C
-this.state = 35;
-;
-RDebugUtils.currentLine=7405623;
- //BA.debugLineNum = 7405623;BA.debugLine="ResetRetryDelay";
-__ref._resetretrydelay /*String*/ (null);
-RDebugUtils.currentLine=7405624;
- //BA.debugLineNum = 7405624;BA.debugLine="Dim queue As List = responseAdapter.NormalizeQueu";
-_queue = new anywheresoftware.b4a.objects.collections.List();
-_queue = __ref._responseadapter /*b4j.example.playbackresponseadapter*/ ._normalizequeueresponse /*anywheresoftware.b4a.objects.collections.List*/ (null,_result.Get((Object)("Data")));
-RDebugUtils.currentLine=7405625;
- //BA.debugLineNum = 7405625;BA.debugLine="If queue.IsInitialized = False Or queue.Size = 0";
-if (true) break;
-
-case 35:
-//if
-this.state = 38;
-if (_queue.IsInitialized()==parent.__c.False || _queue.getSize()==0) { 
-this.state = 37;
-}if (true) break;
-
-case 37:
-//C
-this.state = 38;
-RDebugUtils.currentLine=7405629;
- //BA.debugLineNum = 7405629;BA.debugLine="HandleTemporaryState(\"server\", \"\")";
+this.state = 32;
+RDebugUtils.currentLine=7405621;
+ //BA.debugLineNum = 7405621;BA.debugLine="HandleTemporaryState(\"server\", \"\")";
 __ref._handletemporarystate /*String*/ (null,"server","");
-RDebugUtils.currentLine=7405630;
- //BA.debugLineNum = 7405630;BA.debugLine="Return False";
+RDebugUtils.currentLine=7405622;
+ //BA.debugLineNum = 7405622;BA.debugLine="Return False";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
  if (true) break;
 
-case 38:
+case 32:
 //C
 this.state = -1;
 ;
-RDebugUtils.currentLine=7405632;
- //BA.debugLineNum = 7405632;BA.debugLine="playQueue = queue";
+RDebugUtils.currentLine=7405624;
+ //BA.debugLineNum = 7405624;BA.debugLine="playQueue = queue";
 __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/  = _queue;
-RDebugUtils.currentLine=7405633;
- //BA.debugLineNum = 7405633;BA.debugLine="SyncExactBreakState";
+RDebugUtils.currentLine=7405625;
+ //BA.debugLineNum = 7405625;BA.debugLine="SyncExactBreakState";
 __ref._syncexactbreakstate /*String*/ (null);
-RDebugUtils.currentLine=7405637;
- //BA.debugLineNum = 7405637;BA.debugLine="Dim retryAfter As Int = responseAdapter.Normalize";
+RDebugUtils.currentLine=7405629;
+ //BA.debugLineNum = 7405629;BA.debugLine="Dim retryAfter As Int = responseAdapter.Normalize";
 _retryafter = __ref._responseadapter /*b4j.example.playbackresponseadapter*/ ._normalizeretryafter /*int*/ (null,_result.Get((Object)("Data")));
-RDebugUtils.currentLine=7405638;
- //BA.debugLineNum = 7405638;BA.debugLine="retryFallbackState.SetDispatchRetryAfter(retryAft";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._setdispatchretryafter /*String*/ (null,_retryafter);
-RDebugUtils.currentLine=7405639;
- //BA.debugLineNum = 7405639;BA.debugLine="Return True";
+RDebugUtils.currentLine=7405630;
+ //BA.debugLineNum = 7405630;BA.debugLine="stateStore.SetDispatchRetryAfter(retryAfter)";
+__ref._statestore /*b4j.example.playerstatestore*/ ._setdispatchretryafter /*String*/ (null,_retryafter);
+RDebugUtils.currentLine=7405631;
+ //BA.debugLineNum = 7405631;BA.debugLine="Return True";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
-RDebugUtils.currentLine=7405640;
- //BA.debugLineNum = 7405640;BA.debugLine="End Sub";
+RDebugUtils.currentLine=7405632;
+ //BA.debugLineNum = 7405632;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -13747,21 +12414,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "facade_pauseplaybackcore", false))
 	 {return ((String) Debug.delegate(ba, "facade_pauseplaybackcore", new Object[] {_reason,_connectionmode}));}
-String _safereason = "";
 RDebugUtils.currentLine=53673984;
  //BA.debugLineNum = 53673984;BA.debugLine="Public Sub Facade_PausePlaybackCore(reason As Stri";
 RDebugUtils.currentLine=53673985;
- //BA.debugLineNum = 53673985;BA.debugLine="Dim safeReason As String = reason";
-_safereason = _reason;
+ //BA.debugLineNum = 53673985;BA.debugLine="playerDataCoordinator.PausePlaybackByPolicy(reaso";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._pauseplaybackbypolicy /*String*/ (null,_reason,_connectionmode);
 RDebugUtils.currentLine=53673986;
- //BA.debugLineNum = 53673986;BA.debugLine="If safeReason = \"\" Then safeReason = MessageValue";
-if ((_safereason).equals("")) { 
-_safereason = __ref._messagevalue /*String*/ (null,"playback_paused");};
-RDebugUtils.currentLine=53673987;
- //BA.debugLineNum = 53673987;BA.debugLine="EnterPolicyPauseState(safeReason, connectionMode)";
-__ref._enterpolicypausestate /*String*/ (null,_safereason,_connectionmode);
-RDebugUtils.currentLine=53673988;
- //BA.debugLineNum = 53673988;BA.debugLine="End Sub";
+ //BA.debugLineNum = 53673986;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _facade_preparenextplayablecore(b4j.example.b4xmainpage __ref) throws Exception{
@@ -14127,106 +12786,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "restorestoppedreservequeue", false))
 	 {return ((Boolean) Debug.delegate(ba, "restorestoppedreservequeue", null));}
-String _currentsignature = "";
-anywheresoftware.b4a.objects.collections.List _restoredqueue = null;
-Object _itemobject = null;
-anywheresoftware.b4a.objects.collections.Map _item = null;
-int _restoredcount = 0;
-Object _restoredobject = null;
 RDebugUtils.currentLine=7274496;
  //BA.debugLineNum = 7274496;BA.debugLine="Private Sub RestoreStoppedReserveQueue As Boolean";
 RDebugUtils.currentLine=7274497;
- //BA.debugLineNum = 7274497;BA.debugLine="If queueState.StoppedReserveQueue.IsInitialized =";
-if (__ref._queuestate /*b4j.example.playbackqueuestate*/ ._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ .IsInitialized()==__c.False || __ref._queuestate /*b4j.example.playbackqueuestate*/ ._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()==0) { 
-if (true) return __c.False;};
+ //BA.debugLineNum = 7274497;BA.debugLine="Return stateStore.RestoreStoppedReserveQueue(play";
+if (true) return __ref._statestore /*b4j.example.playerstatestore*/ ._restorestoppedreservequeue /*boolean*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ );
 RDebugUtils.currentLine=7274498;
- //BA.debugLineNum = 7274498;BA.debugLine="Dim currentSignature As String = BuildQueueSignat";
-_currentsignature = __ref._buildqueuesignature /*String*/ (null);
-RDebugUtils.currentLine=7274499;
- //BA.debugLineNum = 7274499;BA.debugLine="If currentSignature = \"\" Then Return False";
-if ((_currentsignature).equals("")) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=7274500;
- //BA.debugLineNum = 7274500;BA.debugLine="If queueState.CanRestoreStoppedReserve(currentSig";
-if (__ref._queuestate /*b4j.example.playbackqueuestate*/ ._canrestorestoppedreserve /*boolean*/ (null,_currentsignature)==__c.False) { 
-RDebugUtils.currentLine=7274501;
- //BA.debugLineNum = 7274501;BA.debugLine="queueState.ClearStoppedReserve";
-__ref._queuestate /*b4j.example.playbackqueuestate*/ ._clearstoppedreserve /*String*/ (null);
-RDebugUtils.currentLine=7274502;
- //BA.debugLineNum = 7274502;BA.debugLine="Return False";
-if (true) return __c.False;
- };
-RDebugUtils.currentLine=7274504;
- //BA.debugLineNum = 7274504;BA.debugLine="Dim restoredQueue As List";
-_restoredqueue = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=7274505;
- //BA.debugLineNum = 7274505;BA.debugLine="restoredQueue.Initialize";
-_restoredqueue.Initialize();
-RDebugUtils.currentLine=7274506;
- //BA.debugLineNum = 7274506;BA.debugLine="For Each itemObject As Object In queueState.Stopp";
-{
-final anywheresoftware.b4a.BA.IterableList group10 = __ref._queuestate /*b4j.example.playbackqueuestate*/ ._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ ;
-final int groupLen10 = group10.getSize()
-;int index10 = 0;
-;
-for (; index10 < groupLen10;index10++){
-_itemobject = group10.Get(index10);
-RDebugUtils.currentLine=7274507;
- //BA.debugLineNum = 7274507;BA.debugLine="If itemObject Is Map Then";
-if (_itemobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=7274508;
- //BA.debugLineNum = 7274508;BA.debugLine="Dim item As Map = itemObject";
-_item = new anywheresoftware.b4a.objects.collections.Map();
-_item = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_itemobject));
-RDebugUtils.currentLine=7274509;
- //BA.debugLineNum = 7274509;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
-if (__ref._isvaliddatatrackitem /*boolean*/ (null,_item)==__c.False) { 
-if (true) continue;};
-RDebugUtils.currentLine=7274510;
- //BA.debugLineNum = 7274510;BA.debugLine="If mediaCacheService.IsTrackCached(item.GetDefa";
-if (__ref._mediacacheservice /*b4j.example.mediacache*/ ._istrackcached /*boolean*/ (null,BA.ObjectToString(_item.GetDefault((Object)("id"),(Object)(""))))==__c.False) { 
-if (true) continue;};
-RDebugUtils.currentLine=7274511;
- //BA.debugLineNum = 7274511;BA.debugLine="restoredQueue.Add(CloneMap(item))";
-_restoredqueue.Add((Object)(__ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_item).getObject()));
- };
- }
-};
-RDebugUtils.currentLine=7274514;
- //BA.debugLineNum = 7274514;BA.debugLine="queueState.ClearStoppedReserve";
-__ref._queuestate /*b4j.example.playbackqueuestate*/ ._clearstoppedreserve /*String*/ (null);
-RDebugUtils.currentLine=7274515;
- //BA.debugLineNum = 7274515;BA.debugLine="playQueue.Clear";
-__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .Clear();
-RDebugUtils.currentLine=7274516;
- //BA.debugLineNum = 7274516;BA.debugLine="Dim restoredCount As Int = 0";
-_restoredcount = (int) (0);
-RDebugUtils.currentLine=7274517;
- //BA.debugLineNum = 7274517;BA.debugLine="For Each restoredObject As Object In restoredQueu";
-{
-final anywheresoftware.b4a.BA.IterableList group21 = _restoredqueue;
-final int groupLen21 = group21.getSize()
-;int index21 = 0;
-;
-for (; index21 < groupLen21;index21++){
-_restoredobject = group21.Get(index21);
-RDebugUtils.currentLine=7274518;
- //BA.debugLineNum = 7274518;BA.debugLine="playQueue.Add(restoredObject)";
-__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .Add(_restoredobject);
-RDebugUtils.currentLine=7274519;
- //BA.debugLineNum = 7274519;BA.debugLine="restoredCount = restoredCount + 1";
-_restoredcount = (int) (_restoredcount+1);
- }
-};
-RDebugUtils.currentLine=7274521;
- //BA.debugLineNum = 7274521;BA.debugLine="If restoredCount = 0 Then Return False";
-if (_restoredcount==0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=7274522;
- //BA.debugLineNum = 7274522;BA.debugLine="Return True";
-if (true) return __c.True;
-RDebugUtils.currentLine=7274523;
- //BA.debugLineNum = 7274523;BA.debugLine="End Sub";
+ //BA.debugLineNum = 7274498;BA.debugLine="End Sub";
 return false;
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _tryseedfirsttrackfromcache(b4j.example.b4xmainpage __ref) throws Exception{
@@ -14245,19 +12811,7 @@ this.__ref = parent;
 }
 b4j.example.b4xmainpage __ref;
 b4j.example.b4xmainpage parent;
-boolean _emptyresult = false;
-anywheresoftware.b4a.objects.collections.Map _currentslot = null;
-anywheresoftware.b4a.objects.collections.List _playlists = null;
-anywheresoftware.b4a.objects.collections.Map _workingcursors = null;
 boolean _seeded = false;
-int _attempt = 0;
-anywheresoftware.b4a.objects.collections.Map _playlistdescriptor = null;
-String _playlistid = "";
-anywheresoftware.b4a.objects.collections.Map _playlistdata = null;
-anywheresoftware.b4a.objects.collections.Map _cachedtrack = null;
-anywheresoftware.b4a.objects.collections.Map _queueitem = null;
-int step10;
-int limit10;
 
 @Override
 public void resume(BA ba, Object[] result) throws Exception{
@@ -14272,10 +12826,7 @@ case 0:
 //C
 this.state = 1;
 RDebugUtils.currentLine=60882945;
- //BA.debugLineNum = 60882945;BA.debugLine="Dim emptyResult As Boolean = False";
-_emptyresult = parent.__c.False;
-RDebugUtils.currentLine=60882946;
- //BA.debugLineNum = 60882946;BA.debugLine="If USE_DATA_PLAYBACK_RESOLVER = False Then Return";
+ //BA.debugLineNum = 60882945;BA.debugLine="If USE_DATA_PLAYBACK_RESOLVER = False Then Return";
 if (true) break;
 
 case 1:
@@ -14289,267 +12840,29 @@ case 3:
 //C
 this.state = 6;
 if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_emptyresult));return;};
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
 if (true) break;
 
 case 6:
 //C
-this.state = 7;
-;
-RDebugUtils.currentLine=60882947;
- //BA.debugLineNum = 60882947;BA.debugLine="If CanUseDataPlaybackResolver = False Then Return";
-if (true) break;
-
-case 7:
-//if
-this.state = 12;
-if (__ref._canusedataplaybackresolver /*boolean*/ (null)==parent.__c.False) { 
-this.state = 9;
-;}if (true) break;
-
-case 9:
-//C
-this.state = 12;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_emptyresult));return;};
-if (true) break;
-
-case 12:
-//C
-this.state = 13;
-;
-RDebugUtils.currentLine=60882948;
- //BA.debugLineNum = 60882948;BA.debugLine="Dim currentSlot As Map = dataResolver.ResolveData";
-_currentslot = new anywheresoftware.b4a.objects.collections.Map();
-_currentslot = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._resolvedataslotatticks /*anywheresoftware.b4a.objects.collections.Map*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ,__ref._effectivenowticks /*long*/ (null));
-RDebugUtils.currentLine=60882949;
- //BA.debugLineNum = 60882949;BA.debugLine="If currentSlot.IsInitialized = False Or currentSl";
-if (true) break;
-
-case 13:
-//if
-this.state = 18;
-if (_currentslot.IsInitialized()==parent.__c.False || _currentslot.getSize()==0) { 
-this.state = 15;
-;}if (true) break;
-
-case 15:
-//C
-this.state = 18;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_emptyresult));return;};
-if (true) break;
-
-case 18:
-//C
-this.state = 19;
-;
-RDebugUtils.currentLine=60882950;
- //BA.debugLineNum = 60882950;BA.debugLine="Dim playlists As List = currentSlot.GetDefault(\"p";
-_playlists = new anywheresoftware.b4a.objects.collections.List();
-_playlists = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_currentslot.GetDefault((Object)("playlists"),parent.__c.Null)));
-RDebugUtils.currentLine=60882951;
- //BA.debugLineNum = 60882951;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
-if (true) break;
-
-case 19:
-//if
-this.state = 24;
-if (_playlists.IsInitialized()==parent.__c.False || _playlists.getSize()==0) { 
-this.state = 21;
-;}if (true) break;
-
-case 21:
-//C
-this.state = 24;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_emptyresult));return;};
-if (true) break;
-
-case 24:
-//C
-this.state = 25;
-;
-RDebugUtils.currentLine=60882952;
- //BA.debugLineNum = 60882952;BA.debugLine="Dim workingCursors As Map = dataResolver.ClonePla";
-_workingcursors = new anywheresoftware.b4a.objects.collections.Map();
-_workingcursors = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._cloneplaylistcursors /*anywheresoftware.b4a.objects.collections.Map*/ (null);
-RDebugUtils.currentLine=60882953;
- //BA.debugLineNum = 60882953;BA.debugLine="Dim seeded As Boolean = False";
-_seeded = parent.__c.False;
-RDebugUtils.currentLine=60882954;
- //BA.debugLineNum = 60882954;BA.debugLine="For attempt = 0 To playlists.Size - 1";
-if (true) break;
-
-case 25:
-//for
-this.state = 52;
-step10 = 1;
-limit10 = (int) (_playlists.getSize()-1);
-_attempt = (int) (0) ;
-this.state = 53;
-if (true) break;
-
-case 53:
-//C
-this.state = 52;
-if ((step10 > 0 && _attempt <= limit10) || (step10 < 0 && _attempt >= limit10)) this.state = 27;
-if (true) break;
-
-case 54:
-//C
-this.state = 53;
-_attempt = ((int)(0 + _attempt + step10)) ;
-if (true) break;
-
-case 27:
-//C
-this.state = 28;
-RDebugUtils.currentLine=60882955;
- //BA.debugLineNum = 60882955;BA.debugLine="Dim playlistDescriptor As Map = dataResolver.Cho";
-_playlistdescriptor = new anywheresoftware.b4a.objects.collections.Map();
-_playlistdescriptor = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._choosenextplaylistdescriptor /*anywheresoftware.b4a.objects.collections.Map*/ (null,_currentslot,_workingcursors);
-RDebugUtils.currentLine=60882956;
- //BA.debugLineNum = 60882956;BA.debugLine="If playlistDescriptor.IsInitialized = False Or p";
-if (true) break;
-
-case 28:
-//if
-this.state = 33;
-if (_playlistdescriptor.IsInitialized()==parent.__c.False || _playlistdescriptor.getSize()==0) { 
-this.state = 30;
-;}if (true) break;
-
-case 30:
-//C
-this.state = 33;
-this.state = 52;
-if (true) break;
-if (true) break;
-
-case 33:
-//C
-this.state = 34;
-;
-RDebugUtils.currentLine=60882957;
- //BA.debugLineNum = 60882957;BA.debugLine="Dim playlistId As String = playlistDescriptor.Ge";
-_playlistid = BA.ObjectToString(_playlistdescriptor.GetDefault((Object)("id"),(Object)("")));
-RDebugUtils.currentLine=60882958;
- //BA.debugLineNum = 60882958;BA.debugLine="If playlistId = \"\" Then Continue";
-if (true) break;
-
-case 34:
-//if
-this.state = 39;
-if ((_playlistid).equals("")) { 
-this.state = 36;
-;}if (true) break;
-
-case 36:
-//C
-this.state = 39;
-this.state = 54;
-if (true) break;;
-if (true) break;
-
-case 39:
-//C
-this.state = 40;
-;
-RDebugUtils.currentLine=60882959;
- //BA.debugLineNum = 60882959;BA.debugLine="Dim playlistData As Map = dataResolver.LoadCache";
-_playlistdata = new anywheresoftware.b4a.objects.collections.Map();
-_playlistdata = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._loadcachedplaylistmetadata /*anywheresoftware.b4a.objects.collections.Map*/ (null,_playlistid);
-RDebugUtils.currentLine=60882960;
- //BA.debugLineNum = 60882960;BA.debugLine="If playlistData.IsInitialized = False Or playlis";
-if (true) break;
-
-case 40:
-//if
-this.state = 45;
-if (_playlistdata.IsInitialized()==parent.__c.False || _playlistdata.getSize()==0) { 
-this.state = 42;
-;}if (true) break;
-
-case 42:
-//C
-this.state = 45;
-this.state = 54;
-if (true) break;;
-if (true) break;
-
-case 45:
-//C
-this.state = 46;
-;
-RDebugUtils.currentLine=60882961;
- //BA.debugLineNum = 60882961;BA.debugLine="Dim cachedTrack As Map = dataResolver.ChooseRand";
-_cachedtrack = new anywheresoftware.b4a.objects.collections.Map();
-_cachedtrack = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._chooserandomtrackfromplaylist /*anywheresoftware.b4a.objects.collections.Map*/ (null,_playlistdata,__ref._mediacacheservice /*b4j.example.mediacache*/ ,parent.__c.True);
-RDebugUtils.currentLine=60882962;
- //BA.debugLineNum = 60882962;BA.debugLine="If cachedTrack.IsInitialized = False Or cachedTr";
-if (true) break;
-
-case 46:
-//if
-this.state = 51;
-if (_cachedtrack.IsInitialized()==parent.__c.False || _cachedtrack.getSize()==0) { 
-this.state = 48;
-;}if (true) break;
-
-case 48:
-//C
-this.state = 51;
-this.state = 54;
-if (true) break;;
-if (true) break;
-
-case 51:
-//C
-this.state = 54;
-;
-RDebugUtils.currentLine=60882963;
- //BA.debugLineNum = 60882963;BA.debugLine="Dim queueItem As Map = dataResolver.CreateQueueT";
-_queueitem = new anywheresoftware.b4a.objects.collections.Map();
-_queueitem = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._createqueuetrackfromplaylist /*anywheresoftware.b4a.objects.collections.Map*/ (null,_currentslot,_playlistdescriptor,_cachedtrack,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ );
-RDebugUtils.currentLine=60882964;
- //BA.debugLineNum = 60882964;BA.debugLine="playQueue.Add(queueItem)";
-__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .Add((Object)(_queueitem.getObject()));
-RDebugUtils.currentLine=60882965;
- //BA.debugLineNum = 60882965;BA.debugLine="dataResolver.SavePreviewPlaylistCursors(storage,";
-__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._savepreviewplaylistcursors /*String*/ (null,__ref._storage /*b4j.example.keyvaluestore*/ ,_workingcursors);
-RDebugUtils.currentLine=60882966;
- //BA.debugLineNum = 60882966;BA.debugLine="dataResolver.RememberResolvedTrack(queueItem.Get";
-__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._rememberresolvedtrack /*String*/ (null,BA.ObjectToString(_queueitem.GetDefault((Object)("id"),(Object)(""))));
-RDebugUtils.currentLine=60882967;
- //BA.debugLineNum = 60882967;BA.debugLine="dataResolver.RememberResolvedTrackForPlaylist(qu";
-__ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._rememberresolvedtrackforplaylist /*String*/ (null,BA.ObjectToString(_queueitem.GetDefault((Object)("playlist_id"),(Object)(""))),BA.ObjectToString(_queueitem.GetDefault((Object)("id"),(Object)(""))));
-RDebugUtils.currentLine=60882968;
- //BA.debugLineNum = 60882968;BA.debugLine="SaveQueueSnapshotState";
-__ref._savequeuesnapshotstate /*String*/ (null);
-RDebugUtils.currentLine=60882969;
- //BA.debugLineNum = 60882969;BA.debugLine="TraceLog(\"первый старт cache hit playlistId=\" &";
-__ref._tracelog /*String*/ (null,"первый старт cache hit playlistId="+_playlistid+" trackId="+BA.ObjectToString(_queueitem.GetDefault((Object)("id"),(Object)(""))));
-RDebugUtils.currentLine=60882970;
- //BA.debugLineNum = 60882970;BA.debugLine="seeded = True";
-_seeded = parent.__c.True;
-RDebugUtils.currentLine=60882971;
- //BA.debugLineNum = 60882971;BA.debugLine="Exit";
-this.state = 52;
-if (true) break;
- if (true) break;
-if (true) break;
-
-case 52:
-//C
 this.state = -1;
 ;
-RDebugUtils.currentLine=60882973;
- //BA.debugLineNum = 60882973;BA.debugLine="Return seeded";
+RDebugUtils.currentLine=60882946;
+ //BA.debugLineNum = 60882946;BA.debugLine="Wait For (stateStore.TrySeedFirstTrackFromCache(p";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "tryseedfirsttrackfromcache"), __ref._statestore /*b4j.example.playerstatestore*/ ._tryseedfirsttrackfromcache /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ));
+this.state = 7;
+return;
+case 7:
+//C
+this.state = -1;
+_seeded = (boolean) result[1];
+;
+RDebugUtils.currentLine=60882947;
+ //BA.debugLineNum = 60882947;BA.debugLine="Return seeded";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(_seeded));return;};
-RDebugUtils.currentLine=60882974;
- //BA.debugLineNum = 60882974;BA.debugLine="End Sub";
+RDebugUtils.currentLine=60882948;
+ //BA.debugLineNum = 60882948;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -14698,8 +13011,8 @@ RDebugUtils.currentLine=53739533;
  //BA.debugLineNum = 53739533;BA.debugLine="ResetAudioOutputErrorState";
 __ref._resetaudiooutputerrorstate /*String*/ (null);
 RDebugUtils.currentLine=53739534;
- //BA.debugLineNum = 53739534;BA.debugLine="retryFallbackState.ClearDispatchRetryAfter";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._cleardispatchretryafter /*String*/ (null);
+ //BA.debugLineNum = 53739534;BA.debugLine="stateStore.ClearDispatchRetryAfter";
+__ref._statestore /*b4j.example.playerstatestore*/ ._cleardispatchretryafter /*String*/ (null);
 RDebugUtils.currentLine=53739535;
  //BA.debugLineNum = 53739535;BA.debugLine="Dim activeAudioKey As String = Transition_GetDire";
 _activeaudiokey = __ref._transition_getdirectoractiveaudiokey /*String*/ (null);
@@ -14839,8 +13152,8 @@ RDebugUtils.currentLine=53739559;
  //BA.debugLineNum = 53739559;BA.debugLine="mediaCacheService.CleanupPlaybackTempFiles";
 __ref._mediacacheservice /*b4j.example.mediacache*/ ._cleanupplaybacktempfiles /*String*/ (null);
 RDebugUtils.currentLine=53739560;
- //BA.debugLineNum = 53739560;BA.debugLine="SetStatusText(\"\")";
-__ref._setstatustext /*String*/ (null,"");
+ //BA.debugLineNum = 53739560;BA.debugLine="uiController.SetStatusText(\"\")";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._setstatustext /*String*/ (null,"");
 RDebugUtils.currentLine=53739561;
  //BA.debugLineNum = 53739561;BA.debugLine="HidePin";
 __ref._hidepin /*String*/ (null);
@@ -14864,85 +13177,6 @@ if (true) break;
             }
         }
     }
-}
-public String  _setplayicon(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "setplayicon", false))
-	 {return ((String) Debug.delegate(ba, "setplayicon", null));}
-RDebugUtils.currentLine=14090240;
- //BA.debugLineNum = 14090240;BA.debugLine="Private Sub SetPlayIcon";
-RDebugUtils.currentLine=14090241;
- //BA.debugLineNum = 14090241;BA.debugLine="SetLabelStyle(lblPlayIcon, \"-fx-alignment: center";
-__ref._setlabelstyle /*String*/ (null,__ref._lblplayicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,"-fx-alignment: center; -fx-text-fill: "+__ref._colortocss /*String*/ (null,((int)0xffd0ff71))+"; -fx-padding: 0;");
-RDebugUtils.currentLine=14090242;
- //BA.debugLineNum = 14090242;BA.debugLine="lblPlayIcon.Text = ICON_PLAY";
-__ref._lblplayicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(__ref._icon_play /*String*/ );
-RDebugUtils.currentLine=14090243;
- //BA.debugLineNum = 14090243;BA.debugLine="ApplyMaterialIconFont(lblPlayIcon, playIconBaseSi";
-__ref._applymaterialiconfont /*String*/ (null,__ref._lblplayicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,__ref._playiconbasesize /*float*/ );
-RDebugUtils.currentLine=14090244;
- //BA.debugLineNum = 14090244;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
-__ref._orbitpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .Color_Transparent,__c.DipToCurrent((int) (2)),((int)0x00d0ff71),__c.DipToCurrent((int) (999)));
-RDebugUtils.currentLine=14090245;
- //BA.debugLineNum = 14090245;BA.debugLine="StopOrbitAnimation";
-__ref._stoporbitanimation /*String*/ (null);
-RDebugUtils.currentLine=14090246;
- //BA.debugLineNum = 14090246;BA.debugLine="UpdatePlayButtonAppearance(False)";
-__ref._updateplaybuttonappearance /*String*/ (null,__c.False);
-RDebugUtils.currentLine=14090247;
- //BA.debugLineNum = 14090247;BA.debugLine="End Sub";
-return "";
-}
-public String  _saveserversnapshot(b4j.example.b4xmainpage __ref,String _method,String _url,boolean _success,String _body,String _errormessage) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "saveserversnapshot", false))
-	 {return ((String) Debug.delegate(ba, "saveserversnapshot", new Object[] {_method,_url,_success,_body,_errormessage}));}
-RDebugUtils.currentLine=13959168;
- //BA.debugLineNum = 13959168;BA.debugLine="Private Sub SaveServerSnapshot(method As String, u";
-RDebugUtils.currentLine=13959169;
- //BA.debugLineNum = 13959169;BA.debugLine="appTraceService.SaveServerSnapshot(method, url, s";
-__ref._apptraceservice /*b4j.example.traceservice*/ ._saveserversnapshot /*String*/ (null,_method,_url,_success,_body,_errormessage);
-RDebugUtils.currentLine=13959170;
- //BA.debugLineNum = 13959170;BA.debugLine="End Sub";
-return "";
-}
-public String  _loghttpfailure(b4j.example.b4xmainpage __ref,String _url,String _kind) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "loghttpfailure", false))
-	 {return ((String) Debug.delegate(ba, "loghttpfailure", new Object[] {_url,_kind}));}
-RDebugUtils.currentLine=7798784;
- //BA.debugLineNum = 7798784;BA.debugLine="Private Sub LogHttpFailure(url As String, kind As";
-RDebugUtils.currentLine=7798785;
- //BA.debugLineNum = 7798785;BA.debugLine="consecutiveNetworkErrors = consecutiveNetworkErro";
-__ref._consecutivenetworkerrors /*int*/  = (int) (__ref._consecutivenetworkerrors /*int*/ +1);
-RDebugUtils.currentLine=7798786;
- //BA.debugLineNum = 7798786;BA.debugLine="If url.Contains(\"/data\") Then";
-if (_url.contains("/data")) { 
-RDebugUtils.currentLine=7798787;
- //BA.debugLineNum = 7798787;BA.debugLine="TraceWarn(\"network\", \"data timeout\", \"retry=\" &";
-__ref._tracewarn /*String*/ (null,"network","data timeout","retry="+BA.NumberToString(__ref._consecutivenetworkerrors /*int*/ )+" lastDataOkAgoSec="+__ref._secondsagotext /*String*/ (null,__ref._lastdataokat /*long*/ ));
- }else 
-{RDebugUtils.currentLine=7798788;
- //BA.debugLineNum = 7798788;BA.debugLine="Else If url.Contains(\"/history\") Then";
-if (_url.contains("/history")) { 
-RDebugUtils.currentLine=7798789;
- //BA.debugLineNum = 7798789;BA.debugLine="TraceWarn(\"history\", \"ошибка отправки\", \"kind=\"";
-__ref._tracewarn /*String*/ (null,"history","ошибка отправки","kind="+_kind);
- }else 
-{RDebugUtils.currentLine=7798790;
- //BA.debugLineNum = 7798790;BA.debugLine="Else If url.Contains(\"/next\") Then";
-if (_url.contains("/next")) { 
-RDebugUtils.currentLine=7798791;
- //BA.debugLineNum = 7798791;BA.debugLine="TraceWarn(\"network\", \"ошибка очереди\", \"kind=\" &";
-__ref._tracewarn /*String*/ (null,"network","ошибка очереди","kind="+_kind);
- }}}
-;
-RDebugUtils.currentLine=7798793;
- //BA.debugLineNum = 7798793;BA.debugLine="End Sub";
-return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _fetchnext(b4j.example.b4xmainpage __ref) throws Exception{
 RDebugUtils.currentModule="b4xmainpage";
@@ -14975,8 +13209,8 @@ case 0:
 //C
 this.state = -1;
 RDebugUtils.currentLine=7602177;
- //BA.debugLineNum = 7602177;BA.debugLine="Wait For (FetchJsonWithTimeout(NEXT_BASE_URL & \"?";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "fetchnext"), __ref._fetchjsonwithtimeout /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._next_base_url /*String*/ +"?"+__ref._buildparams /*String*/ (null,__ref._createnextparams /*anywheresoftware.b4a.objects.collections.Map*/ (null)),__ref._fetch_timeout_ms /*int*/ ));
+ //BA.debugLineNum = 7602177;BA.debugLine="Wait For (syncService.FetchNext(FETCH_TIMEOUT_MS,";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "fetchnext"), __ref._syncservice /*b4j.example.networksyncservice*/ ._fetchnext /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._fetch_timeout_ms /*int*/ ,__ref._resolveappversion /*String*/ (null),__ref._nextstartmode /*String*/ ,__ref._playlistindex /*int*/ ));
 this.state = 1;
 return;
 case 1:
@@ -15294,8 +13528,8 @@ case 33:
 //C
 this.state = 34;
 RDebugUtils.currentLine=11403304;
- //BA.debugLineNum = 11403304;BA.debugLine="Dim failureKind As String = ClassifyHttpFailure(";
-_failurekind = __ref._classifyhttpfailure /*String*/ (null,_j._errormessage /*String*/ );
+ //BA.debugLineNum = 11403304;BA.debugLine="Dim failureKind As String = syncService.Classify";
+_failurekind = __ref._syncservice /*b4j.example.networksyncservice*/ ._classifyhttpfailure /*String*/ (null,_j._errormessage /*String*/ );
 RDebugUtils.currentLine=11403305;
  //BA.debugLineNum = 11403305;BA.debugLine="SaveServerSnapshot(\"POST\", requestUrl, False, \"\"";
 __ref._saveserversnapshot /*String*/ (null,"POST",_requesturl,parent.__c.False,"",_j._errormessage /*String*/ );
@@ -15320,8 +13554,8 @@ case 36:
 //C
 this.state = 39;
 RDebugUtils.currentLine=11403309;
- //BA.debugLineNum = 11403309;BA.debugLine="lastHistoryOkAt = DateTime.Now";
-__ref._lasthistoryokat /*long*/  = parent.__c.DateTime.getNow();
+ //BA.debugLineNum = 11403309;BA.debugLine="stateStore.SetLastHistoryOkNow";
+__ref._statestore /*b4j.example.playerstatestore*/ ._setlasthistoryoknow /*String*/ (null);
 RDebugUtils.currentLine=11403310;
  //BA.debugLineNum = 11403310;BA.debugLine="DeleteHistoryPendingFile(pendingHistoryFileName)";
 __ref._deletehistorypendingfile /*String*/ (null,_pendinghistoryfilename);
@@ -15499,6 +13733,20 @@ RDebugUtils.currentLine=11993098;
  //BA.debugLineNum = 11993098;BA.debugLine="End Sub";
 return false;
 }
+public String  _loghttpfailure(b4j.example.b4xmainpage __ref,String _url,String _kind) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "loghttpfailure", false))
+	 {return ((String) Debug.delegate(ba, "loghttpfailure", new Object[] {_url,_kind}));}
+RDebugUtils.currentLine=7798784;
+ //BA.debugLineNum = 7798784;BA.debugLine="Private Sub LogHttpFailure(url As String, kind As";
+RDebugUtils.currentLine=7798785;
+ //BA.debugLineNum = 7798785;BA.debugLine="syncService.LogHttpFailure(url, kind)";
+__ref._syncservice /*b4j.example.networksyncservice*/ ._loghttpfailure /*String*/ (null,_url,_kind);
+RDebugUtils.currentLine=7798786;
+ //BA.debugLineNum = 7798786;BA.debugLine="End Sub";
+return "";
+}
 public void  _flushhistorybufferasync(b4j.example.b4xmainpage __ref) throws Exception{
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "flushhistorybufferasync", false))
@@ -15540,503 +13788,6 @@ _unused = (boolean) result[1];
 ;
 RDebugUtils.currentLine=1048578;
  //BA.debugLineNum = 1048578;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _flushtracebuffer(b4j.example.b4xmainpage __ref) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "flushtracebuffer", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "flushtracebuffer", null));}
-ResumableSub_FlushTraceBuffer rsub = new ResumableSub_FlushTraceBuffer(this,__ref);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_FlushTraceBuffer extends BA.ResumableSub {
-public ResumableSub_FlushTraceBuffer(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-anywheresoftware.b4a.objects.collections.List _tracelines = null;
-String _payload = "";
-anywheresoftware.b4a.objects.collections.Map _queryparams = null;
-String _requesturl = "";
-b4j.example.httpjob _j = null;
-boolean _success = false;
-String _responsetext = "";
-int _statuscode = 0;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-try {
-
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = 1;
-RDebugUtils.currentLine=57868289;
- //BA.debugLineNum = 57868289;BA.debugLine="If playerCode = \"\" Or deviceId = \"\" Then Return F";
-if (true) break;
-
-case 1:
-//if
-this.state = 6;
-if ((__ref._playercode /*String*/ ).equals("") || (__ref._deviceid /*String*/ ).equals("")) { 
-this.state = 3;
-;}if (true) break;
-
-case 3:
-//C
-this.state = 6;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 6:
-//C
-this.state = 7;
-;
-RDebugUtils.currentLine=57868290;
- //BA.debugLineNum = 57868290;BA.debugLine="If isTraceUploadInProgress Then Return False";
-if (true) break;
-
-case 7:
-//if
-this.state = 12;
-if (__ref._istraceuploadinprogress /*boolean*/ ) { 
-this.state = 9;
-;}if (true) break;
-
-case 9:
-//C
-this.state = 12;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 12:
-//C
-this.state = 13;
-;
-RDebugUtils.currentLine=57868291;
- //BA.debugLineNum = 57868291;BA.debugLine="If IsTraceUploadEnabled = False Then Return False";
-if (true) break;
-
-case 13:
-//if
-this.state = 18;
-if (__ref._istraceuploadenabled /*boolean*/ (null)==parent.__c.False) { 
-this.state = 15;
-;}if (true) break;
-
-case 15:
-//C
-this.state = 18;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 18:
-//C
-this.state = 19;
-;
-RDebugUtils.currentLine=57868292;
- //BA.debugLineNum = 57868292;BA.debugLine="Dim traceLines As List = appTraceService.BeginPen";
-_tracelines = new anywheresoftware.b4a.objects.collections.List();
-_tracelines = __ref._apptraceservice /*b4j.example.traceservice*/ ._beginpendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ (null);
-RDebugUtils.currentLine=57868293;
- //BA.debugLineNum = 57868293;BA.debugLine="If traceLines.IsInitialized = False Or traceLines";
-if (true) break;
-
-case 19:
-//if
-this.state = 24;
-if (_tracelines.IsInitialized()==parent.__c.False || _tracelines.getSize()==0) { 
-this.state = 21;
-;}if (true) break;
-
-case 21:
-//C
-this.state = 24;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 24:
-//C
-this.state = 25;
-;
-RDebugUtils.currentLine=57868294;
- //BA.debugLineNum = 57868294;BA.debugLine="Dim payload As String = JoinList(traceLines, CRLF";
-_payload = __ref._joinlist /*String*/ (null,_tracelines,parent.__c.CRLF);
-RDebugUtils.currentLine=57868295;
- //BA.debugLineNum = 57868295;BA.debugLine="If payload.Trim = \"\" Then";
-if (true) break;
-
-case 25:
-//if
-this.state = 28;
-if ((_payload.trim()).equals("")) { 
-this.state = 27;
-}if (true) break;
-
-case 27:
-//C
-this.state = 28;
-RDebugUtils.currentLine=57868296;
- //BA.debugLineNum = 57868296;BA.debugLine="appTraceService.CancelPendingTraceBatch";
-__ref._apptraceservice /*b4j.example.traceservice*/ ._cancelpendingtracebatch /*String*/ (null);
-RDebugUtils.currentLine=57868297;
- //BA.debugLineNum = 57868297;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-
-case 28:
-//C
-this.state = 29;
-;
-RDebugUtils.currentLine=57868299;
- //BA.debugLineNum = 57868299;BA.debugLine="isTraceUploadInProgress = True";
-__ref._istraceuploadinprogress /*boolean*/  = parent.__c.True;
-RDebugUtils.currentLine=57868300;
- //BA.debugLineNum = 57868300;BA.debugLine="Dim queryParams As Map";
-_queryparams = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=57868301;
- //BA.debugLineNum = 57868301;BA.debugLine="queryParams.Initialize";
-_queryparams.Initialize();
-RDebugUtils.currentLine=57868302;
- //BA.debugLineNum = 57868302;BA.debugLine="queryParams.Put(\"player\", playerCode)";
-_queryparams.Put((Object)("player"),(Object)(__ref._playercode /*String*/ ));
-RDebugUtils.currentLine=57868303;
- //BA.debugLineNum = 57868303;BA.debugLine="queryParams.Put(\"device\", deviceId)";
-_queryparams.Put((Object)("device"),(Object)(__ref._deviceid /*String*/ ));
-RDebugUtils.currentLine=57868304;
- //BA.debugLineNum = 57868304;BA.debugLine="queryParams.Put(\"tz\", TimezoneOffsetMinutes)";
-_queryparams.Put((Object)("tz"),(Object)(__ref._timezoneoffsetminutes /*int*/ (null)));
-RDebugUtils.currentLine=57868305;
- //BA.debugLineNum = 57868305;BA.debugLine="queryParams.Put(\"version\", ResolveAppVersion)";
-_queryparams.Put((Object)("version"),(Object)(__ref._resolveappversion /*String*/ (null)));
-RDebugUtils.currentLine=57868306;
- //BA.debugLineNum = 57868306;BA.debugLine="Dim requestUrl As String = TRACE_BASE_URL & \"?\" &";
-_requesturl = __ref._trace_base_url /*String*/ +"?"+__ref._buildparams /*String*/ (null,_queryparams);
-RDebugUtils.currentLine=57868307;
- //BA.debugLineNum = 57868307;BA.debugLine="Dim j As HttpJob";
-_j = new b4j.example.httpjob();
-RDebugUtils.currentLine=57868308;
- //BA.debugLineNum = 57868308;BA.debugLine="j.Initialize(\"\", Me)";
-_j._initialize /*String*/ (null,ba,"",parent);
-RDebugUtils.currentLine=57868309;
- //BA.debugLineNum = 57868309;BA.debugLine="j.PostString(requestUrl, payload)";
-_j._poststring /*String*/ (null,_requesturl,_payload);
-RDebugUtils.currentLine=57868310;
- //BA.debugLineNum = 57868310;BA.debugLine="ApplyClientRequestHeaders(j)";
-__ref._applyclientrequestheaders /*String*/ (null,_j);
-RDebugUtils.currentLine=57868311;
- //BA.debugLineNum = 57868311;BA.debugLine="j.GetRequest.Timeout = 5000";
-_j._getrequest /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ (null).setTimeout((int) (5000));
-RDebugUtils.currentLine=57868312;
- //BA.debugLineNum = 57868312;BA.debugLine="j.GetRequest.SetContentType(\"text/plain; charset=";
-_j._getrequest /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ (null).SetContentType("text/plain; charset=utf-8");
-RDebugUtils.currentLine=57868313;
- //BA.debugLineNum = 57868313;BA.debugLine="Wait For (j) JobDone(j As HttpJob)";
-parent.__c.WaitFor("jobdone", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "flushtracebuffer"), (Object)(_j));
-this.state = 57;
-return;
-case 57:
-//C
-this.state = 29;
-_j = (b4j.example.httpjob) result[1];
-;
-RDebugUtils.currentLine=57868314;
- //BA.debugLineNum = 57868314;BA.debugLine="Dim success As Boolean = False";
-_success = parent.__c.False;
-RDebugUtils.currentLine=57868315;
- //BA.debugLineNum = 57868315;BA.debugLine="If j.Success Then";
-if (true) break;
-
-case 29:
-//if
-this.state = 51;
-if (_j._success /*boolean*/ ) { 
-this.state = 31;
-}else {
-this.state = 39;
-}if (true) break;
-
-case 31:
-//C
-this.state = 32;
-RDebugUtils.currentLine=57868316;
- //BA.debugLineNum = 57868316;BA.debugLine="Dim responseText As String = \"\"";
-_responsetext = "";
-RDebugUtils.currentLine=57868317;
- //BA.debugLineNum = 57868317;BA.debugLine="Try";
-if (true) break;
-
-case 32:
-//try
-this.state = 37;
-this.catchState = 36;
-this.state = 34;
-if (true) break;
-
-case 34:
-//C
-this.state = 37;
-this.catchState = 36;
-RDebugUtils.currentLine=57868318;
- //BA.debugLineNum = 57868318;BA.debugLine="responseText = j.GetString";
-_responsetext = _j._getstring /*String*/ (null);
- if (true) break;
-
-case 36:
-//C
-this.state = 37;
-this.catchState = 0;
-RDebugUtils.currentLine=57868320;
- //BA.debugLineNum = 57868320;BA.debugLine="responseText = \"\"";
-_responsetext = "";
- if (true) break;
-if (true) break;
-
-case 37:
-//C
-this.state = 51;
-this.catchState = 0;
-;
-RDebugUtils.currentLine=57868322;
- //BA.debugLineNum = 57868322;BA.debugLine="SaveServerSnapshot(\"POST\", requestUrl, True, res";
-__ref._saveserversnapshot /*String*/ (null,"POST",_requesturl,parent.__c.True,_responsetext,"");
-RDebugUtils.currentLine=57868323;
- //BA.debugLineNum = 57868323;BA.debugLine="success = True";
-_success = parent.__c.True;
- if (true) break;
-
-case 39:
-//C
-this.state = 40;
-RDebugUtils.currentLine=57868325;
- //BA.debugLineNum = 57868325;BA.debugLine="Dim statusCode As Int = 0";
-_statuscode = (int) (0);
-RDebugUtils.currentLine=57868326;
- //BA.debugLineNum = 57868326;BA.debugLine="Try";
-if (true) break;
-
-case 40:
-//try
-this.state = 45;
-this.catchState = 44;
-this.state = 42;
-if (true) break;
-
-case 42:
-//C
-this.state = 45;
-this.catchState = 44;
-RDebugUtils.currentLine=57868327;
- //BA.debugLineNum = 57868327;BA.debugLine="statusCode = j.Response.StatusCode";
-_statuscode = _j._response /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpResponse*/ .getStatusCode();
- if (true) break;
-
-case 44:
-//C
-this.state = 45;
-this.catchState = 0;
-RDebugUtils.currentLine=57868329;
- //BA.debugLineNum = 57868329;BA.debugLine="statusCode = 0";
-_statuscode = (int) (0);
- if (true) break;
-if (true) break;
-;
-RDebugUtils.currentLine=57868331;
- //BA.debugLineNum = 57868331;BA.debugLine="If statusCode = 204 Then";
-
-case 45:
-//if
-this.state = 50;
-this.catchState = 0;
-if (_statuscode==204) { 
-this.state = 47;
-}else {
-this.state = 49;
-}if (true) break;
-
-case 47:
-//C
-this.state = 50;
-RDebugUtils.currentLine=57868332;
- //BA.debugLineNum = 57868332;BA.debugLine="SaveServerSnapshot(\"POST\", requestUrl, True, \"\"";
-__ref._saveserversnapshot /*String*/ (null,"POST",_requesturl,parent.__c.True,"","");
-RDebugUtils.currentLine=57868333;
- //BA.debugLineNum = 57868333;BA.debugLine="success = True";
-_success = parent.__c.True;
- if (true) break;
-
-case 49:
-//C
-this.state = 50;
-RDebugUtils.currentLine=57868335;
- //BA.debugLineNum = 57868335;BA.debugLine="SaveServerSnapshot(\"POST\", requestUrl, False, \"";
-__ref._saveserversnapshot /*String*/ (null,"POST",_requesturl,parent.__c.False,"",_j._errormessage /*String*/ );
-RDebugUtils.currentLine=57868336;
- //BA.debugLineNum = 57868336;BA.debugLine="LogHttpFailure(requestUrl, ClassifyHttpFailure(";
-__ref._loghttpfailure /*String*/ (null,_requesturl,__ref._classifyhttpfailure /*String*/ (null,_j._errormessage /*String*/ ));
- if (true) break;
-
-case 50:
-//C
-this.state = 51;
-;
- if (true) break;
-;
-RDebugUtils.currentLine=57868339;
- //BA.debugLineNum = 57868339;BA.debugLine="If success Then";
-
-case 51:
-//if
-this.state = 56;
-if (_success) { 
-this.state = 53;
-}else {
-this.state = 55;
-}if (true) break;
-
-case 53:
-//C
-this.state = 56;
-RDebugUtils.currentLine=57868340;
- //BA.debugLineNum = 57868340;BA.debugLine="appTraceService.ConfirmPendingTraceBatchSent";
-__ref._apptraceservice /*b4j.example.traceservice*/ ._confirmpendingtracebatchsent /*String*/ (null);
- if (true) break;
-
-case 55:
-//C
-this.state = 56;
-RDebugUtils.currentLine=57868342;
- //BA.debugLineNum = 57868342;BA.debugLine="appTraceService.CancelPendingTraceBatch";
-__ref._apptraceservice /*b4j.example.traceservice*/ ._cancelpendingtracebatch /*String*/ (null);
- if (true) break;
-
-case 56:
-//C
-this.state = -1;
-;
-RDebugUtils.currentLine=57868344;
- //BA.debugLineNum = 57868344;BA.debugLine="j.Release";
-_j._release /*String*/ (null);
-RDebugUtils.currentLine=57868345;
- //BA.debugLineNum = 57868345;BA.debugLine="isTraceUploadInProgress = False";
-__ref._istraceuploadinprogress /*boolean*/  = parent.__c.False;
-RDebugUtils.currentLine=57868346;
- //BA.debugLineNum = 57868346;BA.debugLine="Return success";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_success));return;};
-RDebugUtils.currentLine=57868347;
- //BA.debugLineNum = 57868347;BA.debugLine="End Sub";
-if (true) break;
-}} 
-       catch (Exception e0) {
-			
-if (catchState == 0)
-    throw e0;
-else {
-    state = catchState;
-ba.setLastException(e0);}
-            }
-        }
-    }
-}
-public boolean  _istraceuploadenabled(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "istraceuploadenabled", false))
-	 {return ((Boolean) Debug.delegate(ba, "istraceuploadenabled", null));}
-anywheresoftware.b4a.objects.collections.Map _playerdata = null;
-RDebugUtils.currentLine=57802752;
- //BA.debugLineNum = 57802752;BA.debugLine="Private Sub IsTraceUploadEnabled As Boolean";
-RDebugUtils.currentLine=57802753;
- //BA.debugLineNum = 57802753;BA.debugLine="If offlineData.IsInitialized = False Then Return";
-if (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()==__c.False) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=57802754;
- //BA.debugLineNum = 57802754;BA.debugLine="If offlineData.GetDefault(\"ok\", False) <> True Th";
-if ((__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)("ok"),(Object)(__c.False))).equals((Object)(__c.True)) == false) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=57802755;
- //BA.debugLineNum = 57802755;BA.debugLine="If offlineData.ContainsKey(\"trace\") Then";
-if (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .ContainsKey((Object)("trace"))) { 
-RDebugUtils.currentLine=57802756;
- //BA.debugLineNum = 57802756;BA.debugLine="Return offlineData.GetDefault(\"trace\", False) =";
-if (true) return (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)("trace"),(Object)(__c.False))).equals((Object)(__c.True));
- };
-RDebugUtils.currentLine=57802758;
- //BA.debugLineNum = 57802758;BA.debugLine="Dim playerData As Map = offlineData.GetDefault(\"p";
-_playerdata = new anywheresoftware.b4a.objects.collections.Map();
-_playerdata = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)("player"),__c.Null)));
-RDebugUtils.currentLine=57802759;
- //BA.debugLineNum = 57802759;BA.debugLine="If playerData.IsInitialized = False Then Return F";
-if (_playerdata.IsInitialized()==__c.False) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=57802760;
- //BA.debugLineNum = 57802760;BA.debugLine="Return playerData.ContainsKey(\"trace\") And player";
-if (true) return _playerdata.ContainsKey((Object)("trace")) && (_playerdata.GetDefault((Object)("trace"),(Object)(__c.False))).equals((Object)(__c.True));
-RDebugUtils.currentLine=57802761;
- //BA.debugLineNum = 57802761;BA.debugLine="End Sub";
-return false;
-}
-public void  _flushtracebufferasync(b4j.example.b4xmainpage __ref) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "flushtracebufferasync", false))
-	 {Debug.delegate(ba, "flushtracebufferasync", null); return;}
-ResumableSub_FlushTraceBufferAsync rsub = new ResumableSub_FlushTraceBufferAsync(this,__ref);
-rsub.resume(ba, null);
-}
-public static class ResumableSub_FlushTraceBufferAsync extends BA.ResumableSub {
-public ResumableSub_FlushTraceBufferAsync(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-boolean _unused = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-        switch (state) {
-            case -1:
-return;
-
-case 0:
-//C
-this.state = -1;
-RDebugUtils.currentLine=58195969;
- //BA.debugLineNum = 58195969;BA.debugLine="Wait For (FlushTraceBuffer) Complete (unused As B";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "flushtracebufferasync"), __ref._flushtracebuffer /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 1;
-return;
-case 1:
-//C
-this.state = -1;
-_unused = (boolean) result[1];
-;
-RDebugUtils.currentLine=58195970;
- //BA.debugLineNum = 58195970;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -16266,8 +14017,8 @@ if (Debug.shouldDelegate(ba, "getqueuebuilderofflinedata", false))
 RDebugUtils.currentLine=50528256;
  //BA.debugLineNum = 50528256;BA.debugLine="Public Sub GetQueueBuilderOfflineData As Map";
 RDebugUtils.currentLine=50528257;
- //BA.debugLineNum = 50528257;BA.debugLine="Return offlineData";
-if (true) return __ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ;
+ //BA.debugLineNum = 50528257;BA.debugLine="Return stateStore.OfflineData";
+if (true) return __ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null);
 RDebugUtils.currentLine=50528258;
  //BA.debugLineNum = 50528258;BA.debugLine="End Sub";
 return null;
@@ -16764,13 +14515,10 @@ if (Debug.shouldDelegate(ba, "traceerror", false))
 RDebugUtils.currentLine=58392576;
  //BA.debugLineNum = 58392576;BA.debugLine="Private Sub TraceError(category As String, message";
 RDebugUtils.currentLine=58392577;
- //BA.debugLineNum = 58392577;BA.debugLine="WriteTraceEntry(\"ERROR\", category, message, detai";
-__ref._writetraceentry /*String*/ (null,"ERROR",_category,_message,_details);
+ //BA.debugLineNum = 58392577;BA.debugLine="traceRouter.TraceError(category, message, details";
+__ref._tracerouter /*b4j.example.playbacktracerouter*/ ._traceerror /*String*/ (null,_category,_message,_details);
 RDebugUtils.currentLine=58392578;
- //BA.debugLineNum = 58392578;BA.debugLine="AppendRecentDebugContext(\"Контекст ошибки\")";
-__ref._appendrecentdebugcontext /*String*/ (null,"Контекст ошибки");
-RDebugUtils.currentLine=58392579;
- //BA.debugLineNum = 58392579;BA.debugLine="End Sub";
+ //BA.debugLineNum = 58392578;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _handlemediaerror(b4j.example.b4xmainpage __ref) throws Exception{
@@ -16789,6 +14537,7 @@ this.__ref = parent;
 }
 b4j.example.b4xmainpage __ref;
 b4j.example.b4xmainpage parent;
+boolean _handled = false;
 
 @Override
 public void resume(BA ba, Object[] result) throws Exception{
@@ -16801,49 +14550,23 @@ RDebugUtils.currentModule="b4xmainpage";
 parent.__c.ReturnFromResumableSub(this,null);return;}
 case 0:
 //C
-this.state = 1;
+this.state = -1;
 RDebugUtils.currentLine=9043969;
- //BA.debugLineNum = 9043969;BA.debugLine="SetPlaybackFlowState(FLOW_ERROR, \"media_error\")";
-__ref._setplaybackflowstate /*String*/ (null,__ref._flow_error /*String*/ ,"media_error");
-RDebugUtils.currentLine=9043970;
- //BA.debugLineNum = 9043970;BA.debugLine="If HasLocalPlaybackFallback Then";
-if (true) break;
-
+ //BA.debugLineNum = 9043969;BA.debugLine="Wait For (playerDataCoordinator.HandleMediaError)";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "handlemediaerror"), __ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._handlemediaerror /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
+this.state = 1;
+return;
 case 1:
-//if
-this.state = 4;
-if (__ref._haslocalplaybackfallback /*boolean*/ (null)) { 
-this.state = 3;
-}if (true) break;
-
-case 3:
-//C
-this.state = 4;
-RDebugUtils.currentLine=9043971;
- //BA.debugLineNum = 9043971;BA.debugLine="TraceLog(\"fallback выбор mode=local reason=media";
-__ref._tracelog /*String*/ (null,"fallback выбор mode=local reason=media_error");
-RDebugUtils.currentLine=9043972;
- //BA.debugLineNum = 9043972;BA.debugLine="SwitchToLocalPlayback(True, \"media_failure\")";
-__ref._switchtolocalplayback /*String*/ (null,parent.__c.True,"media_failure");
-RDebugUtils.currentLine=9043973;
- //BA.debugLineNum = 9043973;BA.debugLine="Return True";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
- if (true) break;
-
-case 4:
 //C
 this.state = -1;
+_handled = (boolean) result[1];
 ;
-RDebugUtils.currentLine=9043975;
- //BA.debugLineNum = 9043975;BA.debugLine="HandleLocalTemporaryState(\"Нужен интернет\")";
-__ref._handlelocaltemporarystate /*String*/ (null,"Нужен интернет");
-RDebugUtils.currentLine=9043976;
- //BA.debugLineNum = 9043976;BA.debugLine="Return True";
+RDebugUtils.currentLine=9043970;
+ //BA.debugLineNum = 9043970;BA.debugLine="Return handled";
 if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
-RDebugUtils.currentLine=9043977;
- //BA.debugLineNum = 9043977;BA.debugLine="End Sub";
+parent.__c.ReturnFromResumableSub(this,(Object)(_handled));return;};
+RDebugUtils.currentLine=9043971;
+ //BA.debugLineNum = 9043971;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -17036,592 +14759,10 @@ if (Debug.shouldDelegate(ba, "handleblockedstate", false))
 RDebugUtils.currentLine=8912896;
  //BA.debugLineNum = 8912896;BA.debugLine="Private Sub HandleBlockedState";
 RDebugUtils.currentLine=8912897;
- //BA.debugLineNum = 8912897;BA.debugLine="TraceLog(\"состояние blocked\")";
-__ref._tracelog /*String*/ (null,"состояние blocked");
+ //BA.debugLineNum = 8912897;BA.debugLine="playerDataCoordinator.HandleBlockedState";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._handleblockedstate /*String*/ (null);
 RDebugUtils.currentLine=8912898;
- //BA.debugLineNum = 8912898;BA.debugLine="EnterPolicyPauseState(MessageValue(\"blocked\"), \"b";
-__ref._enterpolicypausestate /*String*/ (null,__ref._messagevalue /*String*/ (null,"blocked"),"blocked");
-RDebugUtils.currentLine=8912899;
- //BA.debugLineNum = 8912899;BA.debugLine="ScheduleRetry(\"blocked\", 0)";
-__ref._scheduleretry /*String*/ (null,"blocked",(int) (0));
-RDebugUtils.currentLine=8912900;
- //BA.debugLineNum = 8912900;BA.debugLine="End Sub";
-return "";
-}
-public boolean  _handlediagnostictracemessage(b4j.example.b4xmainpage __ref,String _message) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "handlediagnostictracemessage", false))
-	 {return ((Boolean) Debug.delegate(ba, "handlediagnostictracemessage", new Object[] {_message}));}
-RDebugUtils.currentLine=58589184;
- //BA.debugLineNum = 58589184;BA.debugLine="Private Sub HandleDiagnosticTraceMessage(message A";
-RDebugUtils.currentLine=58589185;
- //BA.debugLineNum = 58589185;BA.debugLine="If message = \"\" Then Return True";
-if ((_message).equals("")) { 
-if (true) return __c.True;};
-RDebugUtils.currentLine=58589186;
- //BA.debugLineNum = 58589186;BA.debugLine="If ShouldSuppressTraceMessage(message) Then";
-if (__ref._shouldsuppresstracemessage /*boolean*/ (null,_message)) { 
-RDebugUtils.currentLine=58589187;
- //BA.debugLineNum = 58589187;BA.debugLine="TraceDebug(message)";
-__ref._tracedebug /*String*/ (null,_message);
-RDebugUtils.currentLine=58589188;
- //BA.debugLineNum = 58589188;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589190;
- //BA.debugLineNum = 58589190;BA.debugLine="If message.StartsWith(\"Трек сохранен в кэш.\") The";
-if (_message.startsWith("Трек сохранен в кэш.")) { 
-RDebugUtils.currentLine=58589191;
- //BA.debugLineNum = 58589191;BA.debugLine="TraceInfo(\"cache\", \"трек загружен в кэш\", Normal";
-__ref._traceinfo /*String*/ (null,"cache","трек загружен в кэш",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"Трек сохранен в кэш.")));
-RDebugUtils.currentLine=58589192;
- //BA.debugLineNum = 58589192;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589194;
- //BA.debugLineNum = 58589194;BA.debugLine="If message.StartsWith(\"Не удалось скачать трек.\")";
-if (_message.startsWith("Не удалось скачать трек.") || _message.startsWith("Не удалось сохранить трек в кэш.")) { 
-RDebugUtils.currentLine=58589195;
- //BA.debugLineNum = 58589195;BA.debugLine="TraceError(\"cache\", \"ошибка загрузки трека\", Nor";
-__ref._traceerror /*String*/ (null,"cache","ошибка загрузки трека",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafterfirstspace /*String*/ (null,_message)));
-RDebugUtils.currentLine=58589196;
- //BA.debugLineNum = 58589196;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589198;
- //BA.debugLineNum = 58589198;BA.debugLine="If message.StartsWith(\"Синхронизация кэша треков";
-if (_message.startsWith("Синхронизация кэша треков завершена.")) { 
-RDebugUtils.currentLine=58589199;
- //BA.debugLineNum = 58589199;BA.debugLine="TraceInfo(\"cache\", \"кэш треков обновлен\", Normal";
-__ref._traceinfo /*String*/ (null,"cache","кэш треков обновлен",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"Синхронизация кэша треков завершена.")));
-RDebugUtils.currentLine=58589200;
- //BA.debugLineNum = 58589200;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589202;
- //BA.debugLineNum = 58589202;BA.debugLine="If message.StartsWith(\"ad cache sync done\") Then";
-if (_message.startsWith("ad cache sync done")) { 
-RDebugUtils.currentLine=58589203;
- //BA.debugLineNum = 58589203;BA.debugLine="TraceInfo(\"cache\", \"кэш рекламы обновлен\", Norma";
-__ref._traceinfo /*String*/ (null,"cache","кэш рекламы обновлен",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"ad cache sync done")));
-RDebugUtils.currentLine=58589204;
- //BA.debugLineNum = 58589204;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589206;
- //BA.debugLineNum = 58589206;BA.debugLine="If message.StartsWith(\"Аудит кэша завершен.\") The";
-if (_message.startsWith("Аудит кэша завершен.")) { 
-RDebugUtils.currentLine=58589207;
- //BA.debugLineNum = 58589207;BA.debugLine="TraceInfo(\"cache\", \"аудит кэша\", NormalizeLegacy";
-__ref._traceinfo /*String*/ (null,"cache","аудит кэша",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"Аудит кэша завершен.")));
-RDebugUtils.currentLine=58589208;
- //BA.debugLineNum = 58589208;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589210;
- //BA.debugLineNum = 58589210;BA.debugLine="If message.StartsWith(\"Очистка кэша треков заверш";
-if (_message.startsWith("Очистка кэша треков завершена.")) { 
-RDebugUtils.currentLine=58589211;
- //BA.debugLineNum = 58589211;BA.debugLine="TraceInfo(\"cache\", \"очистка кэша\", NormalizeLega";
-__ref._traceinfo /*String*/ (null,"cache","очистка кэша",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"Очистка кэша треков завершена.")));
-RDebugUtils.currentLine=58589212;
- //BA.debugLineNum = 58589212;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589214;
- //BA.debugLineNum = 58589214;BA.debugLine="If message.StartsWith(\"кэш треков очистка итог\")";
-if (_message.startsWith("кэш треков очистка итог")) { 
-RDebugUtils.currentLine=58589215;
- //BA.debugLineNum = 58589215;BA.debugLine="TraceInfo(\"cache\", \"очистка кэша\", NormalizeLega";
-__ref._traceinfo /*String*/ (null,"cache","очистка кэша",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"кэш треков очистка итог")));
-RDebugUtils.currentLine=58589216;
- //BA.debugLineNum = 58589216;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589218;
- //BA.debugLineNum = 58589218;BA.debugLine="If message.StartsWith(\"Удален cached ad, отсутств";
-if (_message.startsWith("Удален cached ad, отсутствующий в актуальном data.")) { 
-RDebugUtils.currentLine=58589219;
- //BA.debugLineNum = 58589219;BA.debugLine="TraceInfo(\"cache\", \"реклама удалена из кэша\", No";
-__ref._traceinfo /*String*/ (null,"cache","реклама удалена из кэша",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"Удален cached ad, отсутствующий в актуальном data.")));
-RDebugUtils.currentLine=58589220;
- //BA.debugLineNum = 58589220;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589222;
- //BA.debugLineNum = 58589222;BA.debugLine="If message.StartsWith(\"подготовка data playback о";
-if (_message.startsWith("подготовка data playback ошибка")) { 
-RDebugUtils.currentLine=58589223;
- //BA.debugLineNum = 58589223;BA.debugLine="TraceWarn(\"playback\", \"очередь пуста\", \"\")";
-__ref._tracewarn /*String*/ (null,"playback","очередь пуста","");
-RDebugUtils.currentLine=58589224;
- //BA.debugLineNum = 58589224;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589226;
- //BA.debugLineNum = 58589226;BA.debugLine="If message.StartsWith(\"очередь запрос ошибка\") Th";
-if (_message.startsWith("очередь запрос ошибка")) { 
-RDebugUtils.currentLine=58589227;
- //BA.debugLineNum = 58589227;BA.debugLine="TraceWarn(\"playback\", \"очередь пуста\", Normalize";
-__ref._tracewarn /*String*/ (null,"playback","очередь пуста",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"очередь запрос ошибка")));
-RDebugUtils.currentLine=58589228;
- //BA.debugLineNum = 58589228;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589230;
- //BA.debugLineNum = 58589230;BA.debugLine="If message.StartsWith(\"очередь next ошибка\") Then";
-if (_message.startsWith("очередь next ошибка")) { 
-RDebugUtils.currentLine=58589231;
- //BA.debugLineNum = 58589231;BA.debugLine="TraceWarn(\"playback\", \"очередь пуста\", Normalize";
-__ref._tracewarn /*String*/ (null,"playback","очередь пуста",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"очередь next ошибка")));
-RDebugUtils.currentLine=58589232;
- //BA.debugLineNum = 58589232;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589234;
- //BA.debugLineNum = 58589234;BA.debugLine="If message.StartsWith(\"очередь fetch ошибка\") The";
-if (_message.startsWith("очередь fetch ошибка")) { 
-RDebugUtils.currentLine=58589235;
- //BA.debugLineNum = 58589235;BA.debugLine="TraceWarn(\"network\", \"ошибка очереди\", Normalize";
-__ref._tracewarn /*String*/ (null,"network","ошибка очереди",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"очередь fetch ошибка")));
-RDebugUtils.currentLine=58589236;
- //BA.debugLineNum = 58589236;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589238;
- //BA.debugLineNum = 58589238;BA.debugLine="If message.StartsWith(\"состояние blocked\") Then";
-if (_message.startsWith("состояние blocked")) { 
-RDebugUtils.currentLine=58589239;
- //BA.debugLineNum = 58589239;BA.debugLine="TraceWarn(\"player\", \"плеер заблокирован\", \"\")";
-__ref._tracewarn /*String*/ (null,"player","плеер заблокирован","");
-RDebugUtils.currentLine=58589240;
- //BA.debugLineNum = 58589240;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589242;
- //BA.debugLineNum = 58589242;BA.debugLine="If message.StartsWith(\"состояние stop\") Or messag";
-if (_message.startsWith("состояние stop") || _message.startsWith("message shutdown")) { 
-RDebugUtils.currentLine=58589243;
- //BA.debugLineNum = 58589243;BA.debugLine="TraceWarn(\"player\", \"воспроизведение остановлено";
-__ref._tracewarn /*String*/ (null,"player","воспроизведение остановлено",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafterfirstspace /*String*/ (null,_message)));
-RDebugUtils.currentLine=58589244;
- //BA.debugLineNum = 58589244;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589246;
- //BA.debugLineNum = 58589246;BA.debugLine="If message.StartsWith(\"fallback activate\") Then";
-if (_message.startsWith("fallback activate")) { 
-RDebugUtils.currentLine=58589247;
- //BA.debugLineNum = 58589247;BA.debugLine="TraceWarn(\"playback\", \"включен локальный fallbac";
-__ref._tracewarn /*String*/ (null,"playback","включен локальный fallback",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"fallback activate")));
-RDebugUtils.currentLine=58589248;
- //BA.debugLineNum = 58589248;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589250;
- //BA.debugLineNum = 58589250;BA.debugLine="If message.StartsWith(\"degraded path вход\") Then";
-if (_message.startsWith("degraded path вход")) { 
-RDebugUtils.currentLine=58589251;
- //BA.debugLineNum = 58589251;BA.debugLine="TraceWarn(\"network\", \"деградация media path\", \"\"";
-__ref._tracewarn /*String*/ (null,"network","деградация media path","");
-RDebugUtils.currentLine=58589252;
- //BA.debugLineNum = 58589252;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589254;
- //BA.debugLineNum = 58589254;BA.debugLine="If message.StartsWith(\"degraded path восстановлен";
-if (_message.startsWith("degraded path восстановлен")) { 
-RDebugUtils.currentLine=58589255;
- //BA.debugLineNum = 58589255;BA.debugLine="TraceInfo(\"network\", \"media path восстановлен\",";
-__ref._traceinfo /*String*/ (null,"network","media path восстановлен","");
-RDebugUtils.currentLine=58589256;
- //BA.debugLineNum = 58589256;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589258;
- //BA.debugLineNum = 58589258;BA.debugLine="If message.StartsWith(\"история чтение ошибка\") Or";
-if (_message.startsWith("история чтение ошибка") || _message.startsWith("история response parse ошибка")) { 
-RDebugUtils.currentLine=58589259;
- //BA.debugLineNum = 58589259;BA.debugLine="TraceWarn(\"history\", \"ошибка истории\", \"\")";
-__ref._tracewarn /*String*/ (null,"history","ошибка истории","");
-RDebugUtils.currentLine=58589260;
- //BA.debugLineNum = 58589260;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589262;
- //BA.debugLineNum = 58589262;BA.debugLine="If message.StartsWith(\"метаданные плейлистов sync";
-if (_message.startsWith("метаданные плейлистов sync итог")) { 
-RDebugUtils.currentLine=58589263;
- //BA.debugLineNum = 58589263;BA.debugLine="TraceInfo(\"network\", \"метаданные плейлистов обно";
-__ref._traceinfo /*String*/ (null,"network","метаданные плейлистов обновлены",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"метаданные плейлистов sync итог")));
-RDebugUtils.currentLine=58589264;
- //BA.debugLineNum = 58589264;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589266;
- //BA.debugLineNum = 58589266;BA.debugLine="If message.StartsWith(\"метаданные плейлиста fetch";
-if (_message.startsWith("метаданные плейлиста fetch ошибка")) { 
-RDebugUtils.currentLine=58589267;
- //BA.debugLineNum = 58589267;BA.debugLine="TraceWarn(\"network\", \"ошибка метаданных плейлист";
-__ref._tracewarn /*String*/ (null,"network","ошибка метаданных плейлиста",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"метаданные плейлиста fetch ошибка")));
-RDebugUtils.currentLine=58589268;
- //BA.debugLineNum = 58589268;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589270;
- //BA.debugLineNum = 58589270;BA.debugLine="If message.StartsWith(\"Не удалось подготовить вре";
-if (_message.startsWith("Не удалось подготовить временный файл трека.")) { 
-RDebugUtils.currentLine=58589271;
- //BA.debugLineNum = 58589271;BA.debugLine="TraceError(\"cache\", \"ошибка подготовки трека\", N";
-__ref._traceerror /*String*/ (null,"cache","ошибка подготовки трека",__ref._normalizelegacydetails /*String*/ (null,__ref._tailafter /*String*/ (null,_message,"Не удалось подготовить временный файл трека.")));
-RDebugUtils.currentLine=58589272;
- //BA.debugLineNum = 58589272;BA.debugLine="Return True";
-if (true) return __c.True;
- };
-RDebugUtils.currentLine=58589274;
- //BA.debugLineNum = 58589274;BA.debugLine="TraceDebug(message)";
-__ref._tracedebug /*String*/ (null,_message);
-RDebugUtils.currentLine=58589275;
- //BA.debugLineNum = 58589275;BA.debugLine="Return True";
-if (true) return __c.True;
-RDebugUtils.currentLine=58589276;
- //BA.debugLineNum = 58589276;BA.debugLine="End Sub";
-return false;
-}
-public boolean  _shouldsuppresstracemessage(b4j.example.b4xmainpage __ref,String _message) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "shouldsuppresstracemessage", false))
-	 {return ((Boolean) Debug.delegate(ba, "shouldsuppresstracemessage", new Object[] {_message}));}
-anywheresoftware.b4a.objects.collections.List _noisyprefixes = null;
-String _prefix = "";
-RDebugUtils.currentLine=58654720;
- //BA.debugLineNum = 58654720;BA.debugLine="Private Sub ShouldSuppressTraceMessage(message As";
-RDebugUtils.currentLine=58654721;
- //BA.debugLineNum = 58654721;BA.debugLine="If message.StartsWith(\"guard переход\") Or message";
-if (_message.startsWith("guard переход") || _message.startsWith("переход dispatch")) { 
-RDebugUtils.currentLine=58654722;
- //BA.debugLineNum = 58654722;BA.debugLine="If IsReleaseBuild Then";
-if (__ref._isreleasebuild /*boolean*/ (null)) { 
-RDebugUtils.currentLine=58654723;
- //BA.debugLineNum = 58654723;BA.debugLine="Return False";
-if (true) return __c.False;
- }else {
-RDebugUtils.currentLine=58654725;
- //BA.debugLineNum = 58654725;BA.debugLine="Return True";
-if (true) return __c.True;
- };
- };
-RDebugUtils.currentLine=58654728;
- //BA.debugLineNum = 58654728;BA.debugLine="Dim noisyPrefixes As List";
-_noisyprefixes = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=58654729;
- //BA.debugLineNum = 58654729;BA.debugLine="noisyPrefixes.Initialize";
-_noisyprefixes.Initialize();
-RDebugUtils.currentLine=58654730;
- //BA.debugLineNum = 58654730;BA.debugLine="noisyPrefixes.Add(\"курсор плейлистов load\")";
-_noisyprefixes.Add((Object)("курсор плейлистов load"));
-RDebugUtils.currentLine=58654731;
- //BA.debugLineNum = 58654731;BA.debugLine="noisyPrefixes.Add(\"состояние init\")";
-_noisyprefixes.Add((Object)("состояние init"));
-RDebugUtils.currentLine=58654732;
- //BA.debugLineNum = 58654732;BA.debugLine="noisyPrefixes.Add(\"старт skip\")";
-_noisyprefixes.Add((Object)("старт skip"));
-RDebugUtils.currentLine=58654733;
- //BA.debugLineNum = 58654733;BA.debugLine="noisyPrefixes.Add(\"старт вход\")";
-_noisyprefixes.Add((Object)("старт вход"));
-RDebugUtils.currentLine=58654734;
- //BA.debugLineNum = 58654734;BA.debugLine="noisyPrefixes.Add(\"отложенный старт\")";
-_noisyprefixes.Add((Object)("отложенный старт"));
-RDebugUtils.currentLine=58654735;
- //BA.debugLineNum = 58654735;BA.debugLine="noisyPrefixes.Add(\"сценарий \")";
-_noisyprefixes.Add((Object)("сценарий "));
-RDebugUtils.currentLine=58654736;
- //BA.debugLineNum = 58654736;BA.debugLine="noisyPrefixes.Add(\"flow переход\")";
-_noisyprefixes.Add((Object)("flow переход"));
-RDebugUtils.currentLine=58654737;
- //BA.debugLineNum = 58654737;BA.debugLine="noisyPrefixes.Add(\"guard переход\")";
-_noisyprefixes.Add((Object)("guard переход"));
-RDebugUtils.currentLine=58654738;
- //BA.debugLineNum = 58654738;BA.debugLine="noisyPrefixes.Add(\"guard подготовка\")";
-_noisyprefixes.Add((Object)("guard подготовка"));
-RDebugUtils.currentLine=58654739;
- //BA.debugLineNum = 58654739;BA.debugLine="noisyPrefixes.Add(\"guard prefetch\")";
-_noisyprefixes.Add((Object)("guard prefetch"));
-RDebugUtils.currentLine=58654740;
- //BA.debugLineNum = 58654740;BA.debugLine="noisyPrefixes.Add(\"guard fade\")";
-_noisyprefixes.Add((Object)("guard fade"));
-RDebugUtils.currentLine=58654741;
- //BA.debugLineNum = 58654741;BA.debugLine="noisyPrefixes.Add(\"переход dispatch\")";
-_noisyprefixes.Add((Object)("переход dispatch"));
-RDebugUtils.currentLine=58654742;
- //BA.debugLineNum = 58654742;BA.debugLine="noisyPrefixes.Add(\"воспроизведение activate\")";
-_noisyprefixes.Add((Object)("воспроизведение activate"));
-RDebugUtils.currentLine=58654743;
- //BA.debugLineNum = 58654743;BA.debugLine="noisyPrefixes.Add(\"очередь добор\")";
-_noisyprefixes.Add((Object)("очередь добор"));
-RDebugUtils.currentLine=58654744;
- //BA.debugLineNum = 58654744;BA.debugLine="noisyPrefixes.Add(\"очередь next итог\")";
-_noisyprefixes.Add((Object)("очередь next итог"));
-RDebugUtils.currentLine=58654745;
- //BA.debugLineNum = 58654745;BA.debugLine="noisyPrefixes.Add(\"очередь playlist skip\")";
-_noisyprefixes.Add((Object)("очередь playlist skip"));
-RDebugUtils.currentLine=58654746;
- //BA.debugLineNum = 58654746;BA.debugLine="noisyPrefixes.Add(\"очередь signature mismatch\")";
-_noisyprefixes.Add((Object)("очередь signature mismatch"));
-RDebugUtils.currentLine=58654747;
- //BA.debugLineNum = 58654747;BA.debugLine="noisyPrefixes.Add(\"автостарт сначала обновление д";
-_noisyprefixes.Add((Object)("автостарт сначала обновление данных"));
-RDebugUtils.currentLine=58654748;
- //BA.debugLineNum = 58654748;BA.debugLine="noisyPrefixes.Add(\"policy resume авто\")";
-_noisyprefixes.Add((Object)("policy resume авто"));
-RDebugUtils.currentLine=58654749;
- //BA.debugLineNum = 58654749;BA.debugLine="noisyPrefixes.Add(\"возобновление запрет\")";
-_noisyprefixes.Add((Object)("возобновление запрет"));
-RDebugUtils.currentLine=58654750;
- //BA.debugLineNum = 58654750;BA.debugLine="noisyPrefixes.Add(\"возобновление итог\")";
-_noisyprefixes.Add((Object)("возобновление итог"));
-RDebugUtils.currentLine=58654751;
- //BA.debugLineNum = 58654751;BA.debugLine="noisyPrefixes.Add(\"снимок очереди восстановление";
-_noisyprefixes.Add((Object)("снимок очереди восстановление skip"));
-RDebugUtils.currentLine=58654752;
- //BA.debugLineNum = 58654752;BA.debugLine="noisyPrefixes.Add(\"http get начало\")";
-_noisyprefixes.Add((Object)("http get начало"));
-RDebugUtils.currentLine=58654753;
- //BA.debugLineNum = 58654753;BA.debugLine="noisyPrefixes.Add(\"http get итог\")";
-_noisyprefixes.Add((Object)("http get итог"));
-RDebugUtils.currentLine=58654754;
- //BA.debugLineNum = 58654754;BA.debugLine="noisyPrefixes.Add(\"claim начало\")";
-_noisyprefixes.Add((Object)("claim начало"));
-RDebugUtils.currentLine=58654755;
- //BA.debugLineNum = 58654755;BA.debugLine="noisyPrefixes.Add(\"claim итог\")";
-_noisyprefixes.Add((Object)("claim итог"));
-RDebugUtils.currentLine=58654756;
- //BA.debugLineNum = 58654756;BA.debugLine="noisyPrefixes.Add(\"элемент очереди play\")";
-_noisyprefixes.Add((Object)("элемент очереди play"));
-RDebugUtils.currentLine=58654757;
- //BA.debugLineNum = 58654757;BA.debugLine="noisyPrefixes.Add(\"курсор плейлистов commit\")";
-_noisyprefixes.Add((Object)("курсор плейлистов commit"));
-RDebugUtils.currentLine=58654758;
- //BA.debugLineNum = 58654758;BA.debugLine="noisyPrefixes.Add(\"реклама prescan начало\")";
-_noisyprefixes.Add((Object)("реклама prescan начало"));
-RDebugUtils.currentLine=58654759;
- //BA.debugLineNum = 58654759;BA.debugLine="noisyPrefixes.Add(\"брейк exact defer\")";
-_noisyprefixes.Add((Object)("брейк exact defer"));
-RDebugUtils.currentLine=58654760;
- //BA.debugLineNum = 58654760;BA.debugLine="noisyPrefixes.Add(\"брейк exact sync\")";
-_noisyprefixes.Add((Object)("брейк exact sync"));
-RDebugUtils.currentLine=58654761;
- //BA.debugLineNum = 58654761;BA.debugLine="noisyPrefixes.Add(\"fade начало\")";
-_noisyprefixes.Add((Object)("fade начало"));
-RDebugUtils.currentLine=58654762;
- //BA.debugLineNum = 58654762;BA.debugLine="noisyPrefixes.Add(\"история confirm\")";
-_noisyprefixes.Add((Object)("история confirm"));
-RDebugUtils.currentLine=58654763;
- //BA.debugLineNum = 58654763;BA.debugLine="noisyPrefixes.Add(\"история stage\")";
-_noisyprefixes.Add((Object)("история stage"));
-RDebugUtils.currentLine=58654764;
- //BA.debugLineNum = 58654764;BA.debugLine="noisyPrefixes.Add(\"история буфер add\")";
-_noisyprefixes.Add((Object)("история буфер add"));
-RDebugUtils.currentLine=58654765;
- //BA.debugLineNum = 58654765;BA.debugLine="noisyPrefixes.Add(\"история отправка начало\")";
-_noisyprefixes.Add((Object)("история отправка начало"));
-RDebugUtils.currentLine=58654766;
- //BA.debugLineNum = 58654766;BA.debugLine="noisyPrefixes.Add(\"история отправка payload\")";
-_noisyprefixes.Add((Object)("история отправка payload"));
-RDebugUtils.currentLine=58654767;
- //BA.debugLineNum = 58654767;BA.debugLine="noisyPrefixes.Add(\"история отправка ack\")";
-_noisyprefixes.Add((Object)("история отправка ack"));
-RDebugUtils.currentLine=58654768;
- //BA.debugLineNum = 58654768;BA.debugLine="noisyPrefixes.Add(\"stop запрос\")";
-_noisyprefixes.Add((Object)("stop запрос"));
-RDebugUtils.currentLine=58654769;
- //BA.debugLineNum = 58654769;BA.debugLine="noisyPrefixes.Add(\"резерв очереди save\")";
-_noisyprefixes.Add((Object)("резерв очереди save"));
-RDebugUtils.currentLine=58654770;
- //BA.debugLineNum = 58654770;BA.debugLine="noisyPrefixes.Add(\"снимок очереди clear\")";
-_noisyprefixes.Add((Object)("снимок очереди clear"));
-RDebugUtils.currentLine=58654771;
- //BA.debugLineNum = 58654771;BA.debugLine="noisyPrefixes.Add(\"состояние воспроизведения clea";
-_noisyprefixes.Add((Object)("состояние воспроизведения clear"));
-RDebugUtils.currentLine=58654772;
- //BA.debugLineNum = 58654772;BA.debugLine="noisyPrefixes.Add(\"аудио ready\")";
-_noisyprefixes.Add((Object)("аудио ready"));
-RDebugUtils.currentLine=58654773;
- //BA.debugLineNum = 58654773;BA.debugLine="noisyPrefixes.Add(\"аудио complete\")";
-_noisyprefixes.Add((Object)("аудио complete"));
-RDebugUtils.currentLine=58654774;
- //BA.debugLineNum = 58654774;BA.debugLine="noisyPrefixes.Add(\"переход overlap начало\")";
-_noisyprefixes.Add((Object)("переход overlap начало"));
-RDebugUtils.currentLine=58654775;
- //BA.debugLineNum = 58654775;BA.debugLine="noisyPrefixes.Add(\"переход tail начало\")";
-_noisyprefixes.Add((Object)("переход tail начало"));
-RDebugUtils.currentLine=58654776;
- //BA.debugLineNum = 58654776;BA.debugLine="noisyPrefixes.Add(\"переход prefetch начало\")";
-_noisyprefixes.Add((Object)("переход prefetch начало"));
-RDebugUtils.currentLine=58654777;
- //BA.debugLineNum = 58654777;BA.debugLine="noisyPrefixes.Add(\"trusted time update\")";
-_noisyprefixes.Add((Object)("trusted time update"));
-RDebugUtils.currentLine=58654778;
- //BA.debugLineNum = 58654778;BA.debugLine="noisyPrefixes.Add(\"player end parse fail\")";
-_noisyprefixes.Add((Object)("player end parse fail"));
-RDebugUtils.currentLine=58654779;
- //BA.debugLineNum = 58654779;BA.debugLine="noisyPrefixes.Add(\"[AudioPrimary]\")";
-_noisyprefixes.Add((Object)("[AudioPrimary]"));
-RDebugUtils.currentLine=58654780;
- //BA.debugLineNum = 58654780;BA.debugLine="noisyPrefixes.Add(\"[AudioSecondary]\")";
-_noisyprefixes.Add((Object)("[AudioSecondary]"));
-RDebugUtils.currentLine=58654781;
- //BA.debugLineNum = 58654781;BA.debugLine="noisyPrefixes.Add(\"machine guid\")";
-_noisyprefixes.Add((Object)("machine guid"));
-RDebugUtils.currentLine=58654782;
- //BA.debugLineNum = 58654782;BA.debugLine="noisyPrefixes.Add(\"legacy migrate итог\")";
-_noisyprefixes.Add((Object)("legacy migrate итог"));
-RDebugUtils.currentLine=58654783;
- //BA.debugLineNum = 58654783;BA.debugLine="noisyPrefixes.Add(\"метаданные плейлистов sync ski";
-_noisyprefixes.Add((Object)("метаданные плейлистов sync skip"));
-RDebugUtils.currentLine=58654784;
- //BA.debugLineNum = 58654784;BA.debugLine="noisyPrefixes.Add(\"метаданные плейлиста fetch нач";
-_noisyprefixes.Add((Object)("метаданные плейлиста fetch начало"));
-RDebugUtils.currentLine=58654785;
- //BA.debugLineNum = 58654785;BA.debugLine="noisyPrefixes.Add(\"окно save\")";
-_noisyprefixes.Add((Object)("окно save"));
-RDebugUtils.currentLine=58654786;
- //BA.debugLineNum = 58654786;BA.debugLine="noisyPrefixes.Add(\"окно restore\")";
-_noisyprefixes.Add((Object)("окно restore"));
-RDebugUtils.currentLine=58654787;
- //BA.debugLineNum = 58654787;BA.debugLine="noisyPrefixes.Add(\"trace отправка\")";
-_noisyprefixes.Add((Object)("trace отправка"));
-RDebugUtils.currentLine=58654788;
- //BA.debugLineNum = 58654788;BA.debugLine="noisyPrefixes.Add(\"скачивание рекламы в кэш\")";
-_noisyprefixes.Add((Object)("скачивание рекламы в кэш"));
-RDebugUtils.currentLine=58654789;
- //BA.debugLineNum = 58654789;BA.debugLine="noisyPrefixes.Add(\"скачивание трека в кэш\")";
-_noisyprefixes.Add((Object)("скачивание трека в кэш"));
-RDebugUtils.currentLine=58654790;
- //BA.debugLineNum = 58654790;BA.debugLine="noisyPrefixes.Add(\"удален cached track при очистк";
-_noisyprefixes.Add((Object)("удален cached track при очистке кэша"));
-RDebugUtils.currentLine=58654791;
- //BA.debugLineNum = 58654791;BA.debugLine="noisyPrefixes.Add(\"очистка кэша треков пропущена\"";
-_noisyprefixes.Add((Object)("очистка кэша треков пропущена"));
-RDebugUtils.currentLine=58654792;
- //BA.debugLineNum = 58654792;BA.debugLine="noisyPrefixes.Add(\"очередь playlist skip\")";
-_noisyprefixes.Add((Object)("очередь playlist skip"));
-RDebugUtils.currentLine=58654793;
- //BA.debugLineNum = 58654793;BA.debugLine="noisyPrefixes.Add(\"очередь next итог\")";
-_noisyprefixes.Add((Object)("очередь next итог"));
-RDebugUtils.currentLine=58654794;
- //BA.debugLineNum = 58654794;BA.debugLine="noisyPrefixes.Add(\"очередь signature mismatch\")";
-_noisyprefixes.Add((Object)("очередь signature mismatch"));
-RDebugUtils.currentLine=58654795;
- //BA.debugLineNum = 58654795;BA.debugLine="noisyPrefixes.Add(\"переход очередь drop\")";
-_noisyprefixes.Add((Object)("переход очередь drop"));
-RDebugUtils.currentLine=58654796;
- //BA.debugLineNum = 58654796;BA.debugLine="noisyPrefixes.Add(\"переход preload ошибка\")";
-_noisyprefixes.Add((Object)("переход preload ошибка"));
-RDebugUtils.currentLine=58654797;
- //BA.debugLineNum = 58654797;BA.debugLine="noisyPrefixes.Add(\"переход prepared reject\")";
-_noisyprefixes.Add((Object)("переход prepared reject"));
-RDebugUtils.currentLine=58654798;
- //BA.debugLineNum = 58654798;BA.debugLine="For Each prefix As String In noisyPrefixes";
-{
-final anywheresoftware.b4a.BA.IterableList group78 = _noisyprefixes;
-final int groupLen78 = group78.getSize()
-;int index78 = 0;
-;
-for (; index78 < groupLen78;index78++){
-_prefix = BA.ObjectToString(group78.Get(index78));
-RDebugUtils.currentLine=58654799;
- //BA.debugLineNum = 58654799;BA.debugLine="If message.ToLowerCase.StartsWith(prefix.ToLower";
-if (_message.toLowerCase(anywheresoftware.b4a.keywords.Common.stringLocale).startsWith(_prefix.toLowerCase(anywheresoftware.b4a.keywords.Common.stringLocale))) { 
-if (true) return __c.True;};
- }
-};
-RDebugUtils.currentLine=58654801;
- //BA.debugLineNum = 58654801;BA.debugLine="Return False";
-if (true) return __c.False;
-RDebugUtils.currentLine=58654802;
- //BA.debugLineNum = 58654802;BA.debugLine="End Sub";
-return false;
-}
-public String  _tracedebug(b4j.example.b4xmainpage __ref,String _message) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "tracedebug", false))
-	 {return ((String) Debug.delegate(ba, "tracedebug", new Object[] {_message}));}
-RDebugUtils.currentLine=61603840;
- //BA.debugLineNum = 61603840;BA.debugLine="Private Sub TraceDebug(message As String)";
-RDebugUtils.currentLine=61603841;
- //BA.debugLineNum = 61603841;BA.debugLine="appTraceService.TraceDebug(message)";
-__ref._apptraceservice /*b4j.example.traceservice*/ ._tracedebug /*String*/ (null,_message);
-RDebugUtils.currentLine=61603842;
- //BA.debugLineNum = 61603842;BA.debugLine="End Sub";
-return "";
-}
-public String  _normalizelegacydetails(b4j.example.b4xmainpage __ref,String _text) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "normalizelegacydetails", false))
-	 {return ((String) Debug.delegate(ba, "normalizelegacydetails", new Object[] {_text}));}
-String _value = "";
-RDebugUtils.currentLine=58720256;
- //BA.debugLineNum = 58720256;BA.debugLine="Private Sub NormalizeLegacyDetails(text As String)";
-RDebugUtils.currentLine=58720257;
- //BA.debugLineNum = 58720257;BA.debugLine="Dim value As String = text.Trim";
-_value = _text.trim();
-RDebugUtils.currentLine=58720258;
- //BA.debugLineNum = 58720258;BA.debugLine="If value.StartsWith(\".\") Or value.StartsWith(\":\")";
-if (_value.startsWith(".") || _value.startsWith(":")) { 
-_value = _value.substring((int) (1)).trim();};
-RDebugUtils.currentLine=58720259;
- //BA.debugLineNum = 58720259;BA.debugLine="value = value.Replace(\",\", \"\")";
-_value = _value.replace(",","");
-RDebugUtils.currentLine=58720260;
- //BA.debugLineNum = 58720260;BA.debugLine="Return value";
-if (true) return _value;
-RDebugUtils.currentLine=58720261;
- //BA.debugLineNum = 58720261;BA.debugLine="End Sub";
-return "";
-}
-public String  _tailafter(b4j.example.b4xmainpage __ref,String _text,String _prefix) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "tailafter", false))
-	 {return ((String) Debug.delegate(ba, "tailafter", new Object[] {_text,_prefix}));}
-RDebugUtils.currentLine=58785792;
- //BA.debugLineNum = 58785792;BA.debugLine="Private Sub TailAfter(text As String, prefix As St";
-RDebugUtils.currentLine=58785793;
- //BA.debugLineNum = 58785793;BA.debugLine="If text.StartsWith(prefix) = False Then Return te";
-if (_text.startsWith(_prefix)==__c.False) { 
-if (true) return _text;};
-RDebugUtils.currentLine=58785794;
- //BA.debugLineNum = 58785794;BA.debugLine="Return text.SubString(prefix.Length).Trim";
-if (true) return _text.substring(_prefix.length()).trim();
-RDebugUtils.currentLine=58785795;
- //BA.debugLineNum = 58785795;BA.debugLine="End Sub";
-return "";
-}
-public String  _tailafterfirstspace(b4j.example.b4xmainpage __ref,String _text) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "tailafterfirstspace", false))
-	 {return ((String) Debug.delegate(ba, "tailafterfirstspace", new Object[] {_text}));}
-int _firstspace = 0;
-RDebugUtils.currentLine=58851328;
- //BA.debugLineNum = 58851328;BA.debugLine="Private Sub TailAfterFirstSpace(text As String) As";
-RDebugUtils.currentLine=58851329;
- //BA.debugLineNum = 58851329;BA.debugLine="Dim firstSpace As Int = text.IndexOf(\" \")";
-_firstspace = _text.indexOf(" ");
-RDebugUtils.currentLine=58851330;
- //BA.debugLineNum = 58851330;BA.debugLine="If firstSpace < 0 Then Return \"\"";
-if (_firstspace<0) { 
-if (true) return "";};
-RDebugUtils.currentLine=58851331;
- //BA.debugLineNum = 58851331;BA.debugLine="Return text.SubString(firstSpace + 1).Trim";
-if (true) return _text.substring((int) (_firstspace+1)).trim();
-RDebugUtils.currentLine=58851332;
- //BA.debugLineNum = 58851332;BA.debugLine="End Sub";
+ //BA.debugLineNum = 8912898;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _handlefetchfailure(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _result) throws Exception{
@@ -17642,7 +14783,7 @@ this.__ref = parent;
 b4j.example.b4xmainpage __ref;
 b4j.example.b4xmainpage parent;
 anywheresoftware.b4a.objects.collections.Map _result;
-boolean _serviceavailable = false;
+boolean _handled = false;
 
 @Override
 public void resume(BA ba, Object[] result) throws Exception{
@@ -17655,227 +14796,28 @@ RDebugUtils.currentModule="b4xmainpage";
 parent.__c.ReturnFromResumableSub(this,null);return;}
 case 0:
 //C
-this.state = 1;
+this.state = -1;
 RDebugUtils.currentLine=8650753;
- //BA.debugLineNum = 8650753;BA.debugLine="TraceLog(\"очередь fetch ошибка kind=\" & result.Ge";
-__ref._tracelog /*String*/ (null,"очередь fetch ошибка kind="+BA.ObjectToString(_result.GetDefault((Object)("Kind"),(Object)("")))+" message="+BA.ObjectToString(_result.GetDefault((Object)("ErrorMessage"),(Object)(""))));
-RDebugUtils.currentLine=8650754;
- //BA.debugLineNum = 8650754;BA.debugLine="If result.GetDefault(\"Kind\", \"\") = \"offline\" Then";
-if (true) break;
-
-case 1:
-//if
-this.state = 4;
-if ((_result.GetDefault((Object)("Kind"),(Object)(""))).equals((Object)("offline"))) { 
-this.state = 3;
-}if (true) break;
-
-case 3:
-//C
-this.state = 4;
-RDebugUtils.currentLine=8650755;
- //BA.debugLineNum = 8650755;BA.debugLine="HandleLocalTemporaryState(\"\")";
-__ref._handlelocaltemporarystate /*String*/ (null,"");
-RDebugUtils.currentLine=8650756;
- //BA.debugLineNum = 8650756;BA.debugLine="Return True";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
- if (true) break;
-;
-RDebugUtils.currentLine=8650758;
- //BA.debugLineNum = 8650758;BA.debugLine="If HasLocalPlaybackFallback Then";
-
-case 4:
-//if
-this.state = 7;
-if (__ref._haslocalplaybackfallback /*boolean*/ (null)) { 
-this.state = 6;
-}if (true) break;
-
-case 6:
-//C
-this.state = 7;
-RDebugUtils.currentLine=8650759;
- //BA.debugLineNum = 8650759;BA.debugLine="TraceLog(\"fallback выбор mode=local reason=data_";
-__ref._tracelog /*String*/ (null,"fallback выбор mode=local reason=data_fetch_error");
-RDebugUtils.currentLine=8650760;
- //BA.debugLineNum = 8650760;BA.debugLine="HandleLocalTemporaryState(\"\")";
-__ref._handlelocaltemporarystate /*String*/ (null,"");
-RDebugUtils.currentLine=8650761;
- //BA.debugLineNum = 8650761;BA.debugLine="Return True";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
- if (true) break;
-
-case 7:
-//C
-this.state = 8;
-;
-RDebugUtils.currentLine=8650763;
- //BA.debugLineNum = 8650763;BA.debugLine="Wait For (CheckServiceAvailability) Complete (ser";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "handlefetchfailure"), __ref._checkserviceavailability /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 14;
+ //BA.debugLineNum = 8650753;BA.debugLine="Wait For (playerDataCoordinator.HandleFetchFailur";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "handlefetchfailure"), __ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._handlefetchfailure /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_result));
+this.state = 1;
 return;
-case 14:
-//C
-this.state = 8;
-_serviceavailable = (boolean) result[1];
-;
-RDebugUtils.currentLine=8650764;
- //BA.debugLineNum = 8650764;BA.debugLine="If serviceAvailable Then";
-if (true) break;
-
-case 8:
-//if
-this.state = 13;
-if (_serviceavailable) { 
-this.state = 10;
-}else {
-this.state = 12;
-}if (true) break;
-
-case 10:
-//C
-this.state = 13;
-RDebugUtils.currentLine=8650765;
- //BA.debugLineNum = 8650765;BA.debugLine="HandleTemporaryState(\"server\", \"\")";
-__ref._handletemporarystate /*String*/ (null,"server","");
- if (true) break;
-
-case 12:
-//C
-this.state = 13;
-RDebugUtils.currentLine=8650767;
- //BA.debugLineNum = 8650767;BA.debugLine="HandleTemporaryState(\"server\", \"\")";
-__ref._handletemporarystate /*String*/ (null,"server","");
- if (true) break;
-
-case 13:
+case 1:
 //C
 this.state = -1;
+_handled = (boolean) result[1];
 ;
-RDebugUtils.currentLine=8650769;
- //BA.debugLineNum = 8650769;BA.debugLine="Return True";
+RDebugUtils.currentLine=8650754;
+ //BA.debugLineNum = 8650754;BA.debugLine="Return handled";
 if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
-RDebugUtils.currentLine=8650770;
- //BA.debugLineNum = 8650770;BA.debugLine="End Sub";
+parent.__c.ReturnFromResumableSub(this,(Object)(_handled));return;};
+RDebugUtils.currentLine=8650755;
+ //BA.debugLineNum = 8650755;BA.debugLine="End Sub";
 if (true) break;
 
             }
         }
     }
-}
-public String  _handletemporarystate(b4j.example.b4xmainpage __ref,String _mode,String _text) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "handletemporarystate", false))
-	 {return ((String) Debug.delegate(ba, "handletemporarystate", new Object[] {_mode,_text}));}
-RDebugUtils.currentLine=8847360;
- //BA.debugLineNum = 8847360;BA.debugLine="Private Sub HandleTemporaryState(mode As String, t";
-RDebugUtils.currentLine=8847361;
- //BA.debugLineNum = 8847361;BA.debugLine="TraceLog(\"состояние temporary mode=\" & mode & \" t";
-__ref._tracelog /*String*/ (null,"состояние temporary mode="+_mode+" text="+_text);
-RDebugUtils.currentLine=8847362;
- //BA.debugLineNum = 8847362;BA.debugLine="dataPolicyState.ApplyTemporaryMode(mode)";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._applytemporarymode /*String*/ (null,_mode);
-RDebugUtils.currentLine=8847363;
- //BA.debugLineNum = 8847363;BA.debugLine="RefreshConnectionIndicatorState";
-__ref._refreshconnectionindicatorstate /*String*/ (null);
-RDebugUtils.currentLine=8847364;
- //BA.debugLineNum = 8847364;BA.debugLine="ClearPlaybackState";
-__ref._clearplaybackstate /*String*/ (null);
-RDebugUtils.currentLine=8847365;
- //BA.debugLineNum = 8847365;BA.debugLine="HidePin";
-__ref._hidepin /*String*/ (null);
-RDebugUtils.currentLine=8847366;
- //BA.debugLineNum = 8847366;BA.debugLine="If text <> \"\" Then";
-if ((_text).equals("") == false) { 
-RDebugUtils.currentLine=8847367;
- //BA.debugLineNum = 8847367;BA.debugLine="ShowMessage(text)";
-__ref._showmessage /*String*/ (null,_text);
- }else 
-{RDebugUtils.currentLine=8847368;
- //BA.debugLineNum = 8847368;BA.debugLine="Else If mode = \"offline\" Then";
-if ((_mode).equals("offline")) { 
-RDebugUtils.currentLine=8847369;
- //BA.debugLineNum = 8847369;BA.debugLine="ShowMessage(MessageValue(\"offline\"))";
-__ref._showmessage /*String*/ (null,__ref._messagevalue /*String*/ (null,"offline"));
- }else {
-RDebugUtils.currentLine=8847371;
- //BA.debugLineNum = 8847371;BA.debugLine="ShowMessage(MessageValue(\"server_wait\"))";
-__ref._showmessage /*String*/ (null,__ref._messagevalue /*String*/ (null,"server_wait"));
- }}
-;
-RDebugUtils.currentLine=8847373;
- //BA.debugLineNum = 8847373;BA.debugLine="ScheduleRetry(mode, 0)";
-__ref._scheduleretry /*String*/ (null,_mode,(int) (0));
-RDebugUtils.currentLine=8847374;
- //BA.debugLineNum = 8847374;BA.debugLine="End Sub";
-return "";
-}
-public String  _handlemessageitem(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "handlemessageitem", false))
-	 {return ((String) Debug.delegate(ba, "handlemessageitem", new Object[] {_item}));}
-String _action = "";
-RDebugUtils.currentLine=8060928;
- //BA.debugLineNum = 8060928;BA.debugLine="Private Sub HandleMessageItem(item As Map)";
-RDebugUtils.currentLine=8060929;
- //BA.debugLineNum = 8060929;BA.debugLine="Dim action As String = item.GetDefault(\"action\",";
-_action = BA.ObjectToString(_item.GetDefault((Object)("action"),(Object)("")));
-RDebugUtils.currentLine=8060930;
- //BA.debugLineNum = 8060930;BA.debugLine="TraceLog(\"сообщение handle action=\" & action & \"";
-__ref._tracelog /*String*/ (null,"сообщение handle action="+_action+" text="+BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(""))));
-RDebugUtils.currentLine=8060931;
- //BA.debugLineNum = 8060931;BA.debugLine="If action = \"claim\" Then";
-if ((_action).equals("claim")) { 
-RDebugUtils.currentLine=8060932;
- //BA.debugLineNum = 8060932;BA.debugLine="dataPolicyState.ClearPolicyPause";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._clearpolicypause /*String*/ (null);
-RDebugUtils.currentLine=8060933;
- //BA.debugLineNum = 8060933;BA.debugLine="ClearPlaybackState";
-__ref._clearplaybackstate /*String*/ (null);
-RDebugUtils.currentLine=8060934;
- //BA.debugLineNum = 8060934;BA.debugLine="orchestrationState.EnterUserStoppedState";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enteruserstoppedstate /*String*/ (null);
-RDebugUtils.currentLine=8060935;
- //BA.debugLineNum = 8060935;BA.debugLine="SetPlayIcon";
-__ref._setplayicon /*String*/ (null);
-RDebugUtils.currentLine=8060936;
- //BA.debugLineNum = 8060936;BA.debugLine="ShowClaimPrompt(item.GetDefault(\"message\", Messa";
-__ref._showclaimprompt /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(__ref._messagevalue /*String*/ (null,"device_busy")))));
- }else 
-{RDebugUtils.currentLine=8060937;
- //BA.debugLineNum = 8060937;BA.debugLine="Else If action = \"shutdown\" Then";
-if ((_action).equals("shutdown")) { 
-RDebugUtils.currentLine=8060938;
- //BA.debugLineNum = 8060938;BA.debugLine="HandleShutdownMessage(item.GetDefault(\"message\",";
-__ref._handleshutdownmessage /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(__ref._messagevalue /*String*/ (null,"server_wait")))));
- }else 
-{RDebugUtils.currentLine=8060939;
- //BA.debugLineNum = 8060939;BA.debugLine="Else If action = \"blocked\" Then";
-if ((_action).equals("blocked")) { 
-RDebugUtils.currentLine=8060940;
- //BA.debugLineNum = 8060940;BA.debugLine="HandleBlockedState";
-__ref._handleblockedstate /*String*/ (null);
- }else 
-{RDebugUtils.currentLine=8060941;
- //BA.debugLineNum = 8060941;BA.debugLine="Else If action = \"not_found\" Then";
-if ((_action).equals("not_found")) { 
-RDebugUtils.currentLine=8060942;
- //BA.debugLineNum = 8060942;BA.debugLine="StopForMissingData(item.GetDefault(\"message\", Me";
-__ref._stopformissingdata /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(__ref._messagevalue /*String*/ (null,"not_found")))));
- }else {
-RDebugUtils.currentLine=8060944;
- //BA.debugLineNum = 8060944;BA.debugLine="HandleTemporaryState(\"server\", item.GetDefault(\"";
-__ref._handletemporarystate /*String*/ (null,"server",BA.ObjectToString(_item.GetDefault((Object)("message"),(Object)(__ref._messagevalue /*String*/ (null,"server_wait")))));
- }}}}
-;
-RDebugUtils.currentLine=8060946;
- //BA.debugLineNum = 8060946;BA.debugLine="End Sub";
-return "";
 }
 public String  _showclaimprompt(b4j.example.b4xmainpage __ref,String _text) throws Exception{
 __ref = this;
@@ -17885,8 +14827,8 @@ if (Debug.shouldDelegate(ba, "showclaimprompt", false))
 RDebugUtils.currentLine=15138816;
  //BA.debugLineNum = 15138816;BA.debugLine="Private Sub ShowClaimPrompt(text As String)";
 RDebugUtils.currentLine=15138817;
- //BA.debugLineNum = 15138817;BA.debugLine="HideContentBlocks";
-__ref._hidecontentblocks /*String*/ (null);
+ //BA.debugLineNum = 15138817;BA.debugLine="uiController.ShowClaimPrompt(text)";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._showclaimprompt /*String*/ (null,_text);
 RDebugUtils.currentLine=15138818;
  //BA.debugLineNum = 15138818;BA.debugLine="orchestrationState.EnterUserStoppedState";
 __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enteruserstoppedstate /*String*/ (null);
@@ -17894,16 +14836,10 @@ RDebugUtils.currentLine=15138819;
  //BA.debugLineNum = 15138819;BA.debugLine="SetPlayIcon";
 __ref._setplayicon /*String*/ (null);
 RDebugUtils.currentLine=15138820;
- //BA.debugLineNum = 15138820;BA.debugLine="SetStatusText(text)";
-__ref._setstatustext /*String*/ (null,_text);
-RDebugUtils.currentLine=15138821;
- //BA.debugLineNum = 15138821;BA.debugLine="confirmPane.Visible = True";
-__ref._confirmpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible(__c.True);
-RDebugUtils.currentLine=15138822;
- //BA.debugLineNum = 15138822;BA.debugLine="LayoutUi(rootView.Width, rootView.Height)";
+ //BA.debugLineNum = 15138820;BA.debugLine="LayoutUi(rootView.Width, rootView.Height)";
 __ref._layoutui /*String*/ (null,(int) (__ref._rootview /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .getWidth()),(int) (__ref._rootview /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .getHeight()));
-RDebugUtils.currentLine=15138823;
- //BA.debugLineNum = 15138823;BA.debugLine="End Sub";
+RDebugUtils.currentLine=15138821;
+ //BA.debugLineNum = 15138821;BA.debugLine="End Sub";
 return "";
 }
 public String  _handleshutdownmessage(b4j.example.b4xmainpage __ref,String _text) throws Exception{
@@ -17911,57 +14847,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "handleshutdownmessage", false))
 	 {return ((String) Debug.delegate(ba, "handleshutdownmessage", new Object[] {_text}));}
-String _safetext = "";
 RDebugUtils.currentLine=9633792;
  //BA.debugLineNum = 9633792;BA.debugLine="Private Sub HandleShutdownMessage(text As String)";
 RDebugUtils.currentLine=9633793;
- //BA.debugLineNum = 9633793;BA.debugLine="Dim safeText As String = text";
-_safetext = _text;
+ //BA.debugLineNum = 9633793;BA.debugLine="playerDataCoordinator.HandleShutdownMessage(text)";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._handleshutdownmessage /*String*/ (null,_text);
 RDebugUtils.currentLine=9633794;
- //BA.debugLineNum = 9633794;BA.debugLine="If safeText = \"\" Then safeText = MessageValue(\"se";
-if ((_safetext).equals("")) { 
-_safetext = __ref._messagevalue /*String*/ (null,"server_wait");};
-RDebugUtils.currentLine=9633795;
- //BA.debugLineNum = 9633795;BA.debugLine="TraceLog(\"message shutdown text=\" & safeText)";
-__ref._tracelog /*String*/ (null,"message shutdown text="+_safetext);
-RDebugUtils.currentLine=9633796;
- //BA.debugLineNum = 9633796;BA.debugLine="SetPlaybackFlowState(FLOW_IDLE, \"shutdown\")";
-__ref._setplaybackflowstate /*String*/ (null,__ref._flow_idle /*String*/ ,"shutdown");
-RDebugUtils.currentLine=9633797;
- //BA.debugLineNum = 9633797;BA.debugLine="dataPolicyState.ClearPolicyPauseAndResumeRequest";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._clearpolicypauseandresumerequest /*String*/ (null);
-RDebugUtils.currentLine=9633798;
- //BA.debugLineNum = 9633798;BA.debugLine="ClearPlaybackState";
-__ref._clearplaybackstate /*String*/ (null);
-RDebugUtils.currentLine=9633799;
- //BA.debugLineNum = 9633799;BA.debugLine="HidePin";
-__ref._hidepin /*String*/ (null);
-RDebugUtils.currentLine=9633800;
- //BA.debugLineNum = 9633800;BA.debugLine="orchestrationState.EnterUserStoppedState";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enteruserstoppedstate /*String*/ (null);
-RDebugUtils.currentLine=9633801;
- //BA.debugLineNum = 9633801;BA.debugLine="SetPlayIcon";
-__ref._setplayicon /*String*/ (null);
-RDebugUtils.currentLine=9633802;
- //BA.debugLineNum = 9633802;BA.debugLine="ShowMessage(safeText)";
-__ref._showmessage /*String*/ (null,_safetext);
-RDebugUtils.currentLine=9633803;
- //BA.debugLineNum = 9633803;BA.debugLine="offlineDataRefreshTimer.Enabled = False";
-__ref._offlinedatarefreshtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=9633804;
- //BA.debugLineNum = 9633804;BA.debugLine="historyFlushTimer.Enabled = False";
-__ref._historyflushtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=9633805;
- //BA.debugLineNum = 9633805;BA.debugLine="localAdMinuteTimer.Enabled = False";
-__ref._localadminutetimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=9633806;
- //BA.debugLineNum = 9633806;BA.debugLine="trackCacheWarmupTimer.Enabled = False";
-__ref._trackcachewarmuptimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=9633807;
- //BA.debugLineNum = 9633807;BA.debugLine="cacheAuditTimer.Enabled = False";
-__ref._cacheaudittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=9633808;
- //BA.debugLineNum = 9633808;BA.debugLine="End Sub";
+ //BA.debugLineNum = 9633794;BA.debugLine="End Sub";
 return "";
 }
 public String  _stopformissingdata(b4j.example.b4xmainpage __ref,String _text) throws Exception{
@@ -17972,105 +14864,25 @@ if (Debug.shouldDelegate(ba, "stopformissingdata", false))
 RDebugUtils.currentLine=8978432;
  //BA.debugLineNum = 8978432;BA.debugLine="Private Sub StopForMissingData(text As String)";
 RDebugUtils.currentLine=8978433;
- //BA.debugLineNum = 8978433;BA.debugLine="TraceLog(\"состояние stop reason=missing_data text";
-__ref._tracelog /*String*/ (null,"состояние stop reason=missing_data text="+_text);
+ //BA.debugLineNum = 8978433;BA.debugLine="playerDataCoordinator.StopForMissingData(text)";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._stopformissingdata /*String*/ (null,_text);
 RDebugUtils.currentLine=8978434;
- //BA.debugLineNum = 8978434;BA.debugLine="SetPlaybackFlowState(FLOW_IDLE, \"missing_data\")";
-__ref._setplaybackflowstate /*String*/ (null,__ref._flow_idle /*String*/ ,"missing_data");
-RDebugUtils.currentLine=8978435;
- //BA.debugLineNum = 8978435;BA.debugLine="dataPolicyState.ClearPolicyPauseAndResumeRequest";
-__ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._clearpolicypauseandresumerequest /*String*/ (null);
-RDebugUtils.currentLine=8978436;
- //BA.debugLineNum = 8978436;BA.debugLine="RefreshConnectionIndicatorState";
-__ref._refreshconnectionindicatorstate /*String*/ (null);
-RDebugUtils.currentLine=8978437;
- //BA.debugLineNum = 8978437;BA.debugLine="ClearPlaybackState";
-__ref._clearplaybackstate /*String*/ (null);
-RDebugUtils.currentLine=8978438;
- //BA.debugLineNum = 8978438;BA.debugLine="HidePin";
-__ref._hidepin /*String*/ (null);
-RDebugUtils.currentLine=8978439;
- //BA.debugLineNum = 8978439;BA.debugLine="orchestrationState.EnterUserStoppedState";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enteruserstoppedstate /*String*/ (null);
-RDebugUtils.currentLine=8978440;
- //BA.debugLineNum = 8978440;BA.debugLine="SetPlayIcon";
-__ref._setplayicon /*String*/ (null);
-RDebugUtils.currentLine=8978441;
- //BA.debugLineNum = 8978441;BA.debugLine="ShowMessage(text)";
-__ref._showmessage /*String*/ (null,_text);
-RDebugUtils.currentLine=8978442;
- //BA.debugLineNum = 8978442;BA.debugLine="End Sub";
+ //BA.debugLineNum = 8978434;BA.debugLine="End Sub";
 return "";
 }
-public boolean  _hasplayablelocaltrackincurrentslot(b4j.example.b4xmainpage __ref) throws Exception{
+public String  _handletemporarystate(b4j.example.b4xmainpage __ref,String _mode,String _text) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "hasplayablelocaltrackincurrentslot", false))
-	 {return ((Boolean) Debug.delegate(ba, "hasplayablelocaltrackincurrentslot", null));}
-anywheresoftware.b4a.objects.collections.Map _currentslot = null;
-anywheresoftware.b4a.objects.collections.List _playlists = null;
-Object _playlistobject = null;
-anywheresoftware.b4a.objects.collections.Map _playlistdescriptor = null;
-String _playlistid = "";
-anywheresoftware.b4a.objects.collections.Map _playlistdata = null;
-RDebugUtils.currentLine=9306112;
- //BA.debugLineNum = 9306112;BA.debugLine="Private Sub HasPlayableLocalTrackInCurrentSlot As";
-RDebugUtils.currentLine=9306113;
- //BA.debugLineNum = 9306113;BA.debugLine="Dim currentSlot As Map = dataResolver.ResolveData";
-_currentslot = new anywheresoftware.b4a.objects.collections.Map();
-_currentslot = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._resolvedataslotatticks /*anywheresoftware.b4a.objects.collections.Map*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ,__ref._effectivenowticks /*long*/ (null));
-RDebugUtils.currentLine=9306114;
- //BA.debugLineNum = 9306114;BA.debugLine="If currentSlot.IsInitialized = False Or currentSl";
-if (_currentslot.IsInitialized()==__c.False || _currentslot.getSize()==0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=9306115;
- //BA.debugLineNum = 9306115;BA.debugLine="Dim playlists As List = currentSlot.GetDefault(\"p";
-_playlists = new anywheresoftware.b4a.objects.collections.List();
-_playlists = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_currentslot.GetDefault((Object)("playlists"),__c.Null)));
-RDebugUtils.currentLine=9306116;
- //BA.debugLineNum = 9306116;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
-if (_playlists.IsInitialized()==__c.False || _playlists.getSize()==0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=9306117;
- //BA.debugLineNum = 9306117;BA.debugLine="For Each playlistObject As Object In playlists";
-{
-final anywheresoftware.b4a.BA.IterableList group5 = _playlists;
-final int groupLen5 = group5.getSize()
-;int index5 = 0;
-;
-for (; index5 < groupLen5;index5++){
-_playlistobject = group5.Get(index5);
-RDebugUtils.currentLine=9306118;
- //BA.debugLineNum = 9306118;BA.debugLine="If playlistObject Is Map Then";
-if (_playlistobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=9306119;
- //BA.debugLineNum = 9306119;BA.debugLine="Dim playlistDescriptor As Map = playlistObject";
-_playlistdescriptor = new anywheresoftware.b4a.objects.collections.Map();
-_playlistdescriptor = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_playlistobject));
-RDebugUtils.currentLine=9306120;
- //BA.debugLineNum = 9306120;BA.debugLine="Dim playlistId As String = playlistDescriptor.G";
-_playlistid = BA.ObjectToString(_playlistdescriptor.GetDefault((Object)("id"),(Object)("")));
-RDebugUtils.currentLine=9306121;
- //BA.debugLineNum = 9306121;BA.debugLine="If playlistId = \"\" Then Continue";
-if ((_playlistid).equals("")) { 
-if (true) continue;};
-RDebugUtils.currentLine=9306122;
- //BA.debugLineNum = 9306122;BA.debugLine="Dim playlistData As Map = dataResolver.LoadCach";
-_playlistdata = new anywheresoftware.b4a.objects.collections.Map();
-_playlistdata = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._loadcachedplaylistmetadata /*anywheresoftware.b4a.objects.collections.Map*/ (null,_playlistid);
-RDebugUtils.currentLine=9306123;
- //BA.debugLineNum = 9306123;BA.debugLine="If PlaylistHasCachedTrack(playlistData) Then Re";
-if (__ref._playlisthascachedtrack /*boolean*/ (null,_playlistdata)) { 
-if (true) return __c.True;};
- };
- }
-};
-RDebugUtils.currentLine=9306126;
- //BA.debugLineNum = 9306126;BA.debugLine="Return False";
-if (true) return __c.False;
-RDebugUtils.currentLine=9306127;
- //BA.debugLineNum = 9306127;BA.debugLine="End Sub";
-return false;
+if (Debug.shouldDelegate(ba, "handletemporarystate", false))
+	 {return ((String) Debug.delegate(ba, "handletemporarystate", new Object[] {_mode,_text}));}
+RDebugUtils.currentLine=8847360;
+ //BA.debugLineNum = 8847360;BA.debugLine="Private Sub HandleTemporaryState(mode As String, t";
+RDebugUtils.currentLine=8847361;
+ //BA.debugLineNum = 8847361;BA.debugLine="playerDataCoordinator.HandleTemporaryState(mode,";
+__ref._playerdatacoordinator /*b4j.example.playbackdatacoordinator*/ ._handletemporarystate /*String*/ (null,_mode,_text);
+RDebugUtils.currentLine=8847362;
+ //BA.debugLineNum = 8847362;BA.debugLine="End Sub";
+return "";
 }
 public boolean  _hasobservableactiveplayback(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
@@ -18121,62 +14933,6 @@ RDebugUtils.currentLine=10944513;
 if (true) return __ref._queuestate /*b4j.example.playbackqueuestate*/ ._haspendingexactbreak /*boolean*/ (null,__ref._localnowtimestamp /*long*/ (null));
 RDebugUtils.currentLine=10944514;
  //BA.debugLineNum = 10944514;BA.debugLine="End Sub";
-return false;
-}
-public boolean  _playlisthascachedtrack(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _playlistdata) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "playlisthascachedtrack", false))
-	 {return ((Boolean) Debug.delegate(ba, "playlisthascachedtrack", new Object[] {_playlistdata}));}
-anywheresoftware.b4a.objects.collections.List _tracks = null;
-Object _trackobject = null;
-anywheresoftware.b4a.objects.collections.Map _track = null;
-String _trackid = "";
-RDebugUtils.currentLine=10223616;
- //BA.debugLineNum = 10223616;BA.debugLine="Private Sub PlaylistHasCachedTrack(playlistData As";
-RDebugUtils.currentLine=10223617;
- //BA.debugLineNum = 10223617;BA.debugLine="If playlistData.IsInitialized = False Or playlist";
-if (_playlistdata.IsInitialized()==__c.False || _playlistdata.getSize()==0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=10223618;
- //BA.debugLineNum = 10223618;BA.debugLine="Dim tracks As List = playlistData.GetDefault(\"tra";
-_tracks = new anywheresoftware.b4a.objects.collections.List();
-_tracks = (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(_playlistdata.GetDefault((Object)("tracks"),__c.Null)));
-RDebugUtils.currentLine=10223619;
- //BA.debugLineNum = 10223619;BA.debugLine="If tracks.IsInitialized = False Or tracks.Size =";
-if (_tracks.IsInitialized()==__c.False || _tracks.getSize()==0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=10223620;
- //BA.debugLineNum = 10223620;BA.debugLine="For Each trackObject As Object In tracks";
-{
-final anywheresoftware.b4a.BA.IterableList group4 = _tracks;
-final int groupLen4 = group4.getSize()
-;int index4 = 0;
-;
-for (; index4 < groupLen4;index4++){
-_trackobject = group4.Get(index4);
-RDebugUtils.currentLine=10223621;
- //BA.debugLineNum = 10223621;BA.debugLine="If trackObject Is Map Then";
-if (_trackobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=10223622;
- //BA.debugLineNum = 10223622;BA.debugLine="Dim track As Map = trackObject";
-_track = new anywheresoftware.b4a.objects.collections.Map();
-_track = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_trackobject));
-RDebugUtils.currentLine=10223623;
- //BA.debugLineNum = 10223623;BA.debugLine="Dim trackId As String = track.GetDefault(\"id\",";
-_trackid = BA.ObjectToString(_track.GetDefault((Object)("id"),(Object)("")));
-RDebugUtils.currentLine=10223624;
- //BA.debugLineNum = 10223624;BA.debugLine="If trackId <> \"\" And mediaCacheService.IsTrackC";
-if ((_trackid).equals("") == false && __ref._mediacacheservice /*b4j.example.mediacache*/ ._istrackcached /*boolean*/ (null,_trackid)) { 
-if (true) return __c.True;};
- };
- }
-};
-RDebugUtils.currentLine=10223627;
- //BA.debugLineNum = 10223627;BA.debugLine="Return False";
-if (true) return __c.False;
-RDebugUtils.currentLine=10223628;
- //BA.debugLineNum = 10223628;BA.debugLine="End Sub";
 return false;
 }
 public String  _headeractionpane_click(b4j.example.b4xmainpage __ref) throws Exception{
@@ -18308,20 +15064,6 @@ RDebugUtils.currentLine=3735554;
  //BA.debugLineNum = 3735554;BA.debugLine="End Sub";
 return "";
 }
-public String  _setstreamtext(b4j.example.b4xmainpage __ref,String _text) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "setstreamtext", false))
-	 {return ((String) Debug.delegate(ba, "setstreamtext", new Object[] {_text}));}
-RDebugUtils.currentLine=15400960;
- //BA.debugLineNum = 15400960;BA.debugLine="Private Sub SetStreamText(text As String)";
-RDebugUtils.currentLine=15400961;
- //BA.debugLineNum = 15400961;BA.debugLine="lblStream.Text = text";
-__ref._lblstream /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(_text);
-RDebugUtils.currentLine=15400962;
- //BA.debugLineNum = 15400962;BA.debugLine="End Sub";
-return "";
-}
 public String  _historyflushtimer_tick(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -18442,6 +15184,20 @@ RDebugUtils.currentLine=16646148;
  //BA.debugLineNum = 16646148;BA.debugLine="End Sub";
 return "";
 }
+public boolean  _isreleasebuild(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "isreleasebuild", false))
+	 {return ((Boolean) Debug.delegate(ba, "isreleasebuild", null));}
+RDebugUtils.currentLine=59834368;
+ //BA.debugLineNum = 59834368;BA.debugLine="Private Sub IsReleaseBuild As Boolean";
+RDebugUtils.currentLine=59834372;
+ //BA.debugLineNum = 59834372;BA.debugLine="Return False";
+if (true) return __c.False;
+RDebugUtils.currentLine=59834374;
+ //BA.debugLineNum = 59834374;BA.debugLine="End Sub";
+return false;
+}
 public String  _resolvemachineguidasync(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -18469,59 +15225,6 @@ __ref._tracelog /*String*/ (null,"machine guid чтение ошибка message
 RDebugUtils.currentLine=16973832;
  //BA.debugLineNum = 16973832;BA.debugLine="End Sub";
 return "";
-}
-public String  _invalidaterelevanttrackidscache(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "invalidaterelevanttrackidscache", false))
-	 {return ((String) Debug.delegate(ba, "invalidaterelevanttrackidscache", null));}
-RDebugUtils.currentLine=57409536;
- //BA.debugLineNum = 57409536;BA.debugLine="Private Sub InvalidateRelevantTrackIdsCache";
-RDebugUtils.currentLine=57409537;
- //BA.debugLineNum = 57409537;BA.debugLine="If cachedRelevantTrackIds.IsInitialized = False T";
-if (__ref._cachedrelevanttrackids /*anywheresoftware.b4a.objects.collections.List*/ .IsInitialized()==__c.False) { 
-__ref._cachedrelevanttrackids /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();};
-RDebugUtils.currentLine=57409538;
- //BA.debugLineNum = 57409538;BA.debugLine="cachedRelevantTrackIds.Clear";
-__ref._cachedrelevanttrackids /*anywheresoftware.b4a.objects.collections.List*/ .Clear();
-RDebugUtils.currentLine=57409539;
- //BA.debugLineNum = 57409539;BA.debugLine="End Sub";
-return "";
-}
-public long  _resolveplaybackendtimestamp(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _data) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "resolveplaybackendtimestamp", false))
-	 {return ((Long) Debug.delegate(ba, "resolveplaybackendtimestamp", new Object[] {_data}));}
-anywheresoftware.b4a.objects.collections.Map _playerdata = null;
-long _playerend = 0L;
-RDebugUtils.currentLine=9830400;
- //BA.debugLineNum = 9830400;BA.debugLine="Private Sub ResolvePlaybackEndTimestamp(data As Ma";
-RDebugUtils.currentLine=9830401;
- //BA.debugLineNum = 9830401;BA.debugLine="If data.IsInitialized = False Then Return 0";
-if (_data.IsInitialized()==__c.False) { 
-if (true) return (long) (0);};
-RDebugUtils.currentLine=9830402;
- //BA.debugLineNum = 9830402;BA.debugLine="Dim playerData As Map = data.GetDefault(\"player\",";
-_playerdata = new anywheresoftware.b4a.objects.collections.Map();
-_playerdata = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_data.GetDefault((Object)("player"),(Object)(__ref._createinitializedmap /*anywheresoftware.b4a.objects.collections.Map*/ (null).getObject()))));
-RDebugUtils.currentLine=9830403;
- //BA.debugLineNum = 9830403;BA.debugLine="If playerData.IsInitialized Then";
-if (_playerdata.IsInitialized()) { 
-RDebugUtils.currentLine=9830404;
- //BA.debugLineNum = 9830404;BA.debugLine="Dim playerEnd As Long = ParseEndValueToTimestamp";
-_playerend = __ref._parseendvaluetotimestamp /*long*/ (null,_playerdata.Get((Object)("end")));
-RDebugUtils.currentLine=9830405;
- //BA.debugLineNum = 9830405;BA.debugLine="If playerEnd > 0 Then Return playerEnd";
-if (_playerend>0) { 
-if (true) return _playerend;};
- };
-RDebugUtils.currentLine=9830407;
- //BA.debugLineNum = 9830407;BA.debugLine="Return ParseEndValueToTimestamp(data.Get(\"end\"))";
-if (true) return __ref._parseendvaluetotimestamp /*long*/ (null,_data.Get((Object)("end")));
-RDebugUtils.currentLine=9830408;
- //BA.debugLineNum = 9830408;BA.debugLine="End Sub";
-return 0L;
 }
 public String  _isplaybackrunningfortrace(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
@@ -18589,20 +15292,6 @@ RDebugUtils.currentLine=62652425;
 if (true) return __c.False;
 RDebugUtils.currentLine=62652426;
  //BA.debugLineNum = 62652426;BA.debugLine="End Sub";
-return false;
-}
-public boolean  _isreleasebuild(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "isreleasebuild", false))
-	 {return ((Boolean) Debug.delegate(ba, "isreleasebuild", null));}
-RDebugUtils.currentLine=59834368;
- //BA.debugLineNum = 59834368;BA.debugLine="Private Sub IsReleaseBuild As Boolean";
-RDebugUtils.currentLine=59834372;
- //BA.debugLineNum = 59834372;BA.debugLine="Return False";
-if (true) return __c.False;
-RDebugUtils.currentLine=59834374;
- //BA.debugLineNum = 59834374;BA.debugLine="End Sub";
 return false;
 }
 public int  _scalevalue(b4j.example.b4xmainpage __ref,int _availablewidth,int _smallvalue,int _mediumvalue,int _largevalue) throws Exception{
@@ -18736,54 +15425,34 @@ _cardradius = __c.DipToCurrent((int) (24));
  }}
 ;
 RDebugUtils.currentLine=786469;
- //BA.debugLineNum = 786469;BA.debugLine="playIconBaseSize = playFontSize";
-__ref._playiconbasesize /*float*/  = _playfontsize;
-RDebugUtils.currentLine=786470;
- //BA.debugLineNum = 786470;BA.debugLine="stopIconBaseSize = stopFontSize";
-__ref._stopiconbasesize /*float*/  = _stopfontsize;
-RDebugUtils.currentLine=786471;
- //BA.debugLineNum = 786471;BA.debugLine="headerActionFontSize = headerActionSize";
-__ref._headeractionfontsize /*float*/  = _headeractionsize;
-RDebugUtils.currentLine=786472;
- //BA.debugLineNum = 786472;BA.debugLine="codeFontSize = codeSize";
-__ref._codefontsize /*float*/  = _codesize;
-RDebugUtils.currentLine=786473;
- //BA.debugLineNum = 786473;BA.debugLine="lblStream.Font = xui.CreateDefaultBoldFont(stream";
+ //BA.debugLineNum = 786469;BA.debugLine="lblStream.Font = xui.CreateDefaultBoldFont(stream";
 __ref._lblstream /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setFont(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .CreateDefaultBoldFont(_streamfontsize));
-RDebugUtils.currentLine=786474;
- //BA.debugLineNum = 786474;BA.debugLine="lblInfo.Font = xui.CreateDefaultFont(infoFontSize";
+RDebugUtils.currentLine=786470;
+ //BA.debugLineNum = 786470;BA.debugLine="lblInfo.Font = xui.CreateDefaultFont(infoFontSize";
 __ref._lblinfo /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setFont(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .CreateDefaultFont(_infofontsize));
-RDebugUtils.currentLine=786475;
- //BA.debugLineNum = 786475;BA.debugLine="lblHeader.Font = xui.CreateDefaultFont(12)";
+RDebugUtils.currentLine=786471;
+ //BA.debugLineNum = 786471;BA.debugLine="lblHeader.Font = xui.CreateDefaultFont(12)";
 __ref._lblheader /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setFont(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .CreateDefaultFont((float) (12)));
-RDebugUtils.currentLine=786476;
- //BA.debugLineNum = 786476;BA.debugLine="lblFooter.Font = xui.CreateDefaultFont(12)";
+RDebugUtils.currentLine=786472;
+ //BA.debugLineNum = 786472;BA.debugLine="lblFooter.Font = xui.CreateDefaultFont(12)";
 __ref._lblfooter /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setFont(__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ .CreateDefaultFont((float) (12)));
-RDebugUtils.currentLine=786477;
- //BA.debugLineNum = 786477;BA.debugLine="ApplyMaterialIconFont(lblConnectionIcon, 16)";
-__ref._applymaterialiconfont /*String*/ (null,__ref._lblconnectionicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,(float) (16));
-RDebugUtils.currentLine=786478;
- //BA.debugLineNum = 786478;BA.debugLine="card.SetColorAndBorder(0xFF1A1B1E, 1dip, 0x14FFFF";
+RDebugUtils.currentLine=786473;
+ //BA.debugLineNum = 786473;BA.debugLine="headerActionFontSize = headerActionSize";
+__ref._headeractionfontsize /*float*/  = _headeractionsize;
+RDebugUtils.currentLine=786474;
+ //BA.debugLineNum = 786474;BA.debugLine="codeFontSize = codeSize";
+__ref._codefontsize /*float*/  = _codesize;
+RDebugUtils.currentLine=786475;
+ //BA.debugLineNum = 786475;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblConnectionI";
+_uistyle._applymaterialiconfont /*String*/ (__ref._xui /*anywheresoftware.b4a.objects.B4XViewWrapper.XUI*/ ,__ref._lblconnectionicon /*anywheresoftware.b4a.objects.B4XViewWrapper*/ ,(float) (16));
+RDebugUtils.currentLine=786476;
+ //BA.debugLineNum = 786476;BA.debugLine="card.SetColorAndBorder(0xFF1A1B1E, 1dip, 0x14FFFF";
 __ref._card /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .SetColorAndBorder(((int)0xff1a1b1e),__c.DipToCurrent((int) (1)),((int)0x14ffffff),_cardradius);
-RDebugUtils.currentLine=786479;
- //BA.debugLineNum = 786479;BA.debugLine="UpdateHeaderActionAppearance(False)";
-__ref._updateheaderactionappearance /*String*/ (null,__c.False);
-RDebugUtils.currentLine=786480;
- //BA.debugLineNum = 786480;BA.debugLine="UpdateCodeInputAppearance(isCodeInputFocused)";
-__ref._updatecodeinputappearance /*String*/ (null,__ref._iscodeinputfocused /*boolean*/ );
-RDebugUtils.currentLine=786481;
- //BA.debugLineNum = 786481;BA.debugLine="If orchestrationState.IsStarted Or dataPolicyStat";
-if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/  || __ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._isplaybackpausedbypolicy /*boolean*/  || __ref._isstartupsequenceinprogress /*boolean*/ ) { 
-RDebugUtils.currentLine=786482;
- //BA.debugLineNum = 786482;BA.debugLine="SetStopIcon";
-__ref._setstopicon /*String*/ (null);
- }else {
-RDebugUtils.currentLine=786484;
- //BA.debugLineNum = 786484;BA.debugLine="SetPlayIcon";
-__ref._setplayicon /*String*/ (null);
- };
-RDebugUtils.currentLine=786486;
- //BA.debugLineNum = 786486;BA.debugLine="End Sub";
+RDebugUtils.currentLine=786477;
+ //BA.debugLineNum = 786477;BA.debugLine="uiController.UpdateResponsiveStyles(streamFontSiz";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._updateresponsivestyles /*String*/ (null,_streamfontsize,_infofontsize,_playfontsize,_stopfontsize,_headeractionsize,_codesize,__ref._iscodeinputfocused /*boolean*/ ,__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/  || __ref._datapolicystate /*b4j.example.playbackdatapolicystate*/ ._isplaybackpausedbypolicy /*boolean*/  || __ref._isstartupsequenceinprogress /*boolean*/ );
+RDebugUtils.currentLine=786478;
+ //BA.debugLineNum = 786478;BA.debugLine="End Sub";
 return "";
 }
 public int  _measureviewtextwidth(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.B4XViewWrapper _view) throws Exception{
@@ -18819,35 +15488,6 @@ if (true) return (int) (__c.Ceil((double)(BA.ObjectToNumber(_bounds.RunMethod("g
 RDebugUtils.currentLine=60817415;
  //BA.debugLineNum = 60817415;BA.debugLine="End Sub";
 return 0;
-}
-public String  _updatevisiblemode(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "updatevisiblemode", false))
-	 {return ((String) Debug.delegate(ba, "updatevisiblemode", null));}
-RDebugUtils.currentLine=3211264;
- //BA.debugLineNum = 3211264;BA.debugLine="Private Sub UpdateVisibleMode";
-RDebugUtils.currentLine=3211265;
- //BA.debugLineNum = 3211265;BA.debugLine="setupPane.Visible = appScreenMode <> \"player\"";
-__ref._setuppane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible((__ref._appscreenmode /*String*/ ).equals("player") == false);
-RDebugUtils.currentLine=3211266;
- //BA.debugLineNum = 3211266;BA.debugLine="If appScreenMode = \"player\" Then";
-if ((__ref._appscreenmode /*String*/ ).equals("player")) { 
-RDebugUtils.currentLine=3211267;
- //BA.debugLineNum = 3211267;BA.debugLine="playerPane.Visible = True";
-__ref._playerpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible(__c.True);
- }else {
-RDebugUtils.currentLine=3211269;
- //BA.debugLineNum = 3211269;BA.debugLine="playerPane.Visible = False";
-__ref._playerpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible(__c.False);
- };
-RDebugUtils.currentLine=3211271;
- //BA.debugLineNum = 3211271;BA.debugLine="If appScreenMode = \"setup\" Then headerActionPane.";
-if ((__ref._appscreenmode /*String*/ ).equals("setup")) { 
-__ref._headeractionpane /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setVisible(__c.False);};
-RDebugUtils.currentLine=3211272;
- //BA.debugLineNum = 3211272;BA.debugLine="End Sub";
-return "";
 }
 public String  _localadminutetimer_tick(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
@@ -18904,23 +15544,40 @@ RDebugUtils.currentLine=8388616;
  //BA.debugLineNum = 8388616;BA.debugLine="End Sub";
 return "";
 }
-public String  _secondsagotext(b4j.example.b4xmainpage __ref,long _ticksvalue) throws Exception{
+public int  _timezoneoffsetminutes(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "secondsagotext", false))
-	 {return ((String) Debug.delegate(ba, "secondsagotext", new Object[] {_ticksvalue}));}
-RDebugUtils.currentLine=59310080;
- //BA.debugLineNum = 59310080;BA.debugLine="Private Sub SecondsAgoText(ticksValue As Long) As";
-RDebugUtils.currentLine=59310081;
- //BA.debugLineNum = 59310081;BA.debugLine="If ticksValue <= 0 Then Return \"unknown\"";
-if (_ticksvalue<=0) { 
-if (true) return "unknown";};
-RDebugUtils.currentLine=59310082;
- //BA.debugLineNum = 59310082;BA.debugLine="Return \"\" & Max(0, Floor((DateTime.Now - ticksVal";
-if (true) return ""+BA.NumberToString(__c.Max(0,__c.Floor((__c.DateTime.getNow()-_ticksvalue)/(double)1000)));
-RDebugUtils.currentLine=59310083;
- //BA.debugLineNum = 59310083;BA.debugLine="End Sub";
-return "";
+if (Debug.shouldDelegate(ba, "timezoneoffsetminutes", false))
+	 {return ((Integer) Debug.delegate(ba, "timezoneoffsetminutes", null));}
+anywheresoftware.b4j.object.JavaObject _jo = null;
+anywheresoftware.b4j.object.JavaObject _nowoffset = null;
+anywheresoftware.b4j.object.JavaObject _zoneoffset = null;
+int _totalseconds = 0;
+RDebugUtils.currentLine=17956864;
+ //BA.debugLineNum = 17956864;BA.debugLine="Private Sub TimezoneOffsetMinutes As Int";
+RDebugUtils.currentLine=17956865;
+ //BA.debugLineNum = 17956865;BA.debugLine="Dim jo As JavaObject";
+_jo = new anywheresoftware.b4j.object.JavaObject();
+RDebugUtils.currentLine=17956866;
+ //BA.debugLineNum = 17956866;BA.debugLine="jo.InitializeStatic(\"java.time.OffsetDateTime\")";
+_jo.InitializeStatic("java.time.OffsetDateTime");
+RDebugUtils.currentLine=17956867;
+ //BA.debugLineNum = 17956867;BA.debugLine="Dim nowOffset As JavaObject = jo.RunMethod(\"now\",";
+_nowoffset = new anywheresoftware.b4j.object.JavaObject();
+_nowoffset = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_jo.RunMethod("now",(Object[])(__c.Null))));
+RDebugUtils.currentLine=17956868;
+ //BA.debugLineNum = 17956868;BA.debugLine="Dim zoneOffset As JavaObject = nowOffset.RunMetho";
+_zoneoffset = new anywheresoftware.b4j.object.JavaObject();
+_zoneoffset = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_nowoffset.RunMethod("getOffset",(Object[])(__c.Null))));
+RDebugUtils.currentLine=17956869;
+ //BA.debugLineNum = 17956869;BA.debugLine="Dim totalSeconds As Int = zoneOffset.RunMethod(\"g";
+_totalseconds = (int)(BA.ObjectToNumber(_zoneoffset.RunMethod("getTotalSeconds",(Object[])(__c.Null))));
+RDebugUtils.currentLine=17956870;
+ //BA.debugLineNum = 17956870;BA.debugLine="Return -Round(totalSeconds / 60)";
+if (true) return (int) (-__c.Round(_totalseconds/(double)60));
+RDebugUtils.currentLine=17956871;
+ //BA.debugLineNum = 17956871;BA.debugLine="End Sub";
+return 0;
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _stopplayer(b4j.example.b4xmainpage __ref) throws Exception{
 RDebugUtils.currentModule="b4xmainpage";
@@ -18997,11 +15654,11 @@ RDebugUtils.currentLine=2883589;
  //BA.debugLineNum = 2883589;BA.debugLine="SetPlayIcon";
 __ref._setplayicon /*String*/ (null);
 RDebugUtils.currentLine=2883590;
- //BA.debugLineNum = 2883590;BA.debugLine="SetStatusText(\"\")";
-__ref._setstatustext /*String*/ (null,"");
+ //BA.debugLineNum = 2883590;BA.debugLine="uiController.SetStatusText(\"\")";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._setstatustext /*String*/ (null,"");
 RDebugUtils.currentLine=2883591;
- //BA.debugLineNum = 2883591;BA.debugLine="lblHeader.Text = \"\"";
-__ref._lblheader /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText("");
+ //BA.debugLineNum = 2883591;BA.debugLine="uiController.RenderPlayerHead(\"\", \"\")";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._renderplayerhead /*String*/ (null,"","");
 RDebugUtils.currentLine=2883592;
  //BA.debugLineNum = 2883592;BA.debugLine="ConfigureSetupScreen(\"setup\", text)";
 __ref._configuresetupscreen /*String*/ (null,"setup",_text);
@@ -19205,6 +15862,20 @@ RDebugUtils.currentLine=8454152;
  //BA.debugLineNum = 8454152;BA.debugLine="End Sub";
 return 0;
 }
+public String  _nexturlvalue(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "nexturlvalue", false))
+	 {return ((String) Debug.delegate(ba, "nexturlvalue", null));}
+RDebugUtils.currentLine=79036416;
+ //BA.debugLineNum = 79036416;BA.debugLine="Public Sub NextUrlValue As String";
+RDebugUtils.currentLine=79036417;
+ //BA.debugLineNum = 79036417;BA.debugLine="Return NEXT_BASE_URL";
+if (true) return __ref._next_base_url /*String*/ ;
+RDebugUtils.currentLine=79036418;
+ //BA.debugLineNum = 79036418;BA.debugLine="End Sub";
+return "";
+}
 public double  _normalizedbvalue(b4j.example.b4xmainpage __ref,Object _value,double _fallbackvalue) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -19304,235 +15975,12 @@ RDebugUtils.currentLine=14417922;
  //BA.debugLineNum = 14417922;BA.debugLine="Dim fadeStep As Double = orbitTimer.Interval / OR";
 _fadestep = __ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .getInterval()/(double)__ref._orbit_fade_ms /*int*/ ;
 RDebugUtils.currentLine=14417923;
- //BA.debugLineNum = 14417923;BA.debugLine="If orbitFadeValue < orbitFadeTarget Then";
-if (__ref._orbitfadevalue /*double*/ <__ref._orbitfadetarget /*double*/ ) { 
-RDebugUtils.currentLine=14417924;
- //BA.debugLineNum = 14417924;BA.debugLine="orbitFadeValue = Min(orbitFadeTarget, orbitFadeV";
-__ref._orbitfadevalue /*double*/  = __c.Min(__ref._orbitfadetarget /*double*/ ,__ref._orbitfadevalue /*double*/ +_fadestep);
- }else 
-{RDebugUtils.currentLine=14417925;
- //BA.debugLineNum = 14417925;BA.debugLine="Else If orbitFadeValue > orbitFadeTarget Then";
-if (__ref._orbitfadevalue /*double*/ >__ref._orbitfadetarget /*double*/ ) { 
-RDebugUtils.currentLine=14417926;
- //BA.debugLineNum = 14417926;BA.debugLine="orbitFadeValue = Max(orbitFadeTarget, orbitFadeV";
-__ref._orbitfadevalue /*double*/  = __c.Max(__ref._orbitfadetarget /*double*/ ,__ref._orbitfadevalue /*double*/ -_fadestep);
- }}
-;
-RDebugUtils.currentLine=14417928;
- //BA.debugLineNum = 14417928;BA.debugLine="ApplyOrbitFrame(orbitPulseStep)";
-__ref._applyorbitframe /*String*/ (null,__ref._orbitpulsestep /*int*/ );
-RDebugUtils.currentLine=14417929;
- //BA.debugLineNum = 14417929;BA.debugLine="If orbitFadeValue = 0 And orbitFadeTarget = 0 The";
-if (__ref._orbitfadevalue /*double*/ ==0 && __ref._orbitfadetarget /*double*/ ==0) { 
+ //BA.debugLineNum = 14417923;BA.debugLine="If uiController.AdvanceOrbitFrame(orbitPulseStep,";
+if (__ref._uicontroller /*b4j.example.playeruicontroller*/ ._advanceorbitframe /*boolean*/ (null,__ref._orbitpulsestep /*int*/ ,_fadestep)) { 
 __ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);};
-RDebugUtils.currentLine=14417930;
- //BA.debugLineNum = 14417930;BA.debugLine="End Sub";
+RDebugUtils.currentLine=14417924;
+ //BA.debugLineNum = 14417924;BA.debugLine="End Sub";
 return "";
-}
-public long  _parsedateonlyendtimestamp(b4j.example.b4xmainpage __ref,String _textvalue) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "parsedateonlyendtimestamp", false))
-	 {return ((Long) Debug.delegate(ba, "parsedateonlyendtimestamp", new Object[] {_textvalue}));}
-String _previousdateformat = "";
-long _daystartticks = 0L;
-RDebugUtils.currentLine=10158080;
- //BA.debugLineNum = 10158080;BA.debugLine="Private Sub ParseDateOnlyEndTimestamp(textValue As";
-RDebugUtils.currentLine=10158081;
- //BA.debugLineNum = 10158081;BA.debugLine="Dim previousDateFormat As String = DateTime.DateF";
-_previousdateformat = __c.DateTime.getDateFormat();
-RDebugUtils.currentLine=10158082;
- //BA.debugLineNum = 10158082;BA.debugLine="Try";
-try {RDebugUtils.currentLine=10158083;
- //BA.debugLineNum = 10158083;BA.debugLine="DateTime.DateFormat = \"yyyy-MM-dd\"";
-__c.DateTime.setDateFormat("yyyy-MM-dd");
-RDebugUtils.currentLine=10158084;
- //BA.debugLineNum = 10158084;BA.debugLine="Dim dayStartTicks As Long = DateTime.DateParse(t";
-_daystartticks = __c.DateTime.DateParse(_textvalue);
-RDebugUtils.currentLine=10158085;
- //BA.debugLineNum = 10158085;BA.debugLine="DateTime.DateFormat = previousDateFormat";
-__c.DateTime.setDateFormat(_previousdateformat);
-RDebugUtils.currentLine=10158086;
- //BA.debugLineNum = 10158086;BA.debugLine="Return Floor((dayStartTicks + DateTime.TicksPerD";
-if (true) return (long) (__c.Floor((_daystartticks+__c.DateTime.TicksPerDay)/(double)1000));
- } 
-       catch (Exception e8) {
-			ba.setLastException(e8);RDebugUtils.currentLine=10158088;
- //BA.debugLineNum = 10158088;BA.debugLine="DateTime.DateFormat = previousDateFormat";
-__c.DateTime.setDateFormat(_previousdateformat);
-RDebugUtils.currentLine=10158089;
- //BA.debugLineNum = 10158089;BA.debugLine="ConsumeLastException";
-__ref._consumelastexception /*String*/ (null);
-RDebugUtils.currentLine=10158090;
- //BA.debugLineNum = 10158090;BA.debugLine="Return 0";
-if (true) return (long) (0);
- };
-RDebugUtils.currentLine=10158092;
- //BA.debugLineNum = 10158092;BA.debugLine="End Sub";
-return 0L;
-}
-public long  _parseendvaluetotimestamp(b4j.example.b4xmainpage __ref,Object _value) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "parseendvaluetotimestamp", false))
-	 {return ((Long) Debug.delegate(ba, "parseendvaluetotimestamp", new Object[] {_value}));}
-String _textvalue = "";
-anywheresoftware.b4j.object.JavaObject _instantclass = null;
-anywheresoftware.b4j.object.JavaObject _instant = null;
-anywheresoftware.b4j.object.JavaObject _offsetdatetimeclass = null;
-anywheresoftware.b4j.object.JavaObject _offsetdatetime = null;
-RDebugUtils.currentLine=9895936;
- //BA.debugLineNum = 9895936;BA.debugLine="Private Sub ParseEndValueToTimestamp(value As Obje";
-RDebugUtils.currentLine=9895937;
- //BA.debugLineNum = 9895937;BA.debugLine="If value = Null Then Return 0";
-if (_value== null) { 
-if (true) return (long) (0);};
-RDebugUtils.currentLine=9895938;
- //BA.debugLineNum = 9895938;BA.debugLine="Dim textValue As String = (\"\" & value).Trim";
-_textvalue = (""+BA.ObjectToString(_value)).trim();
-RDebugUtils.currentLine=9895939;
- //BA.debugLineNum = 9895939;BA.debugLine="If textValue = \"\" Then Return 0";
-if ((_textvalue).equals("")) { 
-if (true) return (long) (0);};
-RDebugUtils.currentLine=9895940;
- //BA.debugLineNum = 9895940;BA.debugLine="If Regex.IsMatch(\"^\\d+$\", textValue) Then Return";
-if (__c.Regex.IsMatch("^\\d+$",_textvalue)) { 
-if (true) return (long) (__c.Floor((double)(Double.parseDouble(_textvalue))));};
-RDebugUtils.currentLine=9895941;
- //BA.debugLineNum = 9895941;BA.debugLine="If Regex.IsMatch(\"^\\d{4}-\\d{2}-\\d{2}$\", textValue";
-if (__c.Regex.IsMatch("^\\d{4}-\\d{2}-\\d{2}$",_textvalue)) { 
-RDebugUtils.currentLine=9895942;
- //BA.debugLineNum = 9895942;BA.debugLine="Return ParseDateOnlyEndTimestamp(textValue)";
-if (true) return __ref._parsedateonlyendtimestamp /*long*/ (null,_textvalue);
- };
-RDebugUtils.currentLine=9895944;
- //BA.debugLineNum = 9895944;BA.debugLine="Try";
-try {RDebugUtils.currentLine=9895945;
- //BA.debugLineNum = 9895945;BA.debugLine="Dim instantClass As JavaObject";
-_instantclass = new anywheresoftware.b4j.object.JavaObject();
-RDebugUtils.currentLine=9895946;
- //BA.debugLineNum = 9895946;BA.debugLine="instantClass.InitializeStatic(\"java.time.Instant";
-_instantclass.InitializeStatic("java.time.Instant");
-RDebugUtils.currentLine=9895947;
- //BA.debugLineNum = 9895947;BA.debugLine="Dim instant As JavaObject = instantClass.RunMeth";
-_instant = new anywheresoftware.b4j.object.JavaObject();
-_instant = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_instantclass.RunMethod("parse",new Object[]{(Object)(_textvalue)})));
-RDebugUtils.currentLine=9895948;
- //BA.debugLineNum = 9895948;BA.debugLine="Return instant.RunMethod(\"getEpochSecond\", Null)";
-if (true) return BA.ObjectToLongNumber(_instant.RunMethod("getEpochSecond",(Object[])(__c.Null)));
- } 
-       catch (Exception e14) {
-			ba.setLastException(e14);RDebugUtils.currentLine=9895950;
- //BA.debugLineNum = 9895950;BA.debugLine="ConsumeLastException";
-__ref._consumelastexception /*String*/ (null);
- };
-RDebugUtils.currentLine=9895952;
- //BA.debugLineNum = 9895952;BA.debugLine="Try";
-try {RDebugUtils.currentLine=9895953;
- //BA.debugLineNum = 9895953;BA.debugLine="Dim offsetDateTimeClass As JavaObject";
-_offsetdatetimeclass = new anywheresoftware.b4j.object.JavaObject();
-RDebugUtils.currentLine=9895954;
- //BA.debugLineNum = 9895954;BA.debugLine="offsetDateTimeClass.InitializeStatic(\"java.time.";
-_offsetdatetimeclass.InitializeStatic("java.time.OffsetDateTime");
-RDebugUtils.currentLine=9895955;
- //BA.debugLineNum = 9895955;BA.debugLine="Dim offsetDateTime As JavaObject = offsetDateTim";
-_offsetdatetime = new anywheresoftware.b4j.object.JavaObject();
-_offsetdatetime = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_offsetdatetimeclass.RunMethod("parse",new Object[]{(Object)(_textvalue)})));
-RDebugUtils.currentLine=9895956;
- //BA.debugLineNum = 9895956;BA.debugLine="Dim instant As JavaObject = offsetDateTime.RunMe";
-_instant = new anywheresoftware.b4j.object.JavaObject();
-_instant = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_offsetdatetime.RunMethod("toInstant",(Object[])(__c.Null))));
-RDebugUtils.currentLine=9895957;
- //BA.debugLineNum = 9895957;BA.debugLine="Return instant.RunMethod(\"getEpochSecond\", Null)";
-if (true) return BA.ObjectToLongNumber(_instant.RunMethod("getEpochSecond",(Object[])(__c.Null)));
- } 
-       catch (Exception e23) {
-			ba.setLastException(e23);RDebugUtils.currentLine=9895959;
- //BA.debugLineNum = 9895959;BA.debugLine="ConsumeLastException";
-__ref._consumelastexception /*String*/ (null);
- };
-RDebugUtils.currentLine=9895961;
- //BA.debugLineNum = 9895961;BA.debugLine="TraceLog(\"player end parse fail value=\" & textVal";
-__ref._tracelog /*String*/ (null,"player end parse fail value="+_textvalue);
-RDebugUtils.currentLine=9895962;
- //BA.debugLineNum = 9895962;BA.debugLine="Return 0";
-if (true) return (long) (0);
-RDebugUtils.currentLine=9895963;
- //BA.debugLineNum = 9895963;BA.debugLine="End Sub";
-return 0L;
-}
-public long  _parsetrustedonlineticks(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _data) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "parsetrustedonlineticks", false))
-	 {return ((Long) Debug.delegate(ba, "parsetrustedonlineticks", new Object[] {_data}));}
-String _updatedtext = "";
-anywheresoftware.b4j.object.JavaObject _instantclass = null;
-anywheresoftware.b4j.object.JavaObject _instant = null;
-anywheresoftware.b4j.object.JavaObject _offsetdatetimeclass = null;
-anywheresoftware.b4j.object.JavaObject _offsetdatetime = null;
-RDebugUtils.currentLine=10092544;
- //BA.debugLineNum = 10092544;BA.debugLine="Private Sub ParseTrustedOnlineTicks(data As Map) A";
-RDebugUtils.currentLine=10092545;
- //BA.debugLineNum = 10092545;BA.debugLine="If data.IsInitialized = False Then Return 0";
-if (_data.IsInitialized()==__c.False) { 
-if (true) return (long) (0);};
-RDebugUtils.currentLine=10092546;
- //BA.debugLineNum = 10092546;BA.debugLine="Dim updatedText As String = (\"\" & data.GetDefault";
-_updatedtext = (""+BA.ObjectToString(_data.GetDefault((Object)("updated"),(Object)("")))).trim();
-RDebugUtils.currentLine=10092547;
- //BA.debugLineNum = 10092547;BA.debugLine="If updatedText = \"\" Then Return 0";
-if ((_updatedtext).equals("")) { 
-if (true) return (long) (0);};
-RDebugUtils.currentLine=10092548;
- //BA.debugLineNum = 10092548;BA.debugLine="Try";
-try {RDebugUtils.currentLine=10092549;
- //BA.debugLineNum = 10092549;BA.debugLine="Dim instantClass As JavaObject";
-_instantclass = new anywheresoftware.b4j.object.JavaObject();
-RDebugUtils.currentLine=10092550;
- //BA.debugLineNum = 10092550;BA.debugLine="instantClass.InitializeStatic(\"java.time.Instant";
-_instantclass.InitializeStatic("java.time.Instant");
-RDebugUtils.currentLine=10092551;
- //BA.debugLineNum = 10092551;BA.debugLine="Dim instant As JavaObject = instantClass.RunMeth";
-_instant = new anywheresoftware.b4j.object.JavaObject();
-_instant = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_instantclass.RunMethod("parse",new Object[]{(Object)(_updatedtext)})));
-RDebugUtils.currentLine=10092552;
- //BA.debugLineNum = 10092552;BA.debugLine="Return instant.RunMethod(\"toEpochMilli\", Null)";
-if (true) return BA.ObjectToLongNumber(_instant.RunMethod("toEpochMilli",(Object[])(__c.Null)));
- } 
-       catch (Exception e10) {
-			ba.setLastException(e10);RDebugUtils.currentLine=10092554;
- //BA.debugLineNum = 10092554;BA.debugLine="Try";
-try {RDebugUtils.currentLine=10092555;
- //BA.debugLineNum = 10092555;BA.debugLine="Dim offsetDateTimeClass As JavaObject";
-_offsetdatetimeclass = new anywheresoftware.b4j.object.JavaObject();
-RDebugUtils.currentLine=10092556;
- //BA.debugLineNum = 10092556;BA.debugLine="offsetDateTimeClass.InitializeStatic(\"java.time";
-_offsetdatetimeclass.InitializeStatic("java.time.OffsetDateTime");
-RDebugUtils.currentLine=10092557;
- //BA.debugLineNum = 10092557;BA.debugLine="Dim offsetDateTime As JavaObject = offsetDateTi";
-_offsetdatetime = new anywheresoftware.b4j.object.JavaObject();
-_offsetdatetime = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_offsetdatetimeclass.RunMethod("parse",new Object[]{(Object)(_updatedtext)})));
-RDebugUtils.currentLine=10092558;
- //BA.debugLineNum = 10092558;BA.debugLine="Dim instant As JavaObject = offsetDateTime.RunM";
-_instant = new anywheresoftware.b4j.object.JavaObject();
-_instant = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(_offsetdatetime.RunMethod("toInstant",(Object[])(__c.Null))));
-RDebugUtils.currentLine=10092559;
- //BA.debugLineNum = 10092559;BA.debugLine="Return instant.RunMethod(\"toEpochMilli\", Null)";
-if (true) return BA.ObjectToLongNumber(_instant.RunMethod("toEpochMilli",(Object[])(__c.Null)));
- } 
-       catch (Exception e17) {
-			ba.setLastException(e17);RDebugUtils.currentLine=10092561;
- //BA.debugLineNum = 10092561;BA.debugLine="ConsumeLastException";
-__ref._consumelastexception /*String*/ (null);
- };
- };
-RDebugUtils.currentLine=10092564;
- //BA.debugLineNum = 10092564;BA.debugLine="Return 0";
-if (true) return (long) (0);
-RDebugUtils.currentLine=10092565;
- //BA.debugLineNum = 10092565;BA.debugLine="End Sub";
-return 0L;
 }
 public void  _playbackdirectortimer_tick(b4j.example.b4xmainpage __ref) throws Exception{
 RDebugUtils.currentModule="b4xmainpage";
@@ -20024,7 +16472,7 @@ case 12:
 this.state = 13;
 RDebugUtils.currentLine=3276811;
  //BA.debugLineNum = 3276811;BA.debugLine="PausePlaybackByPolicy(ResolvePlaybackBlockReaso";
-__ref._pauseplaybackbypolicy /*String*/ (null,__ref._resolveplaybackblockreason /*String*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ),"server");
+__ref._pauseplaybackbypolicy /*String*/ (null,__ref._resolveplaybackblockreason /*String*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null)),"server");
 RDebugUtils.currentLine=3276812;
  //BA.debugLineNum = 3276812;BA.debugLine="Return";
 if (true) return ;
@@ -20144,6 +16592,20 @@ RDebugUtils.currentLine=3473410;
  //BA.debugLineNum = 3473410;BA.debugLine="End Sub";
 return "";
 }
+public String  _playercodevalue(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "playercodevalue", false))
+	 {return ((String) Debug.delegate(ba, "playercodevalue", null));}
+RDebugUtils.currentLine=76611584;
+ //BA.debugLineNum = 76611584;BA.debugLine="Public Sub PlayerCodeValue As String";
+RDebugUtils.currentLine=76611585;
+ //BA.debugLineNum = 76611585;BA.debugLine="Return playerCode";
+if (true) return __ref._playercode /*String*/ ;
+RDebugUtils.currentLine=76611586;
+ //BA.debugLineNum = 76611586;BA.debugLine="End Sub";
+return "";
+}
 public double  _playerleveltofactor(b4j.example.b4xmainpage __ref,double _levelvalue) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -20174,8 +16636,8 @@ if (Debug.shouldDelegate(ba, "savequeuesnapshotstate", false))
 RDebugUtils.currentLine=2621440;
  //BA.debugLineNum = 2621440;BA.debugLine="Private Sub SaveQueueSnapshotState";
 RDebugUtils.currentLine=2621441;
- //BA.debugLineNum = 2621441;BA.debugLine="queueBuilder.SaveQueueSnapshotState(playQueue, of";
-__ref._queuebuilder /*b4j.example.playbackqueuebuilder*/ ._savequeuesnapshotstate /*String*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ,__ref._effectivenowticks /*long*/ (null),__ref._storage /*b4j.example.keyvaluestore*/ ,__ref._queuestate /*b4j.example.playbackqueuestate*/ ,__ref._dataresolver /*b4j.example.dataplaybackresolver*/ );
+ //BA.debugLineNum = 2621441;BA.debugLine="stateStore.SaveQueueSnapshotState(playQueue)";
+__ref._statestore /*b4j.example.playerstatestore*/ ._savequeuesnapshotstate /*String*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ );
 RDebugUtils.currentLine=2621442;
  //BA.debugLineNum = 2621442;BA.debugLine="End Sub";
 return "";
@@ -20387,46 +16849,6 @@ if (true) break;
         }
     }
 }
-public String  _resolveidleuntilmessage(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "resolveidleuntilmessage", false))
-	 {return ((String) Debug.delegate(ba, "resolveidleuntilmessage", null));}
-anywheresoftware.b4a.objects.collections.Map _currentslot = null;
-anywheresoftware.b4a.objects.collections.Map _nextslot = null;
-String _nexttime = "";
-RDebugUtils.currentLine=9371648;
- //BA.debugLineNum = 9371648;BA.debugLine="Private Sub ResolveIdleUntilMessage As String";
-RDebugUtils.currentLine=9371649;
- //BA.debugLineNum = 9371649;BA.debugLine="If offlineData.IsInitialized = False Then Return";
-if (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()==__c.False) { 
-if (true) return "";};
-RDebugUtils.currentLine=9371650;
- //BA.debugLineNum = 9371650;BA.debugLine="Dim currentSlot As Map = dataResolver.ResolveCurr";
-_currentslot = new anywheresoftware.b4a.objects.collections.Map();
-_currentslot = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._resolvecurrentdataslot /*anywheresoftware.b4a.objects.collections.Map*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ );
-RDebugUtils.currentLine=9371651;
- //BA.debugLineNum = 9371651;BA.debugLine="If IsIdleSlot(currentSlot) = False Then Return \"\"";
-if (__ref._isidleslot /*boolean*/ (null,_currentslot)==__c.False) { 
-if (true) return "";};
-RDebugUtils.currentLine=9371652;
- //BA.debugLineNum = 9371652;BA.debugLine="Dim nextSlot As Map = dataResolver.ResolveNextDat";
-_nextslot = new anywheresoftware.b4a.objects.collections.Map();
-_nextslot = __ref._dataresolver /*b4j.example.dataplaybackresolver*/ ._resolvenextdataslotatticks /*anywheresoftware.b4a.objects.collections.Map*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ,__ref._effectivenowticks /*long*/ (null));
-RDebugUtils.currentLine=9371653;
- //BA.debugLineNum = 9371653;BA.debugLine="Dim nextTime As String = nextSlot.GetDefault(\"slo";
-_nexttime = BA.ObjectToString(_nextslot.GetDefault((Object)("slot_time"),(Object)("")));
-RDebugUtils.currentLine=9371654;
- //BA.debugLineNum = 9371654;BA.debugLine="If nextTime = \"\" Then Return MessageValue(\"idle\")";
-if ((_nexttime).equals("")) { 
-if (true) return __ref._messagevalue /*String*/ (null,"idle");};
-RDebugUtils.currentLine=9371655;
- //BA.debugLineNum = 9371655;BA.debugLine="Return MessageValue(\"idle_until\").Replace(\"{time}";
-if (true) return __ref._messagevalue /*String*/ (null,"idle_until").replace("{time}",_nexttime);
-RDebugUtils.currentLine=9371656;
- //BA.debugLineNum = 9371656;BA.debugLine="End Sub";
-return "";
-}
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _preparenextplayable(b4j.example.b4xmainpage __ref) throws Exception{
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "preparenextplayable", false))
@@ -20491,8 +16913,8 @@ RDebugUtils.currentLine=8257537;
  //BA.debugLineNum = 8257537;BA.debugLine="Dim allowRegularAds As Boolean = AllowRegularAdsA";
 _allowregularads = __ref._allowregularadsattargetminute /*boolean*/ (null,_targetminutetimestamp);
 RDebugUtils.currentLine=8257538;
- //BA.debugLineNum = 8257538;BA.debugLine="If localAdScheduler.ScanTargetMinute(offlineData,";
-if (__ref._localadscheduler /*b4j.example.adscheduler*/ ._scantargetminute /*boolean*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ ,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,_targetminutetimestamp,_force,_allowregularads)) { 
+ //BA.debugLineNum = 8257538;BA.debugLine="If localAdScheduler.ScanTargetMinute(stateStore.O";
+if (__ref._localadscheduler /*b4j.example.adscheduler*/ ._scantargetminute /*boolean*/ (null,__ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null),__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,_targetminutetimestamp,_force,_allowregularads)) { 
 RDebugUtils.currentLine=8257539;
  //BA.debugLineNum = 8257539;BA.debugLine="PruneQueuedBreakItemsByLocalCache";
 __ref._prunequeuedbreakitemsbylocalcache /*String*/ (null);
@@ -21189,8 +17611,8 @@ RDebugUtils.currentLine=60751896;
  //BA.debugLineNum = 60751896;BA.debugLine="orchestrationState.EndDispatch";
 __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._enddispatch /*String*/ (null);
 RDebugUtils.currentLine=60751897;
- //BA.debugLineNum = 60751897;BA.debugLine="retryFallbackState.ClearDispatchRetryAfter";
-__ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._cleardispatchretryafter /*String*/ (null);
+ //BA.debugLineNum = 60751897;BA.debugLine="stateStore.ClearDispatchRetryAfter";
+__ref._statestore /*b4j.example.playerstatestore*/ ._cleardispatchretryafter /*String*/ (null);
 RDebugUtils.currentLine=60751898;
  //BA.debugLineNum = 60751898;BA.debugLine="ClearRetryTimer";
 __ref._clearretrytimer /*String*/ (null);
@@ -21468,350 +17890,6 @@ RDebugUtils.currentLine=67436565;
  //BA.debugLineNum = 67436565;BA.debugLine="End Sub";
 return "";
 }
-public String  _updatetrustedonlinetimefromdata(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _data) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "updatetrustedonlinetimefromdata", false))
-	 {return ((String) Debug.delegate(ba, "updatetrustedonlinetimefromdata", new Object[] {_data}));}
-long _candidateticks = 0L;
-RDebugUtils.currentLine=9961472;
- //BA.debugLineNum = 9961472;BA.debugLine="Private Sub UpdateTrustedOnlineTimeFromData(data A";
-RDebugUtils.currentLine=9961473;
- //BA.debugLineNum = 9961473;BA.debugLine="Dim candidateTicks As Long = ParseTrustedOnlineTi";
-_candidateticks = __ref._parsetrustedonlineticks /*long*/ (null,_data);
-RDebugUtils.currentLine=9961474;
- //BA.debugLineNum = 9961474;BA.debugLine="If candidateTicks <= 0 Then candidateTicks = Date";
-if (_candidateticks<=0) { 
-_candidateticks = __c.DateTime.getNow();};
-RDebugUtils.currentLine=9961475;
- //BA.debugLineNum = 9961475;BA.debugLine="UpdateTrustedOnlineTimeTicks(candidateTicks)";
-__ref._updatetrustedonlinetimeticks /*String*/ (null,_candidateticks);
-RDebugUtils.currentLine=9961476;
- //BA.debugLineNum = 9961476;BA.debugLine="End Sub";
-return "";
-}
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _syncofflineplaylistmetadata(b4j.example.b4xmainpage __ref) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "syncofflineplaylistmetadata", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "syncofflineplaylistmetadata", null));}
-ResumableSub_SyncOfflinePlaylistMetadata rsub = new ResumableSub_SyncOfflinePlaylistMetadata(this,__ref);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_SyncOfflinePlaylistMetadata extends BA.ResumableSub {
-public ResumableSub_SyncOfflinePlaylistMetadata(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-anywheresoftware.b4a.objects.collections.List _playlistdescriptors = null;
-anywheresoftware.b4a.objects.collections.Map _cachedplaylistindex = null;
-int _downloadedcount = 0;
-int _updatedcount = 0;
-int _failedcount = 0;
-Object _descriptorobject = null;
-anywheresoftware.b4a.objects.collections.Map _descriptor = null;
-String _syncaction = "";
-boolean _downloaded = false;
-int _actualcount = 0;
-anywheresoftware.b4a.BA.IterableList group11;
-int index11;
-int groupLen11;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = 1;
-RDebugUtils.currentLine=17563649;
- //BA.debugLineNum = 17563649;BA.debugLine="Dim playlistDescriptors As List = offlineStoreSer";
-_playlistdescriptors = new anywheresoftware.b4a.objects.collections.List();
-_playlistdescriptors = __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._getstoredplaylistdescriptors /*anywheresoftware.b4a.objects.collections.List*/ (null);
-RDebugUtils.currentLine=17563650;
- //BA.debugLineNum = 17563650;BA.debugLine="If playlistDescriptors.IsInitialized = False Or p";
-if (true) break;
-
-case 1:
-//if
-this.state = 4;
-if (_playlistdescriptors.IsInitialized()==parent.__c.False || _playlistdescriptors.getSize()==0) { 
-this.state = 3;
-}if (true) break;
-
-case 3:
-//C
-this.state = 4;
-RDebugUtils.currentLine=17563651;
- //BA.debugLineNum = 17563651;BA.debugLine="TraceLog(\"метаданные плейлистов sync skip reason";
-__ref._tracelog /*String*/ (null,"метаданные плейлистов sync skip reason=nothing_to_sync");
-RDebugUtils.currentLine=17563652;
- //BA.debugLineNum = 17563652;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-
-case 4:
-//C
-this.state = 5;
-;
-RDebugUtils.currentLine=17563654;
- //BA.debugLineNum = 17563654;BA.debugLine="EnsureDirectory(offlineStoreService.GetOfflinePla";
-__ref._ensuredirectory /*String*/ (null,__ref._offlinestoreservice /*b4j.example.offlinestore*/ ._getofflineplaylistsdir /*String*/ (null));
-RDebugUtils.currentLine=17563655;
- //BA.debugLineNum = 17563655;BA.debugLine="Dim cachedPlaylistIndex As Map = offlineStoreServ";
-_cachedplaylistindex = new anywheresoftware.b4a.objects.collections.Map();
-_cachedplaylistindex = __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._getcachedplaylistindex /*anywheresoftware.b4a.objects.collections.Map*/ (null);
-RDebugUtils.currentLine=17563656;
- //BA.debugLineNum = 17563656;BA.debugLine="Dim downloadedCount As Int = 0";
-_downloadedcount = (int) (0);
-RDebugUtils.currentLine=17563657;
- //BA.debugLineNum = 17563657;BA.debugLine="Dim updatedCount As Int = 0";
-_updatedcount = (int) (0);
-RDebugUtils.currentLine=17563658;
- //BA.debugLineNum = 17563658;BA.debugLine="Dim failedCount As Int = 0";
-_failedcount = (int) (0);
-RDebugUtils.currentLine=17563659;
- //BA.debugLineNum = 17563659;BA.debugLine="For Each descriptorObject As Object In playlistDe";
-if (true) break;
-
-case 5:
-//for
-this.state = 30;
-group11 = _playlistdescriptors;
-index11 = 0;
-groupLen11 = group11.getSize();
-this.state = 31;
-if (true) break;
-
-case 31:
-//C
-this.state = 30;
-if (index11 < groupLen11) {
-this.state = 7;
-_descriptorobject = group11.Get(index11);}
-if (true) break;
-
-case 32:
-//C
-this.state = 31;
-index11++;
-if (true) break;
-
-case 7:
-//C
-this.state = 8;
-RDebugUtils.currentLine=17563660;
- //BA.debugLineNum = 17563660;BA.debugLine="If descriptorObject Is Map Then";
-if (true) break;
-
-case 8:
-//if
-this.state = 29;
-if (_descriptorobject instanceof java.util.Map) { 
-this.state = 10;
-}if (true) break;
-
-case 10:
-//C
-this.state = 11;
-RDebugUtils.currentLine=17563661;
- //BA.debugLineNum = 17563661;BA.debugLine="Dim descriptor As Map = descriptorObject";
-_descriptor = new anywheresoftware.b4a.objects.collections.Map();
-_descriptor = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_descriptorobject));
-RDebugUtils.currentLine=17563662;
- //BA.debugLineNum = 17563662;BA.debugLine="Dim syncAction As String = offlineStoreService.";
-_syncaction = __ref._offlinestoreservice /*b4j.example.offlinestore*/ ._resolveplaylistsyncaction /*String*/ (null,_descriptor,_cachedplaylistindex);
-RDebugUtils.currentLine=17563663;
- //BA.debugLineNum = 17563663;BA.debugLine="If syncAction = \"skip\" Then Continue";
-if (true) break;
-
-case 11:
-//if
-this.state = 16;
-if ((_syncaction).equals("skip")) { 
-this.state = 13;
-;}if (true) break;
-
-case 13:
-//C
-this.state = 16;
-this.state = 32;
-if (true) break;;
-if (true) break;
-
-case 16:
-//C
-this.state = 17;
-;
-RDebugUtils.currentLine=17563664;
- //BA.debugLineNum = 17563664;BA.debugLine="Wait For (DownloadOfflinePlaylistMetadata(descr";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "syncofflineplaylistmetadata"), __ref._downloadofflineplaylistmetadata /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_descriptor,_cachedplaylistindex));
-this.state = 33;
-return;
-case 33:
-//C
-this.state = 17;
-_downloaded = (boolean) result[1];
-;
-RDebugUtils.currentLine=17563665;
- //BA.debugLineNum = 17563665;BA.debugLine="If downloaded Then";
-if (true) break;
-
-case 17:
-//if
-this.state = 28;
-if (_downloaded) { 
-this.state = 19;
-}else {
-this.state = 27;
-}if (true) break;
-
-case 19:
-//C
-this.state = 20;
-RDebugUtils.currentLine=17563666;
- //BA.debugLineNum = 17563666;BA.debugLine="If syncAction = \"missing\" Then";
-if (true) break;
-
-case 20:
-//if
-this.state = 25;
-if ((_syncaction).equals("missing")) { 
-this.state = 22;
-}else {
-this.state = 24;
-}if (true) break;
-
-case 22:
-//C
-this.state = 25;
-RDebugUtils.currentLine=17563667;
- //BA.debugLineNum = 17563667;BA.debugLine="downloadedCount = downloadedCount + 1";
-_downloadedcount = (int) (_downloadedcount+1);
- if (true) break;
-
-case 24:
-//C
-this.state = 25;
-RDebugUtils.currentLine=17563669;
- //BA.debugLineNum = 17563669;BA.debugLine="updatedCount = updatedCount + 1";
-_updatedcount = (int) (_updatedcount+1);
- if (true) break;
-
-case 25:
-//C
-this.state = 28;
-;
- if (true) break;
-
-case 27:
-//C
-this.state = 28;
-RDebugUtils.currentLine=17563672;
- //BA.debugLineNum = 17563672;BA.debugLine="failedCount = failedCount + 1";
-_failedcount = (int) (_failedcount+1);
- if (true) break;
-
-case 28:
-//C
-this.state = 29;
-;
- if (true) break;
-
-case 29:
-//C
-this.state = 32;
-;
- if (true) break;
-if (true) break;
-
-case 30:
-//C
-this.state = -1;
-;
-RDebugUtils.currentLine=17563676;
- //BA.debugLineNum = 17563676;BA.debugLine="offlineStoreService.SaveCachedPlaylistIndex(cache";
-__ref._offlinestoreservice /*b4j.example.offlinestore*/ ._savecachedplaylistindex /*String*/ (null,_cachedplaylistindex);
-RDebugUtils.currentLine=17563677;
- //BA.debugLineNum = 17563677;BA.debugLine="offlineStoreService.RefreshPlaylistCacheStatus(pl";
-__ref._offlinestoreservice /*b4j.example.offlinestore*/ ._refreshplaylistcachestatus /*String*/ (null,_playlistdescriptors);
-RDebugUtils.currentLine=17563678;
- //BA.debugLineNum = 17563678;BA.debugLine="InvalidateRelevantTrackIdsCache";
-__ref._invalidaterelevanttrackidscache /*String*/ (null);
-RDebugUtils.currentLine=17563679;
- //BA.debugLineNum = 17563679;BA.debugLine="Dim actualCount As Int = storage.GetDefault(\"play";
-_actualcount = (int)(BA.ObjectToNumber(__ref._storage /*b4j.example.keyvaluestore*/ ._getdefault /*Object*/ (null,"playlist_actual_count",(Object)(0))));
-RDebugUtils.currentLine=17563680;
- //BA.debugLineNum = 17563680;BA.debugLine="TraceLog(\"метаданные плейлистов sync итог downloa";
-__ref._tracelog /*String*/ (null,"метаданные плейлистов sync итог downloaded="+BA.NumberToString(_downloadedcount)+" updated="+BA.NumberToString(_updatedcount)+" failed="+BA.NumberToString(_failedcount)+" actual="+BA.NumberToString(_actualcount));
-RDebugUtils.currentLine=17563681;
- //BA.debugLineNum = 17563681;BA.debugLine="Return failedCount = 0";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_failedcount==0));return;};
-RDebugUtils.currentLine=17563682;
- //BA.debugLineNum = 17563682;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
-public void  _resumeplaybackafterpolicypause(b4j.example.b4xmainpage __ref) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "resumeplaybackafterpolicypause", false))
-	 {Debug.delegate(ba, "resumeplaybackafterpolicypause", null); return;}
-ResumableSub_ResumePlaybackAfterPolicyPause rsub = new ResumableSub_ResumePlaybackAfterPolicyPause(this,__ref);
-rsub.resume(ba, null);
-}
-public static class ResumableSub_ResumePlaybackAfterPolicyPause extends BA.ResumableSub {
-public ResumableSub_ResumePlaybackAfterPolicyPause(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-boolean _unused = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-        switch (state) {
-            case -1:
-return;
-
-case 0:
-//C
-this.state = -1;
-RDebugUtils.currentLine=2162689;
- //BA.debugLineNum = 2162689;BA.debugLine="Wait For (facade.ResumePlaybackAfterPolicyPause)";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "resumeplaybackafterpolicypause"), __ref._facade /*b4j.example.playbackfacade*/ ._resumeplaybackafterpolicypause /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 1;
-return;
-case 1:
-//C
-this.state = -1;
-_unused = (boolean) result[1];
-;
-RDebugUtils.currentLine=2162690;
- //BA.debugLineNum = 2162690;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
 public String  _refreshplayerheaderfromcurrentdata(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -21819,6 +17897,7 @@ if (Debug.shouldDelegate(ba, "refreshplayerheaderfromcurrentdata", false))
 	 {return ((String) Debug.delegate(ba, "refreshplayerheaderfromcurrentdata", null));}
 String _safecode = "";
 String _title = "";
+anywheresoftware.b4a.objects.collections.Map _offlinedata = null;
 anywheresoftware.b4a.objects.collections.Map _playerdata = null;
 RDebugUtils.currentLine=4718592;
  //BA.debugLineNum = 4718592;BA.debugLine="Private Sub RefreshPlayerHeaderFromCurrentData";
@@ -21829,28 +17908,32 @@ RDebugUtils.currentLine=4718594;
  //BA.debugLineNum = 4718594;BA.debugLine="Dim title As String = \"\"";
 _title = "";
 RDebugUtils.currentLine=4718595;
- //BA.debugLineNum = 4718595;BA.debugLine="If offlineData.IsInitialized Then";
-if (__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()) { 
+ //BA.debugLineNum = 4718595;BA.debugLine="Dim offlineData As Map = stateStore.OfflineData";
+_offlinedata = new anywheresoftware.b4a.objects.collections.Map();
+_offlinedata = __ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null);
 RDebugUtils.currentLine=4718596;
- //BA.debugLineNum = 4718596;BA.debugLine="Dim playerData As Map = offlineData.GetDefault(\"";
-_playerdata = new anywheresoftware.b4a.objects.collections.Map();
-_playerdata = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)("player"),__c.Null)));
+ //BA.debugLineNum = 4718596;BA.debugLine="If offlineData.IsInitialized Then";
+if (_offlinedata.IsInitialized()) { 
 RDebugUtils.currentLine=4718597;
- //BA.debugLineNum = 4718597;BA.debugLine="If playerData.IsInitialized Then";
-if (_playerdata.IsInitialized()) { 
+ //BA.debugLineNum = 4718597;BA.debugLine="Dim playerData As Map = offlineData.GetDefault(\"";
+_playerdata = new anywheresoftware.b4a.objects.collections.Map();
+_playerdata = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_offlinedata.GetDefault((Object)("player"),__c.Null)));
 RDebugUtils.currentLine=4718598;
- //BA.debugLineNum = 4718598;BA.debugLine="safeCode = playerData.GetDefault(\"code\", safeCo";
-_safecode = BA.ObjectToString(_playerdata.GetDefault((Object)("code"),(Object)(_safecode)));
+ //BA.debugLineNum = 4718598;BA.debugLine="If playerData.IsInitialized Then";
+if (_playerdata.IsInitialized()) { 
 RDebugUtils.currentLine=4718599;
- //BA.debugLineNum = 4718599;BA.debugLine="title = playerData.GetDefault(\"title\", \"\")";
+ //BA.debugLineNum = 4718599;BA.debugLine="safeCode = playerData.GetDefault(\"code\", safeCo";
+_safecode = BA.ObjectToString(_playerdata.GetDefault((Object)("code"),(Object)(_safecode)));
+RDebugUtils.currentLine=4718600;
+ //BA.debugLineNum = 4718600;BA.debugLine="title = playerData.GetDefault(\"title\", \"\")";
 _title = BA.ObjectToString(_playerdata.GetDefault((Object)("title"),(Object)("")));
  };
  };
-RDebugUtils.currentLine=4718602;
- //BA.debugLineNum = 4718602;BA.debugLine="RenderPlayerHead(safeCode, title)";
-__ref._renderplayerhead /*String*/ (null,_safecode,_title);
 RDebugUtils.currentLine=4718603;
- //BA.debugLineNum = 4718603;BA.debugLine="End Sub";
+ //BA.debugLineNum = 4718603;BA.debugLine="RenderPlayerHead(safeCode, title)";
+__ref._renderplayerhead /*String*/ (null,_safecode,_title);
+RDebugUtils.currentLine=4718604;
+ //BA.debugLineNum = 4718604;BA.debugLine="End Sub";
 return "";
 }
 public String  _renderplayerhead(b4j.example.b4xmainpage __ref,String _code,String _title) throws Exception{
@@ -21858,25 +17941,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "renderplayerhead", false))
 	 {return ((String) Debug.delegate(ba, "renderplayerhead", new Object[] {_code,_title}));}
-String _safecode = "";
 RDebugUtils.currentLine=15728640;
  //BA.debugLineNum = 15728640;BA.debugLine="Private Sub RenderPlayerHead(code As String, title";
 RDebugUtils.currentLine=15728641;
- //BA.debugLineNum = 15728641;BA.debugLine="Dim safeCode As String = FormatPlayerCodeForDispl";
-_safecode = __ref._formatplayercodefordisplay /*String*/ (null,_code);
+ //BA.debugLineNum = 15728641;BA.debugLine="uiController.RenderPlayerHead(FormatPlayerCodeFor";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._renderplayerhead /*String*/ (null,__ref._formatplayercodefordisplay /*String*/ (null,_code),_title);
 RDebugUtils.currentLine=15728642;
- //BA.debugLineNum = 15728642;BA.debugLine="If title <> \"\" Then";
-if ((_title).equals("") == false) { 
-RDebugUtils.currentLine=15728643;
- //BA.debugLineNum = 15728643;BA.debugLine="lblHeader.Text = safeCode & \" • \" & title.ToUppe";
-__ref._lblheader /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(_safecode+" • "+_title.toUpperCase(anywheresoftware.b4a.keywords.Common.stringLocale));
- }else {
-RDebugUtils.currentLine=15728645;
- //BA.debugLineNum = 15728645;BA.debugLine="lblHeader.Text = safeCode";
-__ref._lblheader /*anywheresoftware.b4a.objects.B4XViewWrapper*/ .setText(_safecode);
- };
-RDebugUtils.currentLine=15728647;
- //BA.debugLineNum = 15728647;BA.debugLine="End Sub";
+ //BA.debugLineNum = 15728642;BA.debugLine="End Sub";
 return "";
 }
 public String  _resolveadcachefilecounttext(b4j.example.b4xmainpage __ref) throws Exception{
@@ -22049,6 +18120,20 @@ RDebugUtils.currentLine=62455828;
  //BA.debugLineNum = 62455828;BA.debugLine="End Sub";
 return 0L;
 }
+public String  _tracedebug(b4j.example.b4xmainpage __ref,String _message) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "tracedebug", false))
+	 {return ((String) Debug.delegate(ba, "tracedebug", new Object[] {_message}));}
+RDebugUtils.currentLine=61603840;
+ //BA.debugLineNum = 61603840;BA.debugLine="Private Sub TraceDebug(message As String)";
+RDebugUtils.currentLine=61603841;
+ //BA.debugLineNum = 61603841;BA.debugLine="traceRouter.TraceDebugMessage(message)";
+__ref._tracerouter /*b4j.example.playbacktracerouter*/ ._tracedebugmessage /*String*/ (null,_message);
+RDebugUtils.currentLine=61603842;
+ //BA.debugLineNum = 61603842;BA.debugLine="End Sub";
+return "";
+}
 public String  _resolvecurrenttracktracevalue(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -22175,9 +18260,9 @@ double _playerlevel = 0;
 RDebugUtils.currentLine=15990784;
  //BA.debugLineNum = 15990784;BA.debugLine="Private Sub ResolvePlayerLevelFactor As Double";
 RDebugUtils.currentLine=15990785;
- //BA.debugLineNum = 15990785;BA.debugLine="Dim playerData As Map = offlineData.GetDefault(\"p";
+ //BA.debugLineNum = 15990785;BA.debugLine="Dim playerData As Map = stateStore.OfflineData.Ge";
 _playerdata = new anywheresoftware.b4a.objects.collections.Map();
-_playerdata = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)("player"),(Object)(__ref._createinitializedmap /*anywheresoftware.b4a.objects.collections.Map*/ (null).getObject()))));
+_playerdata = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(__ref._statestore /*b4j.example.playerstatestore*/ ._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null).GetDefault((Object)("player"),(Object)(__ref._createinitializedmap /*anywheresoftware.b4a.objects.collections.Map*/ (null).getObject()))));
 RDebugUtils.currentLine=15990786;
  //BA.debugLineNum = 15990786;BA.debugLine="Dim playerLevel As Double = playerData.GetDefault";
 _playerlevel = (double)(BA.ObjectToNumber(_playerdata.GetDefault((Object)("level"),(Object)(100))));
@@ -22266,20 +18351,6 @@ if (true) return _result;
 RDebugUtils.currentLine=65208345;
  //BA.debugLineNum = 65208345;BA.debugLine="End Sub";
 return null;
-}
-public int  _resolveretrydelay(b4j.example.b4xmainpage __ref,String _mode,int _delayms) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "resolveretrydelay", false))
-	 {return ((Integer) Debug.delegate(ba, "resolveretrydelay", new Object[] {_mode,_delayms}));}
-RDebugUtils.currentLine=10289152;
- //BA.debugLineNum = 10289152;BA.debugLine="Private Sub ResolveRetryDelay(mode As String, dela";
-RDebugUtils.currentLine=10289153;
- //BA.debugLineNum = 10289153;BA.debugLine="Return retryFallbackState.ResolveRetryDelay(mode,";
-if (true) return __ref._retryfallbackstate /*b4j.example.playbackretryfallbackstate*/ ._resolveretrydelay /*int*/ (null,_mode,_delayms,__ref._local_retry_delay_max /*int*/ ,__ref._server_retry_delay_max /*int*/ ,__ref._blocked_retry_delay /*int*/ );
-RDebugUtils.currentLine=10289154;
- //BA.debugLineNum = 10289154;BA.debugLine="End Sub";
-return 0;
 }
 public String  _resolvetotalrammbtext(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
@@ -22405,13 +18476,13 @@ case 6:
 this.state = 7;
 ;
 RDebugUtils.currentLine=10420227;
- //BA.debugLineNum = 10420227;BA.debugLine="If lastRetryMode = \"audio_device\" Then";
+ //BA.debugLineNum = 10420227;BA.debugLine="If stateStore.GetLastRetryMode = \"audio_device\" T";
 if (true) break;
 
 case 7:
 //if
 this.state = 14;
-if ((__ref._lastretrymode /*String*/ ).equals("audio_device")) { 
+if ((__ref._statestore /*b4j.example.playerstatestore*/ ._getlastretrymode /*String*/ (null)).equals("audio_device")) { 
 this.state = 9;
 }if (true) break;
 
@@ -22608,66 +18679,18 @@ RDebugUtils.currentLine=10747910;
  //BA.debugLineNum = 10747910;BA.debugLine="End Sub";
 return "";
 }
-public String  _setlabelstyle(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.B4XViewWrapper _view,String _style) throws Exception{
+public String  _servicecheckurlvalue(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "setlabelstyle", false))
-	 {return ((String) Debug.delegate(ba, "setlabelstyle", new Object[] {_view,_style}));}
-RDebugUtils.currentLine=18612224;
- //BA.debugLineNum = 18612224;BA.debugLine="Private Sub SetLabelStyle(view As B4XView, style A";
-RDebugUtils.currentLine=18612225;
- //BA.debugLineNum = 18612225;BA.debugLine="UiStyle.SetLabelStyle(view, style)";
-_uistyle._setlabelstyle /*String*/ (_view,_style);
-RDebugUtils.currentLine=18612226;
- //BA.debugLineNum = 18612226;BA.debugLine="End Sub";
-return "";
-}
-public String  _stoporbitanimation(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "stoporbitanimation", false))
-	 {return ((String) Debug.delegate(ba, "stoporbitanimation", null));}
-RDebugUtils.currentLine=14352384;
- //BA.debugLineNum = 14352384;BA.debugLine="Private Sub StopOrbitAnimation";
-RDebugUtils.currentLine=14352385;
- //BA.debugLineNum = 14352385;BA.debugLine="orbitFadeTarget = 0";
-__ref._orbitfadetarget /*double*/  = 0;
-RDebugUtils.currentLine=14352386;
- //BA.debugLineNum = 14352386;BA.debugLine="If orbitFadeValue > 0 Then";
-if (__ref._orbitfadevalue /*double*/ >0) { 
-RDebugUtils.currentLine=14352387;
- //BA.debugLineNum = 14352387;BA.debugLine="orbitTimer.Enabled = True";
-__ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
- }else {
-RDebugUtils.currentLine=14352389;
- //BA.debugLineNum = 14352389;BA.debugLine="orbitTimer.Enabled = False";
-__ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=14352390;
- //BA.debugLineNum = 14352390;BA.debugLine="ApplyOrbitFrame(0)";
-__ref._applyorbitframe /*String*/ (null,(int) (0));
- };
-RDebugUtils.currentLine=14352392;
- //BA.debugLineNum = 14352392;BA.debugLine="End Sub";
-return "";
-}
-public String  _startorbitanimation(b4j.example.b4xmainpage __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "startorbitanimation", false))
-	 {return ((String) Debug.delegate(ba, "startorbitanimation", null));}
-RDebugUtils.currentLine=14286848;
- //BA.debugLineNum = 14286848;BA.debugLine="Private Sub StartOrbitAnimation";
-RDebugUtils.currentLine=14286849;
- //BA.debugLineNum = 14286849;BA.debugLine="orbitPulseStep = 0";
-__ref._orbitpulsestep /*int*/  = (int) (0);
-RDebugUtils.currentLine=14286850;
- //BA.debugLineNum = 14286850;BA.debugLine="orbitFadeTarget = 1";
-__ref._orbitfadetarget /*double*/  = 1;
-RDebugUtils.currentLine=14286851;
- //BA.debugLineNum = 14286851;BA.debugLine="orbitTimer.Enabled = True";
-__ref._orbittimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
-RDebugUtils.currentLine=14286852;
- //BA.debugLineNum = 14286852;BA.debugLine="End Sub";
+if (Debug.shouldDelegate(ba, "servicecheckurlvalue", false))
+	 {return ((String) Debug.delegate(ba, "servicecheckurlvalue", null));}
+RDebugUtils.currentLine=76873728;
+ //BA.debugLineNum = 76873728;BA.debugLine="Public Sub ServiceCheckUrlValue As String";
+RDebugUtils.currentLine=76873729;
+ //BA.debugLineNum = 76873729;BA.debugLine="Return SERVICE_CHECK_URL";
+if (true) return __ref._service_check_url /*String*/ ;
+RDebugUtils.currentLine=76873730;
+ //BA.debugLineNum = 76873730;BA.debugLine="End Sub";
 return "";
 }
 public String  _showadmeta(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
@@ -22678,10 +18701,24 @@ if (Debug.shouldDelegate(ba, "showadmeta", false))
 RDebugUtils.currentLine=15335424;
  //BA.debugLineNum = 15335424;BA.debugLine="Private Sub ShowAdMeta(item As Map)";
 RDebugUtils.currentLine=15335425;
- //BA.debugLineNum = 15335425;BA.debugLine="SetStatusText(item.GetDefault(\"title\", \"\"))";
-__ref._setstatustext /*String*/ (null,BA.ObjectToString(_item.GetDefault((Object)("title"),(Object)(""))));
+ //BA.debugLineNum = 15335425;BA.debugLine="uiController.ShowAdMeta(item)";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._showadmeta /*String*/ (null,_item);
 RDebugUtils.currentLine=15335426;
  //BA.debugLineNum = 15335426;BA.debugLine="End Sub";
+return "";
+}
+public String  _showstream(b4j.example.b4xmainpage __ref,String _text) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "showstream", false))
+	 {return ((String) Debug.delegate(ba, "showstream", new Object[] {_text}));}
+RDebugUtils.currentLine=15007744;
+ //BA.debugLineNum = 15007744;BA.debugLine="Private Sub ShowStream(text As String)";
+RDebugUtils.currentLine=15007745;
+ //BA.debugLineNum = 15007745;BA.debugLine="uiController.ShowStream(text)";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._showstream /*String*/ (null,_text);
+RDebugUtils.currentLine=15007746;
+ //BA.debugLineNum = 15007746;BA.debugLine="End Sub";
 return "";
 }
 public String  _showtrackmeta(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
@@ -22689,28 +18726,13 @@ __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "showtrackmeta", false))
 	 {return ((String) Debug.delegate(ba, "showtrackmeta", new Object[] {_item}));}
-anywheresoftware.b4a.objects.collections.List _parts = null;
 RDebugUtils.currentLine=15269888;
  //BA.debugLineNum = 15269888;BA.debugLine="Private Sub ShowTrackMeta(item As Map)";
 RDebugUtils.currentLine=15269889;
- //BA.debugLineNum = 15269889;BA.debugLine="Dim parts As List";
-_parts = new anywheresoftware.b4a.objects.collections.List();
+ //BA.debugLineNum = 15269889;BA.debugLine="uiController.ShowTrackMeta(item)";
+__ref._uicontroller /*b4j.example.playeruicontroller*/ ._showtrackmeta /*String*/ (null,_item);
 RDebugUtils.currentLine=15269890;
- //BA.debugLineNum = 15269890;BA.debugLine="parts.Initialize";
-_parts.Initialize();
-RDebugUtils.currentLine=15269891;
- //BA.debugLineNum = 15269891;BA.debugLine="If item.GetDefault(\"set\", \"\") <> \"\" Then parts.Ad";
-if ((_item.GetDefault((Object)("set"),(Object)(""))).equals((Object)("")) == false) { 
-_parts.Add(_item.Get((Object)("set")));};
-RDebugUtils.currentLine=15269892;
- //BA.debugLineNum = 15269892;BA.debugLine="If item.GetDefault(\"code\", \"\") <> \"\" Then parts.A";
-if ((_item.GetDefault((Object)("code"),(Object)(""))).equals((Object)("")) == false) { 
-_parts.Add(_item.Get((Object)("code")));};
-RDebugUtils.currentLine=15269893;
- //BA.debugLineNum = 15269893;BA.debugLine="SetStatusText(JoinList(parts, \" • \"))";
-__ref._setstatustext /*String*/ (null,__ref._joinlist /*String*/ (null,_parts," • "));
-RDebugUtils.currentLine=15269894;
- //BA.debugLineNum = 15269894;BA.debugLine="End Sub";
+ //BA.debugLineNum = 15269890;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _waitforplaybackactivation(b4j.example.b4xmainpage __ref,String _audiokey,anywheresoftware.b4a.objects.collections.Map _item,int _timeoutms) throws Exception{
@@ -22853,6 +18875,20 @@ if (true) break;
         }
     }
 }
+public int  _timezoneoffsetminutesvalue(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="b4xmainpage";
+if (Debug.shouldDelegate(ba, "timezoneoffsetminutesvalue", false))
+	 {return ((Integer) Debug.delegate(ba, "timezoneoffsetminutesvalue", null));}
+RDebugUtils.currentLine=76742656;
+ //BA.debugLineNum = 76742656;BA.debugLine="Public Sub TimezoneOffsetMinutesValue As Int";
+RDebugUtils.currentLine=76742657;
+ //BA.debugLineNum = 76742657;BA.debugLine="Return TimezoneOffsetMinutes";
+if (true) return __ref._timezoneoffsetminutes /*int*/ (null);
+RDebugUtils.currentLine=76742658;
+ //BA.debugLineNum = 76742658;BA.debugLine="End Sub";
+return 0;
+}
 public String  _tracestate(b4j.example.b4xmainpage __ref,String _category,String _message,String _details) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="b4xmainpage";
@@ -22861,124 +18897,40 @@ if (Debug.shouldDelegate(ba, "tracestate", false))
 RDebugUtils.currentLine=58458112;
  //BA.debugLineNum = 58458112;BA.debugLine="Private Sub TraceState(category As String, message";
 RDebugUtils.currentLine=58458113;
- //BA.debugLineNum = 58458113;BA.debugLine="WriteTraceEntry(\"STATE\", category, message, detai";
-__ref._writetraceentry /*String*/ (null,"STATE",_category,_message,_details);
+ //BA.debugLineNum = 58458113;BA.debugLine="traceRouter.TraceState(category, message, details";
+__ref._tracerouter /*b4j.example.playbacktracerouter*/ ._tracestate /*String*/ (null,_category,_message,_details);
 RDebugUtils.currentLine=58458114;
  //BA.debugLineNum = 58458114;BA.debugLine="End Sub";
 return "";
 }
-public void  _traceuploadtimer_tick(b4j.example.b4xmainpage __ref) throws Exception{
+public String  _traceuploadtimer_tick(b4j.example.b4xmainpage __ref) throws Exception{
+__ref = this;
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "traceuploadtimer_tick", false))
-	 {Debug.delegate(ba, "traceuploadtimer_tick", null); return;}
-ResumableSub_TraceUploadTimer_Tick rsub = new ResumableSub_TraceUploadTimer_Tick(this,__ref);
-rsub.resume(ba, null);
-}
-public static class ResumableSub_TraceUploadTimer_Tick extends BA.ResumableSub {
-public ResumableSub_TraceUploadTimer_Tick(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-boolean _unused = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-        switch (state) {
-            case -1:
-return;
-
-case 0:
-//C
-this.state = 1;
+	 {return ((String) Debug.delegate(ba, "traceuploadtimer_tick", null));}
+RDebugUtils.currentLine=57737216;
+ //BA.debugLineNum = 57737216;BA.debugLine="Private Sub TraceUploadTimer_Tick";
 RDebugUtils.currentLine=57737217;
  //BA.debugLineNum = 57737217;BA.debugLine="If playerCode = \"\" Or deviceId = \"\" Then Return";
-if (true) break;
-
-case 1:
-//if
-this.state = 6;
 if ((__ref._playercode /*String*/ ).equals("") || (__ref._deviceid /*String*/ ).equals("")) { 
-this.state = 3;
-;}if (true) break;
-
-case 3:
-//C
-this.state = 6;
-if (true) return ;
-if (true) break;
-
-case 6:
-//C
-this.state = 7;
-;
+if (true) return "";};
 RDebugUtils.currentLine=57737218;
- //BA.debugLineNum = 57737218;BA.debugLine="If isTraceUploadInProgress Then Return";
-if (true) break;
-
-case 7:
-//if
-this.state = 12;
-if (__ref._istraceuploadinprogress /*boolean*/ ) { 
-this.state = 9;
-;}if (true) break;
-
-case 9:
-//C
-this.state = 12;
-if (true) return ;
-if (true) break;
-
-case 12:
-//C
-this.state = 13;
-;
+ //BA.debugLineNum = 57737218;BA.debugLine="If traceUploader.IsUploadInProgress Then Return";
+if (__ref._traceuploader /*b4j.example.playbacktraceuploader*/ ._isuploadinprogress /*boolean*/ (null)) { 
+if (true) return "";};
 RDebugUtils.currentLine=57737219;
  //BA.debugLineNum = 57737219;BA.debugLine="WriteHealthSnapshot(\"таймер\")";
 __ref._writehealthsnapshot /*String*/ (null,"таймер");
 RDebugUtils.currentLine=57737220;
- //BA.debugLineNum = 57737220;BA.debugLine="If IsTraceUploadEnabled = False Then Return";
-if (true) break;
-
-case 13:
-//if
-this.state = 18;
-if (__ref._istraceuploadenabled /*boolean*/ (null)==parent.__c.False) { 
-this.state = 15;
-;}if (true) break;
-
-case 15:
-//C
-this.state = 18;
-if (true) return ;
-if (true) break;
-
-case 18:
-//C
-this.state = -1;
-;
+ //BA.debugLineNum = 57737220;BA.debugLine="If traceUploader.IsTraceUploadEnabled = False The";
+if (__ref._traceuploader /*b4j.example.playbacktraceuploader*/ ._istraceuploadenabled /*boolean*/ (null)==__c.False) { 
+if (true) return "";};
 RDebugUtils.currentLine=57737221;
- //BA.debugLineNum = 57737221;BA.debugLine="Wait For (FlushTraceBuffer) Complete (unused As B";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "traceuploadtimer_tick"), __ref._flushtracebuffer /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 19;
-return;
-case 19:
-//C
-this.state = -1;
-_unused = (boolean) result[1];
-;
+ //BA.debugLineNum = 57737221;BA.debugLine="traceUploader.FlushTraceBufferAsync";
+__ref._traceuploader /*b4j.example.playbacktraceuploader*/ ._flushtracebufferasync /*void*/ (null);
 RDebugUtils.currentLine=57737222;
  //BA.debugLineNum = 57737222;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
+return "";
 }
 public String  _trackcachewarmuptimer_tick(b4j.example.b4xmainpage __ref) throws Exception{
 __ref = this;
@@ -23452,35 +19404,6 @@ __ref._txtplayercode /*anywheresoftware.b4j.objects.TextInputControlWrapper.Text
  };
 RDebugUtils.currentLine=4390918;
  //BA.debugLineNum = 4390918;BA.debugLine="End Sub";
-return "";
-}
-public String  _updatetrustedonlinetimeticks(b4j.example.b4xmainpage __ref,long _candidateticks) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "updatetrustedonlinetimeticks", false))
-	 {return ((String) Debug.delegate(ba, "updatetrustedonlinetimeticks", new Object[] {_candidateticks}));}
-long _storedticks = 0L;
-RDebugUtils.currentLine=10027008;
- //BA.debugLineNum = 10027008;BA.debugLine="Private Sub UpdateTrustedOnlineTimeTicks(candidate";
-RDebugUtils.currentLine=10027009;
- //BA.debugLineNum = 10027009;BA.debugLine="If candidateTicks <= 0 Then Return";
-if (_candidateticks<=0) { 
-if (true) return "";};
-RDebugUtils.currentLine=10027010;
- //BA.debugLineNum = 10027010;BA.debugLine="Dim storedTicks As Long = storage.GetDefault(trus";
-_storedticks = BA.ObjectToLongNumber(__ref._storage /*b4j.example.keyvaluestore*/ ._getdefault /*Object*/ (null,__ref._trustedsynctimekey /*String*/ ,(Object)(0)));
-RDebugUtils.currentLine=10027011;
- //BA.debugLineNum = 10027011;BA.debugLine="If candidateTicks <= storedTicks Then Return";
-if (_candidateticks<=_storedticks) { 
-if (true) return "";};
-RDebugUtils.currentLine=10027012;
- //BA.debugLineNum = 10027012;BA.debugLine="storage.Put(trustedSyncTimeKey, candidateTicks)";
-__ref._storage /*b4j.example.keyvaluestore*/ ._put /*String*/ (null,__ref._trustedsynctimekey /*String*/ ,(Object)(_candidateticks));
-RDebugUtils.currentLine=10027013;
- //BA.debugLineNum = 10027013;BA.debugLine="TraceLog(\"trusted time update ticks=\" & candidate";
-__ref._tracelog /*String*/ (null,"trusted time update ticks="+BA.NumberToString(_candidateticks));
-RDebugUtils.currentLine=10027014;
- //BA.debugLineNum = 10027014;BA.debugLine="End Sub";
 return "";
 }
 }

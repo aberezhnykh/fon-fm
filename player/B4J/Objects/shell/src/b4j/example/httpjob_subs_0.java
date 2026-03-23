@@ -8,7 +8,7 @@ public class httpjob_subs_0 {
 
 public static RemoteObject  _addscheme(RemoteObject __ref,RemoteObject _link) throws Exception{
 try {
-		Debug.PushSubsStack("AddScheme (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,52);
+		Debug.PushSubsStack("AddScheme (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,52);
 if (RapidSub.canDelegate("addscheme")) { return __ref.runUserSub(false, "httpjob","addscheme", __ref, _link);}
 Debug.locals.put("Link", _link);
  BA.debugLineNum = 52;BA.debugLine="Private Sub AddScheme (Link As String) As String";
@@ -64,7 +64,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _complete(RemoteObject __ref,RemoteObject _id) throws Exception{
 try {
-		Debug.PushSubsStack("Complete (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,315);
+		Debug.PushSubsStack("Complete (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,315);
 if (RapidSub.canDelegate("complete")) { return __ref.runUserSub(false, "httpjob","complete", __ref, _id);}
 Debug.locals.put("id", _id);
  BA.debugLineNum = 315;BA.debugLine="Public Sub Complete (id As Int)";
@@ -87,7 +87,7 @@ finally {
 		}}
 public static RemoteObject  _delete(RemoteObject __ref,RemoteObject _link) throws Exception{
 try {
-		Debug.PushSubsStack("Delete (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,261);
+		Debug.PushSubsStack("Delete (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,261);
 if (RapidSub.canDelegate("delete")) { return __ref.runUserSub(false, "httpjob","delete", __ref, _link);}
 Debug.locals.put("Link", _link);
  BA.debugLineNum = 261;BA.debugLine="Public Sub Delete(Link As String)";
@@ -125,7 +125,7 @@ finally {
 		}}
 public static RemoteObject  _delete2(RemoteObject __ref,RemoteObject _link,RemoteObject _parameters) throws Exception{
 try {
-		Debug.PushSubsStack("Delete2 (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,272);
+		Debug.PushSubsStack("Delete2 (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,272);
 if (RapidSub.canDelegate("delete2")) { return __ref.runUserSub(false, "httpjob","delete2", __ref, _link, _parameters);}
 Debug.locals.put("Link", _link);
 Debug.locals.put("Parameters", _parameters);
@@ -164,7 +164,7 @@ finally {
 		}}
 public static RemoteObject  _download(RemoteObject __ref,RemoteObject _link) throws Exception{
 try {
-		Debug.PushSubsStack("Download (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,219);
+		Debug.PushSubsStack("Download (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,219);
 if (RapidSub.canDelegate("download")) { return __ref.runUserSub(false, "httpjob","download", __ref, _link);}
 Debug.locals.put("Link", _link);
  BA.debugLineNum = 219;BA.debugLine="Public Sub Download(Link As String)";
@@ -202,7 +202,7 @@ finally {
 		}}
 public static RemoteObject  _download2(RemoteObject __ref,RemoteObject _link,RemoteObject _parameters) throws Exception{
 try {
-		Debug.PushSubsStack("Download2 (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,235);
+		Debug.PushSubsStack("Download2 (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,235);
 if (RapidSub.canDelegate("download2")) { return __ref.runUserSub(false, "httpjob","download2", __ref, _link, _parameters);}
 Debug.locals.put("Link", _link);
 Debug.locals.put("Parameters", _parameters);
@@ -241,7 +241,7 @@ finally {
 		}}
 public static RemoteObject  _escapelink(RemoteObject __ref,RemoteObject _link,RemoteObject _parameters) throws Exception{
 try {
-		Debug.PushSubsStack("escapeLink (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,246);
+		Debug.PushSubsStack("escapeLink (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,246);
 if (RapidSub.canDelegate("escapelink")) { return __ref.runUserSub(false, "httpjob","escapelink", __ref, _link, _parameters);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 RemoteObject _su = RemoteObject.declareNull("anywheresoftware.b4a.objects.StringUtils");
@@ -302,7 +302,7 @@ finally {
 		}}
 public static RemoteObject  _getbitmap(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetBitmap (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,322);
+		Debug.PushSubsStack("GetBitmap (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,322);
 if (RapidSub.canDelegate("getbitmap")) { return __ref.runUserSub(false, "httpjob","getbitmap", __ref);}
 RemoteObject _b = RemoteObject.declareNull("anywheresoftware.b4j.objects.ImageViewWrapper.ImageWrapper");
  BA.debugLineNum = 322;BA.debugLine="Public Sub GetBitmap As Image";
@@ -328,7 +328,7 @@ finally {
 		}}
 public static RemoteObject  _getinputstream(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetInputStream (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,347);
+		Debug.PushSubsStack("GetInputStream (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,347);
 if (RapidSub.canDelegate("getinputstream")) { return __ref.runUserSub(false, "httpjob","getinputstream", __ref);}
 RemoteObject _in = RemoteObject.declareNull("anywheresoftware.b4a.objects.streams.File.InputStreamWrapper");
  BA.debugLineNum = 347;BA.debugLine="Public Sub GetInputStream As InputStream";
@@ -354,7 +354,7 @@ finally {
 		}}
 public static RemoteObject  _getrequest(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetRequest (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,310);
+		Debug.PushSubsStack("GetRequest (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,310);
 if (RapidSub.canDelegate("getrequest")) { return __ref.runUserSub(false, "httpjob","getrequest", __ref);}
  BA.debugLineNum = 310;BA.debugLine="Public Sub GetRequest As OkHttpRequest";
 Debug.JustUpdateDeviceLine();
@@ -373,7 +373,7 @@ finally {
 		}}
 public static RemoteObject  _getstring(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetString (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,291);
+		Debug.PushSubsStack("GetString (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,291);
 if (RapidSub.canDelegate("getstring")) { return __ref.runUserSub(false, "httpjob","getstring", __ref);}
  BA.debugLineNum = 291;BA.debugLine="Public Sub GetString As String";
 Debug.JustUpdateDeviceLine();
@@ -392,7 +392,7 @@ finally {
 		}}
 public static RemoteObject  _getstring2(RemoteObject __ref,RemoteObject _encoding) throws Exception{
 try {
-		Debug.PushSubsStack("GetString2 (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,296);
+		Debug.PushSubsStack("GetString2 (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,296);
 if (RapidSub.canDelegate("getstring2")) { return __ref.runUserSub(false, "httpjob","getstring2", __ref, _encoding);}
 RemoteObject _tr = RemoteObject.declareNull("anywheresoftware.b4a.objects.streams.File.TextReaderWrapper");
 RemoteObject _res = RemoteObject.createImmutable("");
@@ -426,7 +426,7 @@ finally {
 		}}
 public static RemoteObject  _head(RemoteObject __ref,RemoteObject _link) throws Exception{
 try {
-		Debug.PushSubsStack("Head (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,119);
+		Debug.PushSubsStack("Head (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,119);
 if (RapidSub.canDelegate("head")) { return __ref.runUserSub(false, "httpjob","head", __ref, _link);}
 Debug.locals.put("Link", _link);
  BA.debugLineNum = 119;BA.debugLine="Public Sub Head(Link As String)";
@@ -464,7 +464,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _name,RemoteObject _targetmodule) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,38);
+		Debug.PushSubsStack("Initialize (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,38);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "httpjob","initialize", __ref, _ba, _name, _targetmodule);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -490,7 +490,7 @@ finally {
 		}}
 public static RemoteObject  _multipartstartsection(RemoteObject __ref,RemoteObject _stream,RemoteObject _empty) throws Exception{
 try {
-		Debug.PushSubsStack("MultipartStartSection (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,179);
+		Debug.PushSubsStack("MultipartStartSection (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,179);
 if (RapidSub.canDelegate("multipartstartsection")) { return __ref.runUserSub(false, "httpjob","multipartstartsection", __ref, _stream, _empty);}
 Debug.locals.put("stream", _stream);
 Debug.locals.put("empty", _empty);
@@ -522,7 +522,7 @@ finally {
 		}}
 public static RemoteObject  _patchbytes(RemoteObject __ref,RemoteObject _link,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("PatchBytes (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,97);
+		Debug.PushSubsStack("PatchBytes (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,97);
 if (RapidSub.canDelegate("patchbytes")) { return __ref.runUserSub(false, "httpjob","patchbytes", __ref, _link, _data);}
 Debug.locals.put("Link", _link);
 Debug.locals.put("Data", _data);
@@ -561,7 +561,7 @@ finally {
 		}}
 public static RemoteObject  _patchstring(RemoteObject __ref,RemoteObject _link,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("PatchString (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,92);
+		Debug.PushSubsStack("PatchString (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,92);
 if (RapidSub.canDelegate("patchstring")) { return __ref.runUserSub(false, "httpjob","patchstring", __ref, _link, _text);}
 Debug.locals.put("Link", _link);
 Debug.locals.put("Text", _text);
@@ -582,7 +582,7 @@ finally {
 		}}
 public static RemoteObject  _postbytes(RemoteObject __ref,RemoteObject _link,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("PostBytes (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,63);
+		Debug.PushSubsStack("PostBytes (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,63);
 if (RapidSub.canDelegate("postbytes")) { return __ref.runUserSub(false, "httpjob","postbytes", __ref, _link, _data);}
 Debug.locals.put("Link", _link);
 Debug.locals.put("Data", _data);
@@ -621,7 +621,7 @@ finally {
 		}}
 public static RemoteObject  _postfile(RemoteObject __ref,RemoteObject _link,RemoteObject _dir,RemoteObject _filename) throws Exception{
 try {
-		Debug.PushSubsStack("PostFile (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,190);
+		Debug.PushSubsStack("PostFile (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,190);
 if (RapidSub.canDelegate("postfile")) { return __ref.runUserSub(false, "httpjob","postfile", __ref, _link, _dir, _filename);}
 RemoteObject _length = RemoteObject.createImmutable(0);
 RemoteObject _in = RemoteObject.declareNull("anywheresoftware.b4a.objects.streams.File.InputStreamWrapper");
@@ -691,7 +691,7 @@ finally {
 		}}
 public static RemoteObject  _postmultipart(RemoteObject __ref,RemoteObject _link,RemoteObject _namevalues,RemoteObject _files) throws Exception{
 try {
-		Debug.PushSubsStack("PostMultipart (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,133);
+		Debug.PushSubsStack("PostMultipart (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,133);
 if (RapidSub.canDelegate("postmultipart")) { return __ref.runUserSub(false, "httpjob","postmultipart", __ref, _link, _namevalues, _files);}
 RemoteObject _boundary = RemoteObject.createImmutable("");
 RemoteObject _stream = RemoteObject.declareNull("anywheresoftware.b4a.objects.streams.File.OutputStreamWrapper");
@@ -827,7 +827,7 @@ finally {
 		}}
 public static RemoteObject  _poststring(RemoteObject __ref,RemoteObject _link,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("PostString (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,58);
+		Debug.PushSubsStack("PostString (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,58);
 if (RapidSub.canDelegate("poststring")) { return __ref.runUserSub(false, "httpjob","poststring", __ref, _link, _text);}
 Debug.locals.put("Link", _link);
 Debug.locals.put("Text", _text);
@@ -848,7 +848,7 @@ finally {
 		}}
 public static RemoteObject  _putbytes(RemoteObject __ref,RemoteObject _link,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("PutBytes (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,80);
+		Debug.PushSubsStack("PutBytes (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,80);
 if (RapidSub.canDelegate("putbytes")) { return __ref.runUserSub(false, "httpjob","putbytes", __ref, _link, _data);}
 Debug.locals.put("Link", _link);
 Debug.locals.put("Data", _data);
@@ -887,7 +887,7 @@ finally {
 		}}
 public static RemoteObject  _putstring(RemoteObject __ref,RemoteObject _link,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("PutString (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,75);
+		Debug.PushSubsStack("PutString (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,75);
 if (RapidSub.canDelegate("putstring")) { return __ref.runUserSub(false, "httpjob","putstring", __ref, _link, _text);}
 Debug.locals.put("Link", _link);
 Debug.locals.put("Text", _text);
@@ -908,7 +908,7 @@ finally {
 		}}
 public static RemoteObject  _release(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Release (httpjob) ","httpjob",34,__ref.getField(false, "ba"),__ref,284);
+		Debug.PushSubsStack("Release (httpjob) ","httpjob",41,__ref.getField(false, "ba"),__ref,284);
 if (RapidSub.canDelegate("release")) { return __ref.runUserSub(false, "httpjob","release", __ref);}
  BA.debugLineNum = 284;BA.debugLine="Public Sub Release";
 Debug.JustUpdateDeviceLine();

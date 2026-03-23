@@ -8,7 +8,7 @@ public class dataplaybackresolver_subs_0 {
 
 public static RemoteObject  _builddataslotkey(RemoteObject __ref,RemoteObject _currentslot) throws Exception{
 try {
-		Debug.PushSubsStack("BuildDataSlotKey (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,375);
+		Debug.PushSubsStack("BuildDataSlotKey (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,375);
 if (RapidSub.canDelegate("builddataslotkey")) { return __ref.runUserSub(false, "dataplaybackresolver","builddataslotkey", __ref, _currentslot);}
 Debug.locals.put("currentSlot", _currentslot);
  BA.debugLineNum = 375;BA.debugLine="Private Sub BuildDataSlotKey(currentSlot As Map) A";
@@ -28,7 +28,7 @@ finally {
 		}}
 public static RemoteObject  _choosenextplaylistdescriptor(RemoteObject __ref,RemoteObject _currentslot,RemoteObject _workingcursors) throws Exception{
 try {
-		Debug.PushSubsStack("ChooseNextPlaylistDescriptor (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,166);
+		Debug.PushSubsStack("ChooseNextPlaylistDescriptor (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,166);
 if (RapidSub.canDelegate("choosenextplaylistdescriptor")) { return __ref.runUserSub(false, "dataplaybackresolver","choosenextplaylistdescriptor", __ref, _currentslot, _workingcursors);}
 RemoteObject _emptydescriptor = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _playlists = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -111,7 +111,7 @@ finally {
 		}}
 public static RemoteObject  _chooserandomtrackfromplaylist(RemoteObject __ref,RemoteObject _playlistdata,RemoteObject _mediacacheservice,RemoteObject _cachedonly) throws Exception{
 try {
-		Debug.PushSubsStack("ChooseRandomTrackFromPlaylist (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,205);
+		Debug.PushSubsStack("ChooseRandomTrackFromPlaylist (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,205);
 if (RapidSub.canDelegate("chooserandomtrackfromplaylist")) { return __ref.runUserSub(false, "dataplaybackresolver","chooserandomtrackfromplaylist", __ref, _playlistdata, _mediacacheservice, _cachedonly);}
 RemoteObject _emptytrack = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _playlistid = RemoteObject.createImmutable("");
@@ -327,7 +327,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clonemap(RemoteObject __ref,RemoteObject _source) throws Exception{
 try {
-		Debug.PushSubsStack("CloneMap (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,450);
+		Debug.PushSubsStack("CloneMap (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,450);
 if (RapidSub.canDelegate("clonemap")) { return __ref.runUserSub(false, "dataplaybackresolver","clonemap", __ref, _source);}
 RemoteObject _copy = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
@@ -375,7 +375,7 @@ finally {
 		}}
 public static RemoteObject  _cloneplaylistcursors(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClonePlaylistCursors (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,40);
+		Debug.PushSubsStack("ClonePlaylistCursors (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,40);
 if (RapidSub.canDelegate("cloneplaylistcursors")) { return __ref.runUserSub(false, "dataplaybackresolver","cloneplaylistcursors", __ref);}
  BA.debugLineNum = 40;BA.debugLine="Public Sub ClonePlaylistCursors As Map";
 Debug.ShouldStop(128);
@@ -394,7 +394,7 @@ finally {
 		}}
 public static RemoteObject  _commitplaylistcursor(RemoteObject __ref,RemoteObject _storage,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("CommitPlaylistCursor (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,277);
+		Debug.PushSubsStack("CommitPlaylistCursor (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,277);
 if (RapidSub.canDelegate("commitplaylistcursor")) { return __ref.runUserSub(false, "dataplaybackresolver","commitplaylistcursor", __ref, _storage, _item);}
 RemoteObject _slotkey = RemoteObject.createImmutable("");
 RemoteObject _nextstored = RemoteObject.createImmutable(0);
@@ -438,7 +438,7 @@ finally {
 		}}
 public static RemoteObject  _createinitializedlist(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CreateInitializedList (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,460);
+		Debug.PushSubsStack("CreateInitializedList (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,460);
 if (RapidSub.canDelegate("createinitializedlist")) { return __ref.runUserSub(false, "dataplaybackresolver","createinitializedlist", __ref);}
 RemoteObject _items = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
  BA.debugLineNum = 460;BA.debugLine="Private Sub CreateInitializedList As List";
@@ -464,7 +464,7 @@ finally {
 		}}
 public static RemoteObject  _createinitializedmap(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CreateInitializedMap (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,444);
+		Debug.PushSubsStack("CreateInitializedMap (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,444);
 if (RapidSub.canDelegate("createinitializedmap")) { return __ref.runUserSub(false, "dataplaybackresolver","createinitializedmap", __ref);}
 RemoteObject _m = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
  BA.debugLineNum = 444;BA.debugLine="Private Sub CreateInitializedMap As Map";
@@ -490,7 +490,7 @@ finally {
 		}}
 public static RemoteObject  _createqueuetrackfromplaylist(RemoteObject __ref,RemoteObject _currentslot,RemoteObject _playlistdescriptor,RemoteObject _track,RemoteObject _offlinedata) throws Exception{
 try {
-		Debug.PushSubsStack("CreateQueueTrackFromPlaylist (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,258);
+		Debug.PushSubsStack("CreateQueueTrackFromPlaylist (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,258);
 if (RapidSub.canDelegate("createqueuetrackfromplaylist")) { return __ref.runUserSub(false, "dataplaybackresolver","createqueuetrackfromplaylist", __ref, _currentslot, _playlistdescriptor, _track, _offlinedata);}
 RemoteObject _item = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("currentSlot", _currentslot);
@@ -559,7 +559,7 @@ finally {
 		}}
 public static RemoteObject  _cursorcount(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CursorCount (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,35);
+		Debug.PushSubsStack("CursorCount (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,35);
 if (RapidSub.canDelegate("cursorcount")) { return __ref.runUserSub(false, "dataplaybackresolver","cursorcount", __ref);}
  BA.debugLineNum = 35;BA.debugLine="Public Sub CursorCount As Int";
 Debug.ShouldStop(4);
@@ -582,7 +582,7 @@ finally {
 		}}
 public static RemoteObject  _extractslotstreamdata(RemoteObject __ref,RemoteObject _slot) throws Exception{
 try {
-		Debug.PushSubsStack("ExtractSlotStreamData (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,346);
+		Debug.PushSubsStack("ExtractSlotStreamData (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,346);
 if (RapidSub.canDelegate("extractslotstreamdata")) { return __ref.runUserSub(false, "dataplaybackresolver","extractslotstreamdata", __ref, _slot);}
 RemoteObject _streamdata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _streamobject = RemoteObject.declareNull("Object");
@@ -635,7 +635,7 @@ finally {
 		}}
 public static RemoteObject  _formatisodate(RemoteObject __ref,RemoteObject _ticks) throws Exception{
 try {
-		Debug.PushSubsStack("FormatIsoDate (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,387);
+		Debug.PushSubsStack("FormatIsoDate (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,387);
 if (RapidSub.canDelegate("formatisodate")) { return __ref.runUserSub(false, "dataplaybackresolver","formatisodate", __ref, _ticks);}
 RemoteObject _previousdateformat = RemoteObject.createImmutable("");
 RemoteObject _value = RemoteObject.createImmutable("");
@@ -669,7 +669,7 @@ finally {
 		}}
 public static RemoteObject  _getofflineplaylistsdir(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetOfflinePlaylistsDir (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,379);
+		Debug.PushSubsStack("GetOfflinePlaylistsDir (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,379);
 if (RapidSub.canDelegate("getofflineplaylistsdir")) { return __ref.runUserSub(false, "dataplaybackresolver","getofflineplaylistsdir", __ref);}
  BA.debugLineNum = 379;BA.debugLine="Private Sub GetOfflinePlaylistsDir As String";
 Debug.ShouldStop(67108864);
@@ -688,7 +688,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _storagedirvalue,RemoteObject _targetmodulevalue,RemoteObject _tracesubnamevalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,15);
+		Debug.PushSubsStack("Initialize (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,15);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "dataplaybackresolver","initialize", __ref, _ba, _storagedirvalue, _targetmodulevalue, _tracesubnamevalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -727,7 +727,7 @@ finally {
 		}}
 public static RemoteObject  _isoweekdayfromticks(RemoteObject __ref,RemoteObject _ticks) throws Exception{
 try {
-		Debug.PushSubsStack("IsoWeekdayFromTicks (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,405);
+		Debug.PushSubsStack("IsoWeekdayFromTicks (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,405);
 if (RapidSub.canDelegate("isoweekdayfromticks")) { return __ref.runUserSub(false, "dataplaybackresolver","isoweekdayfromticks", __ref, _ticks);}
 RemoteObject _instantclass = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 RemoteObject _zoneclass = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
@@ -793,7 +793,7 @@ finally {
 		}}
 public static RemoteObject  _loadcachedplaylistmetadata(RemoteObject __ref,RemoteObject _playlistid) throws Exception{
 try {
-		Debug.PushSubsStack("LoadCachedPlaylistMetadata (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,187);
+		Debug.PushSubsStack("LoadCachedPlaylistMetadata (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,187);
 if (RapidSub.canDelegate("loadcachedplaylistmetadata")) { return __ref.runUserSub(false, "dataplaybackresolver","loadcachedplaylistmetadata", __ref, _playlistid);}
 RemoteObject _playlistdata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _parser = RemoteObject.declareNull("anywheresoftware.b4j.objects.collections.JSONParser");
@@ -856,7 +856,7 @@ finally {
 		}}
 public static RemoteObject  _loadstate(RemoteObject __ref,RemoteObject _storage) throws Exception{
 try {
-		Debug.PushSubsStack("LoadState (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,25);
+		Debug.PushSubsStack("LoadState (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,25);
 if (RapidSub.canDelegate("loadstate")) { return __ref.runUserSub(false, "dataplaybackresolver","loadstate", __ref, _storage);}
 Debug.locals.put("storage", _storage);
  BA.debugLineNum = 25;BA.debugLine="Public Sub LoadState(storage As KeyValueStore)";
@@ -897,7 +897,7 @@ finally {
 		}}
 public static RemoteObject  _minutesofdayfromticks(RemoteObject __ref,RemoteObject _ticks) throws Exception{
 try {
-		Debug.PushSubsStack("MinutesOfDayFromTicks (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,395);
+		Debug.PushSubsStack("MinutesOfDayFromTicks (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,395);
 if (RapidSub.canDelegate("minutesofdayfromticks")) { return __ref.runUserSub(false, "dataplaybackresolver","minutesofdayfromticks", __ref, _ticks);}
 RemoteObject _previoustimeformat = RemoteObject.createImmutable("");
 RemoteObject _timevalue = RemoteObject.createImmutable("");
@@ -939,7 +939,7 @@ finally {
 		}}
 public static RemoteObject  _playlistmetadatafilename(RemoteObject __ref,RemoteObject _playlistid) throws Exception{
 try {
-		Debug.PushSubsStack("PlaylistMetadataFileName (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,383);
+		Debug.PushSubsStack("PlaylistMetadataFileName (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,383);
 if (RapidSub.canDelegate("playlistmetadatafilename")) { return __ref.runUserSub(false, "dataplaybackresolver","playlistmetadatafilename", __ref, _playlistid);}
 Debug.locals.put("playlistId", _playlistid);
  BA.debugLineNum = 383;BA.debugLine="Private Sub PlaylistMetadataFileName(playlistId As";
@@ -959,7 +959,7 @@ finally {
 		}}
 public static RemoteObject  _rememberresolvedtrack(RemoteObject __ref,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("RememberResolvedTrack (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,293);
+		Debug.PushSubsStack("RememberResolvedTrack (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,293);
 if (RapidSub.canDelegate("rememberresolvedtrack")) { return __ref.runUserSub(false, "dataplaybackresolver","rememberresolvedtrack", __ref, _trackid);}
 Debug.locals.put("trackId", _trackid);
  BA.debugLineNum = 293;BA.debugLine="Public Sub RememberResolvedTrack(trackId As String";
@@ -995,7 +995,7 @@ finally {
 		}}
 public static RemoteObject  _rememberresolvedtrackforplaylist(RemoteObject __ref,RemoteObject _playlistid,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("RememberResolvedTrackForPlaylist (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,302);
+		Debug.PushSubsStack("RememberResolvedTrackForPlaylist (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,302);
 if (RapidSub.canDelegate("rememberresolvedtrackforplaylist")) { return __ref.runUserSub(false, "dataplaybackresolver","rememberresolvedtrackforplaylist", __ref, _playlistid, _trackid);}
 Debug.locals.put("playlistId", _playlistid);
 Debug.locals.put("trackId", _trackid);
@@ -1024,7 +1024,7 @@ finally {
 		}}
 public static RemoteObject  _resolvecurrentdataslot(RemoteObject __ref,RemoteObject _offlinedata) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveCurrentDataSlot (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,44);
+		Debug.PushSubsStack("ResolveCurrentDataSlot (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,44);
 if (RapidSub.canDelegate("resolvecurrentdataslot")) { return __ref.runUserSub(false, "dataplaybackresolver","resolvecurrentdataslot", __ref, _offlinedata);}
 Debug.locals.put("offlineData", _offlinedata);
  BA.debugLineNum = 44;BA.debugLine="Public Sub ResolveCurrentDataSlot(offlineData As M";
@@ -1044,7 +1044,7 @@ finally {
 		}}
 public static RemoteObject  _resolvedataslotatticks(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _targetticks) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveDataSlotAtTicks (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,49);
+		Debug.PushSubsStack("ResolveDataSlotAtTicks (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,49);
 if (RapidSub.canDelegate("resolvedataslotatticks")) { return __ref.runUserSub(false, "dataplaybackresolver","resolvedataslotatticks", __ref, _offlinedata, _targetticks);}
 RemoteObject _slotcontext = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _schedules = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -1296,7 +1296,7 @@ finally {
 		}}
 public static RemoteObject  _resolvenextdataslot(RemoteObject __ref,RemoteObject _offlinedata) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveNextDataSlot (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,113);
+		Debug.PushSubsStack("ResolveNextDataSlot (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,113);
 if (RapidSub.canDelegate("resolvenextdataslot")) { return __ref.runUserSub(false, "dataplaybackresolver","resolvenextdataslot", __ref, _offlinedata);}
 Debug.locals.put("offlineData", _offlinedata);
  BA.debugLineNum = 113;BA.debugLine="Public Sub ResolveNextDataSlot(offlineData As Map)";
@@ -1316,7 +1316,7 @@ finally {
 		}}
 public static RemoteObject  _resolvenextdataslotatticks(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _referenceticks) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveNextDataSlotAtTicks (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,118);
+		Debug.PushSubsStack("ResolveNextDataSlotAtTicks (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,118);
 if (RapidSub.canDelegate("resolvenextdataslotatticks")) { return __ref.runUserSub(false, "dataplaybackresolver","resolvenextdataslotatticks", __ref, _offlinedata, _referenceticks);}
 RemoteObject _nextslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _schedules = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -1512,7 +1512,7 @@ finally {
 		}}
 public static RemoteObject  _resolveofflinestreamtitle(RemoteObject __ref,RemoteObject _currentslot,RemoteObject _offlinedata) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveOfflineStreamTitle (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,320);
+		Debug.PushSubsStack("ResolveOfflineStreamTitle (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,320);
 if (RapidSub.canDelegate("resolveofflinestreamtitle")) { return __ref.runUserSub(false, "dataplaybackresolver","resolveofflinestreamtitle", __ref, _currentslot, _offlinedata);}
 RemoteObject _targetstreamid = RemoteObject.createImmutable("");
 RemoteObject _targetslottime = RemoteObject.createImmutable("");
@@ -1630,7 +1630,7 @@ finally {
 		}}
 public static RemoteObject  _resolveplaybackstreamtitle(RemoteObject __ref,RemoteObject _currentslot,RemoteObject _playlistdescriptor,RemoteObject _offlinedata) throws Exception{
 try {
-		Debug.PushSubsStack("ResolvePlaybackStreamTitle (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,308);
+		Debug.PushSubsStack("ResolvePlaybackStreamTitle (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,308);
 if (RapidSub.canDelegate("resolveplaybackstreamtitle")) { return __ref.runUserSub(false, "dataplaybackresolver","resolveplaybackstreamtitle", __ref, _currentslot, _playlistdescriptor, _offlinedata);}
 RemoteObject _streamtitle = RemoteObject.createImmutable("");
 RemoteObject _resolvedstreamtitle = RemoteObject.createImmutable("");
@@ -1684,7 +1684,7 @@ finally {
 		}}
 public static RemoteObject  _savepreviewplaylistcursors(RemoteObject __ref,RemoteObject _storage,RemoteObject _workingcursors) throws Exception{
 try {
-		Debug.PushSubsStack("SavePreviewPlaylistCursors (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,287);
+		Debug.PushSubsStack("SavePreviewPlaylistCursors (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,287);
 if (RapidSub.canDelegate("savepreviewplaylistcursors")) { return __ref.runUserSub(false, "dataplaybackresolver","savepreviewplaylistcursors", __ref, _storage, _workingcursors);}
 Debug.locals.put("storage", _storage);
 Debug.locals.put("workingCursors", _workingcursors);
@@ -1712,7 +1712,7 @@ finally {
 		}}
 public static RemoteObject  _scheduleappliesondate(RemoteObject __ref,RemoteObject _schedule,RemoteObject _targetdatekey,RemoteObject _targetweekday) throws Exception{
 try {
-		Debug.PushSubsStack("ScheduleAppliesOnDate (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,364);
+		Debug.PushSubsStack("ScheduleAppliesOnDate (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,364);
 if (RapidSub.canDelegate("scheduleappliesondate")) { return __ref.runUserSub(false, "dataplaybackresolver","scheduleappliesondate", __ref, _schedule, _targetdatekey, _targetweekday);}
 RemoteObject _startdate = RemoteObject.createImmutable("");
 RemoteObject _weekdays = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -1769,7 +1769,7 @@ finally {
 		}}
 public static RemoteObject  _scheduleappliestoday(RemoteObject __ref,RemoteObject _schedule,RemoteObject _todaykey,RemoteObject _todayweekday) throws Exception{
 try {
-		Debug.PushSubsStack("ScheduleAppliesToday (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,360);
+		Debug.PushSubsStack("ScheduleAppliesToday (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,360);
 if (RapidSub.canDelegate("scheduleappliestoday")) { return __ref.runUserSub(false, "dataplaybackresolver","scheduleappliestoday", __ref, _schedule, _todaykey, _todayweekday);}
 Debug.locals.put("schedule", _schedule);
 Debug.locals.put("todayKey", _todaykey);
@@ -1791,7 +1791,7 @@ finally {
 		}}
 public static RemoteObject  _startofdayticks(RemoteObject __ref,RemoteObject _ticks) throws Exception{
 try {
-		Debug.PushSubsStack("StartOfDayTicks (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,435);
+		Debug.PushSubsStack("StartOfDayTicks (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,435);
 if (RapidSub.canDelegate("startofdayticks")) { return __ref.runUserSub(false, "dataplaybackresolver","startofdayticks", __ref, _ticks);}
 RemoteObject _previousdateformat = RemoteObject.createImmutable("");
 RemoteObject _daykey = RemoteObject.createImmutable("");
@@ -1829,7 +1829,7 @@ finally {
 		}}
 public static RemoteObject  _timestringtominutes(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("TimeStringToMinutes (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,420);
+		Debug.PushSubsStack("TimeStringToMinutes (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,420);
 if (RapidSub.canDelegate("timestringtominutes")) { return __ref.runUserSub(false, "dataplaybackresolver","timestringtominutes", __ref, _value);}
 RemoteObject _parts = null;
 RemoteObject _hours = RemoteObject.createImmutable(0);
@@ -1886,7 +1886,7 @@ finally {
 		}}
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (dataplaybackresolver) ","dataplaybackresolver",10,__ref.getField(false, "ba"),__ref,466);
+		Debug.PushSubsStack("Trace (dataplaybackresolver) ","dataplaybackresolver",25,__ref.getField(false, "ba"),__ref,466);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "dataplaybackresolver","trace", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 466;BA.debugLine="Private Sub Trace(message As String)";

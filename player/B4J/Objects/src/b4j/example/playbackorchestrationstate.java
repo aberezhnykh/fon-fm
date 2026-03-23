@@ -133,6 +133,26 @@ RDebugUtils.currentLine=46989315;
  //BA.debugLineNum = 46989315;BA.debugLine="End Sub";
 return "";
 }
+public String  _enteruserstoppedstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackorchestrationstate";
+if (Debug.shouldDelegate(ba, "enteruserstoppedstate", false))
+	 {return ((String) Debug.delegate(ba, "enteruserstoppedstate", null));}
+RDebugUtils.currentLine=46465024;
+ //BA.debugLineNum = 46465024;BA.debugLine="Public Sub EnterUserStoppedState";
+RDebugUtils.currentLine=46465025;
+ //BA.debugLineNum = 46465025;BA.debugLine="IsStarted = False";
+__ref._isstarted /*boolean*/  = __c.False;
+RDebugUtils.currentLine=46465026;
+ //BA.debugLineNum = 46465026;BA.debugLine="IsStoppedByUser = True";
+__ref._isstoppedbyuser /*boolean*/  = __c.True;
+RDebugUtils.currentLine=46465027;
+ //BA.debugLineNum = 46465027;BA.debugLine="IsStopping = False";
+__ref._isstopping /*boolean*/  = __c.False;
+RDebugUtils.currentLine=46465028;
+ //BA.debugLineNum = 46465028;BA.debugLine="End Sub";
+return "";
+}
 public String  _enterpolicypausedstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
@@ -168,26 +188,6 @@ RDebugUtils.currentLine=46530562;
 __ref._isstarted /*boolean*/  = __c.False;
 RDebugUtils.currentLine=46530563;
  //BA.debugLineNum = 46530563;BA.debugLine="End Sub";
-return "";
-}
-public String  _enteruserstoppedstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackorchestrationstate";
-if (Debug.shouldDelegate(ba, "enteruserstoppedstate", false))
-	 {return ((String) Debug.delegate(ba, "enteruserstoppedstate", null));}
-RDebugUtils.currentLine=46465024;
- //BA.debugLineNum = 46465024;BA.debugLine="Public Sub EnterUserStoppedState";
-RDebugUtils.currentLine=46465025;
- //BA.debugLineNum = 46465025;BA.debugLine="IsStarted = False";
-__ref._isstarted /*boolean*/  = __c.False;
-RDebugUtils.currentLine=46465026;
- //BA.debugLineNum = 46465026;BA.debugLine="IsStoppedByUser = True";
-__ref._isstoppedbyuser /*boolean*/  = __c.True;
-RDebugUtils.currentLine=46465027;
- //BA.debugLineNum = 46465027;BA.debugLine="IsStopping = False";
-__ref._isstopping /*boolean*/  = __c.False;
-RDebugUtils.currentLine=46465028;
- //BA.debugLineNum = 46465028;BA.debugLine="End Sub";
 return "";
 }
 public String  _initialize(b4j.example.playbackorchestrationstate __ref,anywheresoftware.b4a.BA _ba) throws Exception{

@@ -98,6 +98,48 @@ RDebugUtils.currentLine=43122698;
  //BA.debugLineNum = 43122698;BA.debugLine="End Sub";
 return "";
 }
+public String  _poststring(b4j.example.httpjob __ref,String _link,String _text) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="httpjob";
+if (Debug.shouldDelegate(ba, "poststring", true))
+	 {return ((String) Debug.delegate(ba, "poststring", new Object[] {_link,_text}));}
+RDebugUtils.currentLine=43253760;
+ //BA.debugLineNum = 43253760;BA.debugLine="Public Sub PostString(Link As String, Text As Stri";
+RDebugUtils.currentLine=43253761;
+ //BA.debugLineNum = 43253761;BA.debugLine="PostBytes(Link, Text.GetBytes(\"UTF8\"))";
+__ref._postbytes /*String*/ (null,_link,_text.getBytes("UTF8"));
+RDebugUtils.currentLine=43253762;
+ //BA.debugLineNum = 43253762;BA.debugLine="End Sub";
+return "";
+}
+public String  _getstring(b4j.example.httpjob __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="httpjob";
+if (Debug.shouldDelegate(ba, "getstring", true))
+	 {return ((String) Debug.delegate(ba, "getstring", null));}
+RDebugUtils.currentLine=44302336;
+ //BA.debugLineNum = 44302336;BA.debugLine="Public Sub GetString As String";
+RDebugUtils.currentLine=44302337;
+ //BA.debugLineNum = 44302337;BA.debugLine="Return GetString2(\"UTF8\")";
+if (true) return __ref._getstring2 /*String*/ (null,"UTF8");
+RDebugUtils.currentLine=44302338;
+ //BA.debugLineNum = 44302338;BA.debugLine="End Sub";
+return "";
+}
+public String  _release(b4j.example.httpjob __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="httpjob";
+if (Debug.shouldDelegate(ba, "release", true))
+	 {return ((String) Debug.delegate(ba, "release", null));}
+RDebugUtils.currentLine=44236800;
+ //BA.debugLineNum = 44236800;BA.debugLine="Public Sub Release";
+RDebugUtils.currentLine=44236802;
+ //BA.debugLineNum = 44236802;BA.debugLine="File.Delete(HttpUtils2Service.TempFolder, taskId)";
+__c.File.Delete(_httputils2service._tempfolder /*String*/ ,__ref._taskid /*String*/ );
+RDebugUtils.currentLine=44236804;
+ //BA.debugLineNum = 44236804;BA.debugLine="End Sub";
+return "";
+}
 public String  _download(b4j.example.httpjob __ref,String _link) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="httpjob";
@@ -127,48 +169,6 @@ RDebugUtils.currentLine=43909128;
 __c.CallSubDelayed2(ba,(Object)(_httputils2service.getObject()),"SubmitJob",this);
 RDebugUtils.currentLine=43909129;
  //BA.debugLineNum = 43909129;BA.debugLine="End Sub";
-return "";
-}
-public String  _release(b4j.example.httpjob __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="httpjob";
-if (Debug.shouldDelegate(ba, "release", true))
-	 {return ((String) Debug.delegate(ba, "release", null));}
-RDebugUtils.currentLine=44236800;
- //BA.debugLineNum = 44236800;BA.debugLine="Public Sub Release";
-RDebugUtils.currentLine=44236802;
- //BA.debugLineNum = 44236802;BA.debugLine="File.Delete(HttpUtils2Service.TempFolder, taskId)";
-__c.File.Delete(_httputils2service._tempfolder /*String*/ ,__ref._taskid /*String*/ );
-RDebugUtils.currentLine=44236804;
- //BA.debugLineNum = 44236804;BA.debugLine="End Sub";
-return "";
-}
-public String  _getstring(b4j.example.httpjob __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="httpjob";
-if (Debug.shouldDelegate(ba, "getstring", true))
-	 {return ((String) Debug.delegate(ba, "getstring", null));}
-RDebugUtils.currentLine=44302336;
- //BA.debugLineNum = 44302336;BA.debugLine="Public Sub GetString As String";
-RDebugUtils.currentLine=44302337;
- //BA.debugLineNum = 44302337;BA.debugLine="Return GetString2(\"UTF8\")";
-if (true) return __ref._getstring2 /*String*/ (null,"UTF8");
-RDebugUtils.currentLine=44302338;
- //BA.debugLineNum = 44302338;BA.debugLine="End Sub";
-return "";
-}
-public String  _poststring(b4j.example.httpjob __ref,String _link,String _text) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="httpjob";
-if (Debug.shouldDelegate(ba, "poststring", true))
-	 {return ((String) Debug.delegate(ba, "poststring", new Object[] {_link,_text}));}
-RDebugUtils.currentLine=43253760;
- //BA.debugLineNum = 43253760;BA.debugLine="Public Sub PostString(Link As String, Text As Stri";
-RDebugUtils.currentLine=43253761;
- //BA.debugLineNum = 43253761;BA.debugLine="PostBytes(Link, Text.GetBytes(\"UTF8\"))";
-__ref._postbytes /*String*/ (null,_link,_text.getBytes("UTF8"));
-RDebugUtils.currentLine=43253762;
- //BA.debugLineNum = 43253762;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.streams.File.InputStreamWrapper  _getinputstream(b4j.example.httpjob __ref) throws Exception{

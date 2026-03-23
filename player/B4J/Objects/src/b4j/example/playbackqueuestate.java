@@ -40,54 +40,6 @@ public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
 public b4j.example.b4xcollections _b4xcollections = null;
 public b4j.example.httputils2service _httputils2service = null;
-public String  _capturestoppedreserve(b4j.example.playbackqueuestate __ref,anywheresoftware.b4a.objects.collections.List _sourcequeue,String _signature) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackqueuestate";
-if (Debug.shouldDelegate(ba, "capturestoppedreserve", false))
-	 {return ((String) Debug.delegate(ba, "capturestoppedreserve", new Object[] {_sourcequeue,_signature}));}
-Object _itemobject = null;
-RDebugUtils.currentLine=49610752;
- //BA.debugLineNum = 49610752;BA.debugLine="Public Sub CaptureStoppedReserve(sourceQueue As Li";
-RDebugUtils.currentLine=49610753;
- //BA.debugLineNum = 49610753;BA.debugLine="ClearStoppedReserve";
-__ref._clearstoppedreserve /*String*/ (null);
-RDebugUtils.currentLine=49610754;
- //BA.debugLineNum = 49610754;BA.debugLine="If sourceQueue.IsInitialized = False Or sourceQue";
-if (_sourcequeue.IsInitialized()==__c.False || _sourcequeue.getSize()==0) { 
-if (true) return "";};
-RDebugUtils.currentLine=49610755;
- //BA.debugLineNum = 49610755;BA.debugLine="If signature = \"\" Then Return";
-if ((_signature).equals("")) { 
-if (true) return "";};
-RDebugUtils.currentLine=49610756;
- //BA.debugLineNum = 49610756;BA.debugLine="For Each itemObject As Object In sourceQueue";
-{
-final anywheresoftware.b4a.BA.IterableList group4 = _sourcequeue;
-final int groupLen4 = group4.getSize()
-;int index4 = 0;
-;
-for (; index4 < groupLen4;index4++){
-_itemobject = group4.Get(index4);
-RDebugUtils.currentLine=49610757;
- //BA.debugLineNum = 49610757;BA.debugLine="If itemObject Is Map Then";
-if (_itemobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=49610758;
- //BA.debugLineNum = 49610758;BA.debugLine="StoppedReserveQueue.Add(CloneStateMap(itemObjec";
-__ref._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ .Add((Object)(__ref._clonestatemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,(anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_itemobject))).getObject()));
- };
- }
-};
-RDebugUtils.currentLine=49610761;
- //BA.debugLineNum = 49610761;BA.debugLine="If StoppedReserveQueue.Size = 0 Then Return";
-if (__ref._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()==0) { 
-if (true) return "";};
-RDebugUtils.currentLine=49610762;
- //BA.debugLineNum = 49610762;BA.debugLine="StoppedReserveSignature = signature";
-__ref._stoppedreservesignature /*String*/  = _signature;
-RDebugUtils.currentLine=49610763;
- //BA.debugLineNum = 49610763;BA.debugLine="End Sub";
-return "";
-}
 public String  _clearexactbreakstate(b4j.example.playbackqueuestate __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackqueuestate";
@@ -100,35 +52,6 @@ RDebugUtils.currentLine=50069505;
 __ref._scheduledbreakat /*long*/  = (long) (-1);
 RDebugUtils.currentLine=50069506;
  //BA.debugLineNum = 50069506;BA.debugLine="End Sub";
-return "";
-}
-public String  _clearqueuesnapshot(b4j.example.playbackqueuestate __ref,b4j.example.keyvaluestore _storage) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackqueuestate";
-if (Debug.shouldDelegate(ba, "clearqueuesnapshot", false))
-	 {return ((String) Debug.delegate(ba, "clearqueuesnapshot", new Object[] {_storage}));}
-RDebugUtils.currentLine=49938432;
- //BA.debugLineNum = 49938432;BA.debugLine="Public Sub ClearQueueSnapshot(storage As KeyValueS";
-RDebugUtils.currentLine=49938433;
- //BA.debugLineNum = 49938433;BA.debugLine="storage.Put(\"queue_snapshot_tracks\", CreateInitia";
-_storage._put /*String*/ (null,"queue_snapshot_tracks",(Object)(__ref._createinitializedlist /*anywheresoftware.b4a.objects.collections.List*/ (null).getObject()));
-RDebugUtils.currentLine=49938434;
- //BA.debugLineNum = 49938434;BA.debugLine="storage.Put(\"queue_snapshot_saved_at\", 0)";
-_storage._put /*String*/ (null,"queue_snapshot_saved_at",(Object)(0));
-RDebugUtils.currentLine=49938435;
- //BA.debugLineNum = 49938435;BA.debugLine="storage.Put(\"queue_snapshot_signature\", \"\")";
-_storage._put /*String*/ (null,"queue_snapshot_signature",(Object)(""));
-RDebugUtils.currentLine=49938436;
- //BA.debugLineNum = 49938436;BA.debugLine="storage.Put(\"download_plan_tracks\", CreateInitial";
-_storage._put /*String*/ (null,"download_plan_tracks",(Object)(__ref._createinitializedlist /*anywheresoftware.b4a.objects.collections.List*/ (null).getObject()));
-RDebugUtils.currentLine=49938437;
- //BA.debugLineNum = 49938437;BA.debugLine="storage.Put(\"download_plan_saved_at\", 0)";
-_storage._put /*String*/ (null,"download_plan_saved_at",(Object)(0));
-RDebugUtils.currentLine=49938438;
- //BA.debugLineNum = 49938438;BA.debugLine="storage.Put(\"download_plan_signature\", \"\")";
-_storage._put /*String*/ (null,"download_plan_signature",(Object)(""));
-RDebugUtils.currentLine=49938439;
- //BA.debugLineNum = 49938439;BA.debugLine="End Sub";
 return "";
 }
 public long  _limitremainbybreak(b4j.example.playbackqueuestate __ref,long _trackremain,long _localnowtimestamp) throws Exception{
@@ -186,20 +109,6 @@ RDebugUtils.currentLine=49217538;
  //BA.debugLineNum = 49217538;BA.debugLine="End Sub";
 return "";
 }
-public String  _requestskipqueuesnapshotrestore(b4j.example.playbackqueuestate __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackqueuestate";
-if (Debug.shouldDelegate(ba, "requestskipqueuesnapshotrestore", false))
-	 {return ((String) Debug.delegate(ba, "requestskipqueuesnapshotrestore", null));}
-RDebugUtils.currentLine=49348608;
- //BA.debugLineNum = 49348608;BA.debugLine="Public Sub RequestSkipQueueSnapshotRestore";
-RDebugUtils.currentLine=49348609;
- //BA.debugLineNum = 49348609;BA.debugLine="SkipQueueSnapshotRestoreOnce = True";
-__ref._skipqueuesnapshotrestoreonce /*boolean*/  = __c.True;
-RDebugUtils.currentLine=49348610;
- //BA.debugLineNum = 49348610;BA.debugLine="End Sub";
-return "";
-}
 public String  _resolvescheduledbreakat(b4j.example.playbackqueuestate __ref,anywheresoftware.b4a.objects.collections.List _queue) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackqueuestate";
@@ -249,6 +158,115 @@ RDebugUtils.currentLine=50003980;
  //BA.debugLineNum = 50003980;BA.debugLine="End Sub";
 return "";
 }
+public boolean  _shouldtriggerbreaknow(b4j.example.playbackqueuestate __ref,long _localnowtimestamp) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackqueuestate";
+if (Debug.shouldDelegate(ba, "shouldtriggerbreaknow", false))
+	 {return ((Boolean) Debug.delegate(ba, "shouldtriggerbreaknow", new Object[] {_localnowtimestamp}));}
+RDebugUtils.currentLine=50200576;
+ //BA.debugLineNum = 50200576;BA.debugLine="Public Sub ShouldTriggerBreakNow(localNowTimestamp";
+RDebugUtils.currentLine=50200577;
+ //BA.debugLineNum = 50200577;BA.debugLine="If ScheduledBreakAt <= 0 Then Return False";
+if (__ref._scheduledbreakat /*long*/ <=0) { 
+if (true) return __c.False;};
+RDebugUtils.currentLine=50200578;
+ //BA.debugLineNum = 50200578;BA.debugLine="Return localNowTimestamp >= ScheduledBreakAt";
+if (true) return _localnowtimestamp>=__ref._scheduledbreakat /*long*/ ;
+RDebugUtils.currentLine=50200579;
+ //BA.debugLineNum = 50200579;BA.debugLine="End Sub";
+return false;
+}
+public String  _capturestoppedreserve(b4j.example.playbackqueuestate __ref,anywheresoftware.b4a.objects.collections.List _sourcequeue,String _signature) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackqueuestate";
+if (Debug.shouldDelegate(ba, "capturestoppedreserve", false))
+	 {return ((String) Debug.delegate(ba, "capturestoppedreserve", new Object[] {_sourcequeue,_signature}));}
+Object _itemobject = null;
+RDebugUtils.currentLine=49610752;
+ //BA.debugLineNum = 49610752;BA.debugLine="Public Sub CaptureStoppedReserve(sourceQueue As Li";
+RDebugUtils.currentLine=49610753;
+ //BA.debugLineNum = 49610753;BA.debugLine="ClearStoppedReserve";
+__ref._clearstoppedreserve /*String*/ (null);
+RDebugUtils.currentLine=49610754;
+ //BA.debugLineNum = 49610754;BA.debugLine="If sourceQueue.IsInitialized = False Or sourceQue";
+if (_sourcequeue.IsInitialized()==__c.False || _sourcequeue.getSize()==0) { 
+if (true) return "";};
+RDebugUtils.currentLine=49610755;
+ //BA.debugLineNum = 49610755;BA.debugLine="If signature = \"\" Then Return";
+if ((_signature).equals("")) { 
+if (true) return "";};
+RDebugUtils.currentLine=49610756;
+ //BA.debugLineNum = 49610756;BA.debugLine="For Each itemObject As Object In sourceQueue";
+{
+final anywheresoftware.b4a.BA.IterableList group4 = _sourcequeue;
+final int groupLen4 = group4.getSize()
+;int index4 = 0;
+;
+for (; index4 < groupLen4;index4++){
+_itemobject = group4.Get(index4);
+RDebugUtils.currentLine=49610757;
+ //BA.debugLineNum = 49610757;BA.debugLine="If itemObject Is Map Then";
+if (_itemobject instanceof java.util.Map) { 
+RDebugUtils.currentLine=49610758;
+ //BA.debugLineNum = 49610758;BA.debugLine="StoppedReserveQueue.Add(CloneStateMap(itemObjec";
+__ref._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ .Add((Object)(__ref._clonestatemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,(anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_itemobject))).getObject()));
+ };
+ }
+};
+RDebugUtils.currentLine=49610761;
+ //BA.debugLineNum = 49610761;BA.debugLine="If StoppedReserveQueue.Size = 0 Then Return";
+if (__ref._stoppedreservequeue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()==0) { 
+if (true) return "";};
+RDebugUtils.currentLine=49610762;
+ //BA.debugLineNum = 49610762;BA.debugLine="StoppedReserveSignature = signature";
+__ref._stoppedreservesignature /*String*/  = _signature;
+RDebugUtils.currentLine=49610763;
+ //BA.debugLineNum = 49610763;BA.debugLine="End Sub";
+return "";
+}
+public String  _clearqueuesnapshot(b4j.example.playbackqueuestate __ref,b4j.example.keyvaluestore _storage) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackqueuestate";
+if (Debug.shouldDelegate(ba, "clearqueuesnapshot", false))
+	 {return ((String) Debug.delegate(ba, "clearqueuesnapshot", new Object[] {_storage}));}
+RDebugUtils.currentLine=49938432;
+ //BA.debugLineNum = 49938432;BA.debugLine="Public Sub ClearQueueSnapshot(storage As KeyValueS";
+RDebugUtils.currentLine=49938433;
+ //BA.debugLineNum = 49938433;BA.debugLine="storage.Put(\"queue_snapshot_tracks\", CreateInitia";
+_storage._put /*String*/ (null,"queue_snapshot_tracks",(Object)(__ref._createinitializedlist /*anywheresoftware.b4a.objects.collections.List*/ (null).getObject()));
+RDebugUtils.currentLine=49938434;
+ //BA.debugLineNum = 49938434;BA.debugLine="storage.Put(\"queue_snapshot_saved_at\", 0)";
+_storage._put /*String*/ (null,"queue_snapshot_saved_at",(Object)(0));
+RDebugUtils.currentLine=49938435;
+ //BA.debugLineNum = 49938435;BA.debugLine="storage.Put(\"queue_snapshot_signature\", \"\")";
+_storage._put /*String*/ (null,"queue_snapshot_signature",(Object)(""));
+RDebugUtils.currentLine=49938436;
+ //BA.debugLineNum = 49938436;BA.debugLine="storage.Put(\"download_plan_tracks\", CreateInitial";
+_storage._put /*String*/ (null,"download_plan_tracks",(Object)(__ref._createinitializedlist /*anywheresoftware.b4a.objects.collections.List*/ (null).getObject()));
+RDebugUtils.currentLine=49938437;
+ //BA.debugLineNum = 49938437;BA.debugLine="storage.Put(\"download_plan_saved_at\", 0)";
+_storage._put /*String*/ (null,"download_plan_saved_at",(Object)(0));
+RDebugUtils.currentLine=49938438;
+ //BA.debugLineNum = 49938438;BA.debugLine="storage.Put(\"download_plan_signature\", \"\")";
+_storage._put /*String*/ (null,"download_plan_signature",(Object)(""));
+RDebugUtils.currentLine=49938439;
+ //BA.debugLineNum = 49938439;BA.debugLine="End Sub";
+return "";
+}
+public String  _requestskipqueuesnapshotrestore(b4j.example.playbackqueuestate __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackqueuestate";
+if (Debug.shouldDelegate(ba, "requestskipqueuesnapshotrestore", false))
+	 {return ((String) Debug.delegate(ba, "requestskipqueuesnapshotrestore", null));}
+RDebugUtils.currentLine=49348608;
+ //BA.debugLineNum = 49348608;BA.debugLine="Public Sub RequestSkipQueueSnapshotRestore";
+RDebugUtils.currentLine=49348609;
+ //BA.debugLineNum = 49348609;BA.debugLine="SkipQueueSnapshotRestoreOnce = True";
+__ref._skipqueuesnapshotrestoreonce /*boolean*/  = __c.True;
+RDebugUtils.currentLine=49348610;
+ //BA.debugLineNum = 49348610;BA.debugLine="End Sub";
+return "";
+}
 public boolean  _canrestorestoppedreserve(b4j.example.playbackqueuestate __ref,String _currentsignature) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackqueuestate";
@@ -292,23 +310,59 @@ RDebugUtils.currentLine=49545220;
  //BA.debugLineNum = 49545220;BA.debugLine="End Sub";
 return "";
 }
-public boolean  _shouldtriggerbreaknow(b4j.example.playbackqueuestate __ref,long _localnowtimestamp) throws Exception{
+public String  _savequeuesnapshot(b4j.example.playbackqueuestate __ref,b4j.example.keyvaluestore _storage,String _signature,anywheresoftware.b4a.objects.collections.List _queue,int _limit) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackqueuestate";
-if (Debug.shouldDelegate(ba, "shouldtriggerbreaknow", false))
-	 {return ((Boolean) Debug.delegate(ba, "shouldtriggerbreaknow", new Object[] {_localnowtimestamp}));}
-RDebugUtils.currentLine=50200576;
- //BA.debugLineNum = 50200576;BA.debugLine="Public Sub ShouldTriggerBreakNow(localNowTimestamp";
-RDebugUtils.currentLine=50200577;
- //BA.debugLineNum = 50200577;BA.debugLine="If ScheduledBreakAt <= 0 Then Return False";
-if (__ref._scheduledbreakat /*long*/ <=0) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=50200578;
- //BA.debugLineNum = 50200578;BA.debugLine="Return localNowTimestamp >= ScheduledBreakAt";
-if (true) return _localnowtimestamp>=__ref._scheduledbreakat /*long*/ ;
-RDebugUtils.currentLine=50200579;
- //BA.debugLineNum = 50200579;BA.debugLine="End Sub";
-return false;
+if (Debug.shouldDelegate(ba, "savequeuesnapshot", false))
+	 {return ((String) Debug.delegate(ba, "savequeuesnapshot", new Object[] {_storage,_signature,_queue,_limit}));}
+anywheresoftware.b4a.objects.collections.List _tracks = null;
+Object _itemobject = null;
+RDebugUtils.currentLine=49807360;
+ //BA.debugLineNum = 49807360;BA.debugLine="Public Sub SaveQueueSnapshot(storage As KeyValueSt";
+RDebugUtils.currentLine=49807361;
+ //BA.debugLineNum = 49807361;BA.debugLine="Dim tracks As List";
+_tracks = new anywheresoftware.b4a.objects.collections.List();
+RDebugUtils.currentLine=49807362;
+ //BA.debugLineNum = 49807362;BA.debugLine="tracks.Initialize";
+_tracks.Initialize();
+RDebugUtils.currentLine=49807363;
+ //BA.debugLineNum = 49807363;BA.debugLine="If queue.IsInitialized Then";
+if (_queue.IsInitialized()) { 
+RDebugUtils.currentLine=49807364;
+ //BA.debugLineNum = 49807364;BA.debugLine="For Each itemObject As Object In queue";
+{
+final anywheresoftware.b4a.BA.IterableList group4 = _queue;
+final int groupLen4 = group4.getSize()
+;int index4 = 0;
+;
+for (; index4 < groupLen4;index4++){
+_itemobject = group4.Get(index4);
+RDebugUtils.currentLine=49807365;
+ //BA.debugLineNum = 49807365;BA.debugLine="If itemObject Is Map Then";
+if (_itemobject instanceof java.util.Map) { 
+RDebugUtils.currentLine=49807366;
+ //BA.debugLineNum = 49807366;BA.debugLine="tracks.Add(CloneStateMap(itemObject))";
+_tracks.Add((Object)(__ref._clonestatemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,(anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_itemobject))).getObject()));
+RDebugUtils.currentLine=49807367;
+ //BA.debugLineNum = 49807367;BA.debugLine="If limit > 0 And tracks.Size >= limit Then Exi";
+if (_limit>0 && _tracks.getSize()>=_limit) { 
+if (true) break;};
+ };
+ }
+};
+ };
+RDebugUtils.currentLine=49807371;
+ //BA.debugLineNum = 49807371;BA.debugLine="storage.Put(\"queue_snapshot_signature\", signature";
+_storage._put /*String*/ (null,"queue_snapshot_signature",(Object)(_signature));
+RDebugUtils.currentLine=49807372;
+ //BA.debugLineNum = 49807372;BA.debugLine="storage.Put(\"queue_snapshot_tracks\", tracks)";
+_storage._put /*String*/ (null,"queue_snapshot_tracks",(Object)(_tracks.getObject()));
+RDebugUtils.currentLine=49807373;
+ //BA.debugLineNum = 49807373;BA.debugLine="storage.Put(\"queue_snapshot_saved_at\", DateTime.N";
+_storage._put /*String*/ (null,"queue_snapshot_saved_at",(Object)(__c.DateTime.getNow()));
+RDebugUtils.currentLine=49807374;
+ //BA.debugLineNum = 49807374;BA.debugLine="End Sub";
+return "";
 }
 public boolean  _consumeskipqueuesnapshotrestore(b4j.example.playbackqueuestate __ref) throws Exception{
 __ref = this;
@@ -376,60 +430,6 @@ if (true) return _result;
 RDebugUtils.currentLine=49872909;
  //BA.debugLineNum = 49872909;BA.debugLine="End Sub";
 return null;
-}
-public String  _savequeuesnapshot(b4j.example.playbackqueuestate __ref,b4j.example.keyvaluestore _storage,String _signature,anywheresoftware.b4a.objects.collections.List _queue,int _limit) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackqueuestate";
-if (Debug.shouldDelegate(ba, "savequeuesnapshot", false))
-	 {return ((String) Debug.delegate(ba, "savequeuesnapshot", new Object[] {_storage,_signature,_queue,_limit}));}
-anywheresoftware.b4a.objects.collections.List _tracks = null;
-Object _itemobject = null;
-RDebugUtils.currentLine=49807360;
- //BA.debugLineNum = 49807360;BA.debugLine="Public Sub SaveQueueSnapshot(storage As KeyValueSt";
-RDebugUtils.currentLine=49807361;
- //BA.debugLineNum = 49807361;BA.debugLine="Dim tracks As List";
-_tracks = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=49807362;
- //BA.debugLineNum = 49807362;BA.debugLine="tracks.Initialize";
-_tracks.Initialize();
-RDebugUtils.currentLine=49807363;
- //BA.debugLineNum = 49807363;BA.debugLine="If queue.IsInitialized Then";
-if (_queue.IsInitialized()) { 
-RDebugUtils.currentLine=49807364;
- //BA.debugLineNum = 49807364;BA.debugLine="For Each itemObject As Object In queue";
-{
-final anywheresoftware.b4a.BA.IterableList group4 = _queue;
-final int groupLen4 = group4.getSize()
-;int index4 = 0;
-;
-for (; index4 < groupLen4;index4++){
-_itemobject = group4.Get(index4);
-RDebugUtils.currentLine=49807365;
- //BA.debugLineNum = 49807365;BA.debugLine="If itemObject Is Map Then";
-if (_itemobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=49807366;
- //BA.debugLineNum = 49807366;BA.debugLine="tracks.Add(CloneStateMap(itemObject))";
-_tracks.Add((Object)(__ref._clonestatemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,(anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_itemobject))).getObject()));
-RDebugUtils.currentLine=49807367;
- //BA.debugLineNum = 49807367;BA.debugLine="If limit > 0 And tracks.Size >= limit Then Exi";
-if (_limit>0 && _tracks.getSize()>=_limit) { 
-if (true) break;};
- };
- }
-};
- };
-RDebugUtils.currentLine=49807371;
- //BA.debugLineNum = 49807371;BA.debugLine="storage.Put(\"queue_snapshot_signature\", signature";
-_storage._put /*String*/ (null,"queue_snapshot_signature",(Object)(_signature));
-RDebugUtils.currentLine=49807372;
- //BA.debugLineNum = 49807372;BA.debugLine="storage.Put(\"queue_snapshot_tracks\", tracks)";
-_storage._put /*String*/ (null,"queue_snapshot_tracks",(Object)(_tracks.getObject()));
-RDebugUtils.currentLine=49807373;
- //BA.debugLineNum = 49807373;BA.debugLine="storage.Put(\"queue_snapshot_saved_at\", DateTime.N";
-_storage._put /*String*/ (null,"queue_snapshot_saved_at",(Object)(__c.DateTime.getNow()));
-RDebugUtils.currentLine=49807374;
- //BA.debugLineNum = 49807374;BA.debugLine="End Sub";
-return "";
 }
 public anywheresoftware.b4a.objects.collections.Map  _clonestatemap(b4j.example.playbackqueuestate __ref,anywheresoftware.b4a.objects.collections.Map _source) throws Exception{
 __ref = this;

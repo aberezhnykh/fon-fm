@@ -27,7 +27,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clearitem(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearItem (playbackplayerslot) ","playbackplayerslot",3,__ref.getField(false, "ba"),__ref,42);
+		Debug.PushSubsStack("ClearItem (playbackplayerslot) ","playbackplayerslot",14,__ref.getField(false, "ba"),__ref,42);
 if (RapidSub.canDelegate("clearitem")) { return __ref.runUserSub(false, "playbackplayerslot","clearitem", __ref);}
  BA.debugLineNum = 42;BA.debugLine="Public Sub ClearItem";
 Debug.ShouldStop(512);
@@ -49,7 +49,7 @@ finally {
 		}}
 public static RemoteObject  _clonestatemap(RemoteObject __ref,RemoteObject _source) throws Exception{
 try {
-		Debug.PushSubsStack("CloneStateMap (playbackplayerslot) ","playbackplayerslot",3,__ref.getField(false, "ba"),__ref,56);
+		Debug.PushSubsStack("CloneStateMap (playbackplayerslot) ","playbackplayerslot",14,__ref.getField(false, "ba"),__ref,56);
 if (RapidSub.canDelegate("clonestatemap")) { return __ref.runUserSub(false, "playbackplayerslot","clonestatemap", __ref, _source);}
 RemoteObject _cloned = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
@@ -97,7 +97,7 @@ finally {
 		}}
 public static RemoteObject  _hasitem(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HasItem (playbackplayerslot) ","playbackplayerslot",3,__ref.getField(false, "ba"),__ref,52);
+		Debug.PushSubsStack("HasItem (playbackplayerslot) ","playbackplayerslot",14,__ref.getField(false, "ba"),__ref,52);
 if (RapidSub.canDelegate("hasitem")) { return __ref.runUserSub(false, "playbackplayerslot","hasitem", __ref);}
  BA.debugLineNum = 52;BA.debugLine="Public Sub HasItem As Boolean";
 Debug.ShouldStop(524288);
@@ -116,7 +116,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _slotidvalue,RemoteObject _audiokeyvalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackplayerslot) ","playbackplayerslot",3,__ref.getField(false, "ba"),__ref,15);
+		Debug.PushSubsStack("Initialize (playbackplayerslot) ","playbackplayerslot",14,__ref.getField(false, "ba"),__ref,15);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackplayerslot","initialize", __ref, _ba, _slotidvalue, _audiokeyvalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -145,7 +145,7 @@ finally {
 		}}
 public static RemoteObject  _markprogress(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("MarkProgress (playbackplayerslot) ","playbackplayerslot",3,__ref.getField(false, "ba"),__ref,48);
+		Debug.PushSubsStack("MarkProgress (playbackplayerslot) ","playbackplayerslot",14,__ref.getField(false, "ba"),__ref,48);
 if (RapidSub.canDelegate("markprogress")) { return __ref.runUserSub(false, "playbackplayerslot","markprogress", __ref);}
  BA.debugLineNum = 48;BA.debugLine="Public Sub MarkProgress";
 Debug.ShouldStop(32768);
@@ -164,7 +164,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (playbackplayerslot) ","playbackplayerslot",3,__ref.getField(false, "ba"),__ref,22);
+		Debug.PushSubsStack("Reset (playbackplayerslot) ","playbackplayerslot",14,__ref.getField(false, "ba"),__ref,22);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "playbackplayerslot","reset", __ref);}
  BA.debugLineNum = 22;BA.debugLine="Public Sub Reset";
 Debug.ShouldStop(2097152);
@@ -195,7 +195,7 @@ finally {
 		}}
 public static RemoteObject  _setitem(RemoteObject __ref,RemoteObject _sourceitem) throws Exception{
 try {
-		Debug.PushSubsStack("SetItem (playbackplayerslot) ","playbackplayerslot",3,__ref.getField(false, "ba"),__ref,37);
+		Debug.PushSubsStack("SetItem (playbackplayerslot) ","playbackplayerslot",14,__ref.getField(false, "ba"),__ref,37);
 if (RapidSub.canDelegate("setitem")) { return __ref.runUserSub(false, "playbackplayerslot","setitem", __ref, _sourceitem);}
 Debug.locals.put("sourceItem", _sourceitem);
  BA.debugLineNum = 37;BA.debugLine="Public Sub SetItem(sourceItem As Map)";
@@ -218,7 +218,7 @@ finally {
 		}}
 public static RemoteObject  _setrolestate(RemoteObject __ref,RemoteObject _rolevalue,RemoteObject _statevalue) throws Exception{
 try {
-		Debug.PushSubsStack("SetRoleState (playbackplayerslot) ","playbackplayerslot",3,__ref.getField(false, "ba"),__ref,30);
+		Debug.PushSubsStack("SetRoleState (playbackplayerslot) ","playbackplayerslot",14,__ref.getField(false, "ba"),__ref,30);
 if (RapidSub.canDelegate("setrolestate")) { return __ref.runUserSub(false, "playbackplayerslot","setrolestate", __ref, _rolevalue, _statevalue);}
 Debug.locals.put("roleValue", _rolevalue);
 Debug.locals.put("stateValue", _statevalue);

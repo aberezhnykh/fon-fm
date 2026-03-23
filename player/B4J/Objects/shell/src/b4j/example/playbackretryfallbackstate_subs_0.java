@@ -21,7 +21,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _cleardispatchretryafter(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearDispatchRetryAfter (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,43);
+		Debug.PushSubsStack("ClearDispatchRetryAfter (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,43);
 if (RapidSub.canDelegate("cleardispatchretryafter")) { return __ref.runUserSub(false, "playbackretryfallbackstate","cleardispatchretryafter", __ref);}
  BA.debugLineNum = 43;BA.debugLine="Public Sub ClearDispatchRetryAfter";
 Debug.ShouldStop(1024);
@@ -40,7 +40,7 @@ finally {
 		}}
 public static RemoteObject  _consumedispatchretryafter(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ConsumeDispatchRetryAfter (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,51);
+		Debug.PushSubsStack("ConsumeDispatchRetryAfter (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,51);
 if (RapidSub.canDelegate("consumedispatchretryafter")) { return __ref.runUserSub(false, "playbackretryfallbackstate","consumedispatchretryafter", __ref);}
 RemoteObject _value = RemoteObject.createImmutable(0);
  BA.debugLineNum = 51;BA.debugLine="Public Sub ConsumeDispatchRetryAfter As Int";
@@ -66,7 +66,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _localretryinitial,RemoteObject _serverretryinitial) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,12);
+		Debug.PushSubsStack("Initialize (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,12);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackretryfallbackstate","initialize", __ref, _ba, _localretryinitial, _serverretryinitial);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -89,7 +89,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref,RemoteObject _localretryinitial,RemoteObject _serverretryinitial) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,17);
+		Debug.PushSubsStack("Reset (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,17);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "playbackretryfallbackstate","reset", __ref, _localretryinitial, _serverretryinitial);}
 Debug.locals.put("localRetryInitial", _localretryinitial);
 Debug.locals.put("serverRetryInitial", _serverretryinitial);
@@ -119,7 +119,7 @@ finally {
 		}}
 public static RemoteObject  _resetretrydelays(RemoteObject __ref,RemoteObject _localretryinitial,RemoteObject _serverretryinitial) throws Exception{
 try {
-		Debug.PushSubsStack("ResetRetryDelays (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,38);
+		Debug.PushSubsStack("ResetRetryDelays (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,38);
 if (RapidSub.canDelegate("resetretrydelays")) { return __ref.runUserSub(false, "playbackretryfallbackstate","resetretrydelays", __ref, _localretryinitial, _serverretryinitial);}
 Debug.locals.put("localRetryInitial", _localretryinitial);
 Debug.locals.put("serverRetryInitial", _serverretryinitial);
@@ -143,7 +143,7 @@ finally {
 		}}
 public static RemoteObject  _resolveretrydelay(RemoteObject __ref,RemoteObject _mode,RemoteObject _delayms,RemoteObject _localretrymax,RemoteObject _serverretrymax,RemoteObject _blockedretrydelay) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveRetryDelay (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,25);
+		Debug.PushSubsStack("ResolveRetryDelay (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,25);
 if (RapidSub.canDelegate("resolveretrydelay")) { return __ref.runUserSub(false, "playbackretryfallbackstate","resolveretrydelay", __ref, _mode, _delayms, _localretrymax, _serverretrymax, _blockedretrydelay);}
 RemoteObject _delay = RemoteObject.createImmutable(0);
 RemoteObject _delayserver = RemoteObject.createImmutable(0);
@@ -196,7 +196,7 @@ finally {
 		}}
 public static RemoteObject  _setdispatchretryafter(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("SetDispatchRetryAfter (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,47);
+		Debug.PushSubsStack("SetDispatchRetryAfter (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,47);
 if (RapidSub.canDelegate("setdispatchretryafter")) { return __ref.runUserSub(false, "playbackretryfallbackstate","setdispatchretryafter", __ref, _value);}
 Debug.locals.put("value", _value);
  BA.debugLineNum = 47;BA.debugLine="Public Sub SetDispatchRetryAfter(value As Int)";
@@ -216,7 +216,7 @@ finally {
 		}}
 public static RemoteObject  _setmediapathdegraded(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("SetMediaPathDegraded (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,57);
+		Debug.PushSubsStack("SetMediaPathDegraded (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,57);
 if (RapidSub.canDelegate("setmediapathdegraded")) { return __ref.runUserSub(false, "playbackretryfallbackstate","setmediapathdegraded", __ref, _value);}
 Debug.locals.put("value", _value);
  BA.debugLineNum = 57;BA.debugLine="Public Sub SetMediaPathDegraded(value As Boolean)";
@@ -236,7 +236,7 @@ finally {
 		}}
 public static RemoteObject  _updatemediapathdegradedfromcachesync(RemoteObject __ref,RemoteObject _downloaded,RemoteObject _networkfailure) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateMediaPathDegradedFromCacheSync (playbackretryfallbackstate) ","playbackretryfallbackstate",15,__ref.getField(false, "ba"),__ref,62);
+		Debug.PushSubsStack("UpdateMediaPathDegradedFromCacheSync (playbackretryfallbackstate) ","playbackretryfallbackstate",18,__ref.getField(false, "ba"),__ref,62);
 if (RapidSub.canDelegate("updatemediapathdegradedfromcachesync")) { return __ref.runUserSub(false, "playbackretryfallbackstate","updatemediapathdegradedfromcachesync", __ref, _downloaded, _networkfailure);}
 RemoteObject _previous = RemoteObject.createImmutable(false);
 Debug.locals.put("downloaded", _downloaded);
