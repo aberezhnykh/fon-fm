@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Локальный media cache для треков и рекламы.
+' Отвечает за индексы, загрузку, audit/prune и выдачу локальных URI для playback.
+
 Sub Class_Globals
 	Private storageDir As String
 	Private storage As KeyValueStore
@@ -76,6 +79,7 @@ Public Sub StartCacheAudit
 	cacheAuditInProgress = True
 End Sub
 
+' Выполняет один шаг audit state machine; вызывается worker/timer-циклом, чтобы не блокировать playback длинной проверкой.
 Public Sub RunCacheAuditStep As Boolean
 	If cacheAuditInProgress = False Then Return False
 	If cacheAuditCurrentType = "" Then
@@ -96,6 +100,7 @@ Public Sub RunCacheAuditStep As Boolean
 	Return True
 End Sub
 
+' Обеспечивает локальную готовность рекламы по offlineData и синхронизирует ad index с фактическими файлами.
 Public Sub EnsureAdsCached(offlineData As Map) As ResumableSub
 	FlushPendingIndexSaves
 	If offlineData.IsInitialized = False Then Return False
@@ -128,6 +133,7 @@ Public Sub EnsureAdsCached(offlineData As Map) As ResumableSub
 	Return downloadedCount > 0 Or removedCount > 0
 End Sub
 
+' Выдаёт постоянный локальный URI для уже валидированного media item в кэше.
 Public Sub ResolveLocalMediaUri(item As Map) As String
 	If item.IsInitialized = False Then Return ""
 	Dim itemType As String = item.GetDefault("type", "")
@@ -139,6 +145,7 @@ Public Sub ResolveLocalMediaUri(item As Map) As String
 	Return ""
 End Sub
 
+' Выдаёт playback URI: для треков это temp-файл конкретного аудиослота, чтобы плееры не конфликтовали по одному файлу.
 Public Sub ResolvePlaybackMediaUri(audioKey As String, item As Map) As String
 	If item.IsInitialized = False Then Return ""
 	Dim itemType As String = item.GetDefault("type", "")
@@ -228,6 +235,7 @@ Public Sub FlushPendingIndexSaves
 	If cachedTrackIndexDirty Then SaveTrackIndex
 End Sub
 
+' Прореживает track cache по размеру диска, hard/target limit и спискам protected/relevant track ids.
 Public Sub PruneTrackCacheIfNeeded(protectedTrackIds As List, relevantTrackIds As List) As Int
 	Dim protectedIds As Map = CreateTrackIdSet(protectedTrackIds)
 	Dim relevantIds As Map = CreateTrackIdSet(relevantTrackIds)
@@ -466,6 +474,8 @@ Private Sub LoadIndexesFromStorage
 	If cachedAdIndex.IsInitialized = False Then cachedAdIndex.Initialize
 	cachedTrackIndex = storage.GetDefault("cached_track_index", Null)
 	If cachedTrackIndex.IsInitialized = False Then cachedTrackIndex.Initialize
+	NormalizeTrackIndexFileNames(cachedTrackIndex)
+	BackfillTrackIndexFromFiles
 End Sub
 
 Private Sub SaveAdIndex
@@ -858,9 +868,78 @@ End Sub
 
 Private Sub FindTrackIdByFileName(fileName As String, trackIndex As Map) As String
 	For Each key As String In trackIndex.Keys
-		If ResolveTrackCacheFileName(key, trackIndex) = fileName Then Return key
+		Dim entry As Map = trackIndex.GetDefault(key, Null)
+		If entry.IsInitialized Then
+			Dim storedFileName As String = entry.GetDefault("file_name", "")
+			If storedFileName = fileName Then Return key
+		End If
+		If BuildTrackCacheFileName(key) = fileName Then Return key
 	Next
 	Return ""
+End Sub
+
+Private Sub NormalizeTrackIndexFileNames(trackIndex As Map)
+	If trackIndex.IsInitialized = False Then Return
+	Dim changed As Boolean = False
+	For Each trackId As String In trackIndex.Keys
+		Dim entry As Map = trackIndex.GetDefault(trackId, Null)
+		If entry.IsInitialized = False Then Continue
+		Dim canonicalFileName As String = BuildTrackCacheFileName(trackId)
+		Dim storedFileName As String = entry.GetDefault("file_name", "")
+		If storedFileName = canonicalFileName Then Continue
+		If IsCachedFileUsable(GetTracksDir, canonicalFileName) Then
+			entry.Put("file_name", canonicalFileName)
+			entry.Put("size_bytes", GetFileSizeSafe(GetTracksDir, canonicalFileName))
+			trackIndex.Put(trackId, entry)
+			changed = True
+		End If
+	Next
+	If changed Then SaveTrackIndex
+End Sub
+
+Private Sub BackfillTrackIndexFromFiles
+	If cachedTrackIndex.IsInitialized = False Then cachedTrackIndex.Initialize
+	Dim changed As Boolean = False
+	Try
+		If File.Exists(GetTracksDir, "") = False Then Return
+		Dim listedFiles As List = File.ListFiles(GetTracksDir)
+		If listedFiles.IsInitialized = False Then Return
+		For Each fileName As String In listedFiles
+			If fileName = "" Then Continue
+			If fileName.EndsWith(".tmp") Then Continue
+			Dim trackId As String = FindTrackIdByFileName(fileName, cachedTrackIndex)
+			If trackId = "" Then Continue
+			Dim entry As Map = cachedTrackIndex.GetDefault(trackId, Null)
+			If entry.IsInitialized = False Then entry.Initialize
+			Dim storedFileName As String = "" & entry.GetDefault("file_name", "")
+			If storedFileName <> fileName Then
+				entry.Put("file_name", fileName)
+				changed = True
+			End If
+			If entry.ContainsKey("id") = False Then
+				entry.Put("id", trackId)
+				changed = True
+			End If
+			Dim fileSize As Long = GetFileSizeSafe(GetTracksDir, fileName)
+			Dim storedSize As Long = ToLongDefault(entry.GetDefault("size_bytes", -1), -1)
+			If storedSize <> fileSize Then
+				entry.Put("size_bytes", fileSize)
+				changed = True
+			End If
+			If entry.ContainsKey("saved_at") = False Then
+				entry.Put("saved_at", DateTime.Now)
+				changed = True
+			End If
+			If entry.ContainsKey("last_used_at") = False Then
+				entry.Put("last_used_at", DateTime.Now)
+				changed = True
+			End If
+			cachedTrackIndex.Put(trackId, entry)
+		Next
+	Catch
+		Trace("Не удалось выполнить стартовую переиндексацию кэша треков. message=" & LastException.Message)
+	End Try
+	If changed Then SaveTrackIndex
 End Sub
 
 Private Sub BuildTrackCacheSummary(protectedIds As Map, relevantIds As Map) As Map
@@ -952,6 +1031,15 @@ Private Sub GetFileSizeSafe(dir As String, fileName As String) As Long
 		Return File.Size(dir, fileName)
 	Catch
 		Return 0
+	End Try
+End Sub
+
+Private Sub ToLongDefault(value As Object, defaultValue As Long) As Long
+	Try
+		If value = Null Then Return defaultValue
+		Return value
+	Catch
+		Return defaultValue
 	End Try
 End Sub
 

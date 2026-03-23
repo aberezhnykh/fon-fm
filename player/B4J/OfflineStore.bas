@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Хранилище offline data и playlist metadata.
+' Отвечает за нормализацию player_data, сохранение playlist descriptors и файлов плейлистов на диск.
+
 Sub Class_Globals
 	Private storageDir As String
 	Private storage As KeyValueStore
@@ -27,6 +30,7 @@ Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, 
 	playlistCdnBaseUrl = playlistCdnBaseUrlValue
 End Sub
 
+' Загружает локальный snapshot player_data.json для offline/data playback.
 Public Sub LoadOfflineData As Map
 	Dim data As Map
 	data.Initialize
@@ -45,6 +49,7 @@ Public Sub LoadOfflineData As Map
 	Return data
 End Sub
 
+' Сохраняет нормализованный offline snapshot и обновляет связанные storage-индексы по плейлистам/счётчикам.
 Public Sub SaveOfflineData(sourceData As Map, playerCode As String, deviceId As String) As Map
 	Dim normalizedData As Map = NormalizeOfflineData(sourceData, playerCode, deviceId)
 	Dim offlineDataUpdatedAt As Long = DateTime.Now
@@ -88,6 +93,7 @@ Public Sub RefreshPlaylistCacheStatus(playlistDescriptors As List)
 	storage.Put("playlist_actual_count", refreshedCacheStatus.GetDefault("ActualCount", 0))
 End Sub
 
+' Определяет, надо ли скачивать playlist metadata заново или локальная версия ещё актуальна.
 Public Sub ResolvePlaylistSyncAction(descriptor As Map, cachedPlaylistIndex As Map) As String
 	Dim playlistId As String = descriptor.GetDefault("id", "")
 	If playlistId = "" Then Return "skip"
@@ -102,6 +108,7 @@ Public Sub ResolvePlaylistSyncAction(descriptor As Map, cachedPlaylistIndex As M
 	Return "missing"
 End Sub
 
+' Сохраняет JSON metadata одного плейлиста и обновляет cached playlist index.
 Public Sub SavePlaylistMetadata(descriptor As Map, playlistData As Map, cachedPlaylistIndex As Map)
 	EnsureDirectory(GetOfflinePlaylistsDir)
 	Dim playlistId As String = descriptor.GetDefault("id", "")

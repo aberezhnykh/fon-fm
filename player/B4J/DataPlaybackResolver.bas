@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Разрешает offline/data playback модель в конкретные слоты, плейлисты и queue tracks.
+' Здесь живут cursor-ы, выбор playlist/track и работа с cached playlist metadata.
+
 Sub Class_Globals
 	Private storageDir As String
 	Private targetModule As Object
@@ -24,6 +27,7 @@ Public Sub Initialize(storageDirValue As String, targetModuleValue As Object, tr
 	lastTrackByPlaylist.Initialize
 End Sub
 
+' Загружает persisted cursors и историю недавних треков для более устойчивого выбора следующего контента.
 Public Sub LoadState(storage As KeyValueStore)
 	storageRef = storage
 	playlistCursors = storage.GetDefault("data_slot_playlist_cursors", CreateInitializedMap)
@@ -47,6 +51,7 @@ Public Sub ResolveCurrentDataSlot(offlineData As Map) As Map
 	Return ResolveDataSlotAtTicks(offlineData, DateTime.Now)
 End Sub
 
+' Определяет текущий data slot по расписаниям и времени.
 Public Sub ResolveDataSlotAtTicks(offlineData As Map, targetTicks As Long) As Map
 	Dim slotContext As Map
 	slotContext.Initialize
@@ -115,6 +120,7 @@ Public Sub ResolveNextDataSlot(offlineData As Map) As Map
 	Return ResolveNextDataSlotAtTicks(offlineData, DateTime.Now)
 End Sub
 
+' Ищет ближайший следующий data slot, полезно для прогнозов и debug.
 Public Sub ResolveNextDataSlotAtTicks(offlineData As Map, referenceTicks As Long) As Map
 	Dim nextSlot As Map
 	nextSlot.Initialize
@@ -162,6 +168,7 @@ Public Sub ResolveNextDataSlotAtTicks(offlineData As Map, referenceTicks As Long
 	Return nextSlot
 End Sub
 
+' Выбирает следующий playlist descriptor для текущего slot с учётом cursor-ов по slot_key.
 Public Sub ChooseNextPlaylistDescriptor(currentSlot As Map, workingCursors As Map) As Map
 	Dim emptyDescriptor As Map
 	emptyDescriptor.Initialize
@@ -200,6 +207,7 @@ Public Sub LoadCachedPlaylistMetadata(playlistId As String) As Map
 	Return playlistData
 End Sub
 
+' Выбирает track из playlist metadata, стараясь избегать недавних и только что сыгранных треков.
 Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService As MediaCache, cachedOnly As Boolean) As Map
 	Dim emptyTrack As Map
 	emptyTrack.Initialize
@@ -252,6 +260,7 @@ Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService 
 	Return emptyTrack
 End Sub
 
+' Собирает queue item из slot/playlist/track так, чтобы дальше orchestration уже работал с нормализованной playback queue.
 Public Sub CreateQueueTrackFromPlaylist(currentSlot As Map, playlistDescriptor As Map, track As Map, offlineData As Map) As Map
 	Dim item As Map
 	item.Initialize

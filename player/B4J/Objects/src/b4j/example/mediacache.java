@@ -1310,6 +1310,24 @@ RDebugUtils.currentLine=24772612;
  //BA.debugLineNum = 24772612;BA.debugLine="End Sub";
 return false;
 }
+public boolean  _isadcached(b4j.example.mediacache __ref,String _adid) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "isadcached", false))
+	 {return ((Boolean) Debug.delegate(ba, "isadcached", new Object[] {_adid}));}
+RDebugUtils.currentLine=24444928;
+ //BA.debugLineNum = 24444928;BA.debugLine="Public Sub IsAdCached(adId As String) As Boolean";
+RDebugUtils.currentLine=24444929;
+ //BA.debugLineNum = 24444929;BA.debugLine="If adId = \"\" Then Return False";
+if ((_adid).equals("")) { 
+if (true) return __c.False;};
+RDebugUtils.currentLine=24444930;
+ //BA.debugLineNum = 24444930;BA.debugLine="Return ValidateIndexedFile(\"ad\", adId)";
+if (true) return __ref._validateindexedfile /*boolean*/ (null,"ad",_adid);
+RDebugUtils.currentLine=24444931;
+ //BA.debugLineNum = 24444931;BA.debugLine="End Sub";
+return false;
+}
 public String  _addindexedfilefromaudit(b4j.example.mediacache __ref,String _itemtype,String _filename,anywheresoftware.b4a.objects.collections.Map _auditindex) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="mediacache";
@@ -1455,6 +1473,263 @@ _buffer[_i] = (byte) (__c.Bit.Xor((int) (_buffer[_i]),(int) (_keybytes[_keyindex
 };
 RDebugUtils.currentLine=56229894;
  //BA.debugLineNum = 56229894;BA.debugLine="End Sub";
+return "";
+}
+public String  _backfilltrackindexfromfiles(b4j.example.mediacache __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "backfilltrackindexfromfiles", false))
+	 {return ((String) Debug.delegate(ba, "backfilltrackindexfromfiles", null));}
+boolean _changed = false;
+anywheresoftware.b4a.objects.collections.List _listedfiles = null;
+String _filename = "";
+String _trackid = "";
+anywheresoftware.b4a.objects.collections.Map _entry = null;
+String _storedfilename = "";
+long _filesize = 0L;
+long _storedsize = 0L;
+RDebugUtils.currentLine=65536000;
+ //BA.debugLineNum = 65536000;BA.debugLine="Private Sub BackfillTrackIndexFromFiles";
+RDebugUtils.currentLine=65536001;
+ //BA.debugLineNum = 65536001;BA.debugLine="If cachedTrackIndex.IsInitialized = False Then ca";
+if (__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()==__c.False) { 
+__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();};
+RDebugUtils.currentLine=65536002;
+ //BA.debugLineNum = 65536002;BA.debugLine="Dim changed As Boolean = False";
+_changed = __c.False;
+RDebugUtils.currentLine=65536003;
+ //BA.debugLineNum = 65536003;BA.debugLine="Try";
+try {RDebugUtils.currentLine=65536004;
+ //BA.debugLineNum = 65536004;BA.debugLine="If File.Exists(GetTracksDir, \"\") = False Then Re";
+if (__c.File.Exists(__ref._gettracksdir /*String*/ (null),"")==__c.False) { 
+if (true) return "";};
+RDebugUtils.currentLine=65536005;
+ //BA.debugLineNum = 65536005;BA.debugLine="Dim listedFiles As List = File.ListFiles(GetTrac";
+_listedfiles = new anywheresoftware.b4a.objects.collections.List();
+_listedfiles = __c.File.ListFiles(__ref._gettracksdir /*String*/ (null));
+RDebugUtils.currentLine=65536006;
+ //BA.debugLineNum = 65536006;BA.debugLine="If listedFiles.IsInitialized = False Then Return";
+if (_listedfiles.IsInitialized()==__c.False) { 
+if (true) return "";};
+RDebugUtils.currentLine=65536007;
+ //BA.debugLineNum = 65536007;BA.debugLine="For Each fileName As String In listedFiles";
+{
+final anywheresoftware.b4a.BA.IterableList group7 = _listedfiles;
+final int groupLen7 = group7.getSize()
+;int index7 = 0;
+;
+for (; index7 < groupLen7;index7++){
+_filename = BA.ObjectToString(group7.Get(index7));
+RDebugUtils.currentLine=65536008;
+ //BA.debugLineNum = 65536008;BA.debugLine="If fileName = \"\" Then Continue";
+if ((_filename).equals("")) { 
+if (true) continue;};
+RDebugUtils.currentLine=65536009;
+ //BA.debugLineNum = 65536009;BA.debugLine="If fileName.EndsWith(\".tmp\") Then Continue";
+if (_filename.endsWith(".tmp")) { 
+if (true) continue;};
+RDebugUtils.currentLine=65536010;
+ //BA.debugLineNum = 65536010;BA.debugLine="Dim trackId As String = FindTrackIdByFileName(f";
+_trackid = __ref._findtrackidbyfilename /*String*/ (null,_filename,__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ );
+RDebugUtils.currentLine=65536011;
+ //BA.debugLineNum = 65536011;BA.debugLine="If trackId = \"\" Then Continue";
+if ((_trackid).equals("")) { 
+if (true) continue;};
+RDebugUtils.currentLine=65536012;
+ //BA.debugLineNum = 65536012;BA.debugLine="Dim entry As Map = cachedTrackIndex.GetDefault(";
+_entry = new anywheresoftware.b4a.objects.collections.Map();
+_entry = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .GetDefault((Object)(_trackid),__c.Null)));
+RDebugUtils.currentLine=65536013;
+ //BA.debugLineNum = 65536013;BA.debugLine="If entry.IsInitialized = False Then entry.Initi";
+if (_entry.IsInitialized()==__c.False) { 
+_entry.Initialize();};
+RDebugUtils.currentLine=65536014;
+ //BA.debugLineNum = 65536014;BA.debugLine="Dim storedFileName As String = \"\" & entry.GetDe";
+_storedfilename = ""+BA.ObjectToString(_entry.GetDefault((Object)("file_name"),(Object)("")));
+RDebugUtils.currentLine=65536015;
+ //BA.debugLineNum = 65536015;BA.debugLine="If storedFileName <> fileName Then";
+if ((_storedfilename).equals(_filename) == false) { 
+RDebugUtils.currentLine=65536016;
+ //BA.debugLineNum = 65536016;BA.debugLine="entry.Put(\"file_name\", fileName)";
+_entry.Put((Object)("file_name"),(Object)(_filename));
+RDebugUtils.currentLine=65536017;
+ //BA.debugLineNum = 65536017;BA.debugLine="changed = True";
+_changed = __c.True;
+ };
+RDebugUtils.currentLine=65536019;
+ //BA.debugLineNum = 65536019;BA.debugLine="If entry.ContainsKey(\"id\") = False Then";
+if (_entry.ContainsKey((Object)("id"))==__c.False) { 
+RDebugUtils.currentLine=65536020;
+ //BA.debugLineNum = 65536020;BA.debugLine="entry.Put(\"id\", trackId)";
+_entry.Put((Object)("id"),(Object)(_trackid));
+RDebugUtils.currentLine=65536021;
+ //BA.debugLineNum = 65536021;BA.debugLine="changed = True";
+_changed = __c.True;
+ };
+RDebugUtils.currentLine=65536023;
+ //BA.debugLineNum = 65536023;BA.debugLine="Dim fileSize As Long = GetFileSizeSafe(GetTrack";
+_filesize = __ref._getfilesizesafe /*long*/ (null,__ref._gettracksdir /*String*/ (null),_filename);
+RDebugUtils.currentLine=65536024;
+ //BA.debugLineNum = 65536024;BA.debugLine="Dim storedSize As Long = ToLongDefault(entry.Ge";
+_storedsize = __ref._tolongdefault /*long*/ (null,_entry.GetDefault((Object)("size_bytes"),(Object)(-1)),(long) (-1));
+RDebugUtils.currentLine=65536025;
+ //BA.debugLineNum = 65536025;BA.debugLine="If storedSize <> fileSize Then";
+if (_storedsize!=_filesize) { 
+RDebugUtils.currentLine=65536026;
+ //BA.debugLineNum = 65536026;BA.debugLine="entry.Put(\"size_bytes\", fileSize)";
+_entry.Put((Object)("size_bytes"),(Object)(_filesize));
+RDebugUtils.currentLine=65536027;
+ //BA.debugLineNum = 65536027;BA.debugLine="changed = True";
+_changed = __c.True;
+ };
+RDebugUtils.currentLine=65536029;
+ //BA.debugLineNum = 65536029;BA.debugLine="If entry.ContainsKey(\"saved_at\") = False Then";
+if (_entry.ContainsKey((Object)("saved_at"))==__c.False) { 
+RDebugUtils.currentLine=65536030;
+ //BA.debugLineNum = 65536030;BA.debugLine="entry.Put(\"saved_at\", DateTime.Now)";
+_entry.Put((Object)("saved_at"),(Object)(__c.DateTime.getNow()));
+RDebugUtils.currentLine=65536031;
+ //BA.debugLineNum = 65536031;BA.debugLine="changed = True";
+_changed = __c.True;
+ };
+RDebugUtils.currentLine=65536033;
+ //BA.debugLineNum = 65536033;BA.debugLine="If entry.ContainsKey(\"last_used_at\") = False Th";
+if (_entry.ContainsKey((Object)("last_used_at"))==__c.False) { 
+RDebugUtils.currentLine=65536034;
+ //BA.debugLineNum = 65536034;BA.debugLine="entry.Put(\"last_used_at\", DateTime.Now)";
+_entry.Put((Object)("last_used_at"),(Object)(__c.DateTime.getNow()));
+RDebugUtils.currentLine=65536035;
+ //BA.debugLineNum = 65536035;BA.debugLine="changed = True";
+_changed = __c.True;
+ };
+RDebugUtils.currentLine=65536037;
+ //BA.debugLineNum = 65536037;BA.debugLine="cachedTrackIndex.Put(trackId, entry)";
+__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .Put((Object)(_trackid),(Object)(_entry.getObject()));
+ }
+};
+ } 
+       catch (Exception e40) {
+			ba.setLastException(e40);RDebugUtils.currentLine=65536040;
+ //BA.debugLineNum = 65536040;BA.debugLine="Trace(\"Не удалось выполнить стартовую переиндекс";
+__ref._trace /*String*/ (null,"Не удалось выполнить стартовую переиндексацию кэша треков. message="+__c.LastException(ba).getMessage());
+ };
+RDebugUtils.currentLine=65536042;
+ //BA.debugLineNum = 65536042;BA.debugLine="If changed Then SaveTrackIndex";
+if (_changed) { 
+__ref._savetrackindex /*String*/ (null);};
+RDebugUtils.currentLine=65536043;
+ //BA.debugLineNum = 65536043;BA.debugLine="End Sub";
+return "";
+}
+public String  _findtrackidbyfilename(b4j.example.mediacache __ref,String _filename,anywheresoftware.b4a.objects.collections.Map _trackindex) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "findtrackidbyfilename", false))
+	 {return ((String) Debug.delegate(ba, "findtrackidbyfilename", new Object[] {_filename,_trackindex}));}
+String _key = "";
+anywheresoftware.b4a.objects.collections.Map _entry = null;
+String _storedfilename = "";
+RDebugUtils.currentLine=55771136;
+ //BA.debugLineNum = 55771136;BA.debugLine="Private Sub FindTrackIdByFileName(fileName As Stri";
+RDebugUtils.currentLine=55771137;
+ //BA.debugLineNum = 55771137;BA.debugLine="For Each key As String In trackIndex.Keys";
+{
+final anywheresoftware.b4a.BA.IterableList group1 = _trackindex.Keys();
+final int groupLen1 = group1.getSize()
+;int index1 = 0;
+;
+for (; index1 < groupLen1;index1++){
+_key = BA.ObjectToString(group1.Get(index1));
+RDebugUtils.currentLine=55771138;
+ //BA.debugLineNum = 55771138;BA.debugLine="Dim entry As Map = trackIndex.GetDefault(key, Nu";
+_entry = new anywheresoftware.b4a.objects.collections.Map();
+_entry = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_trackindex.GetDefault((Object)(_key),__c.Null)));
+RDebugUtils.currentLine=55771139;
+ //BA.debugLineNum = 55771139;BA.debugLine="If entry.IsInitialized Then";
+if (_entry.IsInitialized()) { 
+RDebugUtils.currentLine=55771140;
+ //BA.debugLineNum = 55771140;BA.debugLine="Dim storedFileName As String = entry.GetDefault";
+_storedfilename = BA.ObjectToString(_entry.GetDefault((Object)("file_name"),(Object)("")));
+RDebugUtils.currentLine=55771141;
+ //BA.debugLineNum = 55771141;BA.debugLine="If storedFileName = fileName Then Return key";
+if ((_storedfilename).equals(_filename)) { 
+if (true) return _key;};
+ };
+RDebugUtils.currentLine=55771143;
+ //BA.debugLineNum = 55771143;BA.debugLine="If BuildTrackCacheFileName(key) = fileName Then";
+if ((__ref._buildtrackcachefilename /*String*/ (null,_key)).equals(_filename)) { 
+if (true) return _key;};
+ }
+};
+RDebugUtils.currentLine=55771145;
+ //BA.debugLineNum = 55771145;BA.debugLine="Return \"\"";
+if (true) return "";
+RDebugUtils.currentLine=55771146;
+ //BA.debugLineNum = 55771146;BA.debugLine="End Sub";
+return "";
+}
+public long  _tolongdefault(b4j.example.mediacache __ref,Object _value,long _defaultvalue) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "tolongdefault", false))
+	 {return ((Long) Debug.delegate(ba, "tolongdefault", new Object[] {_value,_defaultvalue}));}
+RDebugUtils.currentLine=65601536;
+ //BA.debugLineNum = 65601536;BA.debugLine="Private Sub ToLongDefault(value As Object, default";
+RDebugUtils.currentLine=65601537;
+ //BA.debugLineNum = 65601537;BA.debugLine="Try";
+try {RDebugUtils.currentLine=65601538;
+ //BA.debugLineNum = 65601538;BA.debugLine="If value = Null Then Return defaultValue";
+if (_value== null) { 
+if (true) return _defaultvalue;};
+RDebugUtils.currentLine=65601539;
+ //BA.debugLineNum = 65601539;BA.debugLine="Return value";
+if (true) return BA.ObjectToLongNumber(_value);
+ } 
+       catch (Exception e5) {
+			ba.setLastException(e5);RDebugUtils.currentLine=65601541;
+ //BA.debugLineNum = 65601541;BA.debugLine="Return defaultValue";
+if (true) return _defaultvalue;
+ };
+RDebugUtils.currentLine=65601543;
+ //BA.debugLineNum = 65601543;BA.debugLine="End Sub";
+return 0L;
+}
+public String  _trace(b4j.example.mediacache __ref,String _message) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "trace", false))
+	 {return ((String) Debug.delegate(ba, "trace", new Object[] {_message}));}
+RDebugUtils.currentLine=27066368;
+ //BA.debugLineNum = 27066368;BA.debugLine="Private Sub Trace(message As String)";
+RDebugUtils.currentLine=27066369;
+ //BA.debugLineNum = 27066369;BA.debugLine="If SubExists(targetModule, traceSubName) Then";
+if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,__ref._tracesubname /*String*/ )) { 
+RDebugUtils.currentLine=27066370;
+ //BA.debugLineNum = 27066370;BA.debugLine="CallSub2(targetModule, traceSubName, message)";
+__c.CallSubNew2(ba,__ref._targetmodule /*Object*/ ,__ref._tracesubname /*String*/ ,(Object)(_message));
+ };
+RDebugUtils.currentLine=27066372;
+ //BA.debugLineNum = 27066372;BA.debugLine="End Sub";
+return "";
+}
+public String  _savetrackindex(b4j.example.mediacache __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "savetrackindex", false))
+	 {return ((String) Debug.delegate(ba, "savetrackindex", null));}
+RDebugUtils.currentLine=25427968;
+ //BA.debugLineNum = 25427968;BA.debugLine="Private Sub SaveTrackIndex";
+RDebugUtils.currentLine=25427969;
+ //BA.debugLineNum = 25427969;BA.debugLine="storage.Put(\"cached_track_index\", cachedTrackInde";
+__ref._storage /*b4j.example.keyvaluestore*/ ._put /*String*/ (null,"cached_track_index",(Object)(__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));
+RDebugUtils.currentLine=25427970;
+ //BA.debugLineNum = 25427970;BA.debugLine="storage.Put(\"cached_track_count\", cachedTrackInde";
+__ref._storage /*b4j.example.keyvaluestore*/ ._put /*String*/ (null,"cached_track_count",(Object)(__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .getSize()));
+RDebugUtils.currentLine=25427971;
+ //BA.debugLineNum = 25427971;BA.debugLine="cachedTrackIndexDirty = False";
+__ref._cachedtrackindexdirty /*boolean*/  = __c.False;
+RDebugUtils.currentLine=25427972;
+ //BA.debugLineNum = 25427972;BA.debugLine="End Sub";
 return "";
 }
 public String  _buildadurl(b4j.example.mediacache __ref,String _adid) throws Exception{
@@ -1794,26 +2069,6 @@ RDebugUtils.currentLine=25624586;
  //BA.debugLineNum = 25624586;BA.debugLine="End Sub";
 return false;
 }
-public String  _savetrackindex(b4j.example.mediacache __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="mediacache";
-if (Debug.shouldDelegate(ba, "savetrackindex", false))
-	 {return ((String) Debug.delegate(ba, "savetrackindex", null));}
-RDebugUtils.currentLine=25427968;
- //BA.debugLineNum = 25427968;BA.debugLine="Private Sub SaveTrackIndex";
-RDebugUtils.currentLine=25427969;
- //BA.debugLineNum = 25427969;BA.debugLine="storage.Put(\"cached_track_index\", cachedTrackInde";
-__ref._storage /*b4j.example.keyvaluestore*/ ._put /*String*/ (null,"cached_track_index",(Object)(__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));
-RDebugUtils.currentLine=25427970;
- //BA.debugLineNum = 25427970;BA.debugLine="storage.Put(\"cached_track_count\", cachedTrackInde";
-__ref._storage /*b4j.example.keyvaluestore*/ ._put /*String*/ (null,"cached_track_count",(Object)(__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .getSize()));
-RDebugUtils.currentLine=25427971;
- //BA.debugLineNum = 25427971;BA.debugLine="cachedTrackIndexDirty = False";
-__ref._cachedtrackindexdirty /*boolean*/  = __c.False;
-RDebugUtils.currentLine=25427972;
- //BA.debugLineNum = 25427972;BA.debugLine="End Sub";
-return "";
-}
 public byte[]  _buildtrackobfuscationkey(b4j.example.mediacache __ref,String _trackid) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="mediacache";
@@ -2131,24 +2386,6 @@ if (true) return _result;
 RDebugUtils.currentLine=56623112;
  //BA.debugLineNum = 56623112;BA.debugLine="End Sub";
 return null;
-}
-public String  _trace(b4j.example.mediacache __ref,String _message) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="mediacache";
-if (Debug.shouldDelegate(ba, "trace", false))
-	 {return ((String) Debug.delegate(ba, "trace", new Object[] {_message}));}
-RDebugUtils.currentLine=27066368;
- //BA.debugLineNum = 27066368;BA.debugLine="Private Sub Trace(message As String)";
-RDebugUtils.currentLine=27066369;
- //BA.debugLineNum = 27066369;BA.debugLine="If SubExists(targetModule, traceSubName) Then";
-if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,__ref._tracesubname /*String*/ )) { 
-RDebugUtils.currentLine=27066370;
- //BA.debugLineNum = 27066370;BA.debugLine="CallSub2(targetModule, traceSubName, message)";
-__c.CallSubNew2(ba,__ref._targetmodule /*Object*/ ,__ref._tracesubname /*String*/ ,(Object)(_message));
- };
-RDebugUtils.currentLine=27066372;
- //BA.debugLineNum = 27066372;BA.debugLine="End Sub";
-return "";
 }
 public long  _elapsedms(b4j.example.mediacache __ref,long _startedat) throws Exception{
 __ref = this;
@@ -2559,24 +2796,6 @@ ba.setLastException(e0);}
             }
         }
     }
-}
-public boolean  _isadcached(b4j.example.mediacache __ref,String _adid) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="mediacache";
-if (Debug.shouldDelegate(ba, "isadcached", false))
-	 {return ((Boolean) Debug.delegate(ba, "isadcached", new Object[] {_adid}));}
-RDebugUtils.currentLine=24444928;
- //BA.debugLineNum = 24444928;BA.debugLine="Public Sub IsAdCached(adId As String) As Boolean";
-RDebugUtils.currentLine=24444929;
- //BA.debugLineNum = 24444929;BA.debugLine="If adId = \"\" Then Return False";
-if ((_adid).equals("")) { 
-if (true) return __c.False;};
-RDebugUtils.currentLine=24444930;
- //BA.debugLineNum = 24444930;BA.debugLine="Return ValidateIndexedFile(\"ad\", adId)";
-if (true) return __ref._validateindexedfile /*boolean*/ (null,"ad",_adid);
-RDebugUtils.currentLine=24444931;
- //BA.debugLineNum = 24444931;BA.debugLine="End Sub";
-return false;
 }
 public int  _prunemissingads(b4j.example.mediacache __ref,anywheresoftware.b4a.objects.collections.Map _adindex,anywheresoftware.b4a.objects.collections.Map _actualadids) throws Exception{
 __ref = this;
@@ -3619,36 +3838,6 @@ RDebugUtils.currentLine=55705603;
  //BA.debugLineNum = 55705603;BA.debugLine="End Sub";
 return "";
 }
-public String  _findtrackidbyfilename(b4j.example.mediacache __ref,String _filename,anywheresoftware.b4a.objects.collections.Map _trackindex) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="mediacache";
-if (Debug.shouldDelegate(ba, "findtrackidbyfilename", false))
-	 {return ((String) Debug.delegate(ba, "findtrackidbyfilename", new Object[] {_filename,_trackindex}));}
-String _key = "";
-RDebugUtils.currentLine=55771136;
- //BA.debugLineNum = 55771136;BA.debugLine="Private Sub FindTrackIdByFileName(fileName As Stri";
-RDebugUtils.currentLine=55771137;
- //BA.debugLineNum = 55771137;BA.debugLine="For Each key As String In trackIndex.Keys";
-{
-final anywheresoftware.b4a.BA.IterableList group1 = _trackindex.Keys();
-final int groupLen1 = group1.getSize()
-;int index1 = 0;
-;
-for (; index1 < groupLen1;index1++){
-_key = BA.ObjectToString(group1.Get(index1));
-RDebugUtils.currentLine=55771138;
- //BA.debugLineNum = 55771138;BA.debugLine="If ResolveTrackCacheFileName(key, trackIndex) =";
-if ((__ref._resolvetrackcachefilename /*String*/ (null,_key,_trackindex)).equals(_filename)) { 
-if (true) return _key;};
- }
-};
-RDebugUtils.currentLine=55771140;
- //BA.debugLineNum = 55771140;BA.debugLine="Return \"\"";
-if (true) return "";
-RDebugUtils.currentLine=55771141;
- //BA.debugLineNum = 55771141;BA.debugLine="End Sub";
-return "";
-}
 public String  _finishcacheaudit(b4j.example.mediacache __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="mediacache";
@@ -3851,7 +4040,85 @@ RDebugUtils.currentLine=25296900;
 if (__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized()==__c.False) { 
 __ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();};
 RDebugUtils.currentLine=25296901;
- //BA.debugLineNum = 25296901;BA.debugLine="End Sub";
+ //BA.debugLineNum = 25296901;BA.debugLine="NormalizeTrackIndexFileNames(cachedTrackIndex)";
+__ref._normalizetrackindexfilenames /*String*/ (null,__ref._cachedtrackindex /*anywheresoftware.b4a.objects.collections.Map*/ );
+RDebugUtils.currentLine=25296902;
+ //BA.debugLineNum = 25296902;BA.debugLine="BackfillTrackIndexFromFiles";
+__ref._backfilltrackindexfromfiles /*String*/ (null);
+RDebugUtils.currentLine=25296903;
+ //BA.debugLineNum = 25296903;BA.debugLine="End Sub";
+return "";
+}
+public String  _normalizetrackindexfilenames(b4j.example.mediacache __ref,anywheresoftware.b4a.objects.collections.Map _trackindex) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "normalizetrackindexfilenames", false))
+	 {return ((String) Debug.delegate(ba, "normalizetrackindexfilenames", new Object[] {_trackindex}));}
+boolean _changed = false;
+String _trackid = "";
+anywheresoftware.b4a.objects.collections.Map _entry = null;
+String _canonicalfilename = "";
+String _storedfilename = "";
+RDebugUtils.currentLine=65470464;
+ //BA.debugLineNum = 65470464;BA.debugLine="Private Sub NormalizeTrackIndexFileNames(trackInde";
+RDebugUtils.currentLine=65470465;
+ //BA.debugLineNum = 65470465;BA.debugLine="If trackIndex.IsInitialized = False Then Return";
+if (_trackindex.IsInitialized()==__c.False) { 
+if (true) return "";};
+RDebugUtils.currentLine=65470466;
+ //BA.debugLineNum = 65470466;BA.debugLine="Dim changed As Boolean = False";
+_changed = __c.False;
+RDebugUtils.currentLine=65470467;
+ //BA.debugLineNum = 65470467;BA.debugLine="For Each trackId As String In trackIndex.Keys";
+{
+final anywheresoftware.b4a.BA.IterableList group3 = _trackindex.Keys();
+final int groupLen3 = group3.getSize()
+;int index3 = 0;
+;
+for (; index3 < groupLen3;index3++){
+_trackid = BA.ObjectToString(group3.Get(index3));
+RDebugUtils.currentLine=65470468;
+ //BA.debugLineNum = 65470468;BA.debugLine="Dim entry As Map = trackIndex.GetDefault(trackId";
+_entry = new anywheresoftware.b4a.objects.collections.Map();
+_entry = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_trackindex.GetDefault((Object)(_trackid),__c.Null)));
+RDebugUtils.currentLine=65470469;
+ //BA.debugLineNum = 65470469;BA.debugLine="If entry.IsInitialized = False Then Continue";
+if (_entry.IsInitialized()==__c.False) { 
+if (true) continue;};
+RDebugUtils.currentLine=65470470;
+ //BA.debugLineNum = 65470470;BA.debugLine="Dim canonicalFileName As String = BuildTrackCach";
+_canonicalfilename = __ref._buildtrackcachefilename /*String*/ (null,_trackid);
+RDebugUtils.currentLine=65470471;
+ //BA.debugLineNum = 65470471;BA.debugLine="Dim storedFileName As String = entry.GetDefault(";
+_storedfilename = BA.ObjectToString(_entry.GetDefault((Object)("file_name"),(Object)("")));
+RDebugUtils.currentLine=65470472;
+ //BA.debugLineNum = 65470472;BA.debugLine="If storedFileName = canonicalFileName Then Conti";
+if ((_storedfilename).equals(_canonicalfilename)) { 
+if (true) continue;};
+RDebugUtils.currentLine=65470473;
+ //BA.debugLineNum = 65470473;BA.debugLine="If IsCachedFileUsable(GetTracksDir, canonicalFil";
+if (__ref._iscachedfileusable /*boolean*/ (null,__ref._gettracksdir /*String*/ (null),_canonicalfilename)) { 
+RDebugUtils.currentLine=65470474;
+ //BA.debugLineNum = 65470474;BA.debugLine="entry.Put(\"file_name\", canonicalFileName)";
+_entry.Put((Object)("file_name"),(Object)(_canonicalfilename));
+RDebugUtils.currentLine=65470475;
+ //BA.debugLineNum = 65470475;BA.debugLine="entry.Put(\"size_bytes\", GetFileSizeSafe(GetTrac";
+_entry.Put((Object)("size_bytes"),(Object)(__ref._getfilesizesafe /*long*/ (null,__ref._gettracksdir /*String*/ (null),_canonicalfilename)));
+RDebugUtils.currentLine=65470476;
+ //BA.debugLineNum = 65470476;BA.debugLine="trackIndex.Put(trackId, entry)";
+_trackindex.Put((Object)(_trackid),(Object)(_entry.getObject()));
+RDebugUtils.currentLine=65470477;
+ //BA.debugLineNum = 65470477;BA.debugLine="changed = True";
+_changed = __c.True;
+ };
+ }
+};
+RDebugUtils.currentLine=65470480;
+ //BA.debugLineNum = 65470480;BA.debugLine="If changed Then SaveTrackIndex";
+if (_changed) { 
+__ref._savetrackindex /*String*/ (null);};
+RDebugUtils.currentLine=65470481;
+ //BA.debugLineNum = 65470481;BA.debugLine="End Sub";
 return "";
 }
 public long  _mbtobytes(b4j.example.mediacache __ref,long _valuemb) throws Exception{

@@ -8,7 +8,7 @@ public class b4xpagesdelegator_subs_0 {
 
 public static RemoteObject  _activity_pause(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Activity_Pause (b4xpagesdelegator) ","b4xpagesdelegator",29,__ref.getField(false, "ba"),__ref,52);
+		Debug.PushSubsStack("Activity_Pause (b4xpagesdelegator) ","b4xpagesdelegator",31,__ref.getField(false, "ba"),__ref,52);
 if (RapidSub.canDelegate("activity_pause")) { return __ref.runUserSub(false, "b4xpagesdelegator","activity_pause", __ref);}
  BA.debugLineNum = 52;BA.debugLine="Public Sub Activity_Pause";
 Debug.JustUpdateDeviceLine();
@@ -27,7 +27,7 @@ finally {
 		}}
 public static RemoteObject  _activity_resume(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Activity_Resume (b4xpagesdelegator) ","b4xpagesdelegator",29,__ref.getField(false, "ba"),__ref,48);
+		Debug.PushSubsStack("Activity_Resume (b4xpagesdelegator) ","b4xpagesdelegator",31,__ref.getField(false, "ba"),__ref,48);
 if (RapidSub.canDelegate("activity_resume")) { return __ref.runUserSub(false, "b4xpagesdelegator","activity_resume", __ref);}
  BA.debugLineNum = 48;BA.debugLine="Public Sub Activity_Resume";
 Debug.JustUpdateDeviceLine();
@@ -51,7 +51,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (b4xpagesdelegator) ","b4xpagesdelegator",29,__ref.getField(false, "ba"),__ref,4);
+		Debug.PushSubsStack("Initialize (b4xpagesdelegator) ","b4xpagesdelegator",31,__ref.getField(false, "ba"),__ref,4);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "b4xpagesdelegator","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -69,7 +69,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_closed(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_Closed (b4xpagesdelegator) ","b4xpagesdelegator",29,__ref.getField(false, "ba"),__ref,13);
+		Debug.PushSubsStack("MainForm_Closed (b4xpagesdelegator) ","b4xpagesdelegator",31,__ref.getField(false, "ba"),__ref,13);
 if (RapidSub.canDelegate("mainform_closed")) { return __ref.runUserSub(false, "b4xpagesdelegator","mainform_closed", __ref);}
  BA.debugLineNum = 13;BA.debugLine="Public Sub MainForm_Closed";
 Debug.JustUpdateDeviceLine();
@@ -88,7 +88,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_closerequest(RemoteObject __ref,RemoteObject _eventdata) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_CloseRequest (b4xpagesdelegator) ","b4xpagesdelegator",29,__ref.getField(false, "ba"),__ref,17);
+		Debug.PushSubsStack("MainForm_CloseRequest (b4xpagesdelegator) ","b4xpagesdelegator",31,__ref.getField(false, "ba"),__ref,17);
 if (RapidSub.canDelegate("mainform_closerequest")) { return __ref.runUserSub(false, "b4xpagesdelegator","mainform_closerequest", __ref, _eventdata);}
 Debug.locals.put("EventData", _eventdata);
  BA.debugLineNum = 17;BA.debugLine="Public Sub MainForm_CloseRequest (EventData As Eve";
@@ -108,7 +108,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_focuschanged(RemoteObject __ref,RemoteObject _hasfocus) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_FocusChanged (b4xpagesdelegator) ","b4xpagesdelegator",29,__ref.getField(false, "ba"),__ref,9);
+		Debug.PushSubsStack("MainForm_FocusChanged (b4xpagesdelegator) ","b4xpagesdelegator",31,__ref.getField(false, "ba"),__ref,9);
 if (RapidSub.canDelegate("mainform_focuschanged")) { return __ref.runUserSub(false, "b4xpagesdelegator","mainform_focuschanged", __ref, _hasfocus);}
 Debug.locals.put("HasFocus", _hasfocus);
  BA.debugLineNum = 9;BA.debugLine="Public Sub MainForm_FocusChanged (HasFocus As Bool";
@@ -128,7 +128,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_iconifiedchanged(RemoteObject __ref,RemoteObject _iconified) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_IconifiedChanged (b4xpagesdelegator) ","b4xpagesdelegator",29,__ref.getField(false, "ba"),__ref,21);
+		Debug.PushSubsStack("MainForm_IconifiedChanged (b4xpagesdelegator) ","b4xpagesdelegator",31,__ref.getField(false, "ba"),__ref,21);
 if (RapidSub.canDelegate("mainform_iconifiedchanged")) { return __ref.runUserSub(false, "b4xpagesdelegator","mainform_iconifiedchanged", __ref, _iconified);}
 Debug.locals.put("Iconified", _iconified);
  BA.debugLineNum = 21;BA.debugLine="Public Sub MainForm_IconifiedChanged (Iconified As";
@@ -148,7 +148,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_resize(RemoteObject __ref,RemoteObject _width,RemoteObject _height) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_Resize (b4xpagesdelegator) ","b4xpagesdelegator",29,__ref.getField(false, "ba"),__ref,44);
+		Debug.PushSubsStack("MainForm_Resize (b4xpagesdelegator) ","b4xpagesdelegator",31,__ref.getField(false, "ba"),__ref,44);
 if (RapidSub.canDelegate("mainform_resize")) { return __ref.runUserSub(false, "b4xpagesdelegator","mainform_resize", __ref, _width, _height);}
 Debug.locals.put("Width", _width);
 Debug.locals.put("Height", _height);

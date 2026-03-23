@@ -66,6 +66,20 @@ public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
 public b4j.example.b4xcollections _b4xcollections = null;
 public b4j.example.httputils2service _httputils2service = null;
+public anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest  _getrequest(b4j.example.httpjob __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="httpjob";
+if (Debug.shouldDelegate(ba, "getrequest", true))
+	 {return ((anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest) Debug.delegate(ba, "getrequest", null));}
+RDebugUtils.currentLine=44433408;
+ //BA.debugLineNum = 44433408;BA.debugLine="Public Sub GetRequest As OkHttpRequest";
+RDebugUtils.currentLine=44433409;
+ //BA.debugLineNum = 44433409;BA.debugLine="Return req";
+if (true) return __ref._req /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ ;
+RDebugUtils.currentLine=44433410;
+ //BA.debugLineNum = 44433410;BA.debugLine="End Sub";
+return null;
+}
 public String  _initialize(b4j.example.httpjob __ref,anywheresoftware.b4a.BA _ba,String _name,Object _targetmodule) throws Exception{
 __ref = this;
 innerInitialize(_ba);
@@ -114,20 +128,6 @@ __c.CallSubDelayed2(ba,(Object)(_httputils2service.getObject()),"SubmitJob",this
 RDebugUtils.currentLine=43909129;
  //BA.debugLineNum = 43909129;BA.debugLine="End Sub";
 return "";
-}
-public anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest  _getrequest(b4j.example.httpjob __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="httpjob";
-if (Debug.shouldDelegate(ba, "getrequest", true))
-	 {return ((anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest) Debug.delegate(ba, "getrequest", null));}
-RDebugUtils.currentLine=44433408;
- //BA.debugLineNum = 44433408;BA.debugLine="Public Sub GetRequest As OkHttpRequest";
-RDebugUtils.currentLine=44433409;
- //BA.debugLineNum = 44433409;BA.debugLine="Return req";
-if (true) return __ref._req /*anywheresoftware.b4h.okhttp.OkHttpClientWrapper.OkHttpRequest*/ ;
-RDebugUtils.currentLine=44433410;
- //BA.debugLineNum = 44433410;BA.debugLine="End Sub";
-return null;
 }
 public String  _release(b4j.example.httpjob __ref) throws Exception{
 __ref = this;

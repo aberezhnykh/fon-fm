@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Состояние retry/fallback политики.
+' Хранит текущие задержки повторов для local/server режимов и признаки деградации media path.
+
 Sub Class_Globals
 	Public LocalRetryDelay As Int
 	Public ServerRetryDelay As Int
@@ -16,6 +19,7 @@ Public Sub Initialize(localRetryInitial As Int, serverRetryInitial As Int)
 	Reset(localRetryInitial, serverRetryInitial)
 End Sub
 
+' Сбрасывает backoff и media-path flags к начальному состоянию.
 Public Sub Reset(localRetryInitial As Int, serverRetryInitial As Int)
 	LocalRetryDelay = localRetryInitial
 	ServerRetryDelay = serverRetryInitial
@@ -23,6 +27,7 @@ Public Sub Reset(localRetryInitial As Int, serverRetryInitial As Int)
 	IsMediaPathDegraded = False
 End Sub
 
+' Возвращает текущую задержку повтора и одновременно продвигает backoff для следующей попытки.
 Public Sub ResolveRetryDelay(mode As String, delayMs As Int, localRetryMax As Int, serverRetryMax As Int, blockedRetryDelay As Int) As Int
 	If delayMs > 0 Then Return delayMs
 	If mode = "offline" Then
@@ -59,6 +64,7 @@ Public Sub SetMediaPathDegraded(value As Boolean)
 	IsMediaPathDegraded = value
 End Sub
 
+' Обновляет degraded flag по результату sync/download, чтобы orchestration мог мягко менять поведение без panic-stop.
 Public Sub UpdateMediaPathDegradedFromCacheSync(downloaded As Boolean, networkFailure As Boolean) As String
 	Dim previous As Boolean = IsMediaPathDegraded
 	If downloaded Then

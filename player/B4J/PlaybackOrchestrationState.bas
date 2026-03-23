@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Операционные флаги orchestration-слоя.
+' Хранит не media state, а служебные признаки переходов, prefetch и dispatch/reentry.
+
 Sub Class_Globals
 	Public IsStarted As Boolean
 	Public IsStoppedByUser As Boolean
@@ -20,6 +23,7 @@ Public Sub Initialize
 	ResetToStopped
 End Sub
 
+' Возвращает playback в полностью остановленное состояние вместе с transient orchestration flags.
 Public Sub ResetToStopped
 	IsStarted = False
 	IsStoppedByUser = True
@@ -85,6 +89,7 @@ Public Sub EndQueueBackfill
 	IsQueueBackfillInProgress = False
 End Sub
 
+' Reentry guard для dispatch-path: гарантирует, что одновременно выполняется только один advance/dispatch.
 Public Sub BeginDispatch(initiator As String) As Boolean
 	If IsPlaybackDispatchInProgress Then Return False
 	IsPlaybackDispatchInProgress = True

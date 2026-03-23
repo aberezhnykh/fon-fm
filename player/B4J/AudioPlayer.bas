@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Обёртка над MediaPlayer с защитой от stale events, fade-in/fade-out и stall detection.
+' Даёт B4XMainPage чистые события Ready / Error / Complete / Timeupdate по audioKey.
+
 Sub Class_Globals
 	Private Const STATE_STOPPED = 0, STATE_LOADING = 1, STATE_READY = 2, STATE_PLAYING = 3 As Int
 	Private Const FADE_NONE = 0, FADE_IN = 1, FADE_OUT = 2 As Int
@@ -43,6 +46,7 @@ Public Sub Initialize (eventNameValue As String, targetPageValue As B4XMainPage)
 	TraceAudio("Initialize")
 End Sub
 
+' Загружает media в player и выдаёт новый load token, чтобы старые Ready/Error/Complete не ломали актуальный playback.
 Public Sub LoadUrl(url As String, volume As Double)
 	Reset
 	currentLoadToken = currentLoadToken + 1
@@ -66,6 +70,7 @@ Public Sub Play
 	PlayWithFade(0)
 End Sub
 
+' Запускает playback после Ready и, если нужно, выполняет fade-in до maxVolume.
 Public Sub PlayWithFade(fadeTimeMs As Int)
 	If playerState <> STATE_READY Then
 		TraceInternalError("play_with_fade_not_ready state=" & playerState)
@@ -88,6 +93,7 @@ Public Sub PlayWithFade(fadeTimeMs As Int)
 	End If
 End Sub
 
+' Останавливает playback сразу или через fade-out, в зависимости от fadeTimeMs и текущей громкости.
 Public Sub Stop(fadeTimeMs As Int)
 	loadTimer.Enabled = False
 	checkTimer.Enabled = False
@@ -108,6 +114,7 @@ Public Sub Stop(fadeTimeMs As Int)
 	End If
 End Sub
 
+' Полный reset player instance, таймеров и токенов текущей загрузки.
 Public Sub Reset
 	loadTimer.Enabled = False
 	checkTimer.Enabled = False
@@ -170,6 +177,7 @@ Public Sub Duration As Long
 	End Try
 End Sub
 
+' OnReady игнорирует stale callbacks и сообщает page только о актуальной загрузке.
 Private Sub Ready_Event(methodName As String, args() As Object)
 	If activeEventLoadToken <> currentLoadToken Then
 		TraceAudio("Ready ignored. stale_token=" & activeEventLoadToken & " current=" & currentLoadToken)
@@ -196,6 +204,7 @@ Private Sub Error_Event(methodName As String, args() As Object)
 	NotifyError(msg)
 End Sub
 
+' OnComplete завершает только актуальный playback и не реагирует на устаревшие callbacks.
 Private Sub Player_Complete
 	If activeEventLoadToken <> currentLoadToken Then
 		TraceAudio("Complete ignored. stale_token=" & activeEventLoadToken & " current=" & currentLoadToken)
@@ -226,6 +235,7 @@ Private Sub TimeUpdateTimer_Tick
 	targetPage.AudioPlayer_Timeupdate(audioKey)
 End Sub
 
+' Периодически проверяет реальное движение позиции и поднимает error, если playback завис в тишине.
 Private Sub CheckTimer_Tick
 	If playerState <> STATE_PLAYING Then Return
 	Dim positionNow As Long = Position

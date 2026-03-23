@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Координатор переходов между элементами очереди.
+' Здесь собрана логика prepared/prefetch/promote без владения самим playback-state.
+
 Sub Class_Globals
 	Private targetPage As B4XMainPage
 End Sub
@@ -13,24 +16,30 @@ Public Sub Initialize(targetPageValue As B4XMainPage)
 	targetPage = targetPageValue
 End Sub
 
+' Выбирает свободный audio slot относительно текущего active slot.
 Public Sub GetInactiveAudioKey(runtimeState As PlaybackRuntimeState) As String
-	If runtimeState.ActiveAudioKey = "primary" Then Return "secondary"
+	If targetPage.Transition_GetDirectorActiveAudioKey = "primary" Then Return "secondary"
 	Return "primary"
 End Sub
 
+' Проверяет, что prepared slot реально пригоден для немедленного promote.
 Public Sub HasUsablePreparedItem(runtimeState As PlaybackRuntimeState) As Boolean
-	If runtimeState.PreparedAudioKey = "" Then Return False
-	If runtimeState.PreparedItem.IsInitialized = False Then Return False
-	Dim preparedType As String = runtimeState.PreparedItem.GetDefault("type", "")
+	Dim preparedAudioKey As String = targetPage.Transition_GetDirectorPreparedAudioKey
+	Dim preparedItem As Map = targetPage.Transition_GetDirectorPreparedItem
+	If preparedAudioKey = "" Then Return False
+	If preparedItem.IsInitialized = False Then Return False
+	Dim preparedType As String = preparedItem.GetDefault("type", "")
 	Return preparedType = "track" Or preparedType = "ad"
 End Sub
 
+' Общая проверка, можно ли использовать prepared item в текущем transition-сценарии.
 Public Sub CanUsePreparedTransition(runtimeState As PlaybackRuntimeState, metaState As PlaybackMetaState, orchestrationState As PlaybackOrchestrationState, transitionInProgress As Boolean, currentType As String, preparedType As String, decisionName As String) As Boolean
 	If transitionInProgress Then Return False
 	If orchestrationState.IsCrossfadeTriggered Then Return False
 	If metaState.CurrentMediaType <> currentType Then Return False
 	If HasUsablePreparedItem(runtimeState) = False Then Return False
-	Return runtimeState.PreparedItem.GetDefault("type", "") = preparedType
+	Dim preparedItem As Map = targetPage.Transition_GetDirectorPreparedItem
+	Return preparedItem.GetDefault("type", "") = preparedType
 End Sub
 
 Public Sub CanCrossfadePreparedItem(runtimeState As PlaybackRuntimeState, metaState As PlaybackMetaState, orchestrationState As PlaybackOrchestrationState, transitionInProgress As Boolean) As Boolean
@@ -43,13 +52,15 @@ End Sub
 
 Public Sub PreparedFadeOutMs(metaState As PlaybackMetaState, runtimeState As PlaybackRuntimeState, trackOverlapMs As Int, adTailOverlapMs As Int) As Int
 	If metaState.CurrentMediaType <> "track" Then Return 0
-	If runtimeState.PreparedItem.IsInitialized = False Then Return 0
-	Dim nextType As String = runtimeState.PreparedItem.GetDefault("type", "")
+	Dim preparedItem As Map = targetPage.Transition_GetDirectorPreparedItem
+	If preparedItem.IsInitialized = False Then Return 0
+	Dim nextType As String = preparedItem.GetDefault("type", "")
 	If nextType = "track" Then Return trackOverlapMs
 	If nextType = "ad" Then Return adTailOverlapMs
 	Return 0
 End Sub
 
+' Подготавливает следующий playable item заранее, но не ломает очередь и не перепрыгивает через break.
 Public Sub PrepareNextPlayable(playQueue As List, runtimeState As PlaybackRuntimeState, metaState As PlaybackMetaState, orchestrationState As PlaybackOrchestrationState, mediaCacheService As MediaCache, playbackFlowState As String, flowPlaying As String, flowIdle As String, flowPreparing As String) As ResumableSub
 	Dim candidateIndex As Int = -1
 	Do While playQueue.Size > 0
@@ -69,7 +80,8 @@ Public Sub PrepareNextPlayable(playQueue As List, runtimeState As PlaybackRuntim
 			Continue
 		End If
 		If candidateType <> "track" And candidateType <> "ad" Then Return False
-		If ItemsMatch(runtimeState.ActiveItem, candidateItem) Then
+		Dim activeItem As Map = targetPage.Transition_GetDirectorActiveItem
+		If ItemsMatch(activeItem, candidateItem) Then
 			Trace("prefetch skip reason=active_item item=" & DescribeItem(candidateItem))
 			candidateIndex = scanIndex
 			Continue
@@ -93,10 +105,12 @@ Public Sub PrepareNextPlayable(playQueue As List, runtimeState As PlaybackRuntim
 	Loop
 	If candidateIndex < 0 Or candidateIndex >= playQueue.Size Then Return False
 	Dim nextItem As Map = playQueue.Get(candidateIndex)
-	If runtimeState.PreparedItem.IsInitialized And runtimeState.PreparedAudioKey <> "" Then
+	Dim existingPreparedItem As Map = targetPage.Transition_GetDirectorPreparedItem
+	Dim existingPreparedAudioKey As String = targetPage.Transition_GetDirectorPreparedAudioKey
+	If existingPreparedItem.IsInitialized And existingPreparedAudioKey <> "" Then
 		Dim matchArgs As Map
 		matchArgs.Initialize
-		matchArgs.Put("first", runtimeState.PreparedItem)
+		matchArgs.Put("first", existingPreparedItem)
 		matchArgs.Put("second", nextItem)
 		If targetPage.Transition_ItemsMatch(matchArgs) Then
 			Trace("prefetch reuse prepared item=" & DescribeItem(nextItem))
@@ -105,7 +119,11 @@ Public Sub PrepareNextPlayable(playQueue As List, runtimeState As PlaybackRuntim
 	End If
 	Dim targetAudioKey As String = GetInactiveAudioKey(runtimeState)
 	targetPage.Transition_ClearPreparedState(False)
-	runtimeState.SetPendingPrepare(targetAudioKey, nextItem)
+	Dim pendingPrepareArgs As Map
+	pendingPrepareArgs.Initialize
+	pendingPrepareArgs.Put("audioKey", targetAudioKey)
+	pendingPrepareArgs.Put("item", nextItem)
+	targetPage.Transition_SetDirectorPendingPrepare(pendingPrepareArgs)
 	Dim previousFlowState As String = playbackFlowState
 	If playbackFlowState = flowPlaying Or playbackFlowState = flowIdle Then
 		Dim flowArgs As Map
@@ -153,8 +171,11 @@ Public Sub PrepareNextPlayable(playQueue As List, runtimeState As PlaybackRuntim
 	Return result.GetDefault("Success", False)
 End Sub
 
+' Поднимает prepared slot в active playback и выполняет сопутствующую очистку/фиксацию курсора.
 Public Sub PromotePreparedPlayer(runtimeState As PlaybackRuntimeState, dataResolver As DataPlaybackResolver, storage As KeyValueStore, fadeInMs As Int, fadeOutMs As Int, flowTransitioning As String) As Boolean
-	If runtimeState.PreparedAudioKey = "" Or runtimeState.PreparedItem.IsInitialized = False Then
+	Dim preparedAudioKey As String = targetPage.Transition_GetDirectorPreparedAudioKey
+	Dim preparedItem As Map = targetPage.Transition_GetDirectorPreparedItem
+	If preparedAudioKey = "" Or preparedItem.IsInitialized = False Then
 		Trace("переход prepared reject reason=missing_prepared")
 		Return False
 	End If
@@ -163,9 +184,9 @@ Public Sub PromotePreparedPlayer(runtimeState As PlaybackRuntimeState, dataResol
 	flowArgs.Put("state", flowTransitioning)
 	flowArgs.Put("reason", "promote_prepared")
 	targetPage.Transition_SetPlaybackFlowState(flowArgs)
-	Dim previousAudioKey As String = runtimeState.ActiveAudioKey
-	Dim nextAudioKey As String = runtimeState.PreparedAudioKey
-	Dim promotedItem As Map = CloneMap(runtimeState.PreparedItem)
+	Dim previousAudioKey As String = targetPage.Transition_GetDirectorActiveAudioKey
+	Dim nextAudioKey As String = preparedAudioKey
+	Dim promotedItem As Map = CloneMap(preparedItem)
 	targetPage.Transition_ConsumePreparedQueueItem
 	If previousAudioKey <> "" And previousAudioKey <> nextAudioKey Then
 		Dim previousAudio As AudioPlayer = targetPage.Transition_GetAudioByKey(previousAudioKey)
@@ -178,7 +199,7 @@ Public Sub PromotePreparedPlayer(runtimeState As PlaybackRuntimeState, dataResol
 	activateArgs.Put("audioKey", nextAudioKey)
 	activateArgs.Put("item", promotedItem)
 	activateArgs.Put("fadeInMs", fadeInMs)
-	Trace("break promote audio=" & nextAudioKey & " type=" & promotedItem.GetDefault("type", "") & " id=" & promotedItem.GetDefault("id", ""))
+	Trace("prepared promote audio=" & nextAudioKey & " type=" & promotedItem.GetDefault("type", "") & " id=" & promotedItem.GetDefault("id", ""))
 	targetPage.Transition_ActivateLoadedItem(activateArgs)
 	targetPage.Transition_ClearPreparedState(False)
 	Return True

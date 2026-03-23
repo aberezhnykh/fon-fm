@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Локальный планировщик рекламных break-элементов.
+' Сканирует offline ads на целевую минуту и при необходимости вставляет exact break в начало очереди.
+
 Sub Class_Globals
 	Private targetModule As Object
 	Private traceSubName As String
@@ -19,11 +22,13 @@ Public Sub Initialize(targetModuleValue As Object, traceSubNameValue As String, 
 	adLabelText = adLabelTextValue
 End Sub
 
+' Сбрасывает защиту от повторного scan/inject для минутного break-цикла.
 Public Sub Reset
 	lastScanMinuteKey = ""
 	lastInjectedMinuteKey = ""
 End Sub
 
+' Проверяет target minute и, если для неё положен local break, вставляет break в начало очереди ровно один раз.
 Public Sub ScanTargetMinute(offlineData As Map, playQueue As List, targetMinuteTimestamp As Long, force As Boolean, allowRegularAds As Boolean) As Boolean
 	If offlineData.IsInitialized = False Then Return False
 	If offlineData.GetDefault("ok", False) <> True Then Return False
@@ -46,6 +51,7 @@ Public Sub ScanTargetMinute(offlineData As Map, playQueue As List, targetMinuteT
 	Return True
 End Sub
 
+' Собирает break item со списком ad queue items, которые должны стартовать в указанную минуту.
 Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Long, allowRegularAds As Boolean) As Map
 	Dim emptyBreak As Map
 	emptyBreak.Initialize
@@ -76,6 +82,7 @@ Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Lon
 	Return breakItem
 End Sub
 
+' Проверяет, подходит ли объявление под текущую минуту, даты, weekdays и exact/regular режим.
 Private Sub AdMatchesCurrentMinute(ad As Map, todayKey As String, todayWeekday As String, currentMinuteOfDay As Int, allowRegularAds As Boolean) As Boolean
 	If ad.IsInitialized = False Then Return False
 	Dim isExact As Boolean = ad.GetDefault("exactly", False) = True

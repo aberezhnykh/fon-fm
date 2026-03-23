@@ -62,27 +62,6 @@ RDebugUtils.currentLine=29687811;
  //BA.debugLineNum = 29687811;BA.debugLine="End Sub";
 return "";
 }
-public String  _clearpreparedifmatchesaudio(b4j.example.playbackruntimestate __ref,String _audiokey) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackruntimestate";
-if (Debug.shouldDelegate(ba, "clearpreparedifmatchesaudio", false))
-	 {return ((String) Debug.delegate(ba, "clearpreparedifmatchesaudio", new Object[] {_audiokey}));}
-RDebugUtils.currentLine=29949952;
- //BA.debugLineNum = 29949952;BA.debugLine="Public Sub ClearPreparedIfMatchesAudio(audioKey As";
-RDebugUtils.currentLine=29949953;
- //BA.debugLineNum = 29949953;BA.debugLine="If PreparedAudioKey <> audioKey Then Return";
-if ((__ref._preparedaudiokey /*String*/ ).equals(_audiokey) == false) { 
-if (true) return "";};
-RDebugUtils.currentLine=29949954;
- //BA.debugLineNum = 29949954;BA.debugLine="PreparedAudioKey = \"\"";
-__ref._preparedaudiokey /*String*/  = "";
-RDebugUtils.currentLine=29949955;
- //BA.debugLineNum = 29949955;BA.debugLine="PreparedItem.Initialize";
-__ref._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();
-RDebugUtils.currentLine=29949956;
- //BA.debugLineNum = 29949956;BA.debugLine="End Sub";
-return "";
-}
 public String  _clearpendingplaystate(b4j.example.playbackruntimestate __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackruntimestate";
@@ -119,20 +98,6 @@ __ref._pendingprepareitem /*anywheresoftware.b4a.objects.collections.Map*/ .Init
 RDebugUtils.currentLine=29622275;
  //BA.debugLineNum = 29622275;BA.debugLine="End Sub";
 return "";
-}
-public boolean  _hasprepared(b4j.example.playbackruntimestate __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackruntimestate";
-if (Debug.shouldDelegate(ba, "hasprepared", false))
-	 {return ((Boolean) Debug.delegate(ba, "hasprepared", null));}
-RDebugUtils.currentLine=30015488;
- //BA.debugLineNum = 30015488;BA.debugLine="Public Sub HasPrepared As Boolean";
-RDebugUtils.currentLine=30015489;
- //BA.debugLineNum = 30015489;BA.debugLine="Return PreparedAudioKey <> \"\" And PreparedItem.Is";
-if (true) return (__ref._preparedaudiokey /*String*/ ).equals("") == false && __ref._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized();
-RDebugUtils.currentLine=30015490;
- //BA.debugLineNum = 30015490;BA.debugLine="End Sub";
-return false;
 }
 public String  _reset(b4j.example.playbackruntimestate __ref) throws Exception{
 __ref = this;
@@ -224,23 +189,6 @@ RDebugUtils.currentLine=29818884;
  //BA.debugLineNum = 29818884;BA.debugLine="End Sub";
 return "";
 }
-public String  _setpendingprepare(b4j.example.playbackruntimestate __ref,String _audiokey,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackruntimestate";
-if (Debug.shouldDelegate(ba, "setpendingprepare", false))
-	 {return ((String) Debug.delegate(ba, "setpendingprepare", new Object[] {_audiokey,_item}));}
-RDebugUtils.currentLine=29884416;
- //BA.debugLineNum = 29884416;BA.debugLine="Public Sub SetPendingPrepare(audioKey As String, i";
-RDebugUtils.currentLine=29884417;
- //BA.debugLineNum = 29884417;BA.debugLine="PendingPrepareAudioKey = audioKey";
-__ref._pendingprepareaudiokey /*String*/  = _audiokey;
-RDebugUtils.currentLine=29884418;
- //BA.debugLineNum = 29884418;BA.debugLine="PendingPrepareItem = CloneStateMap(item)";
-__ref._pendingprepareitem /*anywheresoftware.b4a.objects.collections.Map*/  = __ref._clonestatemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_item);
-RDebugUtils.currentLine=29884419;
- //BA.debugLineNum = 29884419;BA.debugLine="End Sub";
-return "";
-}
 public String  _class_globals(b4j.example.playbackruntimestate __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackruntimestate";
@@ -275,6 +223,27 @@ RDebugUtils.currentLine=29360137;
 _pendingplayfadeinms = 0;
 RDebugUtils.currentLine=29360138;
  //BA.debugLineNum = 29360138;BA.debugLine="End Sub";
+return "";
+}
+public String  _clearpreparedifmatchesaudio(b4j.example.playbackruntimestate __ref,String _audiokey) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackruntimestate";
+if (Debug.shouldDelegate(ba, "clearpreparedifmatchesaudio", false))
+	 {return ((String) Debug.delegate(ba, "clearpreparedifmatchesaudio", new Object[] {_audiokey}));}
+RDebugUtils.currentLine=29949952;
+ //BA.debugLineNum = 29949952;BA.debugLine="Public Sub ClearPreparedIfMatchesAudio(audioKey As";
+RDebugUtils.currentLine=29949953;
+ //BA.debugLineNum = 29949953;BA.debugLine="If PreparedAudioKey <> audioKey Then Return";
+if ((__ref._preparedaudiokey /*String*/ ).equals(_audiokey) == false) { 
+if (true) return "";};
+RDebugUtils.currentLine=29949954;
+ //BA.debugLineNum = 29949954;BA.debugLine="PreparedAudioKey = \"\"";
+__ref._preparedaudiokey /*String*/  = "";
+RDebugUtils.currentLine=29949955;
+ //BA.debugLineNum = 29949955;BA.debugLine="PreparedItem.Initialize";
+__ref._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();
+RDebugUtils.currentLine=29949956;
+ //BA.debugLineNum = 29949956;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.Map  _clonestatemap(b4j.example.playbackruntimestate __ref,anywheresoftware.b4a.objects.collections.Map _source) throws Exception{
@@ -330,5 +299,36 @@ if (true) return (__ref._pendingplayaudiokey /*String*/ ).equals("") == false &&
 RDebugUtils.currentLine=30081026;
  //BA.debugLineNum = 30081026;BA.debugLine="End Sub";
 return false;
+}
+public boolean  _hasprepared(b4j.example.playbackruntimestate __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackruntimestate";
+if (Debug.shouldDelegate(ba, "hasprepared", false))
+	 {return ((Boolean) Debug.delegate(ba, "hasprepared", null));}
+RDebugUtils.currentLine=30015488;
+ //BA.debugLineNum = 30015488;BA.debugLine="Public Sub HasPrepared As Boolean";
+RDebugUtils.currentLine=30015489;
+ //BA.debugLineNum = 30015489;BA.debugLine="Return PreparedAudioKey <> \"\" And PreparedItem.Is";
+if (true) return (__ref._preparedaudiokey /*String*/ ).equals("") == false && __ref._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized();
+RDebugUtils.currentLine=30015490;
+ //BA.debugLineNum = 30015490;BA.debugLine="End Sub";
+return false;
+}
+public String  _setpendingprepare(b4j.example.playbackruntimestate __ref,String _audiokey,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackruntimestate";
+if (Debug.shouldDelegate(ba, "setpendingprepare", false))
+	 {return ((String) Debug.delegate(ba, "setpendingprepare", new Object[] {_audiokey,_item}));}
+RDebugUtils.currentLine=29884416;
+ //BA.debugLineNum = 29884416;BA.debugLine="Public Sub SetPendingPrepare(audioKey As String, i";
+RDebugUtils.currentLine=29884417;
+ //BA.debugLineNum = 29884417;BA.debugLine="PendingPrepareAudioKey = audioKey";
+__ref._pendingprepareaudiokey /*String*/  = _audiokey;
+RDebugUtils.currentLine=29884418;
+ //BA.debugLineNum = 29884418;BA.debugLine="PendingPrepareItem = CloneStateMap(item)";
+__ref._pendingprepareitem /*anywheresoftware.b4a.objects.collections.Map*/  = __ref._clonestatemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_item);
+RDebugUtils.currentLine=29884419;
+ //BA.debugLineNum = 29884419;BA.debugLine="End Sub";
+return "";
 }
 }

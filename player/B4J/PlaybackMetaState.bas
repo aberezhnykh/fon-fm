@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Метаданные текущего воспроизведения и staging истории.
+' Не управляет переходами, а хранит факты о текущем media item и pending history record.
+
 Sub Class_Globals
 	Public CurrentMediaUrl As String
 	Public CurrentMediaType As String
@@ -16,6 +19,7 @@ Public Sub Initialize
 	Reset
 End Sub
 
+' Сбрасывает текущий media context и staged history.
 Public Sub Reset
 	CurrentMediaUrl = ""
 	CurrentMediaType = ""
@@ -28,6 +32,7 @@ Public Sub SetCurrentMedia(mediaUrl As String, mediaType As String)
 	CurrentMediaType = mediaType
 End Sub
 
+' Готовит history item к подтверждению после реального старта playback.
 Public Sub StageHistoryItem(item As Map, startedAtTicks As Long)
 	PendingHistoryItem = CloneStateMap(item)
 	HistoryStartedAtTicks = startedAtTicks

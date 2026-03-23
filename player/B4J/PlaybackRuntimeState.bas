@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Legacy compatibility mirror для playback-state.
+' В нормальном потоке canonical state живёт в PlaybackDirectorState, а этот класс нужен старым helper/path-веткам.
+
 Sub Class_Globals
 	Public ActiveAudioKey As String
 	Public PreparedAudioKey As String
@@ -21,6 +24,7 @@ Public Sub Initialize
 	Reset
 End Sub
 
+' Полный сброс legacy snapshot-состояния.
 Public Sub Reset
 	ActiveAudioKey = ""
 	PreparedAudioKey = ""
@@ -44,11 +48,13 @@ Public Sub ClearPendingPrepareState
 	PendingPrepareItem.Initialize
 End Sub
 
+' Compatibility setter для active item; в новой модели это зеркало director active slot.
 Public Sub SetActive(audioKey As String, item As Map)
 	ActiveAudioKey = audioKey
 	ActiveItem = CloneStateMap(item)
 End Sub
 
+' Compatibility setter для prepared item; в новой модели это зеркало director prepared slot.
 Public Sub SetPrepared(audioKey As String, item As Map)
 	PreparedAudioKey = audioKey
 	PreparedItem = CloneStateMap(item)

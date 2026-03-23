@@ -5,6 +5,8 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Состояние data-policy слоя: online/offline режим, policy pause и признаки фоновых refresh-процессов.
+
 Sub Class_Globals
 	Public IsOfflineDataRefreshInProgress As Boolean
 	Public IsTrackCacheRefreshInProgress As Boolean
@@ -18,6 +20,7 @@ Public Sub Initialize
 	Reset
 End Sub
 
+' Сбрасывает policy/data режимы к нейтральному состоянию.
 Public Sub Reset
 	IsOfflineDataRefreshInProgress = False
 	IsTrackCacheRefreshInProgress = False
@@ -49,6 +52,7 @@ Public Sub EndTrackCacheRefresh
 	IsTrackCacheRefreshInProgress = False
 End Sub
 
+' Вводит playback в policy pause и запоминает, что при разрешении сервера надо попытаться возобновить поток.
 Public Sub EnterPolicyPause(connectionMode As String)
 	IsPlaybackPausedByPolicy = True
 	ResumePlaybackWhenServerAllows = True

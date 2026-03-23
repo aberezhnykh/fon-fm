@@ -5,9 +5,13 @@ Type=StaticCode
 Version=10.5
 @EndOfDesignText@
 
+' Небольшой UI helper для создания и стилизации JavaFX/B4XView узлов.
+' Нужен, чтобы держать style-операции вне основного кода страницы.
+
 Sub Process_Globals
 End Sub
 
+' Создаёт стандартный label c единым стилем, выравниванием и font policy.
 Public Sub CreateLabel(xui As XUI, text As String, fontSize As Float, textColor As Int, bold As Boolean, wrapText As Boolean) As B4XView
 	Dim lbl As Label
 	lbl.Initialize("")
@@ -61,6 +65,7 @@ Public Sub ColorToCss(color As Int) As String
 	Return "#" & Bit.ToHexString(rgb)
 End Sub
 
+' Аккуратно добавляет CSS style к текущему стилю узла, а не перетирает его полностью.
 Private Sub MergeNodeStyle(currentStyle As String, extraStyle As String) As String
 	If currentStyle = Null Or currentStyle.Trim = "" Then Return extraStyle
 	If extraStyle = Null Or extraStyle.Trim = "" Then Return currentStyle

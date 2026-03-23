@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Состояние очереди playback и exact break scheduling.
+' Отвечает за snapshot/restore очереди и за отдельный tracking ближайшего exact break.
+
 Sub Class_Globals
 	Public ScheduledBreakAt As Long
 	Public SkipQueueSnapshotRestoreOnce As Boolean
@@ -16,6 +19,7 @@ Public Sub Initialize
 	Reset
 End Sub
 
+' Полный сброс queue-state, reserve-очереди и scheduled break.
 Public Sub Reset
 	ScheduledBreakAt = -1
 	SkipQueueSnapshotRestoreOnce = False
@@ -56,6 +60,7 @@ Public Sub CaptureStoppedReserve(sourceQueue As List, signature As String)
 	StoppedReserveSignature = signature
 End Sub
 
+' Разрешает вернуть reserve-очередь только если сигнатура данных не изменилась.
 Public Sub CanRestoreStoppedReserve(currentSignature As String) As Boolean
 	If StoppedReserveQueue.IsInitialized = False Or StoppedReserveQueue.Size = 0 Then Return False
 	If currentSignature = "" Then Return False
@@ -116,6 +121,7 @@ Public Sub ClearQueueSnapshot(storage As KeyValueStore)
 	storage.Put("download_plan_signature", "")
 End Sub
 
+' Ищет первый exact break в очереди и сохраняет его timestamp отдельно от остальных queue item.
 Public Sub ResolveScheduledBreakAt(queue As List)
 	ScheduledBreakAt = -1
 	If queue.IsInitialized = False Then Return
@@ -143,6 +149,7 @@ Public Sub ShouldTriggerBreakNow(localNowTimestamp As Long) As Boolean
 	Return localNowTimestamp >= ScheduledBreakAt
 End Sub
 
+' Ограничивает оставшееся время трека ближайшим exact break, чтобы director принимал решения по реальному дедлайну.
 Public Sub LimitRemainByBreak(trackRemain As Long, localNowTimestamp As Long) As Long
 	If ScheduledBreakAt <= 0 Then Return trackRemain
 	Dim breakRemain As Long = (ScheduledBreakAt - localNowTimestamp) * 1000

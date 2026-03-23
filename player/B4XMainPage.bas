@@ -9,17 +9,21 @@ Version=9.85
 'Ctrl + click to sync files: ide://run?file=%WINDIR%\System32\Robocopy.exe&args=..\..\Shared+Files&args=..\Files&FilesSync=True
 #End Region
 
+' Главный модуль приложения и orchestration layer playback.
+' Здесь живут UI, network/data refresh и основной director-driven поток воспроизведения.
+
 Sub Class_Globals
 	Private Const NEXT_BASE_URL As String = "https://play.fon.fm/next"
 	Private Const CLAIM_BASE_URL As String = "https://play.fon.fm/claim"
 	Private Const HISTORY_BASE_URL As String = "https://play.fon.fm/history"
 	Private Const TRACE_BASE_URL As String = "https://play.fon.fm/trace"
+	Private Const CLIENT_HEADER_NAME As String = "X-Fonfm-Client"
+	Private Const CLIENT_HEADER_VALUE As String = "windows-player"
 	Private Const HISTORY_FLUSH_INTERVAL_MS As Int = 30000
 Private Const TRACE_FLUSH_INTERVAL_MS As Int = 60 * 1000
 	Private Const DATA_BASE_URL As String = "https://play.fon.fm/data"
 	Private Const PLAYLIST_CDN_BASE_URL As String = "https://cdn.fon.fm/data/playlists/"
 	Private Const SERVICE_CHECK_URL As String = "https://play.fon.fm/data"
-	Private Const EXTERNAL_CONNECTIVITY_CHECK_URL As String = "https://radiosparx.ru/img/logo-dark.svg"
 	Private Const USE_DATA_PLAYBACK_RESOLVER As Boolean = True
 	Private Const ICON_PLAY As String = Chr(0xE037)
 	Private Const ICON_STOP As String = Chr(0xE047)
@@ -43,7 +47,12 @@ Private Const TRACE_FLUSH_INTERVAL_MS As Int = 60 * 1000
 	Private Const DATA_REFRESH_MS As Int = 5 * 60 * 1000
 	Private Const FETCH_TIMEOUT_MS As Int = 4000
 	Private Const AUDIO_READY_TIMEOUT_MS As Int = 5000
+	' После серии подряд audio errors считаем, что проблема, скорее всего, во внешнем audio output,
+	' и уходим в редкий recovery probe вместо бесконечного цикла load/play/error.
+	Private Const AUDIO_OUTPUT_ERROR_PAUSE_THRESHOLD As Int = 3
+	Private Const AUDIO_OUTPUT_RETRY_DELAY_MS As Int = 15000
 	Private Const PLAYBACK_WATCHDOG_INTERVAL_MS As Int = 1000
+	Private Const PLAYBACK_DIRECTOR_INTERVAL_MS As Int = 250
 	Private Const PLAYBACK_WATCHDOG_STALL_MS As Long = 4000
 	Private Const PLAYBACK_WATCHDOG_RECOVERY_COOLDOWN_MS As Long = 10000
 	Private Const PLAYBACK_WATCHDOG_PROGRESS_DELTA_MS As Long = 150
@@ -142,6 +151,7 @@ Private Const TRACE_FLUSH_INTERVAL_MS As Int = 60 * 1000
 	Private trackCacheWarmupTimer As Timer
 	Private cacheAuditTimer As Timer
 	Private playbackWatchdogTimer As Timer
+	Private playbackDirectorTimer As Timer
 	Private machineGuidShell As Shell
 
 	Private playerCode As String
@@ -158,12 +168,16 @@ Private Const TRACE_FLUSH_INTERVAL_MS As Int = 60 * 1000
 	Private transitionCoordinator As PlaybackTransitionCoordinator
 	Private facade As PlaybackFacade
 	Private responseAdapter As PlaybackResponseAdapter
+	Private directorState As PlaybackDirectorState
 	Private initialStartFadePending As Boolean
 	Private isHistoryFlushInProgress As Boolean
 	Private isTraceUploadInProgress As Boolean
 	Private cachedRelevantTrackIds As List
 	Private lastTrackCachePruneAt As Long
 	Private consecutiveNetworkErrors As Int
+	Private consecutiveAudioOutputErrors As Int
+	Private isAudioOutputRecoveryPause As Boolean
+	Private lastRetryMode As String
 	Private lastDataOkAt As Long
 	Private lastHistoryOkAt As Long
 	Private lastPlaybackWatchdogPositionMs As Long
@@ -210,6 +224,7 @@ Private Sub B4XPage_Resize (width As Int, height As Int)
 	LayoutUi(width, height)
 End Sub
 
+' Инициализирует локальные сообщения, форматы времени и базовые UI/trace-строки.
 Private Sub InitSettings
 	DateTime.DateFormat = "dd.MM.yyyy"
 	DateTime.TimeFormat = "HH:mm:ss"
@@ -219,6 +234,7 @@ Private Sub InitSettings
 	messages.Put("syncing", "Синхронизация...")
 	messages.Put("server_wait", "Временная остановка")
 	messages.Put("playback_paused", "Воспроизведение приостановлено")
+	messages.Put("audio_device_check", "Проверьте звуковое устройство")
 	messages.Put("subscription_expired", "Подписка истекла")
 	messages.Put("invalid_data_response", "Ошибка ответа сервера. Обратитесь в техподдержку")
 	messages.Put("idle", "Перерыв...")
@@ -280,6 +296,8 @@ Private Sub InitState
 	dataPolicyState.Initialize
 	retryFallbackState.Initialize(LOCAL_RETRY_DELAY_INITIAL, SERVER_RETRY_DELAY_INITIAL)
 	queueState.Initialize
+	directorState.Initialize
+	directorState.ConfigureDefaultSlots
 	queueBuilder.Initialize(Me)
 	transitionCoordinator.Initialize(Me)
 	facade.Initialize(Me)
@@ -301,7 +319,9 @@ Private Sub InitState
 	trackCacheWarmupTimer.Initialize("TrackCacheWarmupTimer", TRACK_CACHE_WARMUP_DELAY_MS)
 	cacheAuditTimer.Initialize("CacheAuditTimer", CACHE_AUDIT_START_DELAY_MS)
 	playbackWatchdogTimer.Initialize("PlaybackWatchdogTimer", PLAYBACK_WATCHDOG_INTERVAL_MS)
+	playbackDirectorTimer.Initialize("PlaybackDirectorTimer", PLAYBACK_DIRECTOR_INTERVAL_MS)
 	playbackWatchdogTimer.Enabled = True
+	playbackDirectorTimer.Enabled = True
 	isHistoryFlushInProgress = False
 	isTraceUploadInProgress = False
 	isPlaybackWatchdogTickInProgress = False
@@ -312,6 +332,8 @@ Private Sub InitState
 	lastTrackCachePruneAt = 0
 	playbackFlowState = FLOW_IDLE
 	ResetPlaybackWatchdogState
+	directorState.SetFlowState(playbackFlowState)
+	MirrorRuntimeStateFromDirector
 	offlineStoreService.Initialize(storageDir, storage, Me, "TraceLog", playerDataFile, playlistRequirementsFile, localPlaylistsDirName, PLAYLIST_CDN_BASE_URL)
 	offlineData = offlineStoreService.LoadOfflineData
 	RefreshPendingHistoryState
@@ -672,6 +694,7 @@ Private Sub FlushTraceBuffer As ResumableSub
 	Dim j As HttpJob
 	j.Initialize("", Me)
 	j.PostString(requestUrl, payload)
+	ApplyClientRequestHeaders(j)
 	j.GetRequest.Timeout = 5000
 	j.GetRequest.SetContentType("text/plain; charset=utf-8")
 	Wait For (j) JobDone(j As HttpJob)
@@ -801,10 +824,12 @@ Private Sub CollectProtectedTrackIds As List
 	result.Initialize
 	Dim protectedIds As Map
 	protectedIds.Initialize
-	AddProtectedTrackId(protectedIds, runtimeState.ActiveItem)
-	AddProtectedTrackId(protectedIds, runtimeState.PreparedItem)
-	AddProtectedTrackId(protectedIds, runtimeState.PendingPlayItem)
-	AddProtectedTrackId(protectedIds, runtimeState.PendingPrepareItem)
+	AddProtectedTrackId(protectedIds, Transition_GetDirectorActiveItem)
+	AddProtectedTrackId(protectedIds, Transition_GetDirectorPreparedItem)
+	AddProtectedTrackId(protectedIds, Transition_GetDirectorPendingPlayItem("primary"))
+	AddProtectedTrackId(protectedIds, Transition_GetDirectorPendingPlayItem("secondary"))
+	AddProtectedTrackId(protectedIds, Transition_GetDirectorPendingPrepareItem("primary"))
+	AddProtectedTrackId(protectedIds, Transition_GetDirectorPendingPrepareItem("secondary"))
 	If playQueue.IsInitialized Then
 		For Each itemObject As Object In playQueue
 			If itemObject Is Map Then
@@ -1464,16 +1489,184 @@ Private Sub GetInactiveAudioKey As String
 End Sub
 
 Private Sub ClearPreparedState(resetPlayer As Boolean)
-	If runtimeState.PreparedAudioKey <> "" And resetPlayer Then
-		GetAudioByKey(runtimeState.PreparedAudioKey).Reset
+	Dim preparedAudioKey As String = Transition_GetDirectorPreparedAudioKey
+	If preparedAudioKey <> "" And resetPlayer Then
+		GetAudioByKey(preparedAudioKey).Reset
 	End If
-	runtimeState.PreparedAudioKey = ""
-	runtimeState.PreparedItem.Initialize
-	runtimeState.ClearPendingPrepareState
+	If directorState.IsInitialized And preparedAudioKey <> "" Then directorState.ClearSlotByAudioKey(preparedAudioKey)
+	If directorState.IsInitialized Then
+		directorState.ClearRole("pending_prepare_music")
+		directorState.ClearRole("pending_interrupt")
+		directorState.ClearRole("pending_prepare")
+		MirrorRuntimeStateFromDirector
+	Else
+		runtimeState.PreparedAudioKey = ""
+		runtimeState.PreparedItem.Initialize
+		runtimeState.ClearPendingPrepareState
+	End If
 End Sub
 
 Private Sub ClearPendingPlayState
-	runtimeState.ClearPendingPlayState
+	If directorState.IsInitialized Then
+		Dim pendingPlaySlot As PlaybackPlayerSlot = directorState.GetPendingPlaySlot
+		If pendingPlaySlot.IsInitialized And pendingPlaySlot.AudioKey <> "" Then directorState.ClearSlotByAudioKey(pendingPlaySlot.AudioKey)
+		directorState.ClearRole("pending_play")
+		MirrorRuntimeStateFromDirector
+	Else
+		runtimeState.ClearPendingPlayState
+	End If
+End Sub
+
+Private Sub SyncPlaybackDirectorState
+' Compatibility-only bridge for legacy fallback paths. Normal playback should write director first.
+	directorState.ApplyLegacyRuntime(runtimeState)
+	directorState.SetFlowState(playbackFlowState)
+End Sub
+
+' Compatibility mirror: поддерживает старые helper-ветки и trace, пока они не убраны полностью.
+Private Sub MirrorRuntimeStateFromDirector
+	runtimeState.ActiveAudioKey = ""
+	runtimeState.PreparedAudioKey = ""
+	runtimeState.PendingPlayAudioKey = ""
+	runtimeState.PendingPrepareAudioKey = ""
+	runtimeState.ActiveItem.Initialize
+	runtimeState.PreparedItem.Initialize
+	runtimeState.PendingPlayItem.Initialize
+	runtimeState.PendingPrepareItem.Initialize
+	Dim activeSlot As PlaybackPlayerSlot = directorState.GetActiveSlot
+	If activeSlot.IsInitialized And activeSlot.HasItem Then
+		runtimeState.ActiveAudioKey = activeSlot.AudioKey
+		runtimeState.ActiveItem = CloneMap(activeSlot.Item)
+	End If
+	Dim preparedSlot As PlaybackPlayerSlot = directorState.GetPreparedSlot
+	If preparedSlot.IsInitialized And preparedSlot.HasItem Then
+		runtimeState.PreparedAudioKey = preparedSlot.AudioKey
+		runtimeState.PreparedItem = CloneMap(preparedSlot.Item)
+	End If
+	Dim pendingPlaySlot As PlaybackPlayerSlot = directorState.GetPendingPlaySlot
+	If pendingPlaySlot.IsInitialized And pendingPlaySlot.HasItem Then
+		runtimeState.PendingPlayAudioKey = pendingPlaySlot.AudioKey
+		runtimeState.PendingPlayItem = CloneMap(pendingPlaySlot.Item)
+	End If
+	Dim pendingPrepareSlot As PlaybackPlayerSlot = directorState.GetPendingPrepareSlot
+	If pendingPrepareSlot.IsInitialized And pendingPrepareSlot.HasItem Then
+		runtimeState.PendingPrepareAudioKey = pendingPrepareSlot.AudioKey
+		runtimeState.PendingPrepareItem = CloneMap(pendingPrepareSlot.Item)
+	End If
+End Sub
+
+Private Sub ResolvePlaybackTickDecision As Map
+	Dim result As Map
+	result.Initialize
+	result.Put("action", "")
+	result.Put("remainMs", EffectiveTrackRemainMs)
+	If Transition_GetDirectorActiveAudioKey = "" Then Return result
+	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Or IsPlaybackFlowActive = False Then Return result
+	If ShouldTriggerBreakNow Then
+		result.Put("action", "trigger_break")
+		Return result
+	End If
+	Dim remain As Long = result.GetDefault("remainMs", 0)
+	If CanCrossfadePreparedItem And remain > 0 And remain <= TRACK_OVERLAP_MS Then
+		result.Put("action", "crossfade_prepared_track")
+		Return result
+	End If
+	If CanStartPreparedOnTrackTail And remain > 0 And remain <= AD_TAIL_OVERLAP_MS Then
+		result.Put("action", "start_prepared_tail")
+		Return result
+	End If
+	If remain > 0 And remain <= PREFETCH_SECONDS * 1000 And CanPrefetchNextNow(False) Then
+		result.Put("action", "prefetch_next")
+		Return result
+	End If
+	Return result
+End Sub
+
+Private Sub ExecutePlaybackTickDecision(decision As Map) As ResumableSub
+	Dim actionName As String = decision.GetDefault("action", "")
+	Dim remain As Long = decision.GetDefault("remainMs", 0)
+	Select actionName
+		Case "trigger_break"
+			TraceInfo("playback", "вставлен break", "mode=exact")
+			Wait For (FadeOutAndContinue) Complete (unusedBreak As Boolean)
+			Return True
+		Case "crossfade_prepared_track"
+			Dim preparedSlot As PlaybackPlayerSlot = directorState.GetPreparedSlot
+			Dim preparedItem As Map
+			If preparedSlot.IsInitialized Then
+				preparedItem = preparedSlot.Item
+			Else
+				preparedItem.Initialize
+			End If
+			TraceInfo("playback", "crossfade trigger", "remainMs=" & remain & " next=" & TraceTrackValue(preparedItem))
+			orchestrationState.IsCrossfadeTriggered = True
+			PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
+			Return True
+		Case "start_prepared_tail"
+			orchestrationState.IsCrossfadeTriggered = True
+			TraceInfo("playback", "вставлена реклама", "queue=" & playQueue.Size)
+			PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
+			Return True
+		Case "prefetch_next"
+			orchestrationState.PrefetchDone = True
+			Wait For (PrefetchNext) Complete (prefetchOk As Boolean)
+			If prefetchOk = False Then orchestrationState.PrefetchDone = False
+			Return prefetchOk
+		Case Else
+			Return False
+	End Select
+End Sub
+
+Private Sub RunPlaybackDirectorTick(source As String) As ResumableSub
+	If directorState.IsTickInProgress Then Return False
+	If Transition_GetDirectorActiveAudioKey = "" Then Return False
+	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Or IsPlaybackFlowActive = False Then Return False
+	directorState.IsTickInProgress = True
+	RecoverStaleDirectorSlots
+	Dim decision As Map = ResolvePlaybackTickDecision
+	Dim actionName As String = decision.GetDefault("action", "")
+	If actionName = "" Then
+		directorState.IsTickInProgress = False
+		Return False
+	End If
+	If directorState.TryBeginDecision(source & ":" & actionName) = False Then
+		directorState.IsTickInProgress = False
+		Return False
+	End If
+	Wait For (ExecutePlaybackTickDecision(decision)) Complete (executed As Boolean)
+	directorState.ClearDecision
+	directorState.IsTickInProgress = False
+	Return executed
+End Sub
+
+' Единая точка входа для advance-сценариев из break / complete / error / watchdog.
+Private Sub RunPlaybackDirectorAdvance(source As String, allowLoad As Boolean) As ResumableSub
+	Dim ownsDecision As Boolean = False
+	If directorState.CurrentDecision = "" Then
+		If directorState.TryBeginDecision(source & ":advance") = False Then Return False
+		ownsDecision = True
+	End If
+	Wait For (DispatchPlaybackAdvance(source, allowLoad)) Complete (advanced As Boolean)
+	If ownsDecision Then directorState.ClearDecision
+	Return advanced
+End Sub
+
+Private Sub ResolveDispatchDecision(allowLoad As Boolean) As Map
+	Dim result As Map
+	result.Initialize
+	result.Put("action", "")
+	If CanUsePreparedItemNow Then
+		result.Put("action", "use_prepared")
+		Return result
+	End If
+	If playQueue.Size > 0 Then
+		result.Put("action", "play_queue_item")
+		Return result
+	End If
+	If allowLoad Then
+		result.Put("action", "populate_queue")
+	End If
+	Return result
 End Sub
 
 Private Sub ResetPlaybackWatchdogState
@@ -1484,20 +1677,54 @@ Private Sub ResetPlaybackWatchdogState
 	playbackActivationToken = 0
 End Sub
 
+Private Sub RecoverStaleDirectorSlots
+	If directorState.IsInitialized = False Then Return
+	Dim nowTicks As Long = DateTime.Now
+	Dim changed As Boolean = False
+	Dim pendingPlaySlot As PlaybackPlayerSlot = directorState.GetPendingPlaySlot
+	If pendingPlaySlot.IsInitialized And pendingPlaySlot.HasItem Then
+		If nowTicks - pendingPlaySlot.LastStateChangedAt > AUDIO_READY_TIMEOUT_MS Then
+			TraceWarn("audio", "pending play timeout", "audio=" & pendingPlaySlot.AudioKey & " trackId=" & TraceTrackValue(pendingPlaySlot.Item))
+			directorState.ClearRole("pending_play")
+			changed = True
+		End If
+	End If
+	Dim pendingPrepareSlot As PlaybackPlayerSlot = directorState.GetPendingPrepareSlot
+	If pendingPrepareSlot.IsInitialized And pendingPrepareSlot.HasItem Then
+		If nowTicks - pendingPrepareSlot.LastStateChangedAt > AUDIO_READY_TIMEOUT_MS Then
+			TraceWarn("audio", "pending prepare timeout", "audio=" & pendingPrepareSlot.AudioKey & " trackId=" & TraceTrackValue(pendingPrepareSlot.Item))
+			directorState.ClearRole(pendingPrepareSlot.Role)
+			changed = True
+		End If
+	End If
+	If changed Then MirrorRuntimeStateFromDirector
+End Sub
+
 Private Sub ActiveTrackIdForWatchdog As String
-	If runtimeState.ActiveItem.IsInitialized = False Then Return ""
-	Return runtimeState.ActiveItem.GetDefault("id", "")
+	If directorState.IsInitialized Then
+		Dim activeSlot As PlaybackPlayerSlot = directorState.GetActiveSlot
+		If activeSlot.IsInitialized And activeSlot.HasItem Then Return activeSlot.Item.GetDefault("id", "")
+	End If
+	Return ""
 End Sub
 
 Private Sub ActivePlaybackPositionMs As Long
-	If runtimeState.ActiveAudioKey = "" Then Return -1
-	Return Max(-1, GetAudioByKey(runtimeState.ActiveAudioKey).Position)
+	If directorState.IsInitialized Then
+		Dim activeSlot As PlaybackPlayerSlot = directorState.GetActiveSlot
+		If activeSlot.IsInitialized And activeSlot.AudioKey <> "" Then Return Max(-1, GetAudioByKey(activeSlot.AudioKey).Position)
+	End If
+	Return -1
 End Sub
 
 Private Sub HasObservableActivePlayback As Boolean
-	If runtimeState.ActiveAudioKey = "" Then Return False
-	If runtimeState.ActiveItem.IsInitialized = False Then Return False
-	Return GetAudioByKey(runtimeState.ActiveAudioKey).IsPlaying
+	If directorState.IsInitialized Then
+		Dim activeSlot As PlaybackPlayerSlot = directorState.GetActiveSlot
+		If activeSlot.IsInitialized = False Then Return False
+		If activeSlot.HasItem = False Then Return False
+		If activeSlot.AudioKey = "" Then Return False
+		Return GetAudioByKey(activeSlot.AudioKey).IsPlaying
+	End If
+	Return False
 End Sub
 
 Private Sub ShouldWatchPlaybackProgress As Boolean
@@ -1573,12 +1800,20 @@ Private Sub RecoverFromPlaybackStall(trackId As String, positionMs As Long, expe
 	If IsPlaybackStallAlreadyRecovered(trackId, positionMs, expectedActivationToken) Then Return False
 	lastPlaybackWatchdogRecoveryAt = nowTicks
 	TraceWarn("playback", "watchdog stall", "trackId=" & trackId & " posMs=" & positionMs & " stage=" & playbackFlowState & " queue=" & playQueue.Size)
-	If runtimeState.ActiveAudioKey <> "" Then GetAudioByKey(runtimeState.ActiveAudioKey).Reset
-	If runtimeState.PreparedAudioKey <> "" And runtimeState.PreparedAudioKey <> runtimeState.ActiveAudioKey Then
-		GetAudioByKey(runtimeState.PreparedAudioKey).Reset
+	Dim activeAudioKey As String = Transition_GetDirectorActiveAudioKey
+	Dim preparedAudioKey As String = Transition_GetDirectorPreparedAudioKey
+	If activeAudioKey <> "" Then GetAudioByKey(activeAudioKey).Reset
+	If preparedAudioKey <> "" And preparedAudioKey <> activeAudioKey Then
+		GetAudioByKey(preparedAudioKey).Reset
 	End If
-	runtimeState.ActiveAudioKey = ""
-	runtimeState.ActiveItem.Initialize
+	If directorState.IsInitialized Then
+		directorState.Reset
+		directorState.ConfigureDefaultSlots
+		MirrorRuntimeStateFromDirector
+	Else
+		runtimeState.ActiveAudioKey = ""
+		runtimeState.ActiveItem.Initialize
+	End If
 	metaState.Reset
 	ClearPendingPlayState
 	ClearPreparedState(False)
@@ -1598,7 +1833,7 @@ Private Sub RecoverFromPlaybackStall(trackId As String, positionMs As Long, expe
 			TraceWarn("playback", "watchdog recovery", "step=populate_failed")
 		End If
 	End If
-	Wait For (DispatchPlaybackAdvance("watchdog_stall", True)) Complete (dispatched As Boolean)
+	Wait For (RunPlaybackDirectorAdvance("watchdog_stall", True)) Complete (dispatched As Boolean)
 	If IsPlaybackStallAlreadyRecovered(trackId, positionMs, expectedActivationToken) Then Return True
 	If dispatched Then
 		TraceInfo("playback", "watchdog recovery", "result=dispatch queue=" & playQueue.Size)
@@ -1615,17 +1850,21 @@ Private Sub SetPlaybackFlowState(newState As String, reason As String)
 	If playbackFlowState = newState Then Return
 	TraceLog("flow переход from=" & playbackFlowState & " to=" & newState & " reason=" & reason)
 	playbackFlowState = newState
+	If directorState.IsInitialized Then directorState.SetFlowState(newState)
 End Sub
 
 Private Sub IsPlaybackTransitionInProgress As Boolean
+	If directorState.IsInitialized Then Return directorState.IsTransitionInProgress
 	Return playbackFlowState = FLOW_STARTING Or playbackFlowState = FLOW_TRANSITIONING Or playbackFlowState = FLOW_STOPPING
 End Sub
 
 Private Sub IsPlaybackFlowActive As Boolean
+	If directorState.IsInitialized Then Return directorState.IsFlowActive
 	Return playbackFlowState = FLOW_PLAYING Or playbackFlowState = FLOW_PREPARING Or playbackFlowState = FLOW_TRANSITIONING Or playbackFlowState = FLOW_STARTING
 End Sub
 
 Private Sub HasUsablePreparedItem As Boolean
+	If directorState.IsInitialized Then Return directorState.HasPreparedSlot
 	Return transitionCoordinator.HasUsablePreparedItem(runtimeState)
 End Sub
 
@@ -1637,6 +1876,16 @@ Private Sub CanAdvancePlaybackNow(initiator As String, logDecision As Boolean) A
 	If orchestrationState.IsStopping Then
 		If logDecision Then TraceLog("guard переход запрет initiator=" & initiator & " reason=stopping")
 		Return False
+	End If
+	If directorState.IsInitialized Then
+		If directorState.FlowState = FLOW_STOPPING Then
+			If logDecision Then TraceLog("guard переход запрет initiator=" & initiator & " reason=flow_stopping")
+			Return False
+		End If
+		If directorState.FlowState = FLOW_PAUSED_POLICY Then
+			If logDecision Then TraceLog("guard переход запрет initiator=" & initiator & " reason=flow_paused_policy")
+			Return False
+		End If
 	End If
 	If playbackFlowState = FLOW_STOPPING Then
 		If logDecision Then TraceLog("guard переход запрет initiator=" & initiator & " reason=flow_stopping")
@@ -1654,6 +1903,7 @@ Private Sub IsUserStoppedState As Boolean
 End Sub
 
 Private Sub IsPolicyPauseState As Boolean
+	If directorState.IsInitialized Then Return dataPolicyState.IsPlaybackPausedByPolicy Or directorState.FlowState = FLOW_PAUSED_POLICY
 	Return dataPolicyState.IsPlaybackPausedByPolicy Or playbackFlowState = FLOW_PAUSED_POLICY
 End Sub
 
@@ -1701,6 +1951,49 @@ Private Sub EnterPolicyPauseState(reason As String, connectionMode As String)
 	ShowMessage(reason)
 End Sub
 
+Private Sub EnterAudioOutputRecoveryPause(message As String)
+	Dim safeMessage As String = message
+	If safeMessage = "" Then safeMessage = MessageValue("audio_device_check")
+	TraceWarn("audio", "output pause", "message=" & safeMessage & " errors=" & consecutiveAudioOutputErrors)
+	isAudioOutputRecoveryPause = True
+	EnterPolicyPauseState(safeMessage, "audio")
+	ScheduleRetry("audio_device", AUDIO_OUTPUT_RETRY_DELAY_MS)
+End Sub
+
+Private Sub ProbeAudioOutputRecovery As ResumableSub
+	If isAudioOutputRecoveryPause = False Then Return False
+	TraceInfo("audio", "output probe", "queue=" & playQueue.Size)
+	dataPolicyState.ClearPolicyPause
+	orchestrationState.EnterStartedState
+	SetStopIcon
+	HideContentBlocks
+	SetPlaybackFlowState(FLOW_IDLE, "audio_output_probe")
+	Dim recovered As Boolean = False
+	If playQueue.Size = 0 Then
+		Wait For (PopulatePlaybackQueue) Complete (queuePrepared As Boolean)
+		If queuePrepared = False And playQueue.Size = 0 Then
+			EnterPolicyPauseState(MessageValue("audio_device_check"), "audio")
+			isAudioOutputRecoveryPause = True
+			Return False
+		End If
+	End If
+	Wait For (RunPlaybackDirectorAdvance("audio_output_probe", True)) Complete (advanced As Boolean)
+	recovered = advanced
+	If recovered = False Then
+		Wait For (StartFirstTrack("audio_output_probe")) Complete (started As Boolean)
+		recovered = started
+	End If
+	If recovered Then
+		TraceInfo("audio", "output probe recovered", "")
+		ResetAudioOutputErrorState
+		RefreshConnectionIndicatorState
+		Return True
+	End If
+	EnterPolicyPauseState(MessageValue("audio_device_check"), "audio")
+	isAudioOutputRecoveryPause = True
+	Return False
+End Sub
+
 Private Sub CanPrepareNextPlayableNow(logDecision As Boolean) As Boolean
 	If orchestrationState.IsStarted = False Then
 		If logDecision Then TraceLog("guard подготовка запрет reason=not_started")
@@ -1726,6 +2019,11 @@ Private Sub CanUsePreparedItemNow As Boolean
 	Return HasUsablePreparedItem And CanAdvancePlaybackNow("prepared_item", False)
 End Sub
 
+Private Sub HasPreparedSlotForTrace As String
+	If directorState.IsInitialized Then Return IIf(directorState.HasPreparedSlot, "true", "false")
+	Return "false"
+End Sub
+
 Private Sub ShouldBlockMusicTransitionForExactBreak As Boolean
 	If metaState.CurrentMediaType <> "track" Then Return False
 	Return HasPendingExactBreak
@@ -1736,7 +2034,7 @@ Private Sub TryEnterPlaybackDispatch(initiator As String) As Boolean
 		TraceLog("переход dispatch skip reason=reentry initiator=" & initiator & " active=" & orchestrationState.ActiveDispatchInitiator & " stage=" & playbackFlowState)
 		Return False
 	End If
-	TraceLog("переход dispatch начало initiator=" & initiator & " prepared=" & runtimeState.HasPrepared & " queue=" & playQueue.Size)
+	TraceLog("переход dispatch начало initiator=" & initiator & " prepared=" & HasPreparedSlotForTrace & " queue=" & playQueue.Size)
 	Return True
 End Sub
 
@@ -1770,12 +2068,13 @@ Private Sub EnsureDirectory(path As String)
 End Sub
 
 Private Sub ConsumePreparedQueueItem
-	If playQueue.Size = 0 Or runtimeState.PreparedItem.IsInitialized = False Then Return
+	Dim preparedItem As Map = Transition_GetDirectorPreparedItem
+	If playQueue.Size = 0 Or preparedItem.IsInitialized = False Then Return
 	For i = 0 To playQueue.Size - 1
 		Dim queuedObject As Object = playQueue.Get(i)
 		If queuedObject Is Map Then
 			Dim queuedItem As Map = queuedObject
-			If ItemsMatch(queuedItem, runtimeState.PreparedItem) Then
+			If ItemsMatch(queuedItem, preparedItem) Then
 				playQueue.RemoveAt(i)
 				Exit
 			End If
@@ -1797,15 +2096,25 @@ End Sub
 
 Private Sub ActivateLoadedItem(audioKey As String, item As Map, fadeInMs As Int)
 	playbackActivationToken = playbackActivationToken + 1
-	runtimeState.SetActive(audioKey, item)
+	ResetAudioOutputErrorState
+	If directorState.IsInitialized Then
+		directorState.SetActive(audioKey, item)
+		directorState.ClearRole("prepared_music")
+		directorState.ClearRole("prepared_interrupt")
+		directorState.ClearRole("prepared")
+		directorState.ClearRole("pending_play")
+		MirrorRuntimeStateFromDirector
+	Else
+		runtimeState.SetActive(audioKey, item)
+	End If
 	SetPlaybackFlowState(FLOW_PLAYING, "activate_loaded_item")
 	metaState.SetCurrentMedia(ResolvePlaybackMediaUrl(audioKey, item), item.GetDefault("type", ""))
 	orchestrationState.ClearTrackTransitionFlags
-	runtimeState.ClearPreparedIfMatchesAudio(audioKey)
 	UpdatePlaybackMeta(item)
 	mediaCacheService.TouchCachedItem(item)
-	TraceLog("воспроизведение activate audio=" & audioKey & " item=" & DescribeItem(item) & " fadeInMs=" & fadeInMs)
-	TraceInfo("audio", "плеер play", BuildAudioTraceDetails(item, "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(item) & " id=" & TraceTrackValue(item)))
+	Dim plannedEndDetails As String = BuildPlannedEndTraceDetails(audioKey, item)
+	TraceLog("воспроизведение activate audio=" & audioKey & " item=" & DescribeItem(item) & " fadeInMs=" & fadeInMs & IIf(plannedEndDetails <> "", " " & plannedEndDetails, ""))
+	TraceInfo("audio", "плеер play", BuildAudioTraceDetails(item, "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(item) & " id=" & TraceTrackValue(item) & IIf(plannedEndDetails <> "", " " & plannedEndDetails, "")))
 	GetAudioByKey(audioKey).PlayWithFade(fadeInMs)
 	MarkPlaybackWatchdogProgress(item.GetDefault("id", ""), 0)
 	ScheduleTrackCacheWarmup
@@ -1844,7 +2153,13 @@ End Sub
 
 Private Sub StartPlaybackWithAudioKey(audioKey As String, item As Map, fadeInMs As Int) As ResumableSub
 	ClearPendingPlayState
-	runtimeState.SetPendingPlay(audioKey, item, fadeInMs)
+	If directorState.IsInitialized Then
+		directorState.SetPendingPlay(audioKey, item)
+		MirrorRuntimeStateFromDirector
+	Else
+		runtimeState.SetPendingPlay(audioKey, item, fadeInMs)
+	End If
+	runtimeState.PendingPlayFadeInMs = fadeInMs
 	SetPlaybackFlowState(FLOW_STARTING, "start_playback:" & item.GetDefault("type", ""))
 	Dim itemUrl As String = ResolvePlaybackMediaUrl(audioKey, item)
 	If itemUrl = "" Then
@@ -1865,27 +2180,35 @@ Private Sub StartPlaybackWithAudioKey(audioKey As String, item As Map, fadeInMs 
 	Return playbackStarted
 End Sub
 
+' Ожидает подтверждения старта по director active slot, а не по одному факту вызова LoadUrl/Play.
 Private Sub WaitForPlaybackActivation(audioKey As String, item As Map, timeoutMs As Int) As ResumableSub
 	Dim startedAt As Long = DateTime.Now
 	Do While DateTime.Now - startedAt < timeoutMs
+		Dim directorActiveAudioKey As String = Transition_GetDirectorActiveAudioKey
+		Dim directorActiveItem As Map = Transition_GetDirectorActiveItem
+		If directorActiveAudioKey = audioKey And ItemsMatch(directorActiveItem, item) Then Return True
 		If runtimeState.PendingPlayAudioKey = "" Then
-			Return runtimeState.ActiveAudioKey = audioKey And ItemsMatch(runtimeState.ActiveItem, item)
+			Return directorActiveAudioKey = audioKey And ItemsMatch(directorActiveItem, item)
 		End If
 		Sleep(25)
 	Loop
-	TraceWarn("audio", "таймаут старта трека", "audio=" & audioKey & " trackId=" & TraceTrackValue(item) & " pendingPlayAudio=" & runtimeState.PendingPlayAudioKey & " activeAudio=" & runtimeState.ActiveAudioKey)
+	TraceWarn("audio", "таймаут старта трека", "audio=" & audioKey & " trackId=" & TraceTrackValue(item) & " pendingPlayAudio=" & runtimeState.PendingPlayAudioKey & " activeAudio=" & runtimeState.ActiveAudioKey & " directorActiveAudio=" & Transition_GetDirectorActiveAudioKey)
 	Return False
 End Sub
 
+' Ожидает, что preload действительно превратится в prepared slot; timeout здесь нужен для recovery, а не для happy path.
 Private Sub WaitForPreparedAudio(audioKey As String, item As Map, timeoutMs As Int) As ResumableSub
 	Dim startedAt As Long = DateTime.Now
 	Do While DateTime.Now - startedAt < timeoutMs
+		Dim directorPreparedAudioKey As String = Transition_GetDirectorPreparedAudioKey
+		Dim directorPreparedItem As Map = Transition_GetDirectorPreparedItem
+		If directorPreparedAudioKey = audioKey And ItemsMatch(directorPreparedItem, item) Then Return True
 		If runtimeState.PendingPrepareAudioKey = "" Then
-			Return runtimeState.PreparedAudioKey = audioKey And ItemsMatch(runtimeState.PreparedItem, item)
+			Return directorPreparedAudioKey = audioKey And ItemsMatch(directorPreparedItem, item)
 		End If
 		Sleep(25)
 	Loop
-	TraceWarn("audio", "таймаут preload", "audio=" & audioKey & " trackId=" & TraceTrackValue(item) & " pendingPrepareAudio=" & runtimeState.PendingPrepareAudioKey & " preparedAudio=" & runtimeState.PreparedAudioKey)
+	TraceWarn("audio", "таймаут preload", "audio=" & audioKey & " trackId=" & TraceTrackValue(item) & " pendingPrepareAudio=" & runtimeState.PendingPrepareAudioKey & " preparedAudio=" & runtimeState.PreparedAudioKey & " directorPreparedAudio=" & Transition_GetDirectorPreparedAudioKey)
 	Return False
 End Sub
 
@@ -1895,7 +2218,72 @@ Private Sub PrepareNextPlayable As ResumableSub
 End Sub
 
 Public Sub Transition_GetPlaybackFlowState As String
+	If directorState.IsInitialized Then Return directorState.FlowState
 	Return playbackFlowState
+End Sub
+
+Public Sub Transition_GetDirectorPreparedItem As Map
+	If directorState.IsInitialized Then
+		Dim preparedSlot As PlaybackPlayerSlot = directorState.GetPreparedSlot
+		If preparedSlot.IsInitialized And preparedSlot.HasItem Then Return CloneMap(preparedSlot.Item)
+	End If
+	Return CloneMap(runtimeState.PreparedItem)
+End Sub
+
+Public Sub Transition_GetDirectorPreparedAudioKey As String
+	If directorState.IsInitialized Then
+		Dim preparedSlot As PlaybackPlayerSlot = directorState.GetPreparedSlot
+		If preparedSlot.IsInitialized Then Return preparedSlot.AudioKey
+	End If
+	Return runtimeState.PreparedAudioKey
+End Sub
+
+Public Sub Transition_GetDirectorActiveItem As Map
+	If directorState.IsInitialized Then
+		Dim activeSlot As PlaybackPlayerSlot = directorState.GetActiveSlot
+		If activeSlot.IsInitialized And activeSlot.HasItem Then Return CloneMap(activeSlot.Item)
+	End If
+	Return CloneMap(runtimeState.ActiveItem)
+End Sub
+
+Public Sub Transition_GetDirectorActiveAudioKey As String
+	If directorState.IsInitialized Then
+		Dim activeSlot As PlaybackPlayerSlot = directorState.GetActiveSlot
+		If activeSlot.IsInitialized Then Return activeSlot.AudioKey
+	End If
+	Return runtimeState.ActiveAudioKey
+End Sub
+
+Public Sub Transition_GetDirectorPendingPlayItem(audioKey As String) As Map
+	Dim emptyItem As Map
+	emptyItem.Initialize
+	If directorState.IsInitialized Then
+		Dim pendingPlaySlot As PlaybackPlayerSlot = directorState.GetSlotByAudioKey(audioKey)
+		If pendingPlaySlot.IsInitialized And pendingPlaySlot.Role = "pending_play" And pendingPlaySlot.HasItem Then Return CloneMap(pendingPlaySlot.Item)
+	End If
+	If runtimeState.PendingPlayAudioKey = audioKey And runtimeState.PendingPlayItem.IsInitialized And runtimeState.PendingPlayItem.Size > 0 Then
+		Return CloneMap(runtimeState.PendingPlayItem)
+	End If
+	Return emptyItem
+End Sub
+
+Public Sub Transition_GetDirectorPendingPrepareItem(audioKey As String) As Map
+	Dim emptyItem As Map
+	emptyItem.Initialize
+	If directorState.IsInitialized Then
+		Dim pendingPrepareSlot As PlaybackPlayerSlot = directorState.GetSlotByAudioKey(audioKey)
+		If pendingPrepareSlot.IsInitialized And pendingPrepareSlot.State = "loading" And pendingPrepareSlot.HasItem Then Return CloneMap(pendingPrepareSlot.Item)
+	End If
+	If runtimeState.PendingPrepareAudioKey = audioKey And runtimeState.PendingPrepareItem.IsInitialized And runtimeState.PendingPrepareItem.Size > 0 Then
+		Return CloneMap(runtimeState.PendingPrepareItem)
+	End If
+	Return emptyItem
+End Sub
+
+Public Sub Transition_SetDirectorPendingPrepare(args As Map)
+	If directorState.IsInitialized = False Then Return
+	directorState.SetPendingPrepare(args.GetDefault("audioKey", ""), args.GetDefault("item", Null))
+	MirrorRuntimeStateFromDirector
 End Sub
 
 Public Sub Facade_PrepareNextPlayableCore As ResumableSub
@@ -1945,7 +2333,7 @@ Public Sub Facade_StartFirstTrackCore(mode As String) As ResumableSub
 			TraceInfo("playback", "первый трек выбран из кэша", "queue=" & playQueue.Size)
 		End If
 	End If
-	If runtimeState.ActiveAudioKey = "" And metaState.CurrentMediaType = "" Then ShowMessage(MessageValue("syncing"))
+	If Transition_GetDirectorActiveAudioKey = "" And metaState.CurrentMediaType = "" Then ShowMessage(MessageValue("syncing"))
 	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
 	Return True
 End Sub
@@ -2021,7 +2409,7 @@ Public Sub Facade_LoadNextAndPlayCore As ResumableSub
 	If playbackFlowState = FLOW_STOPPING Then Return False
 	Wait For (PopulatePlaybackQueue) Complete (queuePrepared As Boolean)
 	If queuePrepared = False Then Return False
-	Wait For (DispatchPlaybackAdvance("load_next_and_play:" & nextStartMode, False)) Complete (dispatched As Boolean)
+	Wait For (RunPlaybackDirectorAdvance("load_next_and_play:" & nextStartMode, False)) Complete (dispatched As Boolean)
 	Return dispatched
 End Sub
 
@@ -2106,36 +2494,44 @@ End Sub
 
 Public Sub Facade_DispatchPlaybackAdvanceCore(initiator As String, allowLoad As Boolean) As ResumableSub
 	If TryEnterPlaybackDispatch(initiator) = False Then Return False
-	TraceInfo("playback", "dispatch переход", "initiator=" & initiator & " queue=" & playQueue.Size & " prepared=" & runtimeState.HasPrepared)
+	TraceInfo("playback", "dispatch переход", "initiator=" & initiator & " queue=" & playQueue.Size & " prepared=" & HasPreparedSlotForTrace)
 	Do While playbackFlowState <> FLOW_STOPPING
-		If CanUsePreparedItemNow Then
-			TraceInfo("playback", "dispatch prepared", "initiator=" & initiator)
-			Return ExitPlaybackDispatch(PromotePreparedPlayer(0, 0))
-		End If
-		If playQueue.Size > 0 Then
-			Dim nextObject As Object = ShiftQueueItem
-			If nextObject Is Map Then
-				Dim nextItem As Map = nextObject
-				If nextItem.GetDefault("type", "") = "break" Then
-					TraceInfo("playback", "dispatch break", "queue=" & playQueue.Size & " exact=" & nextItem.GetDefault("exactly", False))
-				Else
-					TraceInfo("playback", "dispatch next", "type=" & nextItem.GetDefault("type", "") & " id=" & nextItem.GetDefault("id", ""))
+		Dim dispatchDecision As Map = ResolveDispatchDecision(allowLoad)
+		Dim actionName As String = dispatchDecision.GetDefault("action", "")
+		directorState.BeginDecision("dispatch:" & actionName)
+		Select actionName
+			Case "use_prepared"
+				TraceInfo("playback", "dispatch prepared", "initiator=" & initiator)
+				directorState.ClearDecision
+				Return ExitPlaybackDispatch(PromotePreparedPlayer(0, 0))
+			Case "play_queue_item"
+				Dim nextObject As Object = ShiftQueueItem
+				If nextObject Is Map Then
+					Dim nextItem As Map = nextObject
+					If nextItem.GetDefault("type", "") = "break" Then
+						TraceInfo("playback", "dispatch break", "queue=" & playQueue.Size & " exact=" & nextItem.GetDefault("exactly", False))
+					Else
+						TraceInfo("playback", "dispatch next", "type=" & nextItem.GetDefault("type", "") & " id=" & nextItem.GetDefault("id", ""))
+					End If
 				End If
-			End If
-			Dim retryAfter As Int = retryFallbackState.ConsumeDispatchRetryAfter
-			Wait For (PlayQueueItem(nextObject, retryAfter)) Complete (continueQueue As Boolean)
-			If continueQueue = False Then Return ExitPlaybackDispatch(True)
-		Else
-			If allowLoad = False Then Return ExitPlaybackDispatch(True)
-			Wait For (PopulatePlaybackQueue) Complete (queuePrepared As Boolean)
-			If queuePrepared = False Then Return ExitPlaybackDispatch(False)
-		End If
+				Dim retryAfter As Int = retryFallbackState.ConsumeDispatchRetryAfter
+				Wait For (PlayQueueItem(nextObject, retryAfter)) Complete (continueQueue As Boolean)
+				directorState.ClearDecision
+				If continueQueue = False Then Return ExitPlaybackDispatch(True)
+			Case "populate_queue"
+				Wait For (PopulatePlaybackQueue) Complete (queuePrepared As Boolean)
+				directorState.ClearDecision
+				If queuePrepared = False Then Return ExitPlaybackDispatch(False)
+			Case Else
+				directorState.ClearDecision
+				Return ExitPlaybackDispatch(True)
+		End Select
 	Loop
 	Return ExitPlaybackDispatch(False)
 End Sub
 
 Private Sub PrefetchNext As ResumableSub
-	TraceInfo("playback", "prefetch start", "queue=" & playQueue.Size & " current=" & TraceTrackValue(runtimeState.ActiveItem))
+	TraceInfo("playback", "prefetch start", "queue=" & playQueue.Size & " current=" & TraceTrackValue(Transition_GetDirectorActiveItem))
 	If playQueue.Size > 0 Then
 		Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
 		TraceInfo("playback", IIf(preparedOk, "prefetch done", "prefetch fail"), "queue=" & playQueue.Size)
@@ -2184,6 +2580,7 @@ Private Sub FetchJsonWithTimeout(url As String, timeoutMs As Int) As ResumableSu
 	j.Initialize("", Me)
 	TraceLog("http get начало timeoutMs=" & timeoutMs & " url=" & url)
 	j.Download(url)
+	ApplyClientRequestHeaders(j)
 	j.GetRequest.Timeout = timeoutMs
 	Wait For (j) JobDone(j As HttpJob)
 	If j.Success Then
@@ -2212,6 +2609,11 @@ Private Sub FetchJsonWithTimeout(url As String, timeoutMs As Int) As ResumableSu
 	End If
 	j.Release
 	Return result
+End Sub
+
+Private Sub ApplyClientRequestHeaders(j As HttpJob)
+	If j.IsInitialized = False Then Return
+	j.GetRequest.SetHeader(CLIENT_HEADER_NAME, CLIENT_HEADER_VALUE)
 End Sub
 
 Private Sub ClassifyHttpFailure(errorMessage As String) As String
@@ -2333,7 +2735,7 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 		orchestrationState.PrefetchDone = False
 		Dim fadeInMs As Int = ResolveStartFadeInMs
 		Dim targetAudioKey As String = GetInactiveAudioKey
-		If runtimeState.ActiveAudioKey = "" Then targetAudioKey = "primary"
+		If Transition_GetDirectorActiveAudioKey = "" Then targetAudioKey = "primary"
 		Wait For (StartPlaybackWithAudioKey(targetAudioKey, item, fadeInMs)) Complete (playbackStarted As Boolean)
 		If playbackStarted = False Then
 			If orchestrationState.IsStoppedByUser = False And orchestrationState.IsStarted Then
@@ -2474,6 +2876,36 @@ Private Sub FormatTimestampForTrace(targetTimestamp As Long) As String
 	Return value
 End Sub
 
+Private Sub BuildPlannedEndTraceDetails(audioKey As String, item As Map) As String
+	Dim durationMs As Long = ResolvePlannedDurationMs(audioKey, item)
+	If durationMs <= 0 Then Return ""
+	Dim plannedEndTicks As Long = DateTime.Now + durationMs
+	Return "durationMs=" & durationMs & " plannedEnd=" & FormatTicksTimeForTrace(plannedEndTicks)
+End Sub
+
+Private Sub ResolvePlannedDurationMs(audioKey As String, item As Map) As Long
+	Dim audio As AudioPlayer = GetAudioByKey(audioKey)
+	If audio.IsInitialized Then
+		Dim audioDuration As Long = audio.Duration
+		If audioDuration > 0 Then Return audioDuration
+	End If
+	Dim itemDuration As Long = ToLongDefault(item.GetDefault("duration", 0), 0)
+	If itemDuration <= 0 Then Return 0
+	If itemDuration < 1000 Then Return itemDuration * 1000
+	Return itemDuration
+End Sub
+
+Private Sub FormatTicksTimeForTrace(targetTicks As Long) As String
+	Dim previousDateFormat As String = DateTime.DateFormat
+	Dim previousTimeFormat As String = DateTime.TimeFormat
+	DateTime.DateFormat = "dd.MM.yyyy"
+	DateTime.TimeFormat = "HH:mm:ss"
+	Dim value As String = DateTime.Date(targetTicks) & " " & DateTime.Time(targetTicks)
+	DateTime.DateFormat = previousDateFormat
+	DateTime.TimeFormat = previousTimeFormat
+	Return value
+End Sub
+
 Private Sub LocalTimestampToTicks(targetTimestamp As Long) As Long
 	Return (targetTimestamp + (TimezoneOffsetMinutes * 60)) * 1000
 End Sub
@@ -2493,12 +2925,7 @@ Private Sub HandleFetchFailure(result As Map) As ResumableSub
 	If serviceAvailable Then
 		HandleTemporaryState("server", "")
 	Else
-		Wait For (CheckExternalConnectivity) Complete (hasInternet As Boolean)
-		If hasInternet Then
-			HandleTemporaryState("server", "")
-		Else
-			HandleLocalTemporaryState("")
-		End If
+		HandleTemporaryState("server", "")
 	End If
 	Return True
 End Sub
@@ -2509,17 +2936,7 @@ Private Sub CheckServiceAvailability As ResumableSub
 	Dim params As Map = CreateDataParams
 	params.Put("t", DateTime.Now)
 	j.Download(SERVICE_CHECK_URL & "?" & BuildParams(params))
-	j.GetRequest.Timeout = CONNECTIVITY_CHECK_TIMEOUT_MS
-	Wait For (j) JobDone(j As HttpJob)
-	Dim ok As Boolean = j.Success
-	j.Release
-	Return ok
-End Sub
-
-Private Sub CheckExternalConnectivity As ResumableSub
-	Dim j As HttpJob
-	j.Initialize("", Me)
-	j.Download(EXTERNAL_CONNECTIVITY_CHECK_URL & "?t=" & DateTime.Now)
+	ApplyClientRequestHeaders(j)
 	j.GetRequest.Timeout = CONNECTIVITY_CHECK_TIMEOUT_MS
 	Wait For (j) JobDone(j As HttpJob)
 	Dim ok As Boolean = j.Success
@@ -2813,11 +3230,12 @@ End Sub
 
 Private Sub ScheduleRetry(mode As String, delayMs As Int)
 	ClearRetryTimer
+	lastRetryMode = mode
 	retryTimer.Interval = ResolveRetryDelay(mode, delayMs)
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Then
 		Return
 	End If
-	If dataPolicyState.IsPlaybackPausedByPolicy And mode <> "blocked" Then
+	If dataPolicyState.IsPlaybackPausedByPolicy And mode <> "blocked" And mode <> "audio_device" Then
 		Return
 	End If
 	TraceWarn("network", "переход в retry", "mode=" & mode & " delaySec=" & Floor(retryTimer.Interval / 1000))
@@ -2828,6 +3246,13 @@ End Sub
 Private Sub RetryTimer_Tick
 	retryTimer.Enabled = False
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Then Return
+	If lastRetryMode = "audio_device" Then
+		Wait For (ProbeAudioOutputRecovery) Complete (recovered As Boolean)
+		If recovered = False And orchestrationState.IsStarted And orchestrationState.IsStoppedByUser = False Then
+			ScheduleRetry("audio_device", AUDIO_OUTPUT_RETRY_DELAY_MS)
+		End If
+		Return
+	End If
 	If dataPolicyState.IsPlaybackPausedByPolicy Then Return
 	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
 End Sub
@@ -2838,8 +3263,14 @@ Private Sub ResetRetryDelay
 	consecutiveNetworkErrors = 0
 End Sub
 
+Private Sub ResetAudioOutputErrorState
+	consecutiveAudioOutputErrors = 0
+	isAudioOutputRecoveryPause = False
+End Sub
+
 Private Sub ClearRetryTimer
 	retryTimer.Enabled = False
+	lastRetryMode = ""
 End Sub
 
 Private Sub ResolveScheduledBreakAt
@@ -2865,7 +3296,7 @@ Private Sub BreakTimer_Tick
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Then Return
 	If ShouldTriggerBreakNow = False Then Return
 	TraceLog("брейк exact timer hit")
-	Wait For (FadeOutAndContinue) Complete (unused As Boolean)
+	Wait For (RunPlaybackDirectorTick("break_timer")) Complete (unused As Boolean)
 End Sub
 
 Private Sub ClearExactBreakState
@@ -2883,8 +3314,9 @@ End Sub
 
 Private Sub EffectiveTrackRemainMs As Long
 	Dim trackRemain As Long = 0
-	If runtimeState.ActiveAudioKey <> "" Then
-		Dim activeAudio As AudioPlayer = GetAudioByKey(runtimeState.ActiveAudioKey)
+	Dim activeAudioKey As String = Transition_GetDirectorActiveAudioKey
+	If activeAudioKey <> "" Then
+		Dim activeAudio As AudioPlayer = GetAudioByKey(activeAudioKey)
 		If activeAudio.Duration > 0 Then trackRemain = activeAudio.Duration - activeAudio.Position
 	End If
 	Return queueState.LimitRemainByBreak(trackRemain, LocalNowTimestamp)
@@ -2910,10 +3342,11 @@ Private Sub FadeOutAndContinue As ResumableSub
 		fadeMs = 0
 	End If
 	TraceLog("fade начало type=" & metaState.CurrentMediaType & " fadeMs=" & fadeMs)
-	If runtimeState.ActiveAudioKey <> "" Then GetAudioByKey(runtimeState.ActiveAudioKey).Stop(fadeMs)
-	TraceInfo("playback", "break переход fade", "audio=" & runtimeState.ActiveAudioKey & " fadeMs=" & fadeMs)
+	Dim activeAudioKey As String = Transition_GetDirectorActiveAudioKey
+	If activeAudioKey <> "" Then GetAudioByKey(activeAudioKey).Stop(fadeMs)
+	TraceInfo("playback", "break переход fade", "audio=" & activeAudioKey & " fadeMs=" & fadeMs)
 	ClearPreparedState(False)
-	Wait For (DispatchPlaybackAdvance("fade_out_and_continue", True)) Complete (dispatched As Boolean)
+	Wait For (RunPlaybackDirectorAdvance("fade_out_and_continue", True)) Complete (dispatched As Boolean)
 	TraceInfo("playback", "break переход итог", "dispatched=" & dispatched & " queue=" & playQueue.Size & " stage=" & playbackFlowState)
 	Return dispatched
 End Sub
@@ -2989,6 +3422,7 @@ Private Sub FlushHistoryBuffer As ResumableSub
 	Dim j As HttpJob
 	j.Initialize("", Me)
 	j.PostString(requestUrl, payload)
+	ApplyClientRequestHeaders(j)
 	j.GetRequest.Timeout = 5000
 	j.GetRequest.SetContentType("text/plain; charset=utf-8")
 	Wait For (j) JobDone(j As HttpJob)
@@ -3162,7 +3596,7 @@ Public Sub Facade_StopPlayerCore As ResumableSub
 	If CanStopPlaybackNow(True) = False Then Return False
 	SetPlaybackFlowState(FLOW_STOPPING, "stop_requested")
 	orchestrationState.EnterInternalStoppingState
-	TraceLog("stop запрос type=" & metaState.CurrentMediaType & " activeAudio=" & runtimeState.ActiveAudioKey & " preparedAudio=" & runtimeState.PreparedAudioKey)
+	TraceLog("stop запрос type=" & metaState.CurrentMediaType & " activeAudio=" & Transition_GetDirectorActiveAudioKey & " preparedAudio=" & Transition_GetDirectorPreparedAudioKey)
 	CaptureStoppedReserveQueue
 	dataPolicyState.ClearPolicyPauseAndResumeRequest
 	orchestrationState.EndDispatch
@@ -3171,16 +3605,25 @@ Public Sub Facade_StopPlayerCore As ResumableSub
 	ClearHistoryLogTimer
 	ResetPlaybackWatchdogState
 	ResetRetryDelay
+	ResetAudioOutputErrorState
 	retryFallbackState.ClearDispatchRetryAfter
-	If runtimeState.ActiveAudioKey <> "" Then
+	Dim activeAudioKey As String = Transition_GetDirectorActiveAudioKey
+	Dim preparedAudioKey As String = Transition_GetDirectorPreparedAudioKey
+	If activeAudioKey <> "" Then
 		If metaState.CurrentMediaType = "track" Then
-			GetAudioByKey(runtimeState.ActiveAudioKey).Stop(STOP_FADE_MS)
+			GetAudioByKey(activeAudioKey).Stop(STOP_FADE_MS)
 		Else
-			GetAudioByKey(runtimeState.ActiveAudioKey).Stop(0)
+			GetAudioByKey(activeAudioKey).Stop(0)
 		End If
 	End If
-	If runtimeState.PreparedAudioKey <> "" Then GetAudioByKey(runtimeState.PreparedAudioKey).Stop(0)
-	runtimeState.Reset
+	If preparedAudioKey <> "" Then GetAudioByKey(preparedAudioKey).Stop(0)
+	If directorState.IsInitialized Then
+		directorState.Reset
+		directorState.ConfigureDefaultSlots
+		MirrorRuntimeStateFromDirector
+	Else
+		runtimeState.Reset
+	End If
 	metaState.Reset
 	playlistIndex = -1
 	playQueue.Clear
@@ -3227,10 +3670,13 @@ Private Sub ClearPlaybackState
 	audioSecondary.Reset
 	mediaCacheService.FlushPendingIndexSaves
 	mediaCacheService.CleanupPlaybackTempFiles
+	If directorState.IsInitialized Then directorState.Reset
 	runtimeState.ActiveAudioKey = ""
 	runtimeState.PreparedAudioKey = ""
 	runtimeState.ActiveItem.Initialize
 	runtimeState.PreparedItem.Initialize
+	If directorState.IsInitialized Then directorState.ConfigureDefaultSlots
+	SyncPlaybackDirectorState
 	metaState.Reset
 	ClearPendingPlayState
 	ClearPreparedState(False)
@@ -3248,7 +3694,7 @@ End Sub
 
 Private Sub ResolveStartFadeInMs As Int
 	If initialStartFadePending = False Then Return 0
-	If runtimeState.ActiveAudioKey <> "" Then Return 0
+	If Transition_GetDirectorActiveAudioKey <> "" Then Return 0
 	initialStartFadePending = False
 	Return START_FADE_MS
 End Sub
@@ -3313,96 +3759,98 @@ Private Sub HandleAudioTimeupdateAsync(audioKey As String)
 	Wait For (HandleAudioTimeupdate(audioKey)) Complete (unused As Boolean)
 End Sub
 
+Private Sub PlaybackDirectorTimer_Tick
+	Wait For (RunPlaybackDirectorTick("director_timer")) Complete (unused As Boolean)
+End Sub
+
+' Ready только сообщает факт; дальнейшая трактовка зависит от pending role в director-state.
 Private Sub HandleAudioReady(audioKey As String)
 	RefreshConnectionIndicatorState
-	If runtimeState.PendingPlayAudioKey = audioKey Then
-		TraceInfo("audio", "плеер ready", BuildAudioTraceDetails(runtimeState.PendingPlayItem, "player=" & TracePlayerNumber(audioKey) & " mode=play type=" & TraceItemType(runtimeState.PendingPlayItem) & " id=" & TraceTrackValue(runtimeState.PendingPlayItem)))
-		ActivateLoadedItem(audioKey, runtimeState.PendingPlayItem, runtimeState.PendingPlayFadeInMs)
+	Dim pendingPlayItem As Map = Transition_GetDirectorPendingPlayItem(audioKey)
+	If pendingPlayItem.Size > 0 Then
+		TraceInfo("audio", "плеер ready", BuildAudioTraceDetails(pendingPlayItem, "player=" & TracePlayerNumber(audioKey) & " mode=play type=" & TraceItemType(pendingPlayItem) & " id=" & TraceTrackValue(pendingPlayItem)))
+		ActivateLoadedItem(audioKey, pendingPlayItem, runtimeState.PendingPlayFadeInMs)
 		ClearPendingPlayState
 		Return
 	End If
-	If runtimeState.PendingPrepareAudioKey = audioKey Then
-		TraceInfo("audio", "плеер ready", BuildAudioTraceDetails(runtimeState.PendingPrepareItem, "player=" & TracePlayerNumber(audioKey) & " mode=prepare type=" & TraceItemType(runtimeState.PendingPrepareItem) & " id=" & TraceTrackValue(runtimeState.PendingPrepareItem)))
-		runtimeState.SetPrepared(audioKey, runtimeState.PendingPrepareItem)
-		runtimeState.ClearPendingPrepareState
+	Dim pendingPrepareItem As Map = Transition_GetDirectorPendingPrepareItem(audioKey)
+	If pendingPrepareItem.Size > 0 Then
+		TraceInfo("audio", "плеер ready", BuildAudioTraceDetails(pendingPrepareItem, "player=" & TracePlayerNumber(audioKey) & " mode=prepare type=" & TraceItemType(pendingPrepareItem) & " id=" & TraceTrackValue(pendingPrepareItem)))
+		If directorState.IsInitialized Then
+			directorState.SetPrepared(audioKey, pendingPrepareItem)
+			MirrorRuntimeStateFromDirector
+		Else
+			runtimeState.SetPrepared(audioKey, pendingPrepareItem)
+			runtimeState.ClearPendingPrepareState
+		End If
 	End If
 End Sub
 
+' Error сначала классифицируется по director-slot, а затем либо чистит pending, либо запускает общий recovery path.
 Private Sub HandleAudioError(audioKey As String, message As String) As ResumableSub
-	Dim errorItem As Map = runtimeState.ActiveItem
-	If runtimeState.PendingPlayAudioKey = audioKey Then errorItem = runtimeState.PendingPlayItem
-	If runtimeState.PendingPrepareAudioKey = audioKey Then errorItem = runtimeState.PendingPrepareItem
+	Dim errorItem As Map = Transition_GetDirectorActiveItem
+	Dim pendingPlayItem As Map = Transition_GetDirectorPendingPlayItem(audioKey)
+	Dim pendingPrepareItem As Map = Transition_GetDirectorPendingPrepareItem(audioKey)
+	If pendingPlayItem.Size > 0 Then errorItem = pendingPlayItem
+	If pendingPrepareItem.Size > 0 Then errorItem = pendingPrepareItem
 	TraceError("audio", "плеер error", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(errorItem) & " id=" & TraceTrackValue(errorItem) & " message=" & message)
 	WriteHealthSnapshot("ошибка_audio")
 	SetPlaybackFlowState(FLOW_ERROR, "audio_error:" & audioKey)
-	If runtimeState.PendingPlayAudioKey = audioKey Then
+	If pendingPlayItem.Size > 0 Then
 		ClearPendingPlayState
 		Return True
 	End If
-	If runtimeState.PendingPrepareAudioKey = audioKey Then
+	If pendingPrepareItem.Size > 0 Then
 		ClearPreparedState(False)
 		Return True
 	End If
-	If audioKey <> runtimeState.ActiveAudioKey Then Return False
+	If audioKey <> Transition_GetDirectorActiveAudioKey Then Return False
+	consecutiveAudioOutputErrors = consecutiveAudioOutputErrors + 1
+	If consecutiveAudioOutputErrors >= AUDIO_OUTPUT_ERROR_PAUSE_THRESHOLD Then
+		EnterAudioOutputRecoveryPause(MessageValue("audio_device_check"))
+		Return True
+	End If
 	If CanAdvancePlaybackNow("audio_error:" & audioKey, True) = False Then Return False
 	Wait For (HandleMediaError) Complete (unused As Boolean)
 	If dataPolicyState.IsLocalPlaybackMode And orchestrationState.IsStarted Then
-		Wait For (DispatchPlaybackAdvance("audio_error_recovery:" & audioKey, True)) Complete (unusedRecovery As Boolean)
+		Wait For (RunPlaybackDirectorAdvance("audio_error_recovery:" & audioKey, True)) Complete (unusedRecovery As Boolean)
 	End If
 	Return True
 End Sub
 
+' Complete не выбирает следующий шаг сам — он передаёт управление в общий advance path.
 Private Sub HandleAudioComplete(audioKey As String) As ResumableSub
 	If CanAdvancePlaybackNow("audio_complete:" & audioKey, True) = False Then Return False
-	If audioKey <> runtimeState.ActiveAudioKey Then
-		TraceWarn("playback", "audio complete пропущен", "reason=inactive_audio audio=" & audioKey & " active=" & runtimeState.ActiveAudioKey)
+	Dim activeAudioKey As String = Transition_GetDirectorActiveAudioKey
+	Dim activeItem As Map = Transition_GetDirectorActiveItem
+	If audioKey <> activeAudioKey Then
+		TraceWarn("playback", "audio complete пропущен", "reason=inactive_audio audio=" & audioKey & " active=" & activeAudioKey)
 		Return False
 	End If
 	SetPlaybackFlowState(FLOW_TRANSITIONING, "audio_complete:" & audioKey)
-	If runtimeState.ActiveItem.IsInitialized Then
-		TraceInfo("audio", "плеер complete", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(runtimeState.ActiveItem) & " id=" & TraceTrackValue(runtimeState.ActiveItem))
-		TraceInfo("playback", "смена трека", "trackId=" & TraceTrackValue(runtimeState.ActiveItem))
+	If activeItem.IsInitialized Then
+		TraceInfo("audio", "плеер complete", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(activeItem) & " id=" & TraceTrackValue(activeItem))
+		TraceInfo("playback", "смена трека", "trackId=" & TraceTrackValue(activeItem))
 	End If
-	If runtimeState.ActiveItem.GetDefault("type", "") = "ad" Then
-		QueueHistoryRecordAt(runtimeState.ActiveItem, metaState.HistoryStartedAtTicks)
+	If activeItem.GetDefault("type", "") = "ad" Then
+		QueueHistoryRecordAt(activeItem, metaState.HistoryStartedAtTicks)
 		ClearHistoryLogTimer
 	End If
-	Wait For (DispatchPlaybackAdvance("audio_complete:" & audioKey, True)) Complete (dispatched As Boolean)
+	Wait For (RunPlaybackDirectorAdvance("audio_complete:" & audioKey, True)) Complete (dispatched As Boolean)
 	Return dispatched
 End Sub
 
+' Timeupdate служит подтверждением реального progress active slot и не должен отдельно оркестрировать переходы.
 Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
-	If audioKey <> runtimeState.ActiveAudioKey Then Return False
+	If audioKey <> Transition_GetDirectorActiveAudioKey Then Return False
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Or IsPlaybackFlowActive = False Then Return False
+	Dim activeSlot As PlaybackPlayerSlot = directorState.GetSlotByAudioKey(audioKey)
+	If activeSlot.IsInitialized Then activeSlot.MarkProgress
 	If metaState.PendingHistoryItem.IsInitialized Then
-		If metaState.PendingHistoryItem.GetDefault("type", "") = "track" And metaState.CurrentMediaUrl <> "" And metaState.PendingHistoryItem.GetDefault("id", "") = runtimeState.ActiveItem.GetDefault("id", "") And metaState.PendingHistoryItem.GetDefault("type", "") = runtimeState.ActiveItem.GetDefault("type", "") Then
+		Dim activeItem As Map = Transition_GetDirectorActiveItem
+		If metaState.PendingHistoryItem.GetDefault("type", "") = "track" And metaState.CurrentMediaUrl <> "" And metaState.PendingHistoryItem.GetDefault("id", "") = activeItem.GetDefault("id", "") And metaState.PendingHistoryItem.GetDefault("type", "") = activeItem.GetDefault("type", "") Then
 			ConfirmPendingHistoryItem("timeupdate")
 		End If
-	End If
-	If ShouldTriggerBreakNow Then
-		TraceInfo("playback", "вставлен break", "mode=exact")
-		Wait For (FadeOutAndContinue) Complete (unused As Boolean)
-		Return True
-	End If
-	Dim remain As Long = EffectiveTrackRemainMs
-	If CanCrossfadePreparedItem And remain > 0 And remain <= TRACK_OVERLAP_MS Then
-		TraceInfo("playback", "crossfade trigger", "remainMs=" & remain & " next=" & TraceTrackValue(runtimeState.PreparedItem))
-		orchestrationState.IsCrossfadeTriggered = True
-		PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
-		Return True
-	End If
-	If CanStartPreparedOnTrackTail And remain > 0 And remain <= AD_TAIL_OVERLAP_MS Then
-		orchestrationState.IsCrossfadeTriggered = True
-		TraceInfo("playback", "вставлена реклама", "queue=" & playQueue.Size)
-		PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
-		Return True
-	End If
-	If remain <= 0 Then Return False
-	If remain <= PREFETCH_SECONDS * 1000 Then
-		If CanPrefetchNextNow(False) = False Then Return False
-		orchestrationState.PrefetchDone = True
-		Wait For (PrefetchNext) Complete (prefetchOk As Boolean)
-		If prefetchOk = False Then orchestrationState.PrefetchDone = False
 	End If
 	Return True
 End Sub
@@ -4059,13 +4507,14 @@ End Sub
 
 Private Sub IsPlaybackRunningForTrace As String
 	If orchestrationState.IsStarted = False Then Return "false"
-	If runtimeState.ActiveAudioKey = "" Then Return "false"
+	If Transition_GetDirectorActiveAudioKey = "" Then Return "false"
 	Return "true"
 End Sub
 
 Private Sub ResolveCurrentTrackTraceValue As String
-	If runtimeState.ActiveItem.IsInitialized = False Then Return ""
-	Return TraceTrackValue(runtimeState.ActiveItem)
+	Dim activeItem As Map = Transition_GetDirectorActiveItem
+	If activeItem.IsInitialized = False Then Return ""
+	Return TraceTrackValue(activeItem)
 End Sub
 
 Private Sub ResolveFreeRamMbText As String
@@ -4565,10 +5014,11 @@ Private Sub BuildAudioTraceDetails(item As Map, baseDetails As String) As String
 End Sub
 
 Private Sub BuildHealthAudioTraceDetails As String
-	If runtimeState.ActiveItem.IsInitialized = False Then Return ""
-	Return " volume=" & NumberFormat2(CurrentVolume(runtimeState.ActiveItem), 1, 3, 3, False) & _
-		" gainDb=" & NumberFormat2(ResolveItemGainDb(runtimeState.ActiveItem), 1, 1, 1, False) & _
-		" gainApplied=" & IIf(runtimeState.ActiveItem.ContainsKey("gain"), "yes", "default")
+	Dim activeItem As Map = Transition_GetDirectorActiveItem
+	If activeItem.IsInitialized = False Then Return ""
+	Return " volume=" & NumberFormat2(CurrentVolume(activeItem), 1, 3, 3, False) & _
+		" gainDb=" & NumberFormat2(ResolveItemGainDb(activeItem), 1, 1, 1, False) & _
+		" gainApplied=" & IIf(activeItem.ContainsKey("gain"), "yes", "default")
 End Sub
 
 Private Sub ResolveItemVolume(item As Map) As Double

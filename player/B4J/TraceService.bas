@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Сервис trace/debug логов и server snapshots.
+' Хранит оперативный trace для UI/отправки и отдельные debug snapshots сетевых ответов.
+
 Sub Class_Globals
 	Private storageDir As String
 	Private debugResponsesDir As String
@@ -27,6 +30,7 @@ Public Sub Initialize(storageDirValue As String, debugResponsesDirValue As Strin
 	serverSnapshots.Initialize
 End Sub
 
+' Основной пользовательский trace: хранится кольцевым буфером и выводится в лог.
 Public Sub Trace(message As String)
 	Dim entry As String = DateTime.Time(DateTime.Now) & " " & message
 	traceLogs.Add(entry)
@@ -40,6 +44,7 @@ Public Sub Trace(message As String)
 	Log(entry)
 End Sub
 
+' DEBUG trace для более шумных диагностических сообщений.
 Public Sub TraceDebug(message As String)
 	Dim entry As String = DateTime.Time(DateTime.Now) & " DEBUG " & message
 	debugLogs.Add(entry)
@@ -75,11 +80,13 @@ Public Sub GetRecentDebugList(maxItems As Int) As List
 	Return copy
 End Sub
 
+' Начинает batch отправки trace: отдаёт копию текущего набора, но не удаляет его до подтверждения.
 Public Sub BeginPendingTraceBatch As List
 	pendingTraceBatch = CloneList(traceLogs)
 	Return CloneList(pendingTraceBatch)
 End Sub
 
+' После успешной отправки удаляет только ту часть trace, которая реально ушла, не трогая новые записи.
 Public Sub ConfirmPendingTraceBatchSent
 	If pendingTraceBatch.IsInitialized = False Or pendingTraceBatch.Size = 0 Then Return
 	Do While pendingTraceBatch.Size > 0 And traceLogs.Size > 0
@@ -117,6 +124,7 @@ Public Sub GetServerTraceList As List
 	Return copy
 End Sub
 
+' Сохраняет снимок ответа сервера и пишет его в debugResponsesDir для последующего разбора.
 Public Sub SaveServerSnapshot(method As String, url As String, success As Boolean, body As String, errorMessage As String)
 	Dim timestamp As String = DateTime.Time(DateTime.Now)
 	Dim header As String = timestamp & " SNAPSHOT method=" & method & " success=" & success & " url=" & url

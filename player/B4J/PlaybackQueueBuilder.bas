@@ -5,6 +5,9 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Строит playback queue из offline/data playback модели.
+' Здесь живёт логика snapshot restore, выбора slot/playlist и подготовки очереди без прямого управления аудио.
+
 Sub Class_Globals
 	Private targetPage As B4XMainPage
 End Sub
@@ -13,6 +16,7 @@ Public Sub Initialize(targetPageValue As B4XMainPage)
 	targetPage = targetPageValue
 End Sub
 
+' Проверяет, можно ли сейчас вообще строить очередь из data playback режима.
 Public Sub CanUseDataPlaybackResolver(offlineData As Map) As Boolean
 	If offlineData.IsInitialized = False Then Return False
 	If offlineData.GetDefault("ok", False) <> True Then Return False
@@ -21,6 +25,7 @@ Public Sub CanUseDataPlaybackResolver(offlineData As Map) As Boolean
 	Return True
 End Sub
 
+' Гарантирует, что offlineData уже обновлены настолько, чтобы queue builder мог работать в data playback режиме.
 Public Sub EnsureDataPlaybackReady(offlineData As Map) As ResumableSub
 	If CanUseDataPlaybackResolver(offlineData) Then Return True
 	Wait For (targetPage.QueueBuilder_RefreshOfflineDataNow) Complete (refreshed As Boolean)
@@ -29,6 +34,7 @@ Public Sub EnsureDataPlaybackReady(offlineData As Map) As ResumableSub
 	Return CanUseDataPlaybackResolver(refreshedOfflineData)
 End Sub
 
+' Достраивает очередь до нужной глубины: сначала пробует snapshot restore, потом генерирует новые элементы из data playback.
 Public Sub EnsureDataPlaybackQueue(playQueue As List, minItems As Int, offlineData As Map, nowTicks As Long, storage As KeyValueStore, queueState As PlaybackQueueState, dataResolver As DataPlaybackResolver, mediaCacheService As MediaCache) As ResumableSub
 	If minItems <= 0 Then Return False
 	If playQueue.Size = 0 Then
@@ -68,6 +74,7 @@ Private Sub ApplyExistingQueueToWorkingCursors(workingCursors As Map, playQueue 
 	Next
 End Sub
 
+' Собирает один следующий queue item из текущего data slot / playlist / local cache availability.
 Public Sub BuildNextTrackFromDataPlayback(workingCursors As Map, offlineData As Map, nowTicks As Long, dataResolver As DataPlaybackResolver, mediaCacheService As MediaCache) As ResumableSub
 	Dim emptyItem As Map
 	emptyItem.Initialize
@@ -134,6 +141,7 @@ Public Sub BuildNextTrackFromDataPlayback(workingCursors As Map, offlineData As 
 	Return emptyItem
 End Sub
 
+' Пытается восстановить queue snapshot только если сигнатура данных совпадает с текущей data playback картиной.
 Public Sub RestoreQueueSnapshotFromStorage(playQueue As List, offlineData As Map, nowTicks As Long, storage As KeyValueStore, queueState As PlaybackQueueState, dataResolver As DataPlaybackResolver, mediaCacheService As MediaCache) As Boolean
 	If CanUseDataPlaybackResolver(offlineData) = False Then Return False
 	Dim snapshot As Map = queueState.RestoreQueueSnapshot(storage)

@@ -5,12 +5,15 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' Нормализует сетевые ответы playback API в простые структуры, удобные для orchestration-слоя.
+
 Sub Class_Globals
 End Sub
 
 Public Sub Initialize
 End Sub
 
+' Извлекает и очищает queue list из server response.
 Public Sub NormalizeQueueResponse(data As Object) As List
 	If data Is Map Then
 		Dim m As Map = data
@@ -26,6 +29,7 @@ Public Sub NormalizeQueueResponse(data As Object) As List
 	Return Null
 End Sub
 
+' Безопасно вытаскивает retry_after, если сервер временно просит не дёргать next/data слишком часто.
 Public Sub NormalizeRetryAfter(data As Object) As Int
 	If data Is Map Then
 		Dim m As Map = data

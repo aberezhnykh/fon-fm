@@ -122,7 +122,7 @@ __ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .Remo
 ;
 RDebugUtils.currentLine=30343178;
  //BA.debugLineNum = 30343178;BA.debugLine="Log(entry)";
-__c.LogImpl("730343178",_entry,0);
+__c.LogImpl("430343178",_entry,0);
 RDebugUtils.currentLine=30343179;
  //BA.debugLineNum = 30343179;BA.debugLine="End Sub";
 return "";
@@ -469,7 +469,7 @@ __ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .RemoveAt((in
 ;
 RDebugUtils.currentLine=61800454;
  //BA.debugLineNum = 61800454;BA.debugLine="Log(entry)";
-__c.LogImpl("761800454",_entry,0);
+__c.LogImpl("461800454",_entry,0);
 RDebugUtils.currentLine=61800455;
  //BA.debugLineNum = 61800455;BA.debugLine="End Sub";
 return "";
