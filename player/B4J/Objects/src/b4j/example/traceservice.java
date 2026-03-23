@@ -34,6 +34,7 @@ public anywheresoftware.b4a.keywords.Common __c = null;
 public String _storagedir = "";
 public String _debugresponsesdir = "";
 public anywheresoftware.b4a.objects.collections.List _tracelogs = null;
+public anywheresoftware.b4a.objects.collections.List _debuglogs = null;
 public anywheresoftware.b4a.objects.collections.List _pendingtracebatch = null;
 public anywheresoftware.b4a.objects.collections.List _serversnapshots = null;
 public int _traceloglimit = 0;
@@ -43,6 +44,89 @@ public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
 public b4j.example.b4xcollections _b4xcollections = null;
 public b4j.example.httputils2service _httputils2service = null;
+public anywheresoftware.b4a.objects.collections.List  _getrecentdebuglist(b4j.example.traceservice __ref,int _maxitems) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="traceservice";
+if (Debug.shouldDelegate(ba, "getrecentdebuglist", false))
+	 {return ((anywheresoftware.b4a.objects.collections.List) Debug.delegate(ba, "getrecentdebuglist", new Object[] {_maxitems}));}
+anywheresoftware.b4a.objects.collections.List _copy = null;
+int _startindex = 0;
+int _i = 0;
+RDebugUtils.currentLine=61865984;
+ //BA.debugLineNum = 61865984;BA.debugLine="Public Sub GetRecentDebugList(maxItems As Int) As";
+RDebugUtils.currentLine=61865985;
+ //BA.debugLineNum = 61865985;BA.debugLine="Dim copy As List";
+_copy = new anywheresoftware.b4a.objects.collections.List();
+RDebugUtils.currentLine=61865986;
+ //BA.debugLineNum = 61865986;BA.debugLine="copy.Initialize";
+_copy.Initialize();
+RDebugUtils.currentLine=61865987;
+ //BA.debugLineNum = 61865987;BA.debugLine="If debugLogs.IsInitialized = False Or debugLogs.S";
+if (__ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .IsInitialized()==__c.False || __ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .getSize()==0) { 
+if (true) return _copy;};
+RDebugUtils.currentLine=61865988;
+ //BA.debugLineNum = 61865988;BA.debugLine="Dim startIndex As Int = Max(0, debugLogs.Size - M";
+_startindex = (int) (__c.Max(0,__ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .getSize()-__c.Max(1,_maxitems)));
+RDebugUtils.currentLine=61865989;
+ //BA.debugLineNum = 61865989;BA.debugLine="For i = startIndex To debugLogs.Size - 1";
+{
+final int step5 = 1;
+final int limit5 = (int) (__ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .getSize()-1);
+_i = _startindex ;
+for (;_i <= limit5 ;_i = _i + step5 ) {
+RDebugUtils.currentLine=61865990;
+ //BA.debugLineNum = 61865990;BA.debugLine="copy.Add(debugLogs.Get(i))";
+_copy.Add(__ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .Get(_i));
+ }
+};
+RDebugUtils.currentLine=61865992;
+ //BA.debugLineNum = 61865992;BA.debugLine="Return copy";
+if (true) return _copy;
+RDebugUtils.currentLine=61865993;
+ //BA.debugLineNum = 61865993;BA.debugLine="End Sub";
+return null;
+}
+public String  _trace(b4j.example.traceservice __ref,String _message) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="traceservice";
+if (Debug.shouldDelegate(ba, "trace", false))
+	 {return ((String) Debug.delegate(ba, "trace", new Object[] {_message}));}
+String _entry = "";
+String _removedentry = "";
+RDebugUtils.currentLine=30343168;
+ //BA.debugLineNum = 30343168;BA.debugLine="Public Sub Trace(message As String)";
+RDebugUtils.currentLine=30343169;
+ //BA.debugLineNum = 30343169;BA.debugLine="Dim entry As String = DateTime.Time(DateTime.Now)";
+_entry = __c.DateTime.Time(__c.DateTime.getNow())+" "+_message;
+RDebugUtils.currentLine=30343170;
+ //BA.debugLineNum = 30343170;BA.debugLine="traceLogs.Add(entry)";
+__ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .Add((Object)(_entry));
+RDebugUtils.currentLine=30343171;
+ //BA.debugLineNum = 30343171;BA.debugLine="Do While traceLogs.Size > traceLogLimit";
+while (__ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>__ref._traceloglimit /*int*/ ) {
+RDebugUtils.currentLine=30343172;
+ //BA.debugLineNum = 30343172;BA.debugLine="Dim removedEntry As String = traceLogs.Get(0)";
+_removedentry = BA.ObjectToString(__ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .Get((int) (0)));
+RDebugUtils.currentLine=30343173;
+ //BA.debugLineNum = 30343173;BA.debugLine="traceLogs.RemoveAt(0)";
+__ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .RemoveAt((int) (0));
+RDebugUtils.currentLine=30343174;
+ //BA.debugLineNum = 30343174;BA.debugLine="If pendingTraceBatch.IsInitialized And pendingTr";
+if (__ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .IsInitialized() && __ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>0) { 
+RDebugUtils.currentLine=30343175;
+ //BA.debugLineNum = 30343175;BA.debugLine="If pendingTraceBatch.Get(0) = removedEntry Then";
+if ((__ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .Get((int) (0))).equals((Object)(_removedentry))) { 
+__ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .RemoveAt((int) (0));};
+ };
+ }
+;
+RDebugUtils.currentLine=30343178;
+ //BA.debugLineNum = 30343178;BA.debugLine="Log(entry)";
+__c.LogImpl("730343178",_entry,0);
+RDebugUtils.currentLine=30343179;
+ //BA.debugLineNum = 30343179;BA.debugLine="End Sub";
+return "";
+}
 public anywheresoftware.b4a.objects.collections.List  _beginpendingtracebatch(b4j.example.traceservice __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="traceservice";
@@ -281,13 +365,16 @@ RDebugUtils.currentLine=30277637;
  //BA.debugLineNum = 30277637;BA.debugLine="traceLogs.Initialize";
 __ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
 RDebugUtils.currentLine=30277638;
- //BA.debugLineNum = 30277638;BA.debugLine="pendingTraceBatch.Initialize";
-__ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
+ //BA.debugLineNum = 30277638;BA.debugLine="debugLogs.Initialize";
+__ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
 RDebugUtils.currentLine=30277639;
- //BA.debugLineNum = 30277639;BA.debugLine="serverSnapshots.Initialize";
-__ref._serversnapshots /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
+ //BA.debugLineNum = 30277639;BA.debugLine="pendingTraceBatch.Initialize";
+__ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
 RDebugUtils.currentLine=30277640;
- //BA.debugLineNum = 30277640;BA.debugLine="End Sub";
+ //BA.debugLineNum = 30277640;BA.debugLine="serverSnapshots.Initialize";
+__ref._serversnapshots /*anywheresoftware.b4a.objects.collections.List*/ .Initialize();
+RDebugUtils.currentLine=30277641;
+ //BA.debugLineNum = 30277641;BA.debugLine="End Sub";
 return "";
 }
 public String  _saveserversnapshot(b4j.example.traceservice __ref,String _method,String _url,boolean _success,String _body,String _errormessage) throws Exception{
@@ -301,15 +388,15 @@ anywheresoftware.b4a.objects.collections.Map _entry = null;
 RDebugUtils.currentLine=30670848;
  //BA.debugLineNum = 30670848;BA.debugLine="Public Sub SaveServerSnapshot(method As String, ur";
 RDebugUtils.currentLine=30670849;
- //BA.debugLineNum = 30670849;BA.debugLine="Dim timestamp As String = DateTime.Date(DateTime.";
-_timestamp = __c.DateTime.Date(__c.DateTime.getNow())+" "+__c.DateTime.Time(__c.DateTime.getNow());
+ //BA.debugLineNum = 30670849;BA.debugLine="Dim timestamp As String = DateTime.Time(DateTime.";
+_timestamp = __c.DateTime.Time(__c.DateTime.getNow());
 RDebugUtils.currentLine=30670850;
- //BA.debugLineNum = 30670850;BA.debugLine="Dim header As String = timestamp & \" | \" & method";
-_header = _timestamp+" | "+_method+" | success="+BA.ObjectToString(_success)+" | "+_url;
+ //BA.debugLineNum = 30670850;BA.debugLine="Dim header As String = timestamp & \" SNAPSHOT met";
+_header = _timestamp+" SNAPSHOT method="+_method+" success="+BA.ObjectToString(_success)+" url="+_url;
 RDebugUtils.currentLine=30670851;
- //BA.debugLineNum = 30670851;BA.debugLine="If errorMessage <> \"\" Then header = header & \" |";
+ //BA.debugLineNum = 30670851;BA.debugLine="If errorMessage <> \"\" Then header = header & \" er";
 if ((_errormessage).equals("") == false) { 
-_header = _header+" | error="+_errormessage;};
+_header = _header+" error="+_errormessage;};
 RDebugUtils.currentLine=30670852;
  //BA.debugLineNum = 30670852;BA.debugLine="Dim entry As Map";
 _entry = new anywheresoftware.b4a.objects.collections.Map();
@@ -358,45 +445,33 @@ RDebugUtils.currentLine=30670867;
  //BA.debugLineNum = 30670867;BA.debugLine="End Sub";
 return "";
 }
-public String  _trace(b4j.example.traceservice __ref,String _message) throws Exception{
+public String  _tracedebug(b4j.example.traceservice __ref,String _message) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="traceservice";
-if (Debug.shouldDelegate(ba, "trace", false))
-	 {return ((String) Debug.delegate(ba, "trace", new Object[] {_message}));}
+if (Debug.shouldDelegate(ba, "tracedebug", false))
+	 {return ((String) Debug.delegate(ba, "tracedebug", new Object[] {_message}));}
 String _entry = "";
-String _removedentry = "";
-RDebugUtils.currentLine=30343168;
- //BA.debugLineNum = 30343168;BA.debugLine="Public Sub Trace(message As String)";
-RDebugUtils.currentLine=30343169;
- //BA.debugLineNum = 30343169;BA.debugLine="Dim entry As String = DateTime.Date(DateTime.Now)";
-_entry = __c.DateTime.Date(__c.DateTime.getNow())+" "+__c.DateTime.Time(__c.DateTime.getNow())+" | "+_message;
-RDebugUtils.currentLine=30343170;
- //BA.debugLineNum = 30343170;BA.debugLine="traceLogs.Add(entry)";
-__ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .Add((Object)(_entry));
-RDebugUtils.currentLine=30343171;
- //BA.debugLineNum = 30343171;BA.debugLine="Do While traceLogs.Size > traceLogLimit";
-while (__ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>__ref._traceloglimit /*int*/ ) {
-RDebugUtils.currentLine=30343172;
- //BA.debugLineNum = 30343172;BA.debugLine="Dim removedEntry As String = traceLogs.Get(0)";
-_removedentry = BA.ObjectToString(__ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .Get((int) (0)));
-RDebugUtils.currentLine=30343173;
- //BA.debugLineNum = 30343173;BA.debugLine="traceLogs.RemoveAt(0)";
-__ref._tracelogs /*anywheresoftware.b4a.objects.collections.List*/ .RemoveAt((int) (0));
-RDebugUtils.currentLine=30343174;
- //BA.debugLineNum = 30343174;BA.debugLine="If pendingTraceBatch.IsInitialized And pendingTr";
-if (__ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .IsInitialized() && __ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>0) { 
-RDebugUtils.currentLine=30343175;
- //BA.debugLineNum = 30343175;BA.debugLine="If pendingTraceBatch.Get(0) = removedEntry Then";
-if ((__ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .Get((int) (0))).equals((Object)(_removedentry))) { 
-__ref._pendingtracebatch /*anywheresoftware.b4a.objects.collections.List*/ .RemoveAt((int) (0));};
- };
+RDebugUtils.currentLine=61800448;
+ //BA.debugLineNum = 61800448;BA.debugLine="Public Sub TraceDebug(message As String)";
+RDebugUtils.currentLine=61800449;
+ //BA.debugLineNum = 61800449;BA.debugLine="Dim entry As String = DateTime.Time(DateTime.Now)";
+_entry = __c.DateTime.Time(__c.DateTime.getNow())+" DEBUG "+_message;
+RDebugUtils.currentLine=61800450;
+ //BA.debugLineNum = 61800450;BA.debugLine="debugLogs.Add(entry)";
+__ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .Add((Object)(_entry));
+RDebugUtils.currentLine=61800451;
+ //BA.debugLineNum = 61800451;BA.debugLine="Do While debugLogs.Size > traceLogLimit";
+while (__ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>__ref._traceloglimit /*int*/ ) {
+RDebugUtils.currentLine=61800452;
+ //BA.debugLineNum = 61800452;BA.debugLine="debugLogs.RemoveAt(0)";
+__ref._debuglogs /*anywheresoftware.b4a.objects.collections.List*/ .RemoveAt((int) (0));
  }
 ;
-RDebugUtils.currentLine=30343178;
- //BA.debugLineNum = 30343178;BA.debugLine="Log(entry)";
-__c.LogImpl("530343178",_entry,0);
-RDebugUtils.currentLine=30343179;
- //BA.debugLineNum = 30343179;BA.debugLine="End Sub";
+RDebugUtils.currentLine=61800454;
+ //BA.debugLineNum = 61800454;BA.debugLine="Log(entry)";
+__c.LogImpl("761800454",_entry,0);
+RDebugUtils.currentLine=61800455;
+ //BA.debugLineNum = 61800455;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.List  _clonelist(b4j.example.traceservice __ref,anywheresoftware.b4a.objects.collections.List _source) throws Exception{
@@ -454,19 +529,22 @@ RDebugUtils.currentLine=30212099;
  //BA.debugLineNum = 30212099;BA.debugLine="Private traceLogs As List";
 _tracelogs = new anywheresoftware.b4a.objects.collections.List();
 RDebugUtils.currentLine=30212100;
- //BA.debugLineNum = 30212100;BA.debugLine="Private pendingTraceBatch As List";
-_pendingtracebatch = new anywheresoftware.b4a.objects.collections.List();
+ //BA.debugLineNum = 30212100;BA.debugLine="Private debugLogs As List";
+_debuglogs = new anywheresoftware.b4a.objects.collections.List();
 RDebugUtils.currentLine=30212101;
- //BA.debugLineNum = 30212101;BA.debugLine="Private serverSnapshots As List";
-_serversnapshots = new anywheresoftware.b4a.objects.collections.List();
+ //BA.debugLineNum = 30212101;BA.debugLine="Private pendingTraceBatch As List";
+_pendingtracebatch = new anywheresoftware.b4a.objects.collections.List();
 RDebugUtils.currentLine=30212102;
- //BA.debugLineNum = 30212102;BA.debugLine="Private traceLogLimit As Int";
-_traceloglimit = 0;
+ //BA.debugLineNum = 30212102;BA.debugLine="Private serverSnapshots As List";
+_serversnapshots = new anywheresoftware.b4a.objects.collections.List();
 RDebugUtils.currentLine=30212103;
- //BA.debugLineNum = 30212103;BA.debugLine="Private serverSnapshotLimit As Int";
-_serversnapshotlimit = 0;
+ //BA.debugLineNum = 30212103;BA.debugLine="Private traceLogLimit As Int";
+_traceloglimit = 0;
 RDebugUtils.currentLine=30212104;
- //BA.debugLineNum = 30212104;BA.debugLine="End Sub";
+ //BA.debugLineNum = 30212104;BA.debugLine="Private serverSnapshotLimit As Int";
+_serversnapshotlimit = 0;
+RDebugUtils.currentLine=30212105;
+ //BA.debugLineNum = 30212105;BA.debugLine="End Sub";
 return "";
 }
 public String  _cleanupserversnapshotfiles(b4j.example.traceservice __ref) throws Exception{

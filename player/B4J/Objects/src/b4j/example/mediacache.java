@@ -35,7 +35,6 @@ public String _storagedir = "";
 public b4j.example.keyvaluestore _storage = null;
 public Object _targetmodule = null;
 public String _tracesubname = "";
-public String _devicekeyseed = "";
 public String _mediadirname = "";
 public String _adsdirname = "";
 public String _tracksdirname = "";
@@ -922,28 +921,25 @@ RDebugUtils.currentLine=23986180;
  //BA.debugLineNum = 23986180;BA.debugLine="traceSubName = traceSubNameValue";
 __ref._tracesubname /*String*/  = _tracesubnamevalue;
 RDebugUtils.currentLine=23986181;
- //BA.debugLineNum = 23986181;BA.debugLine="deviceKeySeed = deviceIdValue";
-__ref._devicekeyseed /*String*/  = _deviceidvalue;
-RDebugUtils.currentLine=23986182;
- //BA.debugLineNum = 23986182;BA.debugLine="playbackTempTrackIds.Initialize";
+ //BA.debugLineNum = 23986181;BA.debugLine="playbackTempTrackIds.Initialize";
 __ref._playbacktemptrackids /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();
-RDebugUtils.currentLine=23986183;
- //BA.debugLineNum = 23986183;BA.debugLine="cachedAdIndexDirty = False";
+RDebugUtils.currentLine=23986182;
+ //BA.debugLineNum = 23986182;BA.debugLine="cachedAdIndexDirty = False";
 __ref._cachedadindexdirty /*boolean*/  = __c.False;
-RDebugUtils.currentLine=23986184;
- //BA.debugLineNum = 23986184;BA.debugLine="cachedTrackIndexDirty = False";
+RDebugUtils.currentLine=23986183;
+ //BA.debugLineNum = 23986183;BA.debugLine="cachedTrackIndexDirty = False";
 __ref._cachedtrackindexdirty /*boolean*/  = __c.False;
-RDebugUtils.currentLine=23986185;
- //BA.debugLineNum = 23986185;BA.debugLine="EnsureDirectory(GetAdsDir)";
+RDebugUtils.currentLine=23986184;
+ //BA.debugLineNum = 23986184;BA.debugLine="EnsureDirectory(GetAdsDir)";
 __ref._ensuredirectory /*String*/ (null,__ref._getadsdir /*String*/ (null));
-RDebugUtils.currentLine=23986186;
- //BA.debugLineNum = 23986186;BA.debugLine="EnsureDirectory(GetTracksDir)";
+RDebugUtils.currentLine=23986185;
+ //BA.debugLineNum = 23986185;BA.debugLine="EnsureDirectory(GetTracksDir)";
 __ref._ensuredirectory /*String*/ (null,__ref._gettracksdir /*String*/ (null));
-RDebugUtils.currentLine=23986187;
- //BA.debugLineNum = 23986187;BA.debugLine="LoadIndexesFromStorage";
+RDebugUtils.currentLine=23986186;
+ //BA.debugLineNum = 23986186;BA.debugLine="LoadIndexesFromStorage";
 __ref._loadindexesfromstorage /*String*/ (null);
-RDebugUtils.currentLine=23986188;
- //BA.debugLineNum = 23986188;BA.debugLine="End Sub";
+RDebugUtils.currentLine=23986187;
+ //BA.debugLineNum = 23986187;BA.debugLine="End Sub";
 return "";
 }
 public String  _resolvelocalmediauri(b4j.example.mediacache __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
@@ -1175,6 +1171,20 @@ RDebugUtils.currentLine=56361000;
  //BA.debugLineNum = 56361000;BA.debugLine="End Sub";
 return 0;
 }
+public String  _getadsdir(b4j.example.mediacache __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "getadsdir", false))
+	 {return ((String) Debug.delegate(ba, "getadsdir", null));}
+RDebugUtils.currentLine=24510464;
+ //BA.debugLineNum = 24510464;BA.debugLine="Public Sub GetAdsDir As String";
+RDebugUtils.currentLine=24510465;
+ //BA.debugLineNum = 24510465;BA.debugLine="Return File.Combine(File.Combine(storageDir, medi";
+if (true) return __c.File.Combine(__c.File.Combine(__ref._storagedir /*String*/ ,__ref._mediadirname /*String*/ ),__ref._adsdirname /*String*/ );
+RDebugUtils.currentLine=24510466;
+ //BA.debugLineNum = 24510466;BA.debugLine="End Sub";
+return "";
+}
 public String  _resolveplaybackmediauri(b4j.example.mediacache __ref,String _audiokey,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="mediacache";
@@ -1219,6 +1229,20 @@ RDebugUtils.currentLine=54984713;
 if (true) return __c.File.GetUri(__c.File.getDirTemp(),__ref._buildplaybacktemptrackfilename /*String*/ (null,_audiokey));
 RDebugUtils.currentLine=54984714;
  //BA.debugLineNum = 54984714;BA.debugLine="End Sub";
+return "";
+}
+public String  _gettracksdir(b4j.example.mediacache __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "gettracksdir", false))
+	 {return ((String) Debug.delegate(ba, "gettracksdir", null));}
+RDebugUtils.currentLine=24576000;
+ //BA.debugLineNum = 24576000;BA.debugLine="Public Sub GetTracksDir As String";
+RDebugUtils.currentLine=24576001;
+ //BA.debugLineNum = 24576001;BA.debugLine="Return File.Combine(File.Combine(storageDir, medi";
+if (true) return __c.File.Combine(__c.File.Combine(__ref._storagedir /*String*/ ,__ref._mediadirname /*String*/ ),__ref._tracksdirname /*String*/ );
+RDebugUtils.currentLine=24576002;
+ //BA.debugLineNum = 24576002;BA.debugLine="End Sub";
 return "";
 }
 public String  _resolvemediasource(b4j.example.mediacache __ref,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
@@ -1373,20 +1397,6 @@ RDebugUtils.currentLine=56688646;
  //BA.debugLineNum = 56688646;BA.debugLine="End Sub";
 return 0L;
 }
-public String  _gettracksdir(b4j.example.mediacache __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="mediacache";
-if (Debug.shouldDelegate(ba, "gettracksdir", false))
-	 {return ((String) Debug.delegate(ba, "gettracksdir", null));}
-RDebugUtils.currentLine=24576000;
- //BA.debugLineNum = 24576000;BA.debugLine="Public Sub GetTracksDir As String";
-RDebugUtils.currentLine=24576001;
- //BA.debugLineNum = 24576001;BA.debugLine="Return File.Combine(File.Combine(storageDir, medi";
-if (true) return __c.File.Combine(__c.File.Combine(__ref._storagedir /*String*/ ,__ref._mediadirname /*String*/ ),__ref._tracksdirname /*String*/ );
-RDebugUtils.currentLine=24576002;
- //BA.debugLineNum = 24576002;BA.debugLine="End Sub";
-return "";
-}
 public String  _markauditindexchanged(b4j.example.mediacache __ref,String _itemtype) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="mediacache";
@@ -1513,8 +1523,8 @@ String _filename = "";
 RDebugUtils.currentLine=55115776;
  //BA.debugLineNum = 55115776;BA.debugLine="Private Sub BuildTrackCacheFileName(trackId As Str";
 RDebugUtils.currentLine=55115777;
- //BA.debugLineNum = 55115777;BA.debugLine="Dim sourceBytes() As Byte = GetBytesFromString(\"f";
-_sourcebytes = __ref._getbytesfromstring /*byte[]*/ (null,"fonfm-track|"+__ref._devicekeyseed /*String*/ +"|"+_trackid);
+ //BA.debugLineNum = 55115777;BA.debugLine="Dim sourceBytes() As Byte = GetBytesFromString(Bu";
+_sourcebytes = __ref._getbytesfromstring /*byte[]*/ (null,__ref._buildtrackobfuscationseed /*String*/ (null,"cache",_trackid));
 RDebugUtils.currentLine=55115778;
  //BA.debugLineNum = 55115778;BA.debugLine="Dim jo As JavaObject";
 _jo = new anywheresoftware.b4j.object.JavaObject();
@@ -1555,6 +1565,20 @@ if (true) return (byte[])(_jo.RunMethod("getBytes",new Object[]{(Object)("UTF-8"
 RDebugUtils.currentLine=56098820;
  //BA.debugLineNum = 56098820;BA.debugLine="End Sub";
 return null;
+}
+public String  _buildtrackobfuscationseed(b4j.example.mediacache __ref,String _purpose,String _trackid) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="mediacache";
+if (Debug.shouldDelegate(ba, "buildtrackobfuscationseed", false))
+	 {return ((String) Debug.delegate(ba, "buildtrackobfuscationseed", new Object[] {_purpose,_trackid}));}
+RDebugUtils.currentLine=62521344;
+ //BA.debugLineNum = 62521344;BA.debugLine="Private Sub BuildTrackObfuscationSeed(purpose As S";
+RDebugUtils.currentLine=62521345;
+ //BA.debugLineNum = 62521345;BA.debugLine="Return \"fonfm|\" & purpose & \"|\" & trackId";
+if (true) return "fonfm|"+_purpose+"|"+_trackid;
+RDebugUtils.currentLine=62521346;
+ //BA.debugLineNum = 62521346;BA.debugLine="End Sub";
+return "";
 }
 public anywheresoftware.b4a.objects.collections.Map  _buildtrackcachesummary(b4j.example.mediacache __ref,anywheresoftware.b4a.objects.collections.Map _protectedids,anywheresoftware.b4a.objects.collections.Map _relevantids) throws Exception{
 __ref = this;
@@ -1798,8 +1822,8 @@ if (Debug.shouldDelegate(ba, "buildtrackobfuscationkey", false))
 RDebugUtils.currentLine=55443456;
  //BA.debugLineNum = 55443456;BA.debugLine="Private Sub BuildTrackObfuscationKey(trackId As St";
 RDebugUtils.currentLine=55443457;
- //BA.debugLineNum = 55443457;BA.debugLine="Return GetBytesFromString(\"fonfm-track-key|\" & de";
-if (true) return __ref._getbytesfromstring /*byte[]*/ (null,"fonfm-track-key|"+__ref._devicekeyseed /*String*/ +"|"+_trackid);
+ //BA.debugLineNum = 55443457;BA.debugLine="Return GetBytesFromString(BuildTrackObfuscationSe";
+if (true) return __ref._getbytesfromstring /*byte[]*/ (null,__ref._buildtrackobfuscationseed /*String*/ (null,"key",_trackid));
 RDebugUtils.currentLine=55443458;
  //BA.debugLineNum = 55443458;BA.debugLine="End Sub";
 return null;
@@ -1858,100 +1882,97 @@ RDebugUtils.currentLine=23920644;
  //BA.debugLineNum = 23920644;BA.debugLine="Private traceSubName As String";
 _tracesubname = "";
 RDebugUtils.currentLine=23920645;
- //BA.debugLineNum = 23920645;BA.debugLine="Private deviceKeySeed As String";
-_devicekeyseed = "";
-RDebugUtils.currentLine=23920646;
- //BA.debugLineNum = 23920646;BA.debugLine="Private mediaDirName As String = \"media\"";
+ //BA.debugLineNum = 23920645;BA.debugLine="Private mediaDirName As String = \"media\"";
 _mediadirname = "media";
-RDebugUtils.currentLine=23920647;
- //BA.debugLineNum = 23920647;BA.debugLine="Private adsDirName As String = \"ads\"";
+RDebugUtils.currentLine=23920646;
+ //BA.debugLineNum = 23920646;BA.debugLine="Private adsDirName As String = \"ads\"";
 _adsdirname = "ads";
-RDebugUtils.currentLine=23920648;
- //BA.debugLineNum = 23920648;BA.debugLine="Private tracksDirName As String = \"tracks\"";
+RDebugUtils.currentLine=23920647;
+ //BA.debugLineNum = 23920647;BA.debugLine="Private tracksDirName As String = \"tracks\"";
 _tracksdirname = "tracks";
-RDebugUtils.currentLine=23920649;
- //BA.debugLineNum = 23920649;BA.debugLine="Private Const CACHE_AUDIT_BATCH_SIZE As Int = 8";
+RDebugUtils.currentLine=23920648;
+ //BA.debugLineNum = 23920648;BA.debugLine="Private Const CACHE_AUDIT_BATCH_SIZE As Int = 8";
 _cache_audit_batch_size = (int) (8);
-RDebugUtils.currentLine=23920650;
- //BA.debugLineNum = 23920650;BA.debugLine="Private Const AD_DOWNLOAD_TIMEOUT_MS As Int = 150";
+RDebugUtils.currentLine=23920649;
+ //BA.debugLineNum = 23920649;BA.debugLine="Private Const AD_DOWNLOAD_TIMEOUT_MS As Int = 150";
 _ad_download_timeout_ms = (int) (15000);
-RDebugUtils.currentLine=23920651;
- //BA.debugLineNum = 23920651;BA.debugLine="Private Const TRACK_DOWNLOAD_TIMEOUT_MS As Int =";
+RDebugUtils.currentLine=23920650;
+ //BA.debugLineNum = 23920650;BA.debugLine="Private Const TRACK_DOWNLOAD_TIMEOUT_MS As Int =";
 _track_download_timeout_ms = (int) (10000);
-RDebugUtils.currentLine=23920652;
- //BA.debugLineNum = 23920652;BA.debugLine="Private Const STREAM_XOR_BUFFER_SIZE As Int = 327";
+RDebugUtils.currentLine=23920651;
+ //BA.debugLineNum = 23920651;BA.debugLine="Private Const STREAM_XOR_BUFFER_SIZE As Int = 327";
 _stream_xor_buffer_size = (int) (32768);
-RDebugUtils.currentLine=23920653;
- //BA.debugLineNum = 23920653;BA.debugLine="Private Const TRACK_CACHE_HARD_LIMIT_MB As Long =";
+RDebugUtils.currentLine=23920652;
+ //BA.debugLineNum = 23920652;BA.debugLine="Private Const TRACK_CACHE_HARD_LIMIT_MB As Long =";
 _track_cache_hard_limit_mb = (long) (1536);
-RDebugUtils.currentLine=23920654;
- //BA.debugLineNum = 23920654;BA.debugLine="Private Const TRACK_CACHE_TARGET_MB As Long = 768";
+RDebugUtils.currentLine=23920653;
+ //BA.debugLineNum = 23920653;BA.debugLine="Private Const TRACK_CACHE_TARGET_MB As Long = 768";
 _track_cache_target_mb = (long) (768);
-RDebugUtils.currentLine=23920655;
- //BA.debugLineNum = 23920655;BA.debugLine="Private Const MIN_FREE_DISK_MB As Long = 1536";
+RDebugUtils.currentLine=23920654;
+ //BA.debugLineNum = 23920654;BA.debugLine="Private Const MIN_FREE_DISK_MB As Long = 1536";
 _min_free_disk_mb = (long) (1536);
-RDebugUtils.currentLine=23920656;
- //BA.debugLineNum = 23920656;BA.debugLine="Private Const MIN_FREE_DISK_PERCENT As Int = 5";
+RDebugUtils.currentLine=23920655;
+ //BA.debugLineNum = 23920655;BA.debugLine="Private Const MIN_FREE_DISK_PERCENT As Int = 5";
 _min_free_disk_percent = (int) (5);
-RDebugUtils.currentLine=23920657;
- //BA.debugLineNum = 23920657;BA.debugLine="Private Const PRIMARY_TEMP_TRACK_FILE As String =";
+RDebugUtils.currentLine=23920656;
+ //BA.debugLineNum = 23920656;BA.debugLine="Private Const PRIMARY_TEMP_TRACK_FILE As String =";
 _primary_temp_track_file = "2f7f5f2f-91a0-4f4c-9f5f-70d7b94fd101.tmp";
-RDebugUtils.currentLine=23920658;
- //BA.debugLineNum = 23920658;BA.debugLine="Private Const SECONDARY_TEMP_TRACK_FILE As String";
+RDebugUtils.currentLine=23920657;
+ //BA.debugLineNum = 23920657;BA.debugLine="Private Const SECONDARY_TEMP_TRACK_FILE As String";
 _secondary_temp_track_file = "92c2df6a-7f22-4b75-8c09-d5a6f4f40a21.tmp";
-RDebugUtils.currentLine=23920659;
- //BA.debugLineNum = 23920659;BA.debugLine="Private cachedAdIndex As Map";
+RDebugUtils.currentLine=23920658;
+ //BA.debugLineNum = 23920658;BA.debugLine="Private cachedAdIndex As Map";
 _cachedadindex = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=23920660;
- //BA.debugLineNum = 23920660;BA.debugLine="Private cachedTrackIndex As Map";
+RDebugUtils.currentLine=23920659;
+ //BA.debugLineNum = 23920659;BA.debugLine="Private cachedTrackIndex As Map";
 _cachedtrackindex = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=23920661;
- //BA.debugLineNum = 23920661;BA.debugLine="Private cachedAdIndexDirty As Boolean";
+RDebugUtils.currentLine=23920660;
+ //BA.debugLineNum = 23920660;BA.debugLine="Private cachedAdIndexDirty As Boolean";
 _cachedadindexdirty = false;
-RDebugUtils.currentLine=23920662;
- //BA.debugLineNum = 23920662;BA.debugLine="Private cachedTrackIndexDirty As Boolean";
+RDebugUtils.currentLine=23920661;
+ //BA.debugLineNum = 23920661;BA.debugLine="Private cachedTrackIndexDirty As Boolean";
 _cachedtrackindexdirty = false;
-RDebugUtils.currentLine=23920663;
- //BA.debugLineNum = 23920663;BA.debugLine="Private playbackTempTrackIds As Map";
+RDebugUtils.currentLine=23920662;
+ //BA.debugLineNum = 23920662;BA.debugLine="Private playbackTempTrackIds As Map";
 _playbacktemptrackids = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=23920664;
- //BA.debugLineNum = 23920664;BA.debugLine="Private cacheAuditInProgress As Boolean";
+RDebugUtils.currentLine=23920663;
+ //BA.debugLineNum = 23920663;BA.debugLine="Private cacheAuditInProgress As Boolean";
 _cacheauditinprogress = false;
-RDebugUtils.currentLine=23920665;
- //BA.debugLineNum = 23920665;BA.debugLine="Private cacheAuditPendingTypes As List";
+RDebugUtils.currentLine=23920664;
+ //BA.debugLineNum = 23920664;BA.debugLine="Private cacheAuditPendingTypes As List";
 _cacheauditpendingtypes = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=23920666;
- //BA.debugLineNum = 23920666;BA.debugLine="Private cacheAuditCurrentType As String";
+RDebugUtils.currentLine=23920665;
+ //BA.debugLineNum = 23920665;BA.debugLine="Private cacheAuditCurrentType As String";
 _cacheauditcurrenttype = "";
-RDebugUtils.currentLine=23920667;
- //BA.debugLineNum = 23920667;BA.debugLine="Private cacheAuditCurrentFileNames As List";
+RDebugUtils.currentLine=23920666;
+ //BA.debugLineNum = 23920666;BA.debugLine="Private cacheAuditCurrentFileNames As List";
 _cacheauditcurrentfilenames = new anywheresoftware.b4a.objects.collections.List();
-RDebugUtils.currentLine=23920668;
- //BA.debugLineNum = 23920668;BA.debugLine="Private cacheAuditCurrentPosition As Int";
+RDebugUtils.currentLine=23920667;
+ //BA.debugLineNum = 23920667;BA.debugLine="Private cacheAuditCurrentPosition As Int";
 _cacheauditcurrentposition = 0;
-RDebugUtils.currentLine=23920669;
- //BA.debugLineNum = 23920669;BA.debugLine="Private cacheAuditSeenIds As Map";
+RDebugUtils.currentLine=23920668;
+ //BA.debugLineNum = 23920668;BA.debugLine="Private cacheAuditSeenIds As Map";
 _cacheauditseenids = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=23920670;
- //BA.debugLineNum = 23920670;BA.debugLine="Private cacheAuditAdIndexChanged As Boolean";
+RDebugUtils.currentLine=23920669;
+ //BA.debugLineNum = 23920669;BA.debugLine="Private cacheAuditAdIndexChanged As Boolean";
 _cacheauditadindexchanged = false;
-RDebugUtils.currentLine=23920671;
- //BA.debugLineNum = 23920671;BA.debugLine="Private cacheAuditTrackIndexChanged As Boolean";
+RDebugUtils.currentLine=23920670;
+ //BA.debugLineNum = 23920670;BA.debugLine="Private cacheAuditTrackIndexChanged As Boolean";
 _cacheaudittrackindexchanged = false;
-RDebugUtils.currentLine=23920672;
- //BA.debugLineNum = 23920672;BA.debugLine="Private cacheAuditAddedCount As Int";
+RDebugUtils.currentLine=23920671;
+ //BA.debugLineNum = 23920671;BA.debugLine="Private cacheAuditAddedCount As Int";
 _cacheauditaddedcount = 0;
-RDebugUtils.currentLine=23920673;
- //BA.debugLineNum = 23920673;BA.debugLine="Private cacheAuditRemovedCount As Int";
+RDebugUtils.currentLine=23920672;
+ //BA.debugLineNum = 23920672;BA.debugLine="Private cacheAuditRemovedCount As Int";
 _cacheauditremovedcount = 0;
-RDebugUtils.currentLine=23920674;
- //BA.debugLineNum = 23920674;BA.debugLine="Private cacheAuditTempDeletedCount As Int";
+RDebugUtils.currentLine=23920673;
+ //BA.debugLineNum = 23920673;BA.debugLine="Private cacheAuditTempDeletedCount As Int";
 _cacheaudittempdeletedcount = 0;
-RDebugUtils.currentLine=23920675;
- //BA.debugLineNum = 23920675;BA.debugLine="Private recentMediaNetworkFailure As Boolean";
+RDebugUtils.currentLine=23920674;
+ //BA.debugLineNum = 23920674;BA.debugLine="Private recentMediaNetworkFailure As Boolean";
 _recentmedianetworkfailure = false;
-RDebugUtils.currentLine=23920676;
- //BA.debugLineNum = 23920676;BA.debugLine="End Sub";
+RDebugUtils.currentLine=23920675;
+ //BA.debugLineNum = 23920675;BA.debugLine="End Sub";
 return "";
 }
 public String  _deletefileifexists(b4j.example.mediacache __ref,String _dir,String _filename) throws Exception{
@@ -2764,20 +2785,6 @@ RDebugUtils.currentLine=24969228;
 __ref._cachedadindexdirty /*boolean*/  = __c.True;
 RDebugUtils.currentLine=24969229;
  //BA.debugLineNum = 24969229;BA.debugLine="End Sub";
-return "";
-}
-public String  _getadsdir(b4j.example.mediacache __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="mediacache";
-if (Debug.shouldDelegate(ba, "getadsdir", false))
-	 {return ((String) Debug.delegate(ba, "getadsdir", null));}
-RDebugUtils.currentLine=24510464;
- //BA.debugLineNum = 24510464;BA.debugLine="Public Sub GetAdsDir As String";
-RDebugUtils.currentLine=24510465;
- //BA.debugLineNum = 24510465;BA.debugLine="Return File.Combine(File.Combine(storageDir, medi";
-if (true) return __c.File.Combine(__c.File.Combine(__ref._storagedir /*String*/ ,__ref._mediadirname /*String*/ ),__ref._adsdirname /*String*/ );
-RDebugUtils.currentLine=24510466;
- //BA.debugLineNum = 24510466;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _replacecachefile(b4j.example.mediacache __ref,String _dir,String _tempfilename,String _finalfilename) throws Exception{
@@ -4003,41 +4010,32 @@ _trackid = __ref._findtrackidbyfilename /*String*/ (null,_filename,_auditindex);
 RDebugUtils.currentLine=26607633;
  //BA.debugLineNum = 26607633;BA.debugLine="If trackId = \"\" Then";
 if ((_trackid).equals("")) { 
-RDebugUtils.currentLine=26607634;
- //BA.debugLineNum = 26607634;BA.debugLine="DeleteFileIfExists(auditDir, fileName)";
-__ref._deletefileifexists /*String*/ (null,_auditdir,_filename);
-RDebugUtils.currentLine=26607635;
- //BA.debugLineNum = 26607635;BA.debugLine="cacheAuditRemovedCount = cacheAuditRemovedCoun";
-__ref._cacheauditremovedcount /*int*/  = (int) (__ref._cacheauditremovedcount /*int*/ +1);
 RDebugUtils.currentLine=26607636;
- //BA.debugLineNum = 26607636;BA.debugLine="MarkAuditIndexChanged(cacheAuditCurrentType)";
-__ref._markauditindexchanged /*String*/ (null,__ref._cacheauditcurrenttype /*String*/ );
-RDebugUtils.currentLine=26607637;
- //BA.debugLineNum = 26607637;BA.debugLine="Continue";
+ //BA.debugLineNum = 26607636;BA.debugLine="Continue";
 if (true) continue;
  };
-RDebugUtils.currentLine=26607639;
- //BA.debugLineNum = 26607639;BA.debugLine="cacheAuditSeenIds.Put(trackId, True)";
+RDebugUtils.currentLine=26607638;
+ //BA.debugLineNum = 26607638;BA.debugLine="cacheAuditSeenIds.Put(trackId, True)";
 __ref._cacheauditseenids /*anywheresoftware.b4a.objects.collections.Map*/ .Put((Object)(_trackid),(Object)(__c.True));
  }else {
-RDebugUtils.currentLine=26607641;
- //BA.debugLineNum = 26607641;BA.debugLine="cacheAuditSeenIds.Put(fileName, True)";
+RDebugUtils.currentLine=26607640;
+ //BA.debugLineNum = 26607640;BA.debugLine="cacheAuditSeenIds.Put(fileName, True)";
 __ref._cacheauditseenids /*anywheresoftware.b4a.objects.collections.Map*/ .Put((Object)(_filename),(Object)(__c.True));
-RDebugUtils.currentLine=26607642;
- //BA.debugLineNum = 26607642;BA.debugLine="If auditIndex.ContainsKey(fileName) = False The";
+RDebugUtils.currentLine=26607641;
+ //BA.debugLineNum = 26607641;BA.debugLine="If auditIndex.ContainsKey(fileName) = False The";
 if (_auditindex.ContainsKey((Object)(_filename))==__c.False) { 
-RDebugUtils.currentLine=26607643;
- //BA.debugLineNum = 26607643;BA.debugLine="AddIndexedFileFromAudit(cacheAuditCurrentType,";
+RDebugUtils.currentLine=26607642;
+ //BA.debugLineNum = 26607642;BA.debugLine="AddIndexedFileFromAudit(cacheAuditCurrentType,";
 __ref._addindexedfilefromaudit /*String*/ (null,__ref._cacheauditcurrenttype /*String*/ ,_filename,_auditindex);
-RDebugUtils.currentLine=26607644;
- //BA.debugLineNum = 26607644;BA.debugLine="cacheAuditAddedCount = cacheAuditAddedCount +";
+RDebugUtils.currentLine=26607643;
+ //BA.debugLineNum = 26607643;BA.debugLine="cacheAuditAddedCount = cacheAuditAddedCount +";
 __ref._cacheauditaddedcount /*int*/  = (int) (__ref._cacheauditaddedcount /*int*/ +1);
  };
  };
  }
 };
-RDebugUtils.currentLine=26607648;
- //BA.debugLineNum = 26607648;BA.debugLine="End Sub";
+RDebugUtils.currentLine=26607647;
+ //BA.debugLineNum = 26607647;BA.debugLine="End Sub";
 return "";
 }
 public long  _resolveminfreediskbytes(b4j.example.mediacache __ref,long _totalbytes) throws Exception{

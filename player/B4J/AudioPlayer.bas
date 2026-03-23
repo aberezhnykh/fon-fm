@@ -8,11 +8,13 @@ Version=10.5
 Sub Class_Globals
 	Private Const STATE_STOPPED = 0, STATE_LOADING = 1, STATE_READY = 2, STATE_PLAYING = 3 As Int
 	Private Const FADE_NONE = 0, FADE_IN = 1, FADE_OUT = 2 As Int
+	Private Const CHECK_TIMER_INTERVAL_MS As Int = 2000
+	Private Const SILENCE_STALL_THRESHOLD As Int = 3
 
 	Private player As MediaPlayer
 	Private jo As JavaObject
 	Private eventName As String
-	Private targetModule As Object
+	Private targetPage As B4XMainPage
 	Private timeUpdateTimer As Timer
 	Private lastPosition As Long
 	Private checkTimer As Timer
@@ -25,13 +27,17 @@ Sub Class_Globals
 	Private fadeStepVolume As Double
 	Private currentVolume As Double
 	Private stalledCheckCount As Int
+	Private currentLoadToken As Long
+	Private activeEventLoadToken As Long
+	Private audioKey As String
 End Sub
 
-Public Sub Initialize (eventNameValue As String, targetModuleValue As Object)
+Public Sub Initialize (eventNameValue As String, targetPageValue As B4XMainPage)
 	eventName = eventNameValue
-	targetModule = targetModuleValue
+	targetPage = targetPageValue
+	audioKey = ResolveAudioKey(eventName)
 	loadTimer.Initialize("LoadTimer", 10 * DateTime.TicksPerSecond)
-	checkTimer.Initialize("CheckTimer", 10 * DateTime.TicksPerSecond)
+	checkTimer.Initialize("CheckTimer", CHECK_TIMER_INTERVAL_MS)
 	timeUpdateTimer.Initialize("TimeUpdateTimer", 250)
 	fadeTimer.Initialize("FadeTimer", 40)
 	TraceAudio("Initialize")
@@ -39,6 +45,8 @@ End Sub
 
 Public Sub LoadUrl(url As String, volume As Double)
 	Reset
+	currentLoadToken = currentLoadToken + 1
+	activeEventLoadToken = currentLoadToken
 	loadTimer.Interval = 10 * DateTime.TicksPerSecond
 	loadTimer.Enabled = True
 	playerState = STATE_LOADING
@@ -68,13 +76,15 @@ Public Sub PlayWithFade(fadeTimeMs As Int)
 	stalledCheckCount = 0
 	checkTimer.Enabled = True
 	timeUpdateTimer.Enabled = True
+	If fadeTimeMs > 0 Then
+		SetPlayerVolume(0)
+	Else
+		SetPlayerVolume(maxVolume)
+	End If
 	player.Play
 	TraceAudio("PlayWithFade. fadeTimeMs=" & fadeTimeMs & ", maxVolume=" & NumberFormat2(maxVolume, 1, 3, 3, False))
 	If fadeTimeMs > 0 Then
-		SetPlayerVolume(0)
 		StartFade(FADE_IN, maxVolume, fadeTimeMs)
-	Else
-		SetPlayerVolume(maxVolume)
 	End If
 End Sub
 
@@ -107,6 +117,7 @@ Public Sub Reset
 	lastPosition = 0
 	stalledCheckCount = 0
 	currentVolume = 0
+	activeEventLoadToken = 0
 	playerState = STATE_STOPPED
 	If player.IsInitialized Then
 		Try
@@ -160,13 +171,21 @@ Public Sub Duration As Long
 End Sub
 
 Private Sub Ready_Event(methodName As String, args() As Object)
+	If activeEventLoadToken <> currentLoadToken Then
+		TraceAudio("Ready ignored. stale_token=" & activeEventLoadToken & " current=" & currentLoadToken)
+		Return
+	End If
 	playerState = STATE_READY
 	loadTimer.Enabled = False
 	TraceAudio("Ready")
-	CallIfExists(eventName & "_Ready")
+	targetPage.AudioPlayer_Ready(audioKey)
 End Sub
 
 Private Sub Error_Event(methodName As String, args() As Object)
+	If activeEventLoadToken <> currentLoadToken Then
+		TraceAudio("Error ignored. stale_token=" & activeEventLoadToken & " current=" & currentLoadToken)
+		Return
+	End If
 	Dim msg As String = ""
 	Try
 		msg = jo.RunMethod("getError", Null)
@@ -178,6 +197,10 @@ Private Sub Error_Event(methodName As String, args() As Object)
 End Sub
 
 Private Sub Player_Complete
+	If activeEventLoadToken <> currentLoadToken Then
+		TraceAudio("Complete ignored. stale_token=" & activeEventLoadToken & " current=" & currentLoadToken)
+		Return
+	End If
 	If playerState = STATE_STOPPED Then Return
 	loadTimer.Enabled = False
 	checkTimer.Enabled = False
@@ -188,27 +211,19 @@ Private Sub Player_Complete
 	stalledCheckCount = 0
 	playerState = STATE_STOPPED
 	TraceAudio("Complete")
-	CallIfExists(eventName & "_Complete")
+	targetPage.AudioPlayer_Complete(audioKey)
 End Sub
 
 Private Sub NotifyError(message As String)
 	TraceAudio("NotifyError. message=" & message)
 	Reset
-	Dim subName As String = eventName & "_Error"
-	If SubExists(targetModule, subName) Then
-		CallSubDelayed2(targetModule, subName, message)
-	End If
-End Sub
-
-Private Sub CallIfExists(subName As String)
-	If SubExists(targetModule, subName) Then
-		CallSubDelayed(targetModule, subName)
-	End If
+	targetPage.AudioPlayer_Error(audioKey, message)
 End Sub
 
 Private Sub TimeUpdateTimer_Tick
 	If playerState <> STATE_PLAYING Then Return
-	CallIfExists(eventName & "_Timeupdate")
+	If activeEventLoadToken <> currentLoadToken Then Return
+	targetPage.AudioPlayer_Timeupdate(audioKey)
 End Sub
 
 Private Sub CheckTimer_Tick
@@ -230,8 +245,8 @@ Private Sub CheckTimer_Tick
 	If stalledCheckCount = 1 Or stalledCheckCount = 3 Then
 		TraceDiagnostic("задержка audio=" & eventName & " positionMs=" & positionNow & " durationMs=" & durationNow & " remainMs=" & remainMs & " stalled=" & stalledCheckCount)
 	End If
-	If stalledCheckCount < 3 Then Return
-	NotifyError("Silence detected 3")
+	If stalledCheckCount < SILENCE_STALL_THRESHOLD Then Return
+	NotifyError("Silence detected " & SILENCE_STALL_THRESHOLD)
 End Sub
 
 Private Sub LoadTimer_Tick
@@ -309,22 +324,18 @@ Private Sub StopImmediately
 End Sub
 
 Private Sub TraceInternalError(context As String)
-	Dim subName As String = "TraceLog"
-	If SubExists(targetModule, subName) Then
-		CallSubDelayed2(targetModule, subName, "ошибка аудио internal context=" & context & " message=" & LastException.Message)
-	End If
+	targetPage.TraceLog("ошибка аудио internal context=" & context & " message=" & LastException.Message)
 End Sub
 
 Private Sub TraceDiagnostic(message As String)
-	Dim subName As String = "TraceLog"
-	If SubExists(targetModule, subName) Then
-		CallSubDelayed2(targetModule, subName, message)
-	End If
+	targetPage.TraceLog(message)
 End Sub
 
 Private Sub TraceAudio(message As String)
-	Dim subName As String = "TraceLog"
-	If SubExists(targetModule, subName) Then
-		CallSubDelayed2(targetModule, subName, "[" & eventName & "] " & message)
-	End If
+	targetPage.TraceLog("[" & eventName & "] " & message)
+End Sub
+
+Private Sub ResolveAudioKey(nameValue As String) As String
+	If nameValue.ToLowerCase.Contains("secondary") Then Return "secondary"
+	Return "primary"
 End Sub

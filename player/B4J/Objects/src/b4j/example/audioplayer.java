@@ -38,10 +38,12 @@ public int _state_playing = 0;
 public int _fade_none = 0;
 public int _fade_in = 0;
 public int _fade_out = 0;
+public int _check_timer_interval_ms = 0;
+public int _silence_stall_threshold = 0;
 public anywheresoftware.b4j.objects.MediaPlayerWrapper _player = null;
 public anywheresoftware.b4j.object.JavaObject _jo = null;
 public String _eventname = "";
-public Object _targetmodule = null;
+public b4j.example.b4xmainpage _targetpage = null;
 public anywheresoftware.b4a.objects.Timer _timeupdatetimer = null;
 public long _lastposition = 0L;
 public anywheresoftware.b4a.objects.Timer _checktimer = null;
@@ -54,6 +56,9 @@ public double _fadetargetvolume = 0;
 public double _fadestepvolume = 0;
 public double _currentvolume = 0;
 public int _stalledcheckcount = 0;
+public long _currentloadtoken = 0L;
+public long _activeeventloadtoken = 0L;
+public String _audiokey = "";
 public b4j.example.main _main = null;
 public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
@@ -92,27 +97,31 @@ RDebugUtils.currentLine=20250633;
  //BA.debugLineNum = 20250633;BA.debugLine="timeUpdateTimer.Enabled = True";
 __ref._timeupdatetimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
 RDebugUtils.currentLine=20250634;
- //BA.debugLineNum = 20250634;BA.debugLine="player.Play";
-__ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .Play();
-RDebugUtils.currentLine=20250635;
- //BA.debugLineNum = 20250635;BA.debugLine="TraceAudio(\"PlayWithFade. fadeTimeMs=\" & fadeTime";
-__ref._traceaudio /*String*/ (null,"PlayWithFade. fadeTimeMs="+BA.NumberToString(_fadetimems)+", maxVolume="+__c.NumberFormat2(__ref._maxvolume /*double*/ ,(int) (1),(int) (3),(int) (3),__c.False));
-RDebugUtils.currentLine=20250636;
- //BA.debugLineNum = 20250636;BA.debugLine="If fadeTimeMs > 0 Then";
+ //BA.debugLineNum = 20250634;BA.debugLine="If fadeTimeMs > 0 Then";
 if (_fadetimems>0) { 
-RDebugUtils.currentLine=20250637;
- //BA.debugLineNum = 20250637;BA.debugLine="SetPlayerVolume(0)";
+RDebugUtils.currentLine=20250635;
+ //BA.debugLineNum = 20250635;BA.debugLine="SetPlayerVolume(0)";
 __ref._setplayervolume /*String*/ (null,0);
-RDebugUtils.currentLine=20250638;
- //BA.debugLineNum = 20250638;BA.debugLine="StartFade(FADE_IN, maxVolume, fadeTimeMs)";
-__ref._startfade /*String*/ (null,__ref._fade_in /*int*/ ,__ref._maxvolume /*double*/ ,_fadetimems);
  }else {
-RDebugUtils.currentLine=20250640;
- //BA.debugLineNum = 20250640;BA.debugLine="SetPlayerVolume(maxVolume)";
+RDebugUtils.currentLine=20250637;
+ //BA.debugLineNum = 20250637;BA.debugLine="SetPlayerVolume(maxVolume)";
 __ref._setplayervolume /*String*/ (null,__ref._maxvolume /*double*/ );
  };
+RDebugUtils.currentLine=20250639;
+ //BA.debugLineNum = 20250639;BA.debugLine="player.Play";
+__ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .Play();
+RDebugUtils.currentLine=20250640;
+ //BA.debugLineNum = 20250640;BA.debugLine="TraceAudio(\"PlayWithFade. fadeTimeMs=\" & fadeTime";
+__ref._traceaudio /*String*/ (null,"PlayWithFade. fadeTimeMs="+BA.NumberToString(_fadetimems)+", maxVolume="+__c.NumberFormat2(__ref._maxvolume /*double*/ ,(int) (1),(int) (3),(int) (3),__c.False));
+RDebugUtils.currentLine=20250641;
+ //BA.debugLineNum = 20250641;BA.debugLine="If fadeTimeMs > 0 Then";
+if (_fadetimems>0) { 
 RDebugUtils.currentLine=20250642;
- //BA.debugLineNum = 20250642;BA.debugLine="End Sub";
+ //BA.debugLineNum = 20250642;BA.debugLine="StartFade(FADE_IN, maxVolume, fadeTimeMs)";
+__ref._startfade /*String*/ (null,__ref._fade_in /*int*/ ,__ref._maxvolume /*double*/ ,_fadetimems);
+ };
+RDebugUtils.currentLine=20250644;
+ //BA.debugLineNum = 20250644;BA.debugLine="End Sub";
 return "";
 }
 public long  _position(b4j.example.audioplayer __ref) throws Exception{
@@ -141,37 +150,40 @@ RDebugUtils.currentLine=20709383;
  //BA.debugLineNum = 20709383;BA.debugLine="End Sub";
 return 0L;
 }
-public String  _initialize(b4j.example.audioplayer __ref,anywheresoftware.b4a.BA _ba,String _eventnamevalue,Object _targetmodulevalue) throws Exception{
+public String  _initialize(b4j.example.audioplayer __ref,anywheresoftware.b4a.BA _ba,String _eventnamevalue,b4j.example.b4xmainpage _targetpagevalue) throws Exception{
 __ref = this;
 innerInitialize(_ba);
 RDebugUtils.currentModule="audioplayer";
 if (Debug.shouldDelegate(ba, "initialize", false))
-	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba,_eventnamevalue,_targetmodulevalue}));}
+	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba,_eventnamevalue,_targetpagevalue}));}
 RDebugUtils.currentLine=20054016;
  //BA.debugLineNum = 20054016;BA.debugLine="Public Sub Initialize (eventNameValue As String, t";
 RDebugUtils.currentLine=20054017;
  //BA.debugLineNum = 20054017;BA.debugLine="eventName = eventNameValue";
 __ref._eventname /*String*/  = _eventnamevalue;
 RDebugUtils.currentLine=20054018;
- //BA.debugLineNum = 20054018;BA.debugLine="targetModule = targetModuleValue";
-__ref._targetmodule /*Object*/  = _targetmodulevalue;
+ //BA.debugLineNum = 20054018;BA.debugLine="targetPage = targetPageValue";
+__ref._targetpage /*b4j.example.b4xmainpage*/  = _targetpagevalue;
 RDebugUtils.currentLine=20054019;
- //BA.debugLineNum = 20054019;BA.debugLine="loadTimer.Initialize(\"LoadTimer\", 10 * DateTime.T";
-__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"LoadTimer",(long) (10*__c.DateTime.TicksPerSecond));
+ //BA.debugLineNum = 20054019;BA.debugLine="audioKey = ResolveAudioKey(eventName)";
+__ref._audiokey /*String*/  = __ref._resolveaudiokey /*String*/ (null,__ref._eventname /*String*/ );
 RDebugUtils.currentLine=20054020;
- //BA.debugLineNum = 20054020;BA.debugLine="checkTimer.Initialize(\"CheckTimer\", 10 * DateTime";
-__ref._checktimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"CheckTimer",(long) (10*__c.DateTime.TicksPerSecond));
+ //BA.debugLineNum = 20054020;BA.debugLine="loadTimer.Initialize(\"LoadTimer\", 10 * DateTime.T";
+__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"LoadTimer",(long) (10*__c.DateTime.TicksPerSecond));
 RDebugUtils.currentLine=20054021;
- //BA.debugLineNum = 20054021;BA.debugLine="timeUpdateTimer.Initialize(\"TimeUpdateTimer\", 250";
-__ref._timeupdatetimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"TimeUpdateTimer",(long) (250));
+ //BA.debugLineNum = 20054021;BA.debugLine="checkTimer.Initialize(\"CheckTimer\", CHECK_TIMER_I";
+__ref._checktimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"CheckTimer",(long) (__ref._check_timer_interval_ms /*int*/ ));
 RDebugUtils.currentLine=20054022;
- //BA.debugLineNum = 20054022;BA.debugLine="fadeTimer.Initialize(\"FadeTimer\", 40)";
-__ref._fadetimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"FadeTimer",(long) (40));
+ //BA.debugLineNum = 20054022;BA.debugLine="timeUpdateTimer.Initialize(\"TimeUpdateTimer\", 250";
+__ref._timeupdatetimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"TimeUpdateTimer",(long) (250));
 RDebugUtils.currentLine=20054023;
- //BA.debugLineNum = 20054023;BA.debugLine="TraceAudio(\"Initialize\")";
-__ref._traceaudio /*String*/ (null,"Initialize");
+ //BA.debugLineNum = 20054023;BA.debugLine="fadeTimer.Initialize(\"FadeTimer\", 40)";
+__ref._fadetimer /*anywheresoftware.b4a.objects.Timer*/ .Initialize(ba,"FadeTimer",(long) (40));
 RDebugUtils.currentLine=20054024;
- //BA.debugLineNum = 20054024;BA.debugLine="End Sub";
+ //BA.debugLineNum = 20054024;BA.debugLine="TraceAudio(\"Initialize\")";
+__ref._traceaudio /*String*/ (null,"Initialize");
+RDebugUtils.currentLine=20054025;
+ //BA.debugLineNum = 20054025;BA.debugLine="End Sub";
 return "";
 }
 public String  _reset(b4j.example.audioplayer __ref) throws Exception{
@@ -206,43 +218,46 @@ RDebugUtils.currentLine=20381704;
  //BA.debugLineNum = 20381704;BA.debugLine="currentVolume = 0";
 __ref._currentvolume /*double*/  = 0;
 RDebugUtils.currentLine=20381705;
- //BA.debugLineNum = 20381705;BA.debugLine="playerState = STATE_STOPPED";
-__ref._playerstate /*int*/  = __ref._state_stopped /*int*/ ;
+ //BA.debugLineNum = 20381705;BA.debugLine="activeEventLoadToken = 0";
+__ref._activeeventloadtoken /*long*/  = (long) (0);
 RDebugUtils.currentLine=20381706;
- //BA.debugLineNum = 20381706;BA.debugLine="If player.IsInitialized Then";
-if (__ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .IsInitialized()) { 
+ //BA.debugLineNum = 20381706;BA.debugLine="playerState = STATE_STOPPED";
+__ref._playerstate /*int*/  = __ref._state_stopped /*int*/ ;
 RDebugUtils.currentLine=20381707;
- //BA.debugLineNum = 20381707;BA.debugLine="Try";
-try {RDebugUtils.currentLine=20381708;
- //BA.debugLineNum = 20381708;BA.debugLine="player.Volume = 0";
+ //BA.debugLineNum = 20381707;BA.debugLine="If player.IsInitialized Then";
+if (__ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .IsInitialized()) { 
+RDebugUtils.currentLine=20381708;
+ //BA.debugLineNum = 20381708;BA.debugLine="Try";
+try {RDebugUtils.currentLine=20381709;
+ //BA.debugLineNum = 20381709;BA.debugLine="player.Volume = 0";
 __ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .setVolume(0);
-RDebugUtils.currentLine=20381709;
- //BA.debugLineNum = 20381709;BA.debugLine="player.Stop";
+RDebugUtils.currentLine=20381710;
+ //BA.debugLineNum = 20381710;BA.debugLine="player.Stop";
 __ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .Stop();
  } 
-       catch (Exception e15) {
-			ba.setLastException(e15);RDebugUtils.currentLine=20381711;
- //BA.debugLineNum = 20381711;BA.debugLine="TraceInternalError(\"reset_stop\")";
+       catch (Exception e16) {
+			ba.setLastException(e16);RDebugUtils.currentLine=20381712;
+ //BA.debugLineNum = 20381712;BA.debugLine="TraceInternalError(\"reset_stop\")";
 __ref._traceinternalerror /*String*/ (null,"reset_stop");
  };
-RDebugUtils.currentLine=20381713;
- //BA.debugLineNum = 20381713;BA.debugLine="If jo.IsInitialized Then";
-if (__ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .IsInitialized()) { 
 RDebugUtils.currentLine=20381714;
- //BA.debugLineNum = 20381714;BA.debugLine="Try";
-try {RDebugUtils.currentLine=20381715;
- //BA.debugLineNum = 20381715;BA.debugLine="jo.RunMethod(\"dispose\", Null)";
+ //BA.debugLineNum = 20381714;BA.debugLine="If jo.IsInitialized Then";
+if (__ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .IsInitialized()) { 
+RDebugUtils.currentLine=20381715;
+ //BA.debugLineNum = 20381715;BA.debugLine="Try";
+try {RDebugUtils.currentLine=20381716;
+ //BA.debugLineNum = 20381716;BA.debugLine="jo.RunMethod(\"dispose\", Null)";
 __ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .RunMethod("dispose",(Object[])(__c.Null));
  } 
-       catch (Exception e21) {
-			ba.setLastException(e21);RDebugUtils.currentLine=20381717;
- //BA.debugLineNum = 20381717;BA.debugLine="TraceInternalError(\"reset_dispose\")";
+       catch (Exception e22) {
+			ba.setLastException(e22);RDebugUtils.currentLine=20381718;
+ //BA.debugLineNum = 20381718;BA.debugLine="TraceInternalError(\"reset_dispose\")";
 __ref._traceinternalerror /*String*/ (null,"reset_dispose");
  };
  };
  };
-RDebugUtils.currentLine=20381721;
- //BA.debugLineNum = 20381721;BA.debugLine="End Sub";
+RDebugUtils.currentLine=20381722;
+ //BA.debugLineNum = 20381722;BA.debugLine="End Sub";
 return "";
 }
 public long  _duration(b4j.example.audioplayer __ref) throws Exception{
@@ -327,6 +342,20 @@ RDebugUtils.currentLine=20316178;
  //BA.debugLineNum = 20316178;BA.debugLine="End Sub";
 return "";
 }
+public boolean  _isplaying(b4j.example.audioplayer __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="audioplayer";
+if (Debug.shouldDelegate(ba, "isplaying", false))
+	 {return ((Boolean) Debug.delegate(ba, "isplaying", null));}
+RDebugUtils.currentLine=20643840;
+ //BA.debugLineNum = 20643840;BA.debugLine="Public Sub IsPlaying As Boolean";
+RDebugUtils.currentLine=20643841;
+ //BA.debugLineNum = 20643841;BA.debugLine="Return playerState = STATE_PLAYING";
+if (true) return __ref._playerstate /*int*/ ==__ref._state_playing /*int*/ ;
+RDebugUtils.currentLine=20643842;
+ //BA.debugLineNum = 20643842;BA.debugLine="End Sub";
+return false;
+}
 public String  _loadurl(b4j.example.audioplayer __ref,String _url,double _volume) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="audioplayer";
@@ -338,60 +367,48 @@ RDebugUtils.currentLine=20119553;
  //BA.debugLineNum = 20119553;BA.debugLine="Reset";
 __ref._reset /*String*/ (null);
 RDebugUtils.currentLine=20119554;
- //BA.debugLineNum = 20119554;BA.debugLine="loadTimer.Interval = 10 * DateTime.TicksPerSecond";
-__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .setInterval((long) (10*__c.DateTime.TicksPerSecond));
+ //BA.debugLineNum = 20119554;BA.debugLine="currentLoadToken = currentLoadToken + 1";
+__ref._currentloadtoken /*long*/  = (long) (__ref._currentloadtoken /*long*/ +1);
 RDebugUtils.currentLine=20119555;
- //BA.debugLineNum = 20119555;BA.debugLine="loadTimer.Enabled = True";
-__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
+ //BA.debugLineNum = 20119555;BA.debugLine="activeEventLoadToken = currentLoadToken";
+__ref._activeeventloadtoken /*long*/  = __ref._currentloadtoken /*long*/ ;
 RDebugUtils.currentLine=20119556;
- //BA.debugLineNum = 20119556;BA.debugLine="playerState = STATE_LOADING";
-__ref._playerstate /*int*/  = __ref._state_loading /*int*/ ;
+ //BA.debugLineNum = 20119556;BA.debugLine="loadTimer.Interval = 10 * DateTime.TicksPerSecond";
+__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .setInterval((long) (10*__c.DateTime.TicksPerSecond));
 RDebugUtils.currentLine=20119557;
- //BA.debugLineNum = 20119557;BA.debugLine="maxVolume = Max(0, Min(1, volume))";
-__ref._maxvolume /*double*/  = __c.Max(0,__c.Min(1,_volume));
+ //BA.debugLineNum = 20119557;BA.debugLine="loadTimer.Enabled = True";
+__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.True);
 RDebugUtils.currentLine=20119558;
- //BA.debugLineNum = 20119558;BA.debugLine="TraceAudio(\"LoadUrl. volume=\" & NumberFormat2(max";
-__ref._traceaudio /*String*/ (null,"LoadUrl. volume="+__c.NumberFormat2(__ref._maxvolume /*double*/ ,(int) (1),(int) (3),(int) (3),__c.False)+", url="+_url);
+ //BA.debugLineNum = 20119558;BA.debugLine="playerState = STATE_LOADING";
+__ref._playerstate /*int*/  = __ref._state_loading /*int*/ ;
 RDebugUtils.currentLine=20119559;
- //BA.debugLineNum = 20119559;BA.debugLine="Try";
-try {RDebugUtils.currentLine=20119560;
- //BA.debugLineNum = 20119560;BA.debugLine="player.Initialize(\"Player\", url)";
-__ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .Initialize(ba,"Player",_url);
+ //BA.debugLineNum = 20119559;BA.debugLine="maxVolume = Max(0, Min(1, volume))";
+__ref._maxvolume /*double*/  = __c.Max(0,__c.Min(1,_volume));
+RDebugUtils.currentLine=20119560;
+ //BA.debugLineNum = 20119560;BA.debugLine="TraceAudio(\"LoadUrl. volume=\" & NumberFormat2(max";
+__ref._traceaudio /*String*/ (null,"LoadUrl. volume="+__c.NumberFormat2(__ref._maxvolume /*double*/ ,(int) (1),(int) (3),(int) (3),__c.False)+", url="+_url);
 RDebugUtils.currentLine=20119561;
- //BA.debugLineNum = 20119561;BA.debugLine="jo = player";
-__ref._jo /*anywheresoftware.b4j.object.JavaObject*/  = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(__ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .getObject()));
-RDebugUtils.currentLine=20119562;
- //BA.debugLineNum = 20119562;BA.debugLine="jo.RunMethod(\"setOnError\", Array As Object(jo.Cr";
-__ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .RunMethod("setOnError",new Object[]{__ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .CreateEventFromUI(ba,"java.lang.Runnable","Error",(Object)(__c.False))});
+ //BA.debugLineNum = 20119561;BA.debugLine="Try";
+try {RDebugUtils.currentLine=20119562;
+ //BA.debugLineNum = 20119562;BA.debugLine="player.Initialize(\"Player\", url)";
+__ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .Initialize(ba,"Player",_url);
 RDebugUtils.currentLine=20119563;
- //BA.debugLineNum = 20119563;BA.debugLine="jo.RunMethod(\"setOnReady\", Array As Object(jo.Cr";
+ //BA.debugLineNum = 20119563;BA.debugLine="jo = player";
+__ref._jo /*anywheresoftware.b4j.object.JavaObject*/  = (anywheresoftware.b4j.object.JavaObject) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4j.object.JavaObject(), (java.lang.Object)(__ref._player /*anywheresoftware.b4j.objects.MediaPlayerWrapper*/ .getObject()));
+RDebugUtils.currentLine=20119564;
+ //BA.debugLineNum = 20119564;BA.debugLine="jo.RunMethod(\"setOnError\", Array As Object(jo.Cr";
+__ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .RunMethod("setOnError",new Object[]{__ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .CreateEventFromUI(ba,"java.lang.Runnable","Error",(Object)(__c.False))});
+RDebugUtils.currentLine=20119565;
+ //BA.debugLineNum = 20119565;BA.debugLine="jo.RunMethod(\"setOnReady\", Array As Object(jo.Cr";
 __ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .RunMethod("setOnReady",new Object[]{__ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .CreateEventFromUI(ba,"java.lang.Runnable","Ready",(Object)(__c.False))});
  } 
-       catch (Exception e13) {
-			ba.setLastException(e13);RDebugUtils.currentLine=20119565;
- //BA.debugLineNum = 20119565;BA.debugLine="NotifyError(LastException.Message)";
+       catch (Exception e15) {
+			ba.setLastException(e15);RDebugUtils.currentLine=20119567;
+ //BA.debugLineNum = 20119567;BA.debugLine="NotifyError(LastException.Message)";
 __ref._notifyerror /*String*/ (null,__c.LastException(ba).getMessage());
  };
-RDebugUtils.currentLine=20119567;
- //BA.debugLineNum = 20119567;BA.debugLine="End Sub";
-return "";
-}
-public String  _callifexists(b4j.example.audioplayer __ref,String _subname) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="audioplayer";
-if (Debug.shouldDelegate(ba, "callifexists", false))
-	 {return ((String) Debug.delegate(ba, "callifexists", new Object[] {_subname}));}
-RDebugUtils.currentLine=21102592;
- //BA.debugLineNum = 21102592;BA.debugLine="Private Sub CallIfExists(subName As String)";
-RDebugUtils.currentLine=21102593;
- //BA.debugLineNum = 21102593;BA.debugLine="If SubExists(targetModule, subName) Then";
-if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,_subname)) { 
-RDebugUtils.currentLine=21102594;
- //BA.debugLineNum = 21102594;BA.debugLine="CallSubDelayed(targetModule, subName)";
-__c.CallSubDelayed(ba,__ref._targetmodule /*Object*/ ,_subname);
- };
-RDebugUtils.currentLine=21102596;
- //BA.debugLineNum = 21102596;BA.debugLine="End Sub";
+RDebugUtils.currentLine=20119569;
+ //BA.debugLineNum = 20119569;BA.debugLine="End Sub";
 return "";
 }
 public String  _checktimer_tick(b4j.example.audioplayer __ref) throws Exception{
@@ -455,12 +472,12 @@ RDebugUtils.currentLine=21233681;
 __ref._tracediagnostic /*String*/ (null,"задержка audio="+__ref._eventname /*String*/ +" positionMs="+BA.NumberToString(_positionnow)+" durationMs="+BA.NumberToString(_durationnow)+" remainMs="+BA.NumberToString(_remainms)+" stalled="+BA.NumberToString(__ref._stalledcheckcount /*int*/ ));
  };
 RDebugUtils.currentLine=21233683;
- //BA.debugLineNum = 21233683;BA.debugLine="If stalledCheckCount < 3 Then Return";
-if (__ref._stalledcheckcount /*int*/ <3) { 
+ //BA.debugLineNum = 21233683;BA.debugLine="If stalledCheckCount < SILENCE_STALL_THRESHOLD Th";
+if (__ref._stalledcheckcount /*int*/ <__ref._silence_stall_threshold /*int*/ ) { 
 if (true) return "";};
 RDebugUtils.currentLine=21233684;
- //BA.debugLineNum = 21233684;BA.debugLine="NotifyError(\"Silence detected 3\")";
-__ref._notifyerror /*String*/ (null,"Silence detected 3");
+ //BA.debugLineNum = 21233684;BA.debugLine="NotifyError(\"Silence detected \" & SILENCE_STALL_T";
+__ref._notifyerror /*String*/ (null,"Silence detected "+BA.NumberToString(__ref._silence_stall_threshold /*int*/ ));
 RDebugUtils.currentLine=21233685;
  //BA.debugLineNum = 21233685;BA.debugLine="End Sub";
 return "";
@@ -470,21 +487,13 @@ __ref = this;
 RDebugUtils.currentModule="audioplayer";
 if (Debug.shouldDelegate(ba, "tracediagnostic", false))
 	 {return ((String) Debug.delegate(ba, "tracediagnostic", new Object[] {_message}));}
-String _subname = "";
 RDebugUtils.currentLine=59637760;
  //BA.debugLineNum = 59637760;BA.debugLine="Private Sub TraceDiagnostic(message As String)";
 RDebugUtils.currentLine=59637761;
- //BA.debugLineNum = 59637761;BA.debugLine="Dim subName As String = \"TraceLog\"";
-_subname = "TraceLog";
+ //BA.debugLineNum = 59637761;BA.debugLine="targetPage.TraceLog(message)";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._tracelog /*String*/ (null,_message);
 RDebugUtils.currentLine=59637762;
- //BA.debugLineNum = 59637762;BA.debugLine="If SubExists(targetModule, subName) Then";
-if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,_subname)) { 
-RDebugUtils.currentLine=59637763;
- //BA.debugLineNum = 59637763;BA.debugLine="CallSubDelayed2(targetModule, subName, message)";
-__c.CallSubDelayed2(ba,__ref._targetmodule /*Object*/ ,_subname,(Object)(_message));
- };
-RDebugUtils.currentLine=59637765;
- //BA.debugLineNum = 59637765;BA.debugLine="End Sub";
+ //BA.debugLineNum = 59637762;BA.debugLine="End Sub";
 return "";
 }
 public String  _notifyerror(b4j.example.audioplayer __ref,String _message) throws Exception{
@@ -492,7 +501,6 @@ __ref = this;
 RDebugUtils.currentModule="audioplayer";
 if (Debug.shouldDelegate(ba, "notifyerror", false))
 	 {return ((String) Debug.delegate(ba, "notifyerror", new Object[] {_message}));}
-String _subname = "";
 RDebugUtils.currentLine=21037056;
  //BA.debugLineNum = 21037056;BA.debugLine="Private Sub NotifyError(message As String)";
 RDebugUtils.currentLine=21037057;
@@ -502,17 +510,10 @@ RDebugUtils.currentLine=21037058;
  //BA.debugLineNum = 21037058;BA.debugLine="Reset";
 __ref._reset /*String*/ (null);
 RDebugUtils.currentLine=21037059;
- //BA.debugLineNum = 21037059;BA.debugLine="Dim subName As String = eventName & \"_Error\"";
-_subname = __ref._eventname /*String*/ +"_Error";
+ //BA.debugLineNum = 21037059;BA.debugLine="targetPage.AudioPlayer_Error(audioKey, message)";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._audioplayer_error /*String*/ (null,__ref._audiokey /*String*/ ,_message);
 RDebugUtils.currentLine=21037060;
- //BA.debugLineNum = 21037060;BA.debugLine="If SubExists(targetModule, subName) Then";
-if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,_subname)) { 
-RDebugUtils.currentLine=21037061;
- //BA.debugLineNum = 21037061;BA.debugLine="CallSubDelayed2(targetModule, subName, message)";
-__c.CallSubDelayed2(ba,__ref._targetmodule /*Object*/ ,_subname,(Object)(_message));
- };
-RDebugUtils.currentLine=21037063;
- //BA.debugLineNum = 21037063;BA.debugLine="End Sub";
+ //BA.debugLineNum = 21037060;BA.debugLine="End Sub";
 return "";
 }
 public String  _class_globals(b4j.example.audioplayer __ref) throws Exception{
@@ -531,56 +532,71 @@ RDebugUtils.currentLine=19988482;
 _fade_none = (int) (0);
 _fade_in = (int) (1);
 _fade_out = (int) (2);
+RDebugUtils.currentLine=19988483;
+ //BA.debugLineNum = 19988483;BA.debugLine="Private Const CHECK_TIMER_INTERVAL_MS As Int = 20";
+_check_timer_interval_ms = (int) (2000);
 RDebugUtils.currentLine=19988484;
- //BA.debugLineNum = 19988484;BA.debugLine="Private player As MediaPlayer";
-_player = new anywheresoftware.b4j.objects.MediaPlayerWrapper();
-RDebugUtils.currentLine=19988485;
- //BA.debugLineNum = 19988485;BA.debugLine="Private jo As JavaObject";
-_jo = new anywheresoftware.b4j.object.JavaObject();
+ //BA.debugLineNum = 19988484;BA.debugLine="Private Const SILENCE_STALL_THRESHOLD As Int = 3";
+_silence_stall_threshold = (int) (3);
 RDebugUtils.currentLine=19988486;
- //BA.debugLineNum = 19988486;BA.debugLine="Private eventName As String";
-_eventname = "";
+ //BA.debugLineNum = 19988486;BA.debugLine="Private player As MediaPlayer";
+_player = new anywheresoftware.b4j.objects.MediaPlayerWrapper();
 RDebugUtils.currentLine=19988487;
- //BA.debugLineNum = 19988487;BA.debugLine="Private targetModule As Object";
-_targetmodule = new Object();
+ //BA.debugLineNum = 19988487;BA.debugLine="Private jo As JavaObject";
+_jo = new anywheresoftware.b4j.object.JavaObject();
 RDebugUtils.currentLine=19988488;
- //BA.debugLineNum = 19988488;BA.debugLine="Private timeUpdateTimer As Timer";
-_timeupdatetimer = new anywheresoftware.b4a.objects.Timer();
+ //BA.debugLineNum = 19988488;BA.debugLine="Private eventName As String";
+_eventname = "";
 RDebugUtils.currentLine=19988489;
- //BA.debugLineNum = 19988489;BA.debugLine="Private lastPosition As Long";
-_lastposition = 0L;
+ //BA.debugLineNum = 19988489;BA.debugLine="Private targetPage As B4XMainPage";
+_targetpage = new b4j.example.b4xmainpage();
 RDebugUtils.currentLine=19988490;
- //BA.debugLineNum = 19988490;BA.debugLine="Private checkTimer As Timer";
-_checktimer = new anywheresoftware.b4a.objects.Timer();
+ //BA.debugLineNum = 19988490;BA.debugLine="Private timeUpdateTimer As Timer";
+_timeupdatetimer = new anywheresoftware.b4a.objects.Timer();
 RDebugUtils.currentLine=19988491;
- //BA.debugLineNum = 19988491;BA.debugLine="Private loadTimer As Timer";
-_loadtimer = new anywheresoftware.b4a.objects.Timer();
+ //BA.debugLineNum = 19988491;BA.debugLine="Private lastPosition As Long";
+_lastposition = 0L;
 RDebugUtils.currentLine=19988492;
- //BA.debugLineNum = 19988492;BA.debugLine="Private fadeTimer As Timer";
-_fadetimer = new anywheresoftware.b4a.objects.Timer();
+ //BA.debugLineNum = 19988492;BA.debugLine="Private checkTimer As Timer";
+_checktimer = new anywheresoftware.b4a.objects.Timer();
 RDebugUtils.currentLine=19988493;
- //BA.debugLineNum = 19988493;BA.debugLine="Private playerState As Int";
-_playerstate = 0;
+ //BA.debugLineNum = 19988493;BA.debugLine="Private loadTimer As Timer";
+_loadtimer = new anywheresoftware.b4a.objects.Timer();
 RDebugUtils.currentLine=19988494;
- //BA.debugLineNum = 19988494;BA.debugLine="Private maxVolume As Double";
-_maxvolume = 0;
+ //BA.debugLineNum = 19988494;BA.debugLine="Private fadeTimer As Timer";
+_fadetimer = new anywheresoftware.b4a.objects.Timer();
 RDebugUtils.currentLine=19988495;
- //BA.debugLineNum = 19988495;BA.debugLine="Private fadeMode As Int";
-_fademode = 0;
+ //BA.debugLineNum = 19988495;BA.debugLine="Private playerState As Int";
+_playerstate = 0;
 RDebugUtils.currentLine=19988496;
- //BA.debugLineNum = 19988496;BA.debugLine="Private fadeTargetVolume As Double";
-_fadetargetvolume = 0;
+ //BA.debugLineNum = 19988496;BA.debugLine="Private maxVolume As Double";
+_maxvolume = 0;
 RDebugUtils.currentLine=19988497;
- //BA.debugLineNum = 19988497;BA.debugLine="Private fadeStepVolume As Double";
-_fadestepvolume = 0;
+ //BA.debugLineNum = 19988497;BA.debugLine="Private fadeMode As Int";
+_fademode = 0;
 RDebugUtils.currentLine=19988498;
- //BA.debugLineNum = 19988498;BA.debugLine="Private currentVolume As Double";
-_currentvolume = 0;
+ //BA.debugLineNum = 19988498;BA.debugLine="Private fadeTargetVolume As Double";
+_fadetargetvolume = 0;
 RDebugUtils.currentLine=19988499;
- //BA.debugLineNum = 19988499;BA.debugLine="Private stalledCheckCount As Int";
-_stalledcheckcount = 0;
+ //BA.debugLineNum = 19988499;BA.debugLine="Private fadeStepVolume As Double";
+_fadestepvolume = 0;
 RDebugUtils.currentLine=19988500;
- //BA.debugLineNum = 19988500;BA.debugLine="End Sub";
+ //BA.debugLineNum = 19988500;BA.debugLine="Private currentVolume As Double";
+_currentvolume = 0;
+RDebugUtils.currentLine=19988501;
+ //BA.debugLineNum = 19988501;BA.debugLine="Private stalledCheckCount As Int";
+_stalledcheckcount = 0;
+RDebugUtils.currentLine=19988502;
+ //BA.debugLineNum = 19988502;BA.debugLine="Private currentLoadToken As Long";
+_currentloadtoken = 0L;
+RDebugUtils.currentLine=19988503;
+ //BA.debugLineNum = 19988503;BA.debugLine="Private activeEventLoadToken As Long";
+_activeeventloadtoken = 0L;
+RDebugUtils.currentLine=19988504;
+ //BA.debugLineNum = 19988504;BA.debugLine="Private audioKey As String";
+_audiokey = "";
+RDebugUtils.currentLine=19988505;
+ //BA.debugLineNum = 19988505;BA.debugLine="End Sub";
 return "";
 }
 public String  _error_event(b4j.example.audioplayer __ref,String _methodname,Object[] _args) throws Exception{
@@ -592,27 +608,37 @@ String _msg = "";
 RDebugUtils.currentLine=20905984;
  //BA.debugLineNum = 20905984;BA.debugLine="Private Sub Error_Event(methodName As String, args";
 RDebugUtils.currentLine=20905985;
- //BA.debugLineNum = 20905985;BA.debugLine="Dim msg As String = \"\"";
-_msg = "";
+ //BA.debugLineNum = 20905985;BA.debugLine="If activeEventLoadToken <> currentLoadToken Then";
+if (__ref._activeeventloadtoken /*long*/ !=__ref._currentloadtoken /*long*/ ) { 
 RDebugUtils.currentLine=20905986;
- //BA.debugLineNum = 20905986;BA.debugLine="Try";
-try {RDebugUtils.currentLine=20905987;
- //BA.debugLineNum = 20905987;BA.debugLine="msg = jo.RunMethod(\"getError\", Null)";
+ //BA.debugLineNum = 20905986;BA.debugLine="TraceAudio(\"Error ignored. stale_token=\" & activ";
+__ref._traceaudio /*String*/ (null,"Error ignored. stale_token="+BA.NumberToString(__ref._activeeventloadtoken /*long*/ )+" current="+BA.NumberToString(__ref._currentloadtoken /*long*/ ));
+RDebugUtils.currentLine=20905987;
+ //BA.debugLineNum = 20905987;BA.debugLine="Return";
+if (true) return "";
+ };
+RDebugUtils.currentLine=20905989;
+ //BA.debugLineNum = 20905989;BA.debugLine="Dim msg As String = \"\"";
+_msg = "";
+RDebugUtils.currentLine=20905990;
+ //BA.debugLineNum = 20905990;BA.debugLine="Try";
+try {RDebugUtils.currentLine=20905991;
+ //BA.debugLineNum = 20905991;BA.debugLine="msg = jo.RunMethod(\"getError\", Null)";
 _msg = BA.ObjectToString(__ref._jo /*anywheresoftware.b4j.object.JavaObject*/ .RunMethod("getError",(Object[])(__c.Null)));
  } 
-       catch (Exception e5) {
-			ba.setLastException(e5);RDebugUtils.currentLine=20905989;
- //BA.debugLineNum = 20905989;BA.debugLine="msg = LastException.Message";
+       catch (Exception e9) {
+			ba.setLastException(e9);RDebugUtils.currentLine=20905993;
+ //BA.debugLineNum = 20905993;BA.debugLine="msg = LastException.Message";
 _msg = __c.LastException(ba).getMessage();
  };
-RDebugUtils.currentLine=20905991;
- //BA.debugLineNum = 20905991;BA.debugLine="TraceAudio(\"Error_Event. message=\" & msg)";
+RDebugUtils.currentLine=20905995;
+ //BA.debugLineNum = 20905995;BA.debugLine="TraceAudio(\"Error_Event. message=\" & msg)";
 __ref._traceaudio /*String*/ (null,"Error_Event. message="+_msg);
-RDebugUtils.currentLine=20905992;
- //BA.debugLineNum = 20905992;BA.debugLine="NotifyError(msg)";
+RDebugUtils.currentLine=20905996;
+ //BA.debugLineNum = 20905996;BA.debugLine="NotifyError(msg)";
 __ref._notifyerror /*String*/ (null,_msg);
-RDebugUtils.currentLine=20905993;
- //BA.debugLineNum = 20905993;BA.debugLine="End Sub";
+RDebugUtils.currentLine=20905997;
+ //BA.debugLineNum = 20905997;BA.debugLine="End Sub";
 return "";
 }
 public String  _traceaudio(b4j.example.audioplayer __ref,String _message) throws Exception{
@@ -620,21 +646,13 @@ __ref = this;
 RDebugUtils.currentModule="audioplayer";
 if (Debug.shouldDelegate(ba, "traceaudio", false))
 	 {return ((String) Debug.delegate(ba, "traceaudio", new Object[] {_message}));}
-String _subname = "";
 RDebugUtils.currentLine=21626880;
  //BA.debugLineNum = 21626880;BA.debugLine="Private Sub TraceAudio(message As String)";
 RDebugUtils.currentLine=21626881;
- //BA.debugLineNum = 21626881;BA.debugLine="Dim subName As String = \"TraceLog\"";
-_subname = "TraceLog";
+ //BA.debugLineNum = 21626881;BA.debugLine="targetPage.TraceLog(\"[\" & eventName & \"] \" & mess";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._tracelog /*String*/ (null,"["+__ref._eventname /*String*/ +"] "+_message);
 RDebugUtils.currentLine=21626882;
- //BA.debugLineNum = 21626882;BA.debugLine="If SubExists(targetModule, subName) Then";
-if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,_subname)) { 
-RDebugUtils.currentLine=21626883;
- //BA.debugLineNum = 21626883;BA.debugLine="CallSubDelayed2(targetModule, subName, \"[\" & eve";
-__c.CallSubDelayed2(ba,__ref._targetmodule /*Object*/ ,_subname,(Object)("["+__ref._eventname /*String*/ +"] "+_message));
- };
-RDebugUtils.currentLine=21626885;
- //BA.debugLineNum = 21626885;BA.debugLine="End Sub";
+ //BA.debugLineNum = 21626882;BA.debugLine="End Sub";
 return "";
 }
 public String  _fadetimer_tick(b4j.example.audioplayer __ref) throws Exception{
@@ -783,6 +801,24 @@ RDebugUtils.currentLine=21561357;
  //BA.debugLineNum = 21561357;BA.debugLine="End Sub";
 return "";
 }
+public String  _resolveaudiokey(b4j.example.audioplayer __ref,String _namevalue) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="audioplayer";
+if (Debug.shouldDelegate(ba, "resolveaudiokey", false))
+	 {return ((String) Debug.delegate(ba, "resolveaudiokey", new Object[] {_namevalue}));}
+RDebugUtils.currentLine=62980096;
+ //BA.debugLineNum = 62980096;BA.debugLine="Private Sub ResolveAudioKey(nameValue As String) A";
+RDebugUtils.currentLine=62980097;
+ //BA.debugLineNum = 62980097;BA.debugLine="If nameValue.ToLowerCase.Contains(\"secondary\") Th";
+if (_namevalue.toLowerCase(anywheresoftware.b4a.keywords.Common.stringLocale).contains("secondary")) { 
+if (true) return "secondary";};
+RDebugUtils.currentLine=62980098;
+ //BA.debugLineNum = 62980098;BA.debugLine="Return \"primary\"";
+if (true) return "primary";
+RDebugUtils.currentLine=62980099;
+ //BA.debugLineNum = 62980099;BA.debugLine="End Sub";
+return "";
+}
 public boolean  _isloading(b4j.example.audioplayer __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="audioplayer";
@@ -795,20 +831,6 @@ RDebugUtils.currentLine=20512769;
 if (true) return __ref._playerstate /*int*/ ==__ref._state_loading /*int*/ ;
 RDebugUtils.currentLine=20512770;
  //BA.debugLineNum = 20512770;BA.debugLine="End Sub";
-return false;
-}
-public boolean  _isplaying(b4j.example.audioplayer __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="audioplayer";
-if (Debug.shouldDelegate(ba, "isplaying", false))
-	 {return ((Boolean) Debug.delegate(ba, "isplaying", null));}
-RDebugUtils.currentLine=20643840;
- //BA.debugLineNum = 20643840;BA.debugLine="Public Sub IsPlaying As Boolean";
-RDebugUtils.currentLine=20643841;
- //BA.debugLineNum = 20643841;BA.debugLine="Return playerState = STATE_PLAYING";
-if (true) return __ref._playerstate /*int*/ ==__ref._state_playing /*int*/ ;
-RDebugUtils.currentLine=20643842;
- //BA.debugLineNum = 20643842;BA.debugLine="End Sub";
 return false;
 }
 public boolean  _isready(b4j.example.audioplayer __ref) throws Exception{
@@ -881,41 +903,51 @@ if (Debug.shouldDelegate(ba, "player_complete", false))
 RDebugUtils.currentLine=20971520;
  //BA.debugLineNum = 20971520;BA.debugLine="Private Sub Player_Complete";
 RDebugUtils.currentLine=20971521;
- //BA.debugLineNum = 20971521;BA.debugLine="If playerState = STATE_STOPPED Then Return";
+ //BA.debugLineNum = 20971521;BA.debugLine="If activeEventLoadToken <> currentLoadToken Then";
+if (__ref._activeeventloadtoken /*long*/ !=__ref._currentloadtoken /*long*/ ) { 
+RDebugUtils.currentLine=20971522;
+ //BA.debugLineNum = 20971522;BA.debugLine="TraceAudio(\"Complete ignored. stale_token=\" & ac";
+__ref._traceaudio /*String*/ (null,"Complete ignored. stale_token="+BA.NumberToString(__ref._activeeventloadtoken /*long*/ )+" current="+BA.NumberToString(__ref._currentloadtoken /*long*/ ));
+RDebugUtils.currentLine=20971523;
+ //BA.debugLineNum = 20971523;BA.debugLine="Return";
+if (true) return "";
+ };
+RDebugUtils.currentLine=20971525;
+ //BA.debugLineNum = 20971525;BA.debugLine="If playerState = STATE_STOPPED Then Return";
 if (__ref._playerstate /*int*/ ==__ref._state_stopped /*int*/ ) { 
 if (true) return "";};
-RDebugUtils.currentLine=20971522;
- //BA.debugLineNum = 20971522;BA.debugLine="loadTimer.Enabled = False";
-__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=20971523;
- //BA.debugLineNum = 20971523;BA.debugLine="checkTimer.Enabled = False";
-__ref._checktimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=20971524;
- //BA.debugLineNum = 20971524;BA.debugLine="timeUpdateTimer.Enabled = False";
-__ref._timeupdatetimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
-RDebugUtils.currentLine=20971525;
- //BA.debugLineNum = 20971525;BA.debugLine="fadeTimer.Enabled = False";
-__ref._fadetimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
 RDebugUtils.currentLine=20971526;
- //BA.debugLineNum = 20971526;BA.debugLine="fadeMode = FADE_NONE";
-__ref._fademode /*int*/  = __ref._fade_none /*int*/ ;
+ //BA.debugLineNum = 20971526;BA.debugLine="loadTimer.Enabled = False";
+__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
 RDebugUtils.currentLine=20971527;
- //BA.debugLineNum = 20971527;BA.debugLine="currentVolume = 0";
-__ref._currentvolume /*double*/  = 0;
+ //BA.debugLineNum = 20971527;BA.debugLine="checkTimer.Enabled = False";
+__ref._checktimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
 RDebugUtils.currentLine=20971528;
- //BA.debugLineNum = 20971528;BA.debugLine="stalledCheckCount = 0";
-__ref._stalledcheckcount /*int*/  = (int) (0);
+ //BA.debugLineNum = 20971528;BA.debugLine="timeUpdateTimer.Enabled = False";
+__ref._timeupdatetimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
 RDebugUtils.currentLine=20971529;
- //BA.debugLineNum = 20971529;BA.debugLine="playerState = STATE_STOPPED";
-__ref._playerstate /*int*/  = __ref._state_stopped /*int*/ ;
+ //BA.debugLineNum = 20971529;BA.debugLine="fadeTimer.Enabled = False";
+__ref._fadetimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
 RDebugUtils.currentLine=20971530;
- //BA.debugLineNum = 20971530;BA.debugLine="TraceAudio(\"Complete\")";
-__ref._traceaudio /*String*/ (null,"Complete");
+ //BA.debugLineNum = 20971530;BA.debugLine="fadeMode = FADE_NONE";
+__ref._fademode /*int*/  = __ref._fade_none /*int*/ ;
 RDebugUtils.currentLine=20971531;
- //BA.debugLineNum = 20971531;BA.debugLine="CallIfExists(eventName & \"_Complete\")";
-__ref._callifexists /*String*/ (null,__ref._eventname /*String*/ +"_Complete");
+ //BA.debugLineNum = 20971531;BA.debugLine="currentVolume = 0";
+__ref._currentvolume /*double*/  = 0;
 RDebugUtils.currentLine=20971532;
- //BA.debugLineNum = 20971532;BA.debugLine="End Sub";
+ //BA.debugLineNum = 20971532;BA.debugLine="stalledCheckCount = 0";
+__ref._stalledcheckcount /*int*/  = (int) (0);
+RDebugUtils.currentLine=20971533;
+ //BA.debugLineNum = 20971533;BA.debugLine="playerState = STATE_STOPPED";
+__ref._playerstate /*int*/  = __ref._state_stopped /*int*/ ;
+RDebugUtils.currentLine=20971534;
+ //BA.debugLineNum = 20971534;BA.debugLine="TraceAudio(\"Complete\")";
+__ref._traceaudio /*String*/ (null,"Complete");
+RDebugUtils.currentLine=20971535;
+ //BA.debugLineNum = 20971535;BA.debugLine="targetPage.AudioPlayer_Complete(audioKey)";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._audioplayer_complete /*String*/ (null,__ref._audiokey /*String*/ );
+RDebugUtils.currentLine=20971536;
+ //BA.debugLineNum = 20971536;BA.debugLine="End Sub";
 return "";
 }
 public String  _traceinternalerror(b4j.example.audioplayer __ref,String _context) throws Exception{
@@ -923,21 +955,13 @@ __ref = this;
 RDebugUtils.currentModule="audioplayer";
 if (Debug.shouldDelegate(ba, "traceinternalerror", false))
 	 {return ((String) Debug.delegate(ba, "traceinternalerror", new Object[] {_context}));}
-String _subname = "";
 RDebugUtils.currentLine=59572224;
  //BA.debugLineNum = 59572224;BA.debugLine="Private Sub TraceInternalError(context As String)";
 RDebugUtils.currentLine=59572225;
- //BA.debugLineNum = 59572225;BA.debugLine="Dim subName As String = \"TraceLog\"";
-_subname = "TraceLog";
+ //BA.debugLineNum = 59572225;BA.debugLine="targetPage.TraceLog(\"ошибка аудио internal contex";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._tracelog /*String*/ (null,"ошибка аудио internal context="+_context+" message="+__c.LastException(ba).getMessage());
 RDebugUtils.currentLine=59572226;
- //BA.debugLineNum = 59572226;BA.debugLine="If SubExists(targetModule, subName) Then";
-if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,_subname)) { 
-RDebugUtils.currentLine=59572227;
- //BA.debugLineNum = 59572227;BA.debugLine="CallSubDelayed2(targetModule, subName, \"ошибка а";
-__c.CallSubDelayed2(ba,__ref._targetmodule /*Object*/ ,_subname,(Object)("ошибка аудио internal context="+_context+" message="+__c.LastException(ba).getMessage()));
- };
-RDebugUtils.currentLine=59572229;
- //BA.debugLineNum = 59572229;BA.debugLine="End Sub";
+ //BA.debugLineNum = 59572226;BA.debugLine="End Sub";
 return "";
 }
 public String  _startfade(b4j.example.audioplayer __ref,int _mode,double _targetvolume,int _fadetimems) throws Exception{
@@ -1003,19 +1027,29 @@ if (Debug.shouldDelegate(ba, "ready_event", false))
 RDebugUtils.currentLine=20840448;
  //BA.debugLineNum = 20840448;BA.debugLine="Private Sub Ready_Event(methodName As String, args";
 RDebugUtils.currentLine=20840449;
- //BA.debugLineNum = 20840449;BA.debugLine="playerState = STATE_READY";
-__ref._playerstate /*int*/  = __ref._state_ready /*int*/ ;
+ //BA.debugLineNum = 20840449;BA.debugLine="If activeEventLoadToken <> currentLoadToken Then";
+if (__ref._activeeventloadtoken /*long*/ !=__ref._currentloadtoken /*long*/ ) { 
 RDebugUtils.currentLine=20840450;
- //BA.debugLineNum = 20840450;BA.debugLine="loadTimer.Enabled = False";
-__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+ //BA.debugLineNum = 20840450;BA.debugLine="TraceAudio(\"Ready ignored. stale_token=\" & activ";
+__ref._traceaudio /*String*/ (null,"Ready ignored. stale_token="+BA.NumberToString(__ref._activeeventloadtoken /*long*/ )+" current="+BA.NumberToString(__ref._currentloadtoken /*long*/ ));
 RDebugUtils.currentLine=20840451;
- //BA.debugLineNum = 20840451;BA.debugLine="TraceAudio(\"Ready\")";
-__ref._traceaudio /*String*/ (null,"Ready");
-RDebugUtils.currentLine=20840452;
- //BA.debugLineNum = 20840452;BA.debugLine="CallIfExists(eventName & \"_Ready\")";
-__ref._callifexists /*String*/ (null,__ref._eventname /*String*/ +"_Ready");
+ //BA.debugLineNum = 20840451;BA.debugLine="Return";
+if (true) return "";
+ };
 RDebugUtils.currentLine=20840453;
- //BA.debugLineNum = 20840453;BA.debugLine="End Sub";
+ //BA.debugLineNum = 20840453;BA.debugLine="playerState = STATE_READY";
+__ref._playerstate /*int*/  = __ref._state_ready /*int*/ ;
+RDebugUtils.currentLine=20840454;
+ //BA.debugLineNum = 20840454;BA.debugLine="loadTimer.Enabled = False";
+__ref._loadtimer /*anywheresoftware.b4a.objects.Timer*/ .setEnabled(__c.False);
+RDebugUtils.currentLine=20840455;
+ //BA.debugLineNum = 20840455;BA.debugLine="TraceAudio(\"Ready\")";
+__ref._traceaudio /*String*/ (null,"Ready");
+RDebugUtils.currentLine=20840456;
+ //BA.debugLineNum = 20840456;BA.debugLine="targetPage.AudioPlayer_Ready(audioKey)";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._audioplayer_ready /*String*/ (null,__ref._audiokey /*String*/ );
+RDebugUtils.currentLine=20840457;
+ //BA.debugLineNum = 20840457;BA.debugLine="End Sub";
 return "";
 }
 public String  _timeupdatetimer_tick(b4j.example.audioplayer __ref) throws Exception{
@@ -1030,10 +1064,14 @@ RDebugUtils.currentLine=21168129;
 if (__ref._playerstate /*int*/ !=__ref._state_playing /*int*/ ) { 
 if (true) return "";};
 RDebugUtils.currentLine=21168130;
- //BA.debugLineNum = 21168130;BA.debugLine="CallIfExists(eventName & \"_Timeupdate\")";
-__ref._callifexists /*String*/ (null,__ref._eventname /*String*/ +"_Timeupdate");
+ //BA.debugLineNum = 21168130;BA.debugLine="If activeEventLoadToken <> currentLoadToken Then";
+if (__ref._activeeventloadtoken /*long*/ !=__ref._currentloadtoken /*long*/ ) { 
+if (true) return "";};
 RDebugUtils.currentLine=21168131;
- //BA.debugLineNum = 21168131;BA.debugLine="End Sub";
+ //BA.debugLineNum = 21168131;BA.debugLine="targetPage.AudioPlayer_Timeupdate(audioKey)";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._audioplayer_timeupdate /*String*/ (null,__ref._audiokey /*String*/ );
+RDebugUtils.currentLine=21168132;
+ //BA.debugLineNum = 21168132;BA.debugLine="End Sub";
 return "";
 }
 }

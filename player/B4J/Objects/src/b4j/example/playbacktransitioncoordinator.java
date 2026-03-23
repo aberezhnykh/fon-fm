@@ -99,6 +99,8 @@ String _playbackflowstate;
 String _flowplaying;
 String _flowidle;
 String _flowpreparing;
+int _candidateindex = 0;
+int _scanindex = 0;
 Object _nextobject = null;
 anywheresoftware.b4a.objects.collections.Map _candidateitem = null;
 String _candidatetype = "";
@@ -129,12 +131,15 @@ case 0:
 //C
 this.state = 1;
 RDebugUtils.currentLine=52887553;
- //BA.debugLineNum = 52887553;BA.debugLine="Do While playQueue.Size > 0";
+ //BA.debugLineNum = 52887553;BA.debugLine="Dim candidateIndex As Int = -1";
+_candidateindex = (int) (-1);
+RDebugUtils.currentLine=52887554;
+ //BA.debugLineNum = 52887554;BA.debugLine="Do While playQueue.Size > 0";
 if (true) break;
 
 case 1:
 //do while
-this.state = 23;
+this.state = 41;
 while (_playqueue.getSize()>0) {
 this.state = 3;
 if (true) break;
@@ -144,55 +149,38 @@ if (true) break;
 case 3:
 //C
 this.state = 4;
-RDebugUtils.currentLine=52887554;
- //BA.debugLineNum = 52887554;BA.debugLine="Dim nextObject As Object = playQueue.Get(0)";
-_nextobject = _playqueue.Get((int) (0));
 RDebugUtils.currentLine=52887555;
- //BA.debugLineNum = 52887555;BA.debugLine="If nextObject Is Map Then";
+ //BA.debugLineNum = 52887555;BA.debugLine="Dim scanIndex As Int = candidateIndex + 1";
+_scanindex = (int) (_candidateindex+1);
+RDebugUtils.currentLine=52887556;
+ //BA.debugLineNum = 52887556;BA.debugLine="If scanIndex < 0 Then scanIndex = 0";
 if (true) break;
 
 case 4:
 //if
 this.state = 9;
-if (_nextobject instanceof java.util.Map) { 
+if (_scanindex<0) { 
 this.state = 6;
-}else {
-this.state = 8;
-}if (true) break;
+;}if (true) break;
 
 case 6:
 //C
 this.state = 9;
- if (true) break;
-
-case 8:
-//C
-this.state = 9;
-RDebugUtils.currentLine=52887557;
- //BA.debugLineNum = 52887557;BA.debugLine="Return False";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
+_scanindex = (int) (0);
+if (true) break;
 
 case 9:
 //C
 this.state = 10;
 ;
-RDebugUtils.currentLine=52887559;
- //BA.debugLineNum = 52887559;BA.debugLine="Dim candidateItem As Map = nextObject";
-_candidateitem = new anywheresoftware.b4a.objects.collections.Map();
-_candidateitem = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_nextobject));
-RDebugUtils.currentLine=52887560;
- //BA.debugLineNum = 52887560;BA.debugLine="Dim candidateType As String = candidateItem.GetD";
-_candidatetype = BA.ObjectToString(_candidateitem.GetDefault((Object)("type"),(Object)("")));
-RDebugUtils.currentLine=52887561;
- //BA.debugLineNum = 52887561;BA.debugLine="If candidateType <> \"track\" And candidateType <>";
+RDebugUtils.currentLine=52887557;
+ //BA.debugLineNum = 52887557;BA.debugLine="If scanIndex >= playQueue.Size Then Return False";
 if (true) break;
 
 case 10:
 //if
 this.state = 15;
-if ((_candidatetype).equals("track") == false && (_candidatetype).equals("ad") == false) { 
+if (_scanindex>=_playqueue.getSize()) { 
 this.state = 12;
 ;}if (true) break;
 
@@ -207,361 +195,494 @@ case 15:
 //C
 this.state = 16;
 ;
-RDebugUtils.currentLine=52887562;
- //BA.debugLineNum = 52887562;BA.debugLine="If candidateType = \"track\" And mediaCacheService";
+RDebugUtils.currentLine=52887558;
+ //BA.debugLineNum = 52887558;BA.debugLine="Dim nextObject As Object = playQueue.Get(scanInd";
+_nextobject = _playqueue.Get(_scanindex);
+RDebugUtils.currentLine=52887559;
+ //BA.debugLineNum = 52887559;BA.debugLine="If nextObject Is Map Then";
 if (true) break;
 
 case 16:
 //if
-this.state = 19;
-if ((_candidatetype).equals("track") && _mediacacheservice._istrackcached /*boolean*/ (null,BA.ObjectToString(_candidateitem.GetDefault((Object)("id"),(Object)(""))))==parent.__c.False) { 
+this.state = 21;
+if (_nextobject instanceof java.util.Map) { 
 this.state = 18;
+}else {
+this.state = 20;
 }if (true) break;
 
 case 18:
 //C
-this.state = 19;
-RDebugUtils.currentLine=52887563;
- //BA.debugLineNum = 52887563;BA.debugLine="Trace(\"переход очередь drop reason=no_local_tra";
-__ref._trace /*String*/ (null,"переход очередь drop reason=no_local_track item="+__ref._describeitem /*String*/ (null,_candidateitem));
-RDebugUtils.currentLine=52887564;
- //BA.debugLineNum = 52887564;BA.debugLine="playQueue.RemoveAt(0)";
-_playqueue.RemoveAt((int) (0));
-RDebugUtils.currentLine=52887565;
- //BA.debugLineNum = 52887565;BA.debugLine="targetPage.Transition_SaveQueueSnapshotState";
-__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_savequeuesnapshotstate /*String*/ (null);
-RDebugUtils.currentLine=52887566;
- //BA.debugLineNum = 52887566;BA.debugLine="Continue";
-this.state = 1;
-if (true) break;;
- if (true) break;
-;
-RDebugUtils.currentLine=52887568;
- //BA.debugLineNum = 52887568;BA.debugLine="If candidateType = \"ad\" And mediaCacheService.Is";
-
-case 19:
-//if
-this.state = 22;
-if ((_candidatetype).equals("ad") && _mediacacheservice._isadcached /*boolean*/ (null,BA.ObjectToString(_candidateitem.GetDefault((Object)("id"),(Object)(""))))==parent.__c.False) { 
 this.state = 21;
-}if (true) break;
+ if (true) break;
+
+case 20:
+//C
+this.state = 21;
+RDebugUtils.currentLine=52887561;
+ //BA.debugLineNum = 52887561;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+ if (true) break;
 
 case 21:
 //C
 this.state = 22;
-RDebugUtils.currentLine=52887569;
- //BA.debugLineNum = 52887569;BA.debugLine="Trace(\"переход очередь drop reason=no_local_ad";
-__ref._trace /*String*/ (null,"переход очередь drop reason=no_local_ad item="+__ref._describeitem /*String*/ (null,_candidateitem));
+;
+RDebugUtils.currentLine=52887563;
+ //BA.debugLineNum = 52887563;BA.debugLine="Dim candidateItem As Map = nextObject";
+_candidateitem = new anywheresoftware.b4a.objects.collections.Map();
+_candidateitem = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_nextobject));
+RDebugUtils.currentLine=52887564;
+ //BA.debugLineNum = 52887564;BA.debugLine="Dim candidateType As String = candidateItem.GetD";
+_candidatetype = BA.ObjectToString(_candidateitem.GetDefault((Object)("type"),(Object)("")));
+RDebugUtils.currentLine=52887565;
+ //BA.debugLineNum = 52887565;BA.debugLine="If candidateType = \"break\" Then";
+if (true) break;
+
+case 22:
+//if
+this.state = 25;
+if ((_candidatetype).equals("break")) { 
+this.state = 24;
+}if (true) break;
+
+case 24:
+//C
+this.state = 25;
+RDebugUtils.currentLine=52887566;
+ //BA.debugLineNum = 52887566;BA.debugLine="Trace(\"prefetch skip reason=break_ahead item=\"";
+__ref._trace /*String*/ (null,"prefetch skip reason=break_ahead item="+__ref._describeitem /*String*/ (null,_candidateitem));
+RDebugUtils.currentLine=52887567;
+ //BA.debugLineNum = 52887567;BA.debugLine="candidateIndex = scanIndex";
+_candidateindex = _scanindex;
+RDebugUtils.currentLine=52887568;
+ //BA.debugLineNum = 52887568;BA.debugLine="Continue";
+this.state = 1;
+if (true) break;;
+ if (true) break;
+;
 RDebugUtils.currentLine=52887570;
- //BA.debugLineNum = 52887570;BA.debugLine="playQueue.RemoveAt(0)";
-_playqueue.RemoveAt((int) (0));
+ //BA.debugLineNum = 52887570;BA.debugLine="If candidateType <> \"track\" And candidateType <>";
+
+case 25:
+//if
+this.state = 30;
+if ((_candidatetype).equals("track") == false && (_candidatetype).equals("ad") == false) { 
+this.state = 27;
+;}if (true) break;
+
+case 27:
+//C
+this.state = 30;
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+if (true) break;
+
+case 30:
+//C
+this.state = 31;
+;
 RDebugUtils.currentLine=52887571;
- //BA.debugLineNum = 52887571;BA.debugLine="targetPage.Transition_SaveQueueSnapshotState";
-__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_savequeuesnapshotstate /*String*/ (null);
+ //BA.debugLineNum = 52887571;BA.debugLine="If ItemsMatch(runtimeState.ActiveItem, candidate";
+if (true) break;
+
+case 31:
+//if
+this.state = 34;
+if (__ref._itemsmatch /*boolean*/ (null,_runtimestate._activeitem /*anywheresoftware.b4a.objects.collections.Map*/ ,_candidateitem)) { 
+this.state = 33;
+}if (true) break;
+
+case 33:
+//C
+this.state = 34;
 RDebugUtils.currentLine=52887572;
- //BA.debugLineNum = 52887572;BA.debugLine="Continue";
+ //BA.debugLineNum = 52887572;BA.debugLine="Trace(\"prefetch skip reason=active_item item=\"";
+__ref._trace /*String*/ (null,"prefetch skip reason=active_item item="+__ref._describeitem /*String*/ (null,_candidateitem));
+RDebugUtils.currentLine=52887573;
+ //BA.debugLineNum = 52887573;BA.debugLine="candidateIndex = scanIndex";
+_candidateindex = _scanindex;
+RDebugUtils.currentLine=52887574;
+ //BA.debugLineNum = 52887574;BA.debugLine="Continue";
+this.state = 1;
+if (true) break;;
+ if (true) break;
+;
+RDebugUtils.currentLine=52887576;
+ //BA.debugLineNum = 52887576;BA.debugLine="If candidateType = \"track\" And mediaCacheService";
+
+case 34:
+//if
+this.state = 37;
+if ((_candidatetype).equals("track") && _mediacacheservice._istrackcached /*boolean*/ (null,BA.ObjectToString(_candidateitem.GetDefault((Object)("id"),(Object)(""))))==parent.__c.False) { 
+this.state = 36;
+}if (true) break;
+
+case 36:
+//C
+this.state = 37;
+RDebugUtils.currentLine=52887577;
+ //BA.debugLineNum = 52887577;BA.debugLine="Trace(\"переход очередь drop reason=no_local_tra";
+__ref._trace /*String*/ (null,"переход очередь drop reason=no_local_track item="+__ref._describeitem /*String*/ (null,_candidateitem));
+RDebugUtils.currentLine=52887578;
+ //BA.debugLineNum = 52887578;BA.debugLine="playQueue.RemoveAt(scanIndex)";
+_playqueue.RemoveAt(_scanindex);
+RDebugUtils.currentLine=52887579;
+ //BA.debugLineNum = 52887579;BA.debugLine="targetPage.Transition_SaveQueueSnapshotState";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_savequeuesnapshotstate /*String*/ (null);
+RDebugUtils.currentLine=52887580;
+ //BA.debugLineNum = 52887580;BA.debugLine="candidateIndex = -1";
+_candidateindex = (int) (-1);
+RDebugUtils.currentLine=52887581;
+ //BA.debugLineNum = 52887581;BA.debugLine="Continue";
+this.state = 1;
+if (true) break;;
+ if (true) break;
+;
+RDebugUtils.currentLine=52887583;
+ //BA.debugLineNum = 52887583;BA.debugLine="If candidateType = \"ad\" And mediaCacheService.Is";
+
+case 37:
+//if
+this.state = 40;
+if ((_candidatetype).equals("ad") && _mediacacheservice._isadcached /*boolean*/ (null,BA.ObjectToString(_candidateitem.GetDefault((Object)("id"),(Object)(""))))==parent.__c.False) { 
+this.state = 39;
+}if (true) break;
+
+case 39:
+//C
+this.state = 40;
+RDebugUtils.currentLine=52887584;
+ //BA.debugLineNum = 52887584;BA.debugLine="Trace(\"переход очередь drop reason=no_local_ad";
+__ref._trace /*String*/ (null,"переход очередь drop reason=no_local_ad item="+__ref._describeitem /*String*/ (null,_candidateitem));
+RDebugUtils.currentLine=52887585;
+ //BA.debugLineNum = 52887585;BA.debugLine="playQueue.RemoveAt(scanIndex)";
+_playqueue.RemoveAt(_scanindex);
+RDebugUtils.currentLine=52887586;
+ //BA.debugLineNum = 52887586;BA.debugLine="targetPage.Transition_SaveQueueSnapshotState";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_savequeuesnapshotstate /*String*/ (null);
+RDebugUtils.currentLine=52887587;
+ //BA.debugLineNum = 52887587;BA.debugLine="candidateIndex = -1";
+_candidateindex = (int) (-1);
+RDebugUtils.currentLine=52887588;
+ //BA.debugLineNum = 52887588;BA.debugLine="Continue";
 this.state = 1;
 if (true) break;;
  if (true) break;
 
-case 22:
+case 40:
 //C
 this.state = 1;
 ;
-RDebugUtils.currentLine=52887574;
- //BA.debugLineNum = 52887574;BA.debugLine="Exit";
-this.state = 23;
-if (true) break;
- if (true) break;
-;
-RDebugUtils.currentLine=52887576;
- //BA.debugLineNum = 52887576;BA.debugLine="If playQueue.Size = 0 Then Return False";
-
-case 23:
-//if
-this.state = 28;
-if (_playqueue.getSize()==0) { 
-this.state = 25;
-;}if (true) break;
-
-case 25:
-//C
-this.state = 28;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 28:
-//C
-this.state = 29;
-;
-RDebugUtils.currentLine=52887577;
- //BA.debugLineNum = 52887577;BA.debugLine="Dim nextItem As Map = playQueue.Get(0)";
-_nextitem = new anywheresoftware.b4a.objects.collections.Map();
-_nextitem = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_playqueue.Get((int) (0))));
-RDebugUtils.currentLine=52887578;
- //BA.debugLineNum = 52887578;BA.debugLine="If runtimeState.PreparedItem.IsInitialized And ru";
-if (true) break;
-
-case 29:
-//if
-this.state = 38;
-if (_runtimestate._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized() && (_runtimestate._preparedaudiokey /*String*/ ).equals("") == false) { 
-this.state = 31;
-}if (true) break;
-
-case 31:
-//C
-this.state = 32;
-RDebugUtils.currentLine=52887579;
- //BA.debugLineNum = 52887579;BA.debugLine="Dim matchArgs As Map";
-_matchargs = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=52887580;
- //BA.debugLineNum = 52887580;BA.debugLine="matchArgs.Initialize";
-_matchargs.Initialize();
-RDebugUtils.currentLine=52887581;
- //BA.debugLineNum = 52887581;BA.debugLine="matchArgs.Put(\"first\", runtimeState.PreparedItem";
-_matchargs.Put((Object)("first"),(Object)(_runtimestate._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));
-RDebugUtils.currentLine=52887582;
- //BA.debugLineNum = 52887582;BA.debugLine="matchArgs.Put(\"second\", nextItem)";
-_matchargs.Put((Object)("second"),(Object)(_nextitem.getObject()));
-RDebugUtils.currentLine=52887583;
- //BA.debugLineNum = 52887583;BA.debugLine="If targetPage.Transition_ItemsMatch(matchArgs) T";
-if (true) break;
-
-case 32:
-//if
-this.state = 37;
-if (__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_itemsmatch /*boolean*/ (null,_matchargs)) { 
-this.state = 34;
-;}if (true) break;
-
-case 34:
-//C
-this.state = 37;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
-if (true) break;
-
-case 37:
-//C
-this.state = 38;
-;
- if (true) break;
-
-case 38:
-//C
-this.state = 39;
-;
-RDebugUtils.currentLine=52887585;
- //BA.debugLineNum = 52887585;BA.debugLine="Dim targetAudioKey As String = GetInactiveAudioKe";
-_targetaudiokey = __ref._getinactiveaudiokey /*String*/ (null,_runtimestate);
-RDebugUtils.currentLine=52887586;
- //BA.debugLineNum = 52887586;BA.debugLine="targetPage.Transition_ClearPreparedState(False)";
-__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_clearpreparedstate /*String*/ (null,parent.__c.False);
-RDebugUtils.currentLine=52887587;
- //BA.debugLineNum = 52887587;BA.debugLine="runtimeState.SetPendingPrepare(targetAudioKey, ne";
-_runtimestate._setpendingprepare /*String*/ (null,_targetaudiokey,_nextitem);
-RDebugUtils.currentLine=52887588;
- //BA.debugLineNum = 52887588;BA.debugLine="Dim previousFlowState As String = playbackFlowSta";
-_previousflowstate = _playbackflowstate;
-RDebugUtils.currentLine=52887589;
- //BA.debugLineNum = 52887589;BA.debugLine="If playbackFlowState = flowPlaying Or playbackFlo";
-if (true) break;
-
-case 39:
-//if
-this.state = 42;
-if ((_playbackflowstate).equals(_flowplaying) || (_playbackflowstate).equals(_flowidle)) { 
+RDebugUtils.currentLine=52887590;
+ //BA.debugLineNum = 52887590;BA.debugLine="candidateIndex = scanIndex";
+_candidateindex = _scanindex;
+RDebugUtils.currentLine=52887591;
+ //BA.debugLineNum = 52887591;BA.debugLine="Exit";
 this.state = 41;
-}if (true) break;
+if (true) break;
+ if (true) break;
+;
+RDebugUtils.currentLine=52887593;
+ //BA.debugLineNum = 52887593;BA.debugLine="If candidateIndex < 0 Or candidateIndex >= playQu";
 
 case 41:
-//C
-this.state = 42;
-RDebugUtils.currentLine=52887590;
- //BA.debugLineNum = 52887590;BA.debugLine="Dim flowArgs As Map";
-_flowargs = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=52887591;
- //BA.debugLineNum = 52887591;BA.debugLine="flowArgs.Initialize";
-_flowargs.Initialize();
-RDebugUtils.currentLine=52887592;
- //BA.debugLineNum = 52887592;BA.debugLine="flowArgs.Put(\"state\", flowPreparing)";
-_flowargs.Put((Object)("state"),(Object)(_flowpreparing));
-RDebugUtils.currentLine=52887593;
- //BA.debugLineNum = 52887593;BA.debugLine="flowArgs.Put(\"reason\", \"prepare_next:\" & nextIte";
-_flowargs.Put((Object)("reason"),(Object)("prepare_next:"+BA.ObjectToString(_nextitem.GetDefault((Object)("type"),(Object)("")))));
-RDebugUtils.currentLine=52887594;
- //BA.debugLineNum = 52887594;BA.debugLine="targetPage.Transition_SetPlaybackFlowState(flowA";
-__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_setplaybackflowstate /*String*/ (null,_flowargs);
- if (true) break;
-
-case 42:
-//C
-this.state = 43;
-;
-RDebugUtils.currentLine=52887596;
- //BA.debugLineNum = 52887596;BA.debugLine="Dim mediaArgs As Map";
-_mediaargs = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=52887597;
- //BA.debugLineNum = 52887597;BA.debugLine="mediaArgs.Initialize";
-_mediaargs.Initialize();
-RDebugUtils.currentLine=52887598;
- //BA.debugLineNum = 52887598;BA.debugLine="mediaArgs.Put(\"audioKey\", targetAudioKey)";
-_mediaargs.Put((Object)("audioKey"),(Object)(_targetaudiokey));
-RDebugUtils.currentLine=52887599;
- //BA.debugLineNum = 52887599;BA.debugLine="mediaArgs.Put(\"item\", nextItem)";
-_mediaargs.Put((Object)("item"),(Object)(_nextitem.getObject()));
-RDebugUtils.currentLine=52887600;
- //BA.debugLineNum = 52887600;BA.debugLine="Dim nextItemUrl As String = targetPage.Transition";
-_nextitemurl = __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_resolveplaybackmediaurl /*String*/ (null,_mediaargs);
-RDebugUtils.currentLine=52887601;
- //BA.debugLineNum = 52887601;BA.debugLine="If nextItemUrl = \"\" Then";
-if (true) break;
-
-case 43:
 //if
 this.state = 46;
-if ((_nextitemurl).equals("")) { 
-this.state = 45;
-}if (true) break;
+if (_candidateindex<0 || _candidateindex>=_playqueue.getSize()) { 
+this.state = 43;
+;}if (true) break;
 
-case 45:
+case 43:
 //C
 this.state = 46;
-RDebugUtils.currentLine=52887602;
- //BA.debugLineNum = 52887602;BA.debugLine="Trace(\"переход preload ошибка audio=\" & targetAu";
-__ref._trace /*String*/ (null,"переход preload ошибка audio="+_targetaudiokey+" message=empty_media_url");
-RDebugUtils.currentLine=52887603;
- //BA.debugLineNum = 52887603;BA.debugLine="Return False";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
+if (true) break;
 
 case 46:
 //C
 this.state = 47;
 ;
-RDebugUtils.currentLine=52887605;
- //BA.debugLineNum = 52887605;BA.debugLine="Dim volume As Double = targetPage.Transition_Curr";
-_volume = __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_currentvolume /*double*/ (null,_nextitem);
-RDebugUtils.currentLine=52887606;
- //BA.debugLineNum = 52887606;BA.debugLine="Dim targetAudio As AudioPlayer = targetPage.Trans";
-_targetaudio = __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_getaudiobykey /*b4j.example.audioplayer*/ (null,_targetaudiokey);
-RDebugUtils.currentLine=52887607;
- //BA.debugLineNum = 52887607;BA.debugLine="targetAudio.LoadUrl(nextItemUrl, volume)";
-_targetaudio._loadurl /*String*/ (null,_nextitemurl,_volume);
-RDebugUtils.currentLine=52887608;
- //BA.debugLineNum = 52887608;BA.debugLine="Dim waitArgs As Map";
-_waitargs = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=52887609;
- //BA.debugLineNum = 52887609;BA.debugLine="waitArgs.Initialize";
-_waitargs.Initialize();
-RDebugUtils.currentLine=52887610;
- //BA.debugLineNum = 52887610;BA.debugLine="waitArgs.Put(\"audioKey\", targetAudioKey)";
-_waitargs.Put((Object)("audioKey"),(Object)(_targetaudiokey));
-RDebugUtils.currentLine=52887611;
- //BA.debugLineNum = 52887611;BA.debugLine="waitArgs.Put(\"item\", nextItem)";
-_waitargs.Put((Object)("item"),(Object)(_nextitem.getObject()));
-RDebugUtils.currentLine=52887612;
- //BA.debugLineNum = 52887612;BA.debugLine="waitArgs.Put(\"timeoutMs\", 5000)";
-_waitargs.Put((Object)("timeoutMs"),(Object)(5000));
-RDebugUtils.currentLine=52887613;
- //BA.debugLineNum = 52887613;BA.debugLine="Wait For (targetPage.Transition_WaitForPreparedAu";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbacktransitioncoordinator", "preparenextplayable"), __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_waitforpreparedaudio /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_waitargs));
-this.state = 57;
-return;
-case 57:
-//C
-this.state = 47;
-_result = (anywheresoftware.b4a.objects.collections.Map) result[1];
-;
-RDebugUtils.currentLine=52887614;
- //BA.debugLineNum = 52887614;BA.debugLine="If playbackFlowState = flowPreparing Then";
+RDebugUtils.currentLine=52887594;
+ //BA.debugLineNum = 52887594;BA.debugLine="Dim nextItem As Map = playQueue.Get(candidateInde";
+_nextitem = new anywheresoftware.b4a.objects.collections.Map();
+_nextitem = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_playqueue.Get(_candidateindex)));
+RDebugUtils.currentLine=52887595;
+ //BA.debugLineNum = 52887595;BA.debugLine="If runtimeState.PreparedItem.IsInitialized And ru";
 if (true) break;
 
 case 47:
 //if
-this.state = 56;
-if ((_playbackflowstate).equals(_flowpreparing)) { 
+this.state = 54;
+if (_runtimestate._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized() && (_runtimestate._preparedaudiokey /*String*/ ).equals("") == false) { 
 this.state = 49;
 }if (true) break;
 
 case 49:
 //C
 this.state = 50;
-RDebugUtils.currentLine=52887615;
- //BA.debugLineNum = 52887615;BA.debugLine="If result.GetDefault(\"Success\", False) Then";
+RDebugUtils.currentLine=52887596;
+ //BA.debugLineNum = 52887596;BA.debugLine="Dim matchArgs As Map";
+_matchargs = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=52887597;
+ //BA.debugLineNum = 52887597;BA.debugLine="matchArgs.Initialize";
+_matchargs.Initialize();
+RDebugUtils.currentLine=52887598;
+ //BA.debugLineNum = 52887598;BA.debugLine="matchArgs.Put(\"first\", runtimeState.PreparedItem";
+_matchargs.Put((Object)("first"),(Object)(_runtimestate._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));
+RDebugUtils.currentLine=52887599;
+ //BA.debugLineNum = 52887599;BA.debugLine="matchArgs.Put(\"second\", nextItem)";
+_matchargs.Put((Object)("second"),(Object)(_nextitem.getObject()));
+RDebugUtils.currentLine=52887600;
+ //BA.debugLineNum = 52887600;BA.debugLine="If targetPage.Transition_ItemsMatch(matchArgs) T";
 if (true) break;
 
 case 50:
 //if
-this.state = 55;
-if (BA.ObjectToBoolean(_result.GetDefault((Object)("Success"),(Object)(parent.__c.False)))) { 
+this.state = 53;
+if (__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_itemsmatch /*boolean*/ (null,_matchargs)) { 
 this.state = 52;
-}else {
-this.state = 54;
 }if (true) break;
 
 case 52:
 //C
-this.state = 55;
-RDebugUtils.currentLine=52887616;
- //BA.debugLineNum = 52887616;BA.debugLine="Dim readyArgs As Map";
-_readyargs = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=52887617;
- //BA.debugLineNum = 52887617;BA.debugLine="readyArgs.Initialize";
-_readyargs.Initialize();
-RDebugUtils.currentLine=52887618;
- //BA.debugLineNum = 52887618;BA.debugLine="readyArgs.Put(\"state\", previousFlowState)";
-_readyargs.Put((Object)("state"),(Object)(_previousflowstate));
-RDebugUtils.currentLine=52887619;
- //BA.debugLineNum = 52887619;BA.debugLine="readyArgs.Put(\"reason\", \"prepare_ready\")";
-_readyargs.Put((Object)("reason"),(Object)("prepare_ready"));
-RDebugUtils.currentLine=52887620;
- //BA.debugLineNum = 52887620;BA.debugLine="targetPage.Transition_SetPlaybackFlowState(read";
-__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_setplaybackflowstate /*String*/ (null,_readyargs);
+this.state = 53;
+RDebugUtils.currentLine=52887601;
+ //BA.debugLineNum = 52887601;BA.debugLine="Trace(\"prefetch reuse prepared item=\" & Describ";
+__ref._trace /*String*/ (null,"prefetch reuse prepared item="+__ref._describeitem /*String*/ (null,_nextitem));
+RDebugUtils.currentLine=52887602;
+ //BA.debugLineNum = 52887602;BA.debugLine="Return True";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.True));return;};
+ if (true) break;
+
+case 53:
+//C
+this.state = 54;
+;
  if (true) break;
 
 case 54:
 //C
 this.state = 55;
+;
+RDebugUtils.currentLine=52887605;
+ //BA.debugLineNum = 52887605;BA.debugLine="Dim targetAudioKey As String = GetInactiveAudioKe";
+_targetaudiokey = __ref._getinactiveaudiokey /*String*/ (null,_runtimestate);
+RDebugUtils.currentLine=52887606;
+ //BA.debugLineNum = 52887606;BA.debugLine="targetPage.Transition_ClearPreparedState(False)";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_clearpreparedstate /*String*/ (null,parent.__c.False);
+RDebugUtils.currentLine=52887607;
+ //BA.debugLineNum = 52887607;BA.debugLine="runtimeState.SetPendingPrepare(targetAudioKey, ne";
+_runtimestate._setpendingprepare /*String*/ (null,_targetaudiokey,_nextitem);
+RDebugUtils.currentLine=52887608;
+ //BA.debugLineNum = 52887608;BA.debugLine="Dim previousFlowState As String = playbackFlowSta";
+_previousflowstate = _playbackflowstate;
+RDebugUtils.currentLine=52887609;
+ //BA.debugLineNum = 52887609;BA.debugLine="If playbackFlowState = flowPlaying Or playbackFlo";
+if (true) break;
+
+case 55:
+//if
+this.state = 58;
+if ((_playbackflowstate).equals(_flowplaying) || (_playbackflowstate).equals(_flowidle)) { 
+this.state = 57;
+}if (true) break;
+
+case 57:
+//C
+this.state = 58;
+RDebugUtils.currentLine=52887610;
+ //BA.debugLineNum = 52887610;BA.debugLine="Dim flowArgs As Map";
+_flowargs = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=52887611;
+ //BA.debugLineNum = 52887611;BA.debugLine="flowArgs.Initialize";
+_flowargs.Initialize();
+RDebugUtils.currentLine=52887612;
+ //BA.debugLineNum = 52887612;BA.debugLine="flowArgs.Put(\"state\", flowPreparing)";
+_flowargs.Put((Object)("state"),(Object)(_flowpreparing));
+RDebugUtils.currentLine=52887613;
+ //BA.debugLineNum = 52887613;BA.debugLine="flowArgs.Put(\"reason\", \"prepare_next:\" & nextIte";
+_flowargs.Put((Object)("reason"),(Object)("prepare_next:"+BA.ObjectToString(_nextitem.GetDefault((Object)("type"),(Object)("")))));
+RDebugUtils.currentLine=52887614;
+ //BA.debugLineNum = 52887614;BA.debugLine="targetPage.Transition_SetPlaybackFlowState(flowA";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_setplaybackflowstate /*String*/ (null,_flowargs);
+ if (true) break;
+
+case 58:
+//C
+this.state = 59;
+;
+RDebugUtils.currentLine=52887616;
+ //BA.debugLineNum = 52887616;BA.debugLine="Dim mediaArgs As Map";
+_mediaargs = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=52887617;
+ //BA.debugLineNum = 52887617;BA.debugLine="mediaArgs.Initialize";
+_mediaargs.Initialize();
+RDebugUtils.currentLine=52887618;
+ //BA.debugLineNum = 52887618;BA.debugLine="mediaArgs.Put(\"audioKey\", targetAudioKey)";
+_mediaargs.Put((Object)("audioKey"),(Object)(_targetaudiokey));
+RDebugUtils.currentLine=52887619;
+ //BA.debugLineNum = 52887619;BA.debugLine="mediaArgs.Put(\"item\", nextItem)";
+_mediaargs.Put((Object)("item"),(Object)(_nextitem.getObject()));
+RDebugUtils.currentLine=52887620;
+ //BA.debugLineNum = 52887620;BA.debugLine="Dim nextItemUrl As String = targetPage.Transition";
+_nextitemurl = __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_resolveplaybackmediaurl /*String*/ (null,_mediaargs);
+RDebugUtils.currentLine=52887621;
+ //BA.debugLineNum = 52887621;BA.debugLine="If nextItemUrl = \"\" Then";
+if (true) break;
+
+case 59:
+//if
+this.state = 62;
+if ((_nextitemurl).equals("")) { 
+this.state = 61;
+}if (true) break;
+
+case 61:
+//C
+this.state = 62;
 RDebugUtils.currentLine=52887622;
- //BA.debugLineNum = 52887622;BA.debugLine="Dim failedArgs As Map";
-_failedargs = new anywheresoftware.b4a.objects.collections.Map();
+ //BA.debugLineNum = 52887622;BA.debugLine="Trace(\"переход preload ошибка audio=\" & targetAu";
+__ref._trace /*String*/ (null,"переход preload ошибка audio="+_targetaudiokey+" message=empty_media_url");
 RDebugUtils.currentLine=52887623;
- //BA.debugLineNum = 52887623;BA.debugLine="failedArgs.Initialize";
-_failedargs.Initialize();
-RDebugUtils.currentLine=52887624;
- //BA.debugLineNum = 52887624;BA.debugLine="failedArgs.Put(\"state\", \"error\")";
-_failedargs.Put((Object)("state"),(Object)("error"));
+ //BA.debugLineNum = 52887623;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+ if (true) break;
+
+case 62:
+//C
+this.state = 63;
+;
 RDebugUtils.currentLine=52887625;
- //BA.debugLineNum = 52887625;BA.debugLine="failedArgs.Put(\"reason\", \"prepare_failed\")";
-_failedargs.Put((Object)("reason"),(Object)("prepare_failed"));
+ //BA.debugLineNum = 52887625;BA.debugLine="Trace(\"prefetch load audio=\" & targetAudioKey & \"";
+__ref._trace /*String*/ (null,"prefetch load audio="+_targetaudiokey+" item="+__ref._describeitem /*String*/ (null,_nextitem));
 RDebugUtils.currentLine=52887626;
- //BA.debugLineNum = 52887626;BA.debugLine="targetPage.Transition_SetPlaybackFlowState(fail";
-__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_setplaybackflowstate /*String*/ (null,_failedargs);
+ //BA.debugLineNum = 52887626;BA.debugLine="Dim volume As Double = targetPage.Transition_Curr";
+_volume = __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_currentvolume /*double*/ (null,_nextitem);
 RDebugUtils.currentLine=52887627;
- //BA.debugLineNum = 52887627;BA.debugLine="Trace(\"переход preload ошибка audio=\" & targetAu";
+ //BA.debugLineNum = 52887627;BA.debugLine="Dim targetAudio As AudioPlayer = targetPage.Trans";
+_targetaudio = __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_getaudiobykey /*b4j.example.audioplayer*/ (null,_targetaudiokey);
+RDebugUtils.currentLine=52887628;
+ //BA.debugLineNum = 52887628;BA.debugLine="targetAudio.LoadUrl(nextItemUrl, volume)";
+_targetaudio._loadurl /*String*/ (null,_nextitemurl,_volume);
+RDebugUtils.currentLine=52887629;
+ //BA.debugLineNum = 52887629;BA.debugLine="Dim waitArgs As Map";
+_waitargs = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=52887630;
+ //BA.debugLineNum = 52887630;BA.debugLine="waitArgs.Initialize";
+_waitargs.Initialize();
+RDebugUtils.currentLine=52887631;
+ //BA.debugLineNum = 52887631;BA.debugLine="waitArgs.Put(\"audioKey\", targetAudioKey)";
+_waitargs.Put((Object)("audioKey"),(Object)(_targetaudiokey));
+RDebugUtils.currentLine=52887632;
+ //BA.debugLineNum = 52887632;BA.debugLine="waitArgs.Put(\"item\", nextItem)";
+_waitargs.Put((Object)("item"),(Object)(_nextitem.getObject()));
+RDebugUtils.currentLine=52887633;
+ //BA.debugLineNum = 52887633;BA.debugLine="waitArgs.Put(\"timeoutMs\", 5000)";
+_waitargs.Put((Object)("timeoutMs"),(Object)(5000));
+RDebugUtils.currentLine=52887634;
+ //BA.debugLineNum = 52887634;BA.debugLine="Wait For (targetPage.Transition_WaitForPreparedAu";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbacktransitioncoordinator", "preparenextplayable"), __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_waitforpreparedaudio /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_waitargs));
+this.state = 73;
+return;
+case 73:
+//C
+this.state = 63;
+_result = (anywheresoftware.b4a.objects.collections.Map) result[1];
+;
+RDebugUtils.currentLine=52887635;
+ //BA.debugLineNum = 52887635;BA.debugLine="If targetPage.Transition_GetPlaybackFlowState = f";
+if (true) break;
+
+case 63:
+//if
+this.state = 72;
+if ((__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_getplaybackflowstate /*String*/ (null)).equals(_flowpreparing)) { 
+this.state = 65;
+}if (true) break;
+
+case 65:
+//C
+this.state = 66;
+RDebugUtils.currentLine=52887636;
+ //BA.debugLineNum = 52887636;BA.debugLine="If result.GetDefault(\"Success\", False) Then";
+if (true) break;
+
+case 66:
+//if
+this.state = 71;
+if (BA.ObjectToBoolean(_result.GetDefault((Object)("Success"),(Object)(parent.__c.False)))) { 
+this.state = 68;
+}else {
+this.state = 70;
+}if (true) break;
+
+case 68:
+//C
+this.state = 71;
+RDebugUtils.currentLine=52887637;
+ //BA.debugLineNum = 52887637;BA.debugLine="Dim readyArgs As Map";
+_readyargs = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=52887638;
+ //BA.debugLineNum = 52887638;BA.debugLine="readyArgs.Initialize";
+_readyargs.Initialize();
+RDebugUtils.currentLine=52887639;
+ //BA.debugLineNum = 52887639;BA.debugLine="readyArgs.Put(\"state\", previousFlowState)";
+_readyargs.Put((Object)("state"),(Object)(_previousflowstate));
+RDebugUtils.currentLine=52887640;
+ //BA.debugLineNum = 52887640;BA.debugLine="readyArgs.Put(\"reason\", \"prepare_ready\")";
+_readyargs.Put((Object)("reason"),(Object)("prepare_ready"));
+RDebugUtils.currentLine=52887641;
+ //BA.debugLineNum = 52887641;BA.debugLine="targetPage.Transition_SetPlaybackFlowState(read";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_setplaybackflowstate /*String*/ (null,_readyargs);
+RDebugUtils.currentLine=52887642;
+ //BA.debugLineNum = 52887642;BA.debugLine="Trace(\"prefetch prepared audio=\" & targetAudioK";
+__ref._trace /*String*/ (null,"prefetch prepared audio="+_targetaudiokey+" item="+__ref._describeitem /*String*/ (null,_nextitem));
+ if (true) break;
+
+case 70:
+//C
+this.state = 71;
+RDebugUtils.currentLine=52887644;
+ //BA.debugLineNum = 52887644;BA.debugLine="Dim failedArgs As Map";
+_failedargs = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=52887645;
+ //BA.debugLineNum = 52887645;BA.debugLine="failedArgs.Initialize";
+_failedargs.Initialize();
+RDebugUtils.currentLine=52887646;
+ //BA.debugLineNum = 52887646;BA.debugLine="failedArgs.Put(\"state\", \"error\")";
+_failedargs.Put((Object)("state"),(Object)("error"));
+RDebugUtils.currentLine=52887647;
+ //BA.debugLineNum = 52887647;BA.debugLine="failedArgs.Put(\"reason\", \"prepare_failed\")";
+_failedargs.Put((Object)("reason"),(Object)("prepare_failed"));
+RDebugUtils.currentLine=52887648;
+ //BA.debugLineNum = 52887648;BA.debugLine="targetPage.Transition_SetPlaybackFlowState(fail";
+__ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_setplaybackflowstate /*String*/ (null,_failedargs);
+RDebugUtils.currentLine=52887649;
+ //BA.debugLineNum = 52887649;BA.debugLine="Trace(\"переход preload ошибка audio=\" & targetA";
 __ref._trace /*String*/ (null,"переход preload ошибка audio="+_targetaudiokey);
  if (true) break;
 
-case 55:
+case 71:
 //C
-this.state = 56;
+this.state = 72;
 ;
  if (true) break;
 
-case 56:
+case 72:
 //C
 this.state = -1;
 ;
-RDebugUtils.currentLine=52887630;
- //BA.debugLineNum = 52887630;BA.debugLine="Return result.GetDefault(\"Success\", False)";
+RDebugUtils.currentLine=52887652;
+ //BA.debugLineNum = 52887652;BA.debugLine="Return result.GetDefault(\"Success\", False)";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,_result.GetDefault((Object)("Success"),(Object)(parent.__c.False)));return;};
-RDebugUtils.currentLine=52887631;
- //BA.debugLineNum = 52887631;BA.debugLine="End Sub";
+RDebugUtils.currentLine=52887653;
+ //BA.debugLineNum = 52887653;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -858,6 +979,33 @@ if (true) return __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_desc
 RDebugUtils.currentLine=53018627;
  //BA.debugLineNum = 53018627;BA.debugLine="End Sub";
 return "";
+}
+public boolean  _itemsmatch(b4j.example.playbacktransitioncoordinator __ref,anywheresoftware.b4a.objects.collections.Map _firstitem,anywheresoftware.b4a.objects.collections.Map _seconditem) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbacktransitioncoordinator";
+if (Debug.shouldDelegate(ba, "itemsmatch", false))
+	 {return ((Boolean) Debug.delegate(ba, "itemsmatch", new Object[] {_firstitem,_seconditem}));}
+anywheresoftware.b4a.objects.collections.Map _args = null;
+RDebugUtils.currentLine=63438848;
+ //BA.debugLineNum = 63438848;BA.debugLine="Private Sub ItemsMatch(firstItem As Map, secondIte";
+RDebugUtils.currentLine=63438849;
+ //BA.debugLineNum = 63438849;BA.debugLine="Dim args As Map";
+_args = new anywheresoftware.b4a.objects.collections.Map();
+RDebugUtils.currentLine=63438850;
+ //BA.debugLineNum = 63438850;BA.debugLine="args.Initialize";
+_args.Initialize();
+RDebugUtils.currentLine=63438851;
+ //BA.debugLineNum = 63438851;BA.debugLine="args.Put(\"first\", firstItem)";
+_args.Put((Object)("first"),(Object)(_firstitem.getObject()));
+RDebugUtils.currentLine=63438852;
+ //BA.debugLineNum = 63438852;BA.debugLine="args.Put(\"second\", secondItem)";
+_args.Put((Object)("second"),(Object)(_seconditem.getObject()));
+RDebugUtils.currentLine=63438853;
+ //BA.debugLineNum = 63438853;BA.debugLine="Return targetPage.Transition_ItemsMatch(args)";
+if (true) return __ref._targetpage /*b4j.example.b4xmainpage*/ ._transition_itemsmatch /*boolean*/ (null,_args);
+RDebugUtils.currentLine=63438854;
+ //BA.debugLineNum = 63438854;BA.debugLine="End Sub";
+return false;
 }
 public String  _trace(b4j.example.playbacktransitioncoordinator __ref,String _message) throws Exception{
 __ref = this;

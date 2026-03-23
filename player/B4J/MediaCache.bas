@@ -10,7 +10,6 @@ Sub Class_Globals
 	Private storage As KeyValueStore
 	Private targetModule As Object
 	Private traceSubName As String
-	Private deviceKeySeed As String
 	Private mediaDirName As String = "media"
 	Private adsDirName As String = "ads"
 	Private tracksDirName As String = "tracks"
@@ -48,7 +47,6 @@ Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, 
 	storage = storageValue
 	targetModule = targetModuleValue
 	traceSubName = traceSubNameValue
-	deviceKeySeed = deviceIdValue
 	playbackTempTrackIds.Initialize
 	cachedAdIndexDirty = False
 	cachedTrackIndexDirty = False
@@ -495,7 +493,7 @@ Private Sub BuildTrackUrl(trackId As String) As String
 End Sub
 
 Private Sub BuildTrackCacheFileName(trackId As String) As String
-	Dim sourceBytes() As Byte = GetBytesFromString("fonfm-track|" & deviceKeySeed & "|" & trackId)
+	Dim sourceBytes() As Byte = GetBytesFromString(BuildTrackObfuscationSeed("cache", trackId))
 	Dim jo As JavaObject
 	jo.InitializeStatic("java.util.UUID")
 	Dim uuid As JavaObject = jo.RunMethod("nameUUIDFromBytes", Array As Object(sourceBytes))
@@ -564,7 +562,11 @@ Private Sub EnsureTrackPlaybackTemp(audioKey As String, trackId As String) As Bo
 End Sub
 
 Private Sub BuildTrackObfuscationKey(trackId As String) As Byte()
-	Return GetBytesFromString("fonfm-track-key|" & deviceKeySeed & "|" & trackId)
+	Return GetBytesFromString(BuildTrackObfuscationSeed("key", trackId))
+End Sub
+
+Private Sub BuildTrackObfuscationSeed(purpose As String, trackId As String) As String
+	Return "fonfm|" & purpose & "|" & trackId
 End Sub
 
 Private Sub GetBytesFromString(value As String) As Byte()
@@ -762,9 +764,8 @@ Private Sub ProcessCurrentCacheAuditBatch
 		If cacheAuditCurrentType = "tracks" Then
 			Dim trackId As String = FindTrackIdByFileName(fileName, auditIndex)
 			If trackId = "" Then
-				DeleteFileIfExists(auditDir, fileName)
-				cacheAuditRemovedCount = cacheAuditRemovedCount + 1
-				MarkAuditIndexChanged(cacheAuditCurrentType)
+				' Be conservative: never delete a usable cached track during audit
+				' just because the current index cannot identify it.
 				Continue
 			End If
 			cacheAuditSeenIds.Put(trackId, True)

@@ -48,6 +48,7 @@ Private Const TRACE_FLUSH_INTERVAL_MS As Int = 60 * 1000
 	Private Const PLAYBACK_WATCHDOG_RECOVERY_COOLDOWN_MS As Long = 10000
 	Private Const PLAYBACK_WATCHDOG_PROGRESS_DELTA_MS As Long = 150
 	Private Const PLAYBACK_WATCHDOG_GRACE_MS As Long = 3000
+	Private Const TRACE_ERROR_DEBUG_CONTEXT_LINES As Int = 8
 	Private Const CONNECTIVITY_CHECK_TIMEOUT_MS As Int = 2500
 	Private Const PAUSE_RETRY_DELAY As Int = 300000
 	Private Const LOCAL_RETRY_DELAY_INITIAL As Int = 5000
@@ -170,6 +171,7 @@ Private Const TRACE_FLUSH_INTERVAL_MS As Int = 60 * 1000
 	Private lastPlaybackWatchdogProgressAt As Long
 	Private lastPlaybackWatchdogRecoveryAt As Long
 	Private isPlaybackWatchdogTickInProgress As Boolean
+	Private playbackActivationToken As Long
 
 	Private playlistIndex As Int = -1
 	Private orbitPulseStep As Int
@@ -195,6 +197,10 @@ Private Sub B4XPage_Created (root1 As B4XView)
 	audioPrimary.Initialize("AudioPrimary", Me)
 	audioSecondary.Initialize("AudioSecondary", Me)
 	TraceInfo("app", "запуск", "version=" & ResolveAppVersion & " player=" & FormatPlayerCodeForDisplay(playerCode))
+	TraceInfo("system", "устройство", "name=" & ResolveDeviceTraceName & " id=" & deviceId)
+	TraceInfo("system", "платформа", "os=" & ResolveClientPlatformText)
+	TraceInfo("system", "диск", "diskFreeMb=" & ResolveFreeDiskMbText & " diskTotalMb=" & ResolveTotalDiskMbText)
+	WriteHealthSnapshot("запуск")
 	StartOfflineDataRefresh
 	ShowInitialScreen
 End Sub
@@ -773,6 +779,7 @@ Private Sub CacheAuditTimer_Tick
 		cacheAuditTimer.Interval = CACHE_AUDIT_STEP_INTERVAL_MS
 	Else
 		PruneTrackCacheIfNeeded("cache_audit")
+		WriteSystemSnapshot("cache_worker")
 		cacheAuditTimer.Interval = CACHE_AUDIT_RECHECK_INTERVAL_MS
 	End If
 	cacheAuditTimer.Enabled = True
@@ -967,6 +974,7 @@ End Sub
 Private Sub RefreshOfflineDataNow As ResumableSub
 	If playerCode = "" Then Return False
 	If dataPolicyState.BeginOfflineDataRefresh = False Then Return False
+	TraceInfo("network", "запрос данных", "")
 	Wait For (FetchJsonWithTimeout(DATA_BASE_URL & "?" & BuildParams(CreateDataParams), FETCH_TIMEOUT_MS)) Complete (result As Map)
 	If result.GetDefault("Success", False) = False Then
 		consecutiveNetworkErrors = consecutiveNetworkErrors + 1
@@ -1473,6 +1481,7 @@ Private Sub ResetPlaybackWatchdogState
 	lastPlaybackWatchdogTrackId = ""
 	lastPlaybackWatchdogProgressAt = 0
 	lastPlaybackWatchdogRecoveryAt = 0
+	playbackActivationToken = 0
 End Sub
 
 Private Sub ActiveTrackIdForWatchdog As String
@@ -1485,12 +1494,20 @@ Private Sub ActivePlaybackPositionMs As Long
 	Return Max(-1, GetAudioByKey(runtimeState.ActiveAudioKey).Position)
 End Sub
 
+Private Sub HasObservableActivePlayback As Boolean
+	If runtimeState.ActiveAudioKey = "" Then Return False
+	If runtimeState.ActiveItem.IsInitialized = False Then Return False
+	Return GetAudioByKey(runtimeState.ActiveAudioKey).IsPlaying
+End Sub
+
 Private Sub ShouldWatchPlaybackProgress As Boolean
 	If orchestrationState.IsStarted = False Then Return False
 	If orchestrationState.IsStoppedByUser Then Return False
 	If orchestrationState.IsStopping Then Return False
 	If IsPolicyPauseState Then Return False
-	Return True
+	If HasObservableActivePlayback Then Return True
+	If lastPlaybackWatchdogProgressAt = 0 Then Return False
+	Return IsPlaybackTransitionInProgress Or orchestrationState.IsPlaybackDispatchInProgress
 End Sub
 
 Private Sub MarkPlaybackWatchdogProgress(trackId As String, positionMs As Long)
@@ -1514,6 +1531,8 @@ Private Sub RunPlaybackWatchdogTick As ResumableSub
 	Dim nowTicks As Long = DateTime.Now
 	Dim currentTrackId As String = ActiveTrackIdForWatchdog
 	Dim currentPositionMs As Long = ActivePlaybackPositionMs
+	Dim expectedActivationToken As Long = playbackActivationToken
+	If HasObservableActivePlayback = False And lastPlaybackWatchdogProgressAt = 0 Then Return False
 	If lastPlaybackWatchdogProgressAt = 0 Then
 		MarkPlaybackWatchdogProgress(currentTrackId, currentPositionMs)
 		Return True
@@ -1528,7 +1547,7 @@ Private Sub RunPlaybackWatchdogTick As ResumableSub
 	End If
 	If nowTicks - lastPlaybackWatchdogRecoveryAt < PLAYBACK_WATCHDOG_GRACE_MS Then Return False
 	If nowTicks - lastPlaybackWatchdogProgressAt < PLAYBACK_WATCHDOG_STALL_MS Then Return False
-	Wait For (RecoverFromPlaybackStall(currentTrackId, currentPositionMs)) Complete (recovered As Boolean)
+	Wait For (RecoverFromPlaybackStall(currentTrackId, currentPositionMs, expectedActivationToken)) Complete (recovered As Boolean)
 	If recovered Then
 		lastPlaybackWatchdogRecoveryAt = DateTime.Now
 		MarkPlaybackWatchdogProgress(ActiveTrackIdForWatchdog, ActivePlaybackPositionMs)
@@ -1536,9 +1555,22 @@ Private Sub RunPlaybackWatchdogTick As ResumableSub
 	Return recovered
 End Sub
 
-Private Sub RecoverFromPlaybackStall(trackId As String, positionMs As Long) As ResumableSub
+Private Sub IsPlaybackStallAlreadyRecovered(expectedTrackId As String, expectedPositionMs As Long, expectedActivationToken As Long) As Boolean
+	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Or orchestrationState.IsStopping Or IsPolicyPauseState Then Return True
+	If expectedActivationToken <> playbackActivationToken Then Return True
+	If HasObservableActivePlayback = False Then Return False
+	Dim currentTrackId As String = ActiveTrackIdForWatchdog
+	Dim currentPositionMs As Long = ActivePlaybackPositionMs
+	If currentTrackId <> "" And currentTrackId <> expectedTrackId Then Return True
+	If currentPositionMs >= 0 And expectedPositionMs < 0 Then Return True
+	If currentPositionMs >= 0 And currentPositionMs > expectedPositionMs + PLAYBACK_WATCHDOG_PROGRESS_DELTA_MS Then Return True
+	Return False
+End Sub
+
+Private Sub RecoverFromPlaybackStall(trackId As String, positionMs As Long, expectedActivationToken As Long) As ResumableSub
 	Dim nowTicks As Long = DateTime.Now
 	If nowTicks - lastPlaybackWatchdogRecoveryAt < PLAYBACK_WATCHDOG_RECOVERY_COOLDOWN_MS Then Return False
+	If IsPlaybackStallAlreadyRecovered(trackId, positionMs, expectedActivationToken) Then Return False
 	lastPlaybackWatchdogRecoveryAt = nowTicks
 	TraceWarn("playback", "watchdog stall", "trackId=" & trackId & " posMs=" & positionMs & " stage=" & playbackFlowState & " queue=" & playQueue.Size)
 	If runtimeState.ActiveAudioKey <> "" Then GetAudioByKey(runtimeState.ActiveAudioKey).Reset
@@ -1561,16 +1593,19 @@ Private Sub RecoverFromPlaybackStall(trackId As String, positionMs As Long) As R
 	End If
 	If playQueue.Size = 0 Then
 		Wait For (PopulatePlaybackQueue) Complete (queuePrepared As Boolean)
+		If IsPlaybackStallAlreadyRecovered(trackId, positionMs, expectedActivationToken) Then Return True
 		If queuePrepared = False And playQueue.Size = 0 Then
 			TraceWarn("playback", "watchdog recovery", "step=populate_failed")
 		End If
 	End If
 	Wait For (DispatchPlaybackAdvance("watchdog_stall", True)) Complete (dispatched As Boolean)
+	If IsPlaybackStallAlreadyRecovered(trackId, positionMs, expectedActivationToken) Then Return True
 	If dispatched Then
 		TraceInfo("playback", "watchdog recovery", "result=dispatch queue=" & playQueue.Size)
 		Return True
 	End If
 	Wait For (LoadNextAndPlay) Complete (advanced As Boolean)
+	If IsPlaybackStallAlreadyRecovered(trackId, positionMs, expectedActivationToken) Then Return True
 	TraceInfo("playback", "watchdog recovery", "result=" & IIf(advanced, "restart", "failed") & " queue=" & playQueue.Size)
 	Return advanced
 End Sub
@@ -1679,11 +1714,21 @@ Private Sub CanPrefetchNextNow(logDecision As Boolean) As Boolean
 		If logDecision Then TraceLog("guard prefetch запрет reason=already_done")
 		Return False
 	End If
+	If ShouldBlockMusicTransitionForExactBreak Then
+		If logDecision Then TraceLog("guard prefetch запрет reason=exact_break_pending")
+		Return False
+	End If
 	Return CanPrepareNextPlayableNow(logDecision)
 End Sub
 
 Private Sub CanUsePreparedItemNow As Boolean
+	If ShouldTriggerBreakNow Then Return False
 	Return HasUsablePreparedItem And CanAdvancePlaybackNow("prepared_item", False)
+End Sub
+
+Private Sub ShouldBlockMusicTransitionForExactBreak As Boolean
+	If metaState.CurrentMediaType <> "track" Then Return False
+	Return HasPendingExactBreak
 End Sub
 
 Private Sub TryEnterPlaybackDispatch(initiator As String) As Boolean
@@ -1726,10 +1771,16 @@ End Sub
 
 Private Sub ConsumePreparedQueueItem
 	If playQueue.Size = 0 Or runtimeState.PreparedItem.IsInitialized = False Then Return
-	If playQueue.Get(0) Is Map Then
-		Dim firstQueuedItem As Map = playQueue.Get(0)
-		If ItemsMatch(firstQueuedItem, runtimeState.PreparedItem) Then playQueue.RemoveAt(0)
-	End If
+	For i = 0 To playQueue.Size - 1
+		Dim queuedObject As Object = playQueue.Get(i)
+		If queuedObject Is Map Then
+			Dim queuedItem As Map = queuedObject
+			If ItemsMatch(queuedItem, runtimeState.PreparedItem) Then
+				playQueue.RemoveAt(i)
+				Exit
+			End If
+		End If
+	Next
 End Sub
 
 Private Sub UpdatePlaybackMeta(item As Map)
@@ -1745,6 +1796,7 @@ Private Sub UpdatePlaybackMeta(item As Map)
 End Sub
 
 Private Sub ActivateLoadedItem(audioKey As String, item As Map, fadeInMs As Int)
+	playbackActivationToken = playbackActivationToken + 1
 	runtimeState.SetActive(audioKey, item)
 	SetPlaybackFlowState(FLOW_PLAYING, "activate_loaded_item")
 	metaState.SetCurrentMedia(ResolvePlaybackMediaUrl(audioKey, item), item.GetDefault("type", ""))
@@ -1753,7 +1805,7 @@ Private Sub ActivateLoadedItem(audioKey As String, item As Map, fadeInMs As Int)
 	UpdatePlaybackMeta(item)
 	mediaCacheService.TouchCachedItem(item)
 	TraceLog("воспроизведение activate audio=" & audioKey & " item=" & DescribeItem(item) & " fadeInMs=" & fadeInMs)
-	TraceInfo("audio", "плеер play", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(item) & " id=" & TraceTrackValue(item))
+	TraceInfo("audio", "плеер play", BuildAudioTraceDetails(item, "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(item) & " id=" & TraceTrackValue(item)))
 	GetAudioByKey(audioKey).PlayWithFade(fadeInMs)
 	MarkPlaybackWatchdogProgress(item.GetDefault("id", ""), 0)
 	ScheduleTrackCacheWarmup
@@ -1800,7 +1852,7 @@ Private Sub StartPlaybackWithAudioKey(audioKey As String, item As Map, fadeInMs 
 		WriteHealthSnapshot("ошибка_playback")
 		Return False
 	End If
-	TraceInfo("audio", "плеер load", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(item) & " id=" & TraceTrackValue(item))
+	TraceInfo("audio", "плеер load", BuildAudioTraceDetails(item, "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(item) & " id=" & TraceTrackValue(item)))
 	GetAudioByKey(audioKey).LoadUrl(itemUrl, CurrentVolume(item))
 	Wait For (WaitForPlaybackActivation(audioKey, item, AUDIO_READY_TIMEOUT_MS)) Complete (playbackStarted As Boolean)
 	If playbackStarted Then
@@ -1842,6 +1894,10 @@ Private Sub PrepareNextPlayable As ResumableSub
 	Return prepared
 End Sub
 
+Public Sub Transition_GetPlaybackFlowState As String
+	Return playbackFlowState
+End Sub
+
 Public Sub Facade_PrepareNextPlayableCore As ResumableSub
 	If CanPrepareNextPlayableNow(True) = False Then Return False
 	Wait For (transitionCoordinator.PrepareNextPlayable(playQueue, runtimeState, metaState, orchestrationState, mediaCacheService, playbackFlowState, FLOW_PLAYING, FLOW_IDLE, FLOW_PREPARING)) Complete (prepared As Boolean)
@@ -1849,6 +1905,7 @@ Public Sub Facade_PrepareNextPlayableCore As ResumableSub
 End Sub
 
 Private Sub CanCrossfadePreparedItem As Boolean
+	If ShouldBlockMusicTransitionForExactBreak Then Return False
 	Return transitionCoordinator.CanCrossfadePreparedItem(runtimeState, metaState, orchestrationState, IsPlaybackTransitionInProgress)
 End Sub
 
@@ -1931,6 +1988,7 @@ Private Sub TrySeedFirstTrackFromCache As ResumableSub
 	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
 	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return emptyResult
 	Dim workingCursors As Map = dataResolver.ClonePlaylistCursors
+	Dim seeded As Boolean = False
 	For attempt = 0 To playlists.Size - 1
 		Dim playlistDescriptor As Map = dataResolver.ChooseNextPlaylistDescriptor(currentSlot, workingCursors)
 		If playlistDescriptor.IsInitialized = False Or playlistDescriptor.Size = 0 Then Exit
@@ -1941,16 +1999,16 @@ Private Sub TrySeedFirstTrackFromCache As ResumableSub
 		Dim cachedTrack As Map = dataResolver.ChooseRandomTrackFromPlaylist(playlistData, mediaCacheService, True)
 		If cachedTrack.IsInitialized = False Or cachedTrack.Size = 0 Then Continue
 		Dim queueItem As Map = dataResolver.CreateQueueTrackFromPlaylist(currentSlot, playlistDescriptor, cachedTrack, offlineData)
-		If mediaCacheService.IsTrackCached(queueItem.GetDefault("id", "")) = False Then Continue
 		playQueue.Add(queueItem)
 		dataResolver.SavePreviewPlaylistCursors(storage, workingCursors)
 		dataResolver.RememberResolvedTrack(queueItem.GetDefault("id", ""))
 		dataResolver.RememberResolvedTrackForPlaylist(queueItem.GetDefault("playlist_id", ""), queueItem.GetDefault("id", ""))
 		SaveQueueSnapshotState
 		TraceLog("первый старт cache hit playlistId=" & playlistId & " trackId=" & queueItem.GetDefault("id", ""))
-		Return True
+		seeded = True
+		Exit
 	Next
-	Return False
+	Return seeded
 End Sub
 
 Private Sub LoadNextAndPlay As ResumableSub
@@ -2058,7 +2116,11 @@ Public Sub Facade_DispatchPlaybackAdvanceCore(initiator As String, allowLoad As 
 			Dim nextObject As Object = ShiftQueueItem
 			If nextObject Is Map Then
 				Dim nextItem As Map = nextObject
-				TraceInfo("playback", "dispatch next", "type=" & nextItem.GetDefault("type", "") & " id=" & nextItem.GetDefault("id", ""))
+				If nextItem.GetDefault("type", "") = "break" Then
+					TraceInfo("playback", "dispatch break", "queue=" & playQueue.Size & " exact=" & nextItem.GetDefault("exactly", False))
+				Else
+					TraceInfo("playback", "dispatch next", "type=" & nextItem.GetDefault("type", "") & " id=" & nextItem.GetDefault("id", ""))
+				End If
 			End If
 			Dim retryAfter As Int = retryFallbackState.ConsumeDispatchRetryAfter
 			Wait For (PlayQueueItem(nextObject, retryAfter)) Complete (continueQueue As Boolean)
@@ -2073,9 +2135,10 @@ Public Sub Facade_DispatchPlaybackAdvanceCore(initiator As String, allowLoad As 
 End Sub
 
 Private Sub PrefetchNext As ResumableSub
-	If CanPrefetchNextNow(False) = False Then Return False
+	TraceInfo("playback", "prefetch start", "queue=" & playQueue.Size & " current=" & TraceTrackValue(runtimeState.ActiveItem))
 	If playQueue.Size > 0 Then
 		Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
+		TraceInfo("playback", IIf(preparedOk, "prefetch done", "prefetch fail"), "queue=" & playQueue.Size)
 		Return preparedOk
 	End If
 	If USE_DATA_PLAYBACK_RESOLVER Then
@@ -2086,8 +2149,10 @@ Private Sub PrefetchNext As ResumableSub
 		Wait For (EnsureDataPlaybackQueue(1)) Complete (queuePrepared As Boolean)
 		If queuePrepared And playQueue.Size > 0 Then
 			Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
+			TraceInfo("playback", IIf(preparedOk, "prefetch done", "prefetch fail"), "queue=" & playQueue.Size)
 			Return preparedOk
 		End If
+		TraceInfo("playback", "prefetch fail", "reason=queue_empty")
 		Return False
 	End If
 	If HasPendingExactBreak Then Return False
@@ -2098,6 +2163,7 @@ Private Sub PrefetchNext As ResumableSub
 	playQueue = queue
 	SyncExactBreakState
 	Wait For (PrepareNextPlayable) Complete (preparedOk As Boolean)
+	TraceInfo("playback", IIf(preparedOk, "prefetch done", "prefetch fail"), "queue=" & playQueue.Size)
 	Return preparedOk
 End Sub
 
@@ -3219,6 +3285,22 @@ Private Sub AudioSecondary_Timeupdate
 	HandleAudioTimeupdateAsync("secondary")
 End Sub
 
+Public Sub AudioPlayer_Ready(audioKey As String)
+	HandleAudioReady(audioKey)
+End Sub
+
+Public Sub AudioPlayer_Error(audioKey As String, message As String)
+	HandleAudioErrorAsync(CreateMap("audioKey": audioKey, "message": message))
+End Sub
+
+Public Sub AudioPlayer_Complete(audioKey As String)
+	HandleAudioCompleteAsync(audioKey)
+End Sub
+
+Public Sub AudioPlayer_Timeupdate(audioKey As String)
+	HandleAudioTimeupdateAsync(audioKey)
+End Sub
+
 Private Sub HandleAudioErrorAsync(args As Map)
 	Wait For (HandleAudioError(args.GetDefault("audioKey", ""), args.GetDefault("message", ""))) Complete (unused As Boolean)
 End Sub
@@ -3234,13 +3316,13 @@ End Sub
 Private Sub HandleAudioReady(audioKey As String)
 	RefreshConnectionIndicatorState
 	If runtimeState.PendingPlayAudioKey = audioKey Then
-		TraceInfo("audio", "плеер ready", "player=" & TracePlayerNumber(audioKey) & " mode=play type=" & TraceItemType(runtimeState.PendingPlayItem) & " id=" & TraceTrackValue(runtimeState.PendingPlayItem))
+		TraceInfo("audio", "плеер ready", BuildAudioTraceDetails(runtimeState.PendingPlayItem, "player=" & TracePlayerNumber(audioKey) & " mode=play type=" & TraceItemType(runtimeState.PendingPlayItem) & " id=" & TraceTrackValue(runtimeState.PendingPlayItem)))
 		ActivateLoadedItem(audioKey, runtimeState.PendingPlayItem, runtimeState.PendingPlayFadeInMs)
 		ClearPendingPlayState
 		Return
 	End If
 	If runtimeState.PendingPrepareAudioKey = audioKey Then
-		TraceInfo("audio", "плеер ready", "player=" & TracePlayerNumber(audioKey) & " mode=prepare type=" & TraceItemType(runtimeState.PendingPrepareItem) & " id=" & TraceTrackValue(runtimeState.PendingPrepareItem))
+		TraceInfo("audio", "плеер ready", BuildAudioTraceDetails(runtimeState.PendingPrepareItem, "player=" & TracePlayerNumber(audioKey) & " mode=prepare type=" & TraceItemType(runtimeState.PendingPrepareItem) & " id=" & TraceTrackValue(runtimeState.PendingPrepareItem)))
 		runtimeState.SetPrepared(audioKey, runtimeState.PendingPrepareItem)
 		runtimeState.ClearPendingPrepareState
 	End If
@@ -3304,6 +3386,7 @@ Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
 	End If
 	Dim remain As Long = EffectiveTrackRemainMs
 	If CanCrossfadePreparedItem And remain > 0 And remain <= TRACK_OVERLAP_MS Then
+		TraceInfo("playback", "crossfade trigger", "remainMs=" & remain & " next=" & TraceTrackValue(runtimeState.PreparedItem))
 		orchestrationState.IsCrossfadeTriggered = True
 		PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
 		Return True
@@ -3318,13 +3401,16 @@ Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
 	If remain <= PREFETCH_SECONDS * 1000 Then
 		If CanPrefetchNextNow(False) = False Then Return False
 		orchestrationState.PrefetchDone = True
-		Wait For (PrefetchNext) Complete (unused2 As Boolean)
+		Wait For (PrefetchNext) Complete (prefetchOk As Boolean)
+		If prefetchOk = False Then orchestrationState.PrefetchDone = False
 	End If
 	Return True
 End Sub
 
 Public Sub TraceLog(message As String)
+	If message = "" Then Return
 	If HandleDiagnosticTraceMessage(message) Then Return
+	TraceDebug(message)
 End Sub
 
 Private Sub TraceInfo(category As String, message As String, details As String)
@@ -3337,22 +3423,391 @@ End Sub
 
 Private Sub TraceError(category As String, message As String, details As String)
 	WriteTraceEntry("ERROR", category, message, details)
+	AppendRecentDebugContext("Контекст ошибки")
 End Sub
 
 Private Sub TraceState(category As String, message As String, details As String)
 	WriteTraceEntry("STATE", category, message, details)
 End Sub
 
+Private Sub TraceDebug(message As String)
+	appTraceService.TraceDebug(message)
+End Sub
+
+Private Sub AppendRecentDebugContext(title As String)
+	Dim debugLines As List = appTraceService.GetRecentDebugList(TRACE_ERROR_DEBUG_CONTEXT_LINES)
+	If debugLines.IsInitialized = False Or debugLines.Size = 0 Then Return
+	WriteTraceEntry("DEBUG", "debug", title, "")
+	For Each debugLine As String In debugLines
+		appTraceService.Trace("DEBUG " & TrimDebugContextLine(debugLine))
+	Next
+End Sub
+
+Private Sub TrimDebugContextLine(debugLine As String) As String
+	If debugLine = "" Then Return ""
+	Dim marker As String = " DEBUG "
+	Dim markerIndex As Int = debugLine.IndexOf(marker)
+	If markerIndex < 0 Then Return debugLine
+	Return debugLine.SubString(markerIndex + marker.Length).Trim
+End Sub
+
 Private Sub WriteTraceEntry(level As String, category As String, message As String, details As String)
-	Dim line As String = level & " | " & category & " | " & message
-	Dim safeDetails As String = details.Trim
-	If safeDetails <> "" Then line = line & " | " & safeDetails
+	Dim line As String = level & " " & BuildHumanTraceMessage(category, message, details.Trim)
 	appTraceService.Trace(line)
+End Sub
+
+Private Sub BuildHumanTraceMessage(category As String, message As String, details As String) As String
+	Select category
+		Case "app"
+			If message = "запуск" Then
+				Return "Приложение запущено. " & BuildVersionPlayerText(details)
+			End If
+		Case "network"
+			Select message
+				Case "запрос данных"
+					Return "Запрос данных"
+				Case "data загружены"
+					Return "Данные получены."
+				Case "data ошибка"
+					Return "Ошибка запроса данных. " & BuildReasonText(details)
+				Case "data сообщение"
+					Return "Сервер вернул сообщение. " & BuildReasonText(details)
+				Case "data некорректны"
+					Return "Ошибка данных от сервера. " & BuildReasonText(details)
+				Case "переход в retry"
+					Dim delaySec As String = ExtractDetailValue(details, "delaySec")
+					If delaySec = "" Then delaySec = ExtractDetailValue(details, "delay")
+					If delaySec <> "" Then Return "Повторный запрос данных через " & delaySec & " секунд"
+					Return "Повторный запрос данных позже"
+				Case "data timeout"
+					Return "Сервер не ответил вовремя. " & BuildReasonText(details)
+				Case "метаданные плейлистов обновлены"
+					Return "Метаданные плейлистов обновлены. " & BuildCountsText(details)
+				Case "ошибка метаданных плейлиста"
+					Return "Не удалось загрузить метаданные плейлиста. " & BuildReasonText(details)
+				Case "ошибка очереди"
+					Return "Не удалось получить очередь. " & BuildReasonText(details)
+				Case "media path восстановлен"
+					Return "Доступ к медиа восстановлен."
+				Case "деградация media path"
+					Return "Доступ к медиа ухудшился."
+			End Select
+		Case "audio"
+			Dim playerText As String = "Плеер " & ExtractDetailValue(details, "player")
+			Dim itemLabel As String = TraceItemLabelFromDetails(details)
+			Dim audioSettingsText As String = BuildAudioSettingsText(details)
+			Select message
+				Case "плеер load"
+					Return playerText & ": Загружен " & itemLabel & audioSettingsText
+				Case "плеер ready"
+					If ExtractDetailValue(details, "mode") = "prepare" Then
+						Return playerText & ": Подготовлен " & itemLabel & audioSettingsText
+					End If
+					Return playerText & ": Готов к воспроизведению " & itemLabel & audioSettingsText
+				Case "плеер play"
+					Return playerText & ": Воспроизведение " & itemLabel & audioSettingsText
+				Case "плеер complete"
+					Return playerText & ": Закончил " & itemLabel
+				Case "плеер error"
+					Return playerText & ": Ошибка " & itemLabel & ". " & BuildReasonText(details)
+				Case "не удалось запустить трек"
+					Return playerText & ": Не удалось запустить " & itemLabel & ". " & BuildReasonText(details)
+				Case "таймаут старта трека"
+					Return playerText & ": Не дождались старта " & itemLabel
+				Case "таймаут preload"
+					Return playerText & ": Не дождались подготовки " & itemLabel
+			End Select
+		Case "playback"
+			Select message
+				Case "первый трек выбран из кэша"
+					Return "Первый трек выбран из кэша."
+				Case "populate queue start"
+					Return "Подготовка очереди."
+				Case "populate queue done"
+					Return "Очередь подготовлена. Элементов: " & DefaultIfEmpty(ExtractDetailValue(details, "queue"), "0")
+				Case "populate queue fail"
+					Return "Не удалось подготовить очередь. " & BuildReasonText(details)
+				Case "dispatch next"
+					Return "Следующий элемент очереди: " & TraceItemLabelFromDetails(details)
+				Case "dispatch break"
+					Return "Начата обработка break."
+				Case "dispatch prepared"
+					Return "Запущен заранее подготовленный элемент."
+				Case "dispatch переход"
+					Return "Переход к следующему элементу."
+				Case "prefetch start"
+					Return "Начата подготовка следующего элемента."
+				Case "prefetch done"
+					Return "Следующий элемент подготовлен заранее."
+				Case "prefetch fail"
+					Return "Не удалось заранее подготовить следующий элемент. " & BuildReasonText(details)
+				Case "prefetch skip"
+					Dim skipReason As String = ExtractDetailValue(details, "reason")
+					If skipReason = "break_ahead" Then Return "Предварительная подготовка отложена: впереди break."
+					Return "Предварительная подготовка пропущена. " & BuildReasonText(details)
+				Case "crossfade trigger"
+					Return "Начат кроссфейд на следующий трек."
+				Case "старт трека"
+					Dim sourceText As String = ExtractDetailValue(details, "source")
+					If sourceText <> "" Then
+						Return "Старт трека " & ExtractDetailValue(details, "trackId") & ". Источник: " & sourceText
+					End If
+					Return "Старт трека " & ExtractDetailValue(details, "trackId")
+				Case "смена трека"
+					Return "Переход после трека " & ExtractDetailValue(details, "trackId")
+				Case "watchdog stall"
+					Return "Воспроизведение зависло на треке " & DefaultIfEmpty(ExtractDetailValue(details, "trackId"), "без идентификатора") & ". Запускаю восстановление."
+				Case "watchdog recovery"
+					Return "Восстановление воспроизведения. " & BuildReasonText(details)
+				Case "break переход начало"
+					Return "Начат переход на break."
+				Case "break переход итог"
+					Return "Переход на break завершен. " & BuildReasonText(details)
+				Case "break переход fade"
+					Return "Плавное завершение текущего элемента."
+				Case "break переход пропущен"
+					Return "Переход на break пропущен. " & BuildReasonText(details)
+				Case "вставлен break"
+					Return "В очередь вставлен break."
+				Case "вставлена реклама"
+					Return "Подготовлен переход на рекламу."
+				Case "очередь пуста"
+					Return "Очередь пуста. " & BuildReasonText(details)
+				Case "audio complete пропущен"
+					Return "Событие завершения проигнорировано. " & BuildReasonText(details)
+			End Select
+		Case "player"
+			Select message
+				Case "старт завершен"
+					Return "Старт плеера завершен."
+				Case "старт не завершен"
+					Return "Старт плеера не завершен. " & BuildReasonText(details)
+				Case "автостарт воспроизведение начало"
+					Return "Автостарт воспроизведения."
+				Case "воспроизведение остановлено"
+					Return "Воспроизведение остановлено. " & BuildReasonText(details)
+				Case "плеер заблокирован"
+					Return "Плеер заблокирован."
+			End Select
+		Case "cache"
+			Select message
+				Case "трек загружен в кэш"
+					Return "Кэш: Загружен трек " & DefaultIfEmpty(ExtractDetailValue(details, "id"), "без идентификатора")
+				Case "ошибка загрузки трека"
+					Return "Кэш: Не удалось загрузить трек. " & BuildReasonText(details)
+				Case "кэш треков обновлен"
+					Return "Кэш треков проверен. " & BuildCountsText(details)
+				Case "кэш рекламы обновлен"
+					Return "Кэш рекламы проверен. " & BuildCountsText(details)
+				Case "аудит кэша"
+					Return "Кэш проверен. " & BuildCountsText(details)
+				Case "очистка кэша"
+					Return "Очистка кэша завершена. " & BuildCountsText(details)
+				Case "реклама удалена из кэша"
+					Return "Кэш: Удалена устаревшая реклама " & ExtractDetailValue(details, "id")
+				Case "ошибка подготовки трека"
+					Return "Кэш: Ошибка подготовки трека. " & BuildReasonText(details)
+				Case "нет локального файла"
+					Return "Кэш: Локальный файл не найден для трека " & ExtractDetailValue(details, "trackId")
+			End Select
+		Case "history"
+			Select message
+				Case "история отправлена"
+					Return "История отправлена. Записей: " & DefaultIfEmpty(ExtractDetailValue(details, "records"), "0")
+				Case "история не отправлена"
+					Return "История не отправлена. Записей: " & DefaultIfEmpty(ExtractDetailValue(details, "records"), "0")
+				Case "ошибка отправки"
+					Return "Ошибка отправки истории. " & BuildReasonText(details)
+				Case "ошибка истории"
+					Return "Ошибка чтения истории."
+				Case "не удалось прочитать файл истории"
+					Return "Не удалось прочитать файл истории " & ExtractDetailValue(details, "file")
+			End Select
+		Case "health"
+			Select message
+				Case "воспроизведение"
+					Return "Состояние воспроизведения: этап=" & ExtractDetailValue(details, "stage") & _
+						", играет=" & ExtractDetailValue(details, "playing") & _
+						", трек=" & ExtractDetailValue(details, "currentTrackId") & _
+						", очередь=" & ExtractDetailValue(details, "queue") & _
+						BuildHealthAudioSettingsText(details)
+				Case "кэш"
+					Return "Состояние кэша: треков=" & ExtractDetailValue(details, "trackCache") & _
+						", рекламы=" & ExtractDetailValue(details, "adCache") & _
+						", индекс треков=" & ExtractDetailValue(details, "trackIndex") & _
+						", индекс рекламы=" & ExtractDetailValue(details, "adIndex")
+				Case "устройство"
+					Return "Состояние устройства: " & ExtractDetailValue(details, "device") & _
+						", id=" & ExtractDetailValue(details, "deviceId") & _
+						", ОС=" & ExtractDetailTail(details, "os")
+				Case "ресурсы"
+					Return "Состояние ресурсов: RAM=" & ExtractDetailValue(details, "ramFreeMb") & " МБ" & _
+						", диск=" & ExtractDetailValue(details, "diskFreeMb") & "/" & ExtractDetailValue(details, "diskTotalMb") & " МБ"
+				Case "сеть"
+					Return "Состояние сети: ошибок=" & ExtractDetailValue(details, "netErrors") & _
+						", данные ок " & ExtractDetailValue(details, "lastDataOkAgoSec") & " сек назад" & _
+						", история ок " & ExtractDetailValue(details, "lastHistoryOkAgoSec") & " сек назад"
+			End Select
+		Case "system"
+			Select message
+				Case "источник"
+					Return "Системный снимок. Источник: " & details
+				Case "устройство"
+					Return "Устройство: " & ExtractDetailValue(details, "name") & ", id=" & ExtractDetailValue(details, "id")
+				Case "платформа"
+					Return "Платформа: " & ExtractDetailTail(details, "os")
+				Case "память"
+					Return "Память: свободно " & ExtractDetailValue(details, "ramFreeMb") & " МБ"
+				Case "память доступно"
+					Return "Память: доступно приложению " & ExtractDetailValue(details, "ramTotalMb") & " МБ"
+				Case "диск"
+					Return "Диск: свободно " & ExtractDetailValue(details, "diskFreeMb") & " МБ из " & ExtractDetailValue(details, "diskTotalMb") & " МБ"
+				Case "кэш треков"
+					Return "Кэш треков: " & ExtractDetailValue(details, "trackCount") & " файлов, " & ExtractDetailValue(details, "trackMb") & " МБ, в индексе " & ExtractDetailValue(details, "trackIndex")
+				Case "кэш рекламы"
+					Return "Кэш рекламы: " & ExtractDetailValue(details, "adCount") & " файлов, " & ExtractDetailValue(details, "adMb") & " МБ, в индексе " & ExtractDetailValue(details, "adIndex")
+				Case "история"
+					Return "История: ожидает отправки " & ExtractDetailValue(details, "pendingHistory") & " записей"
+			End Select
+	End Select
+	Dim genericText As String = message
+	If details <> "" Then genericText = genericText & ". " & details
+	Return genericText
+End Sub
+
+Private Sub BuildVersionPlayerText(details As String) As String
+	Dim versionText As String = ExtractDetailValue(details, "version")
+	Dim playerText As String = ExtractDetailValue(details, "player")
+	Dim parts As List
+	parts.Initialize
+	If versionText <> "" Then parts.Add("Версия " & versionText)
+	If playerText <> "" Then parts.Add("Плеер " & playerText)
+	If parts.Size = 0 Then Return "Запуск"
+	Return JoinWords(parts)
+End Sub
+
+Private Sub TraceItemLabelFromDetails(details As String) As String
+	Dim itemType As String = ExtractDetailValue(details, "type")
+	Dim itemId As String = DefaultIfEmpty(ExtractDetailValue(details, "id"), ExtractDetailValue(details, "trackId"))
+	If itemType = "ad" Then
+		If itemId <> "" Then Return "рекламу " & itemId
+		Return "рекламу"
+	End If
+	If itemId <> "" Then Return "трек " & itemId
+	Return "трек"
+End Sub
+
+Private Sub BuildAudioSettingsText(details As String) As String
+	Dim volumeText As String = ExtractDetailValue(details, "volume")
+	Dim gainText As String = ExtractDetailValue(details, "gainDb")
+	Dim gainState As String = ExtractDetailValue(details, "gainApplied")
+	Dim parts As List
+	parts.Initialize
+	If volumeText <> "" Then parts.Add("громкость " & volumeText)
+	If gainText <> "" Then
+		If gainState = "yes" Then
+			parts.Add("gain " & gainText & " дБ")
+		Else
+			parts.Add("gain по умолчанию " & gainText & " дБ")
+		End If
+	End If
+	If parts.Size = 0 Then Return ""
+	Return ". " & JoinWords(parts)
+End Sub
+
+Private Sub BuildHealthAudioSettingsText(details As String) As String
+	Dim volumeText As String = ExtractDetailValue(details, "volume")
+	Dim gainText As String = ExtractDetailValue(details, "gainDb")
+	Dim gainState As String = ExtractDetailValue(details, "gainApplied")
+	Dim parts As List
+	parts.Initialize
+	If volumeText <> "" Then parts.Add("громкость=" & volumeText)
+	If gainText <> "" Then
+		If gainState = "yes" Then
+			parts.Add("gain=" & gainText & " дБ")
+		Else
+			parts.Add("gain=" & gainText & " дБ по умолчанию")
+		End If
+	End If
+	If parts.Size = 0 Then Return ""
+	Return ", " & JoinWords(parts)
+End Sub
+
+Private Sub BuildReasonText(details As String) As String
+	If details = "" Then Return ""
+	Dim messageText As String = ExtractDetailTail(details, "message")
+	If messageText <> "" Then Return messageText
+	Dim reasonText As String = ExtractDetailTail(details, "reason")
+	If reasonText <> "" Then Return "Причина: " & reasonText
+	Dim kindText As String = ExtractDetailValue(details, "kind")
+	If kindText <> "" Then Return "Причина: " & kindText
+	Dim stepText As String = ExtractDetailValue(details, "step")
+	If stepText <> "" Then Return "Шаг: " & stepText
+	Dim resultText As String = ExtractDetailValue(details, "result")
+	If resultText <> "" Then Return "Результат: " & resultText
+	Return details
+End Sub
+
+Private Sub BuildCountsText(details As String) As String
+	Dim parts As List
+	parts.Initialize
+	AddCountPart(parts, details, "downloaded", "загружено")
+	AddCountPart(parts, details, "updated", "обновлено")
+	AddCountPart(parts, details, "failed", "ошибок")
+	AddCountPart(parts, details, "removed", "удалено")
+	AddCountPart(parts, details, "actual", "осталось")
+	AddCountPart(parts, details, "added", "добавлено")
+	AddCountPart(parts, details, "tempDeleted", "временных удалено")
+	AddCountPart(parts, details, "ads", "рекламы")
+	AddCountPart(parts, details, "tracks", "треков")
+	If parts.Size = 0 Then Return BuildReasonText(details)
+	Return JoinWords(parts)
+End Sub
+
+Private Sub AddCountPart(parts As List, details As String, key As String, label As String)
+	Dim value As String = ExtractDetailValue(details, key)
+	If value = "" Then Return
+	parts.Add(label & " " & value)
+End Sub
+
+Private Sub JoinWords(parts As List) As String
+	Dim sb As StringBuilder
+	sb.Initialize
+	For i = 0 To parts.Size - 1
+		If i > 0 Then sb.Append(". ")
+		sb.Append(parts.Get(i))
+	Next
+	Return sb.ToString
+End Sub
+
+Private Sub DefaultIfEmpty(value As String, fallback As String) As String
+	If value = "" Then Return fallback
+	Return value
+End Sub
+
+Private Sub ExtractDetailValue(details As String, key As String) As String
+	Dim marker As String = key & "="
+	Dim startIndex As Int = details.IndexOf(marker)
+	If startIndex < 0 Then Return ""
+	Dim value As String = details.SubString(startIndex + marker.Length).Trim
+	Dim nextSpace As Int = value.IndexOf(" ")
+	If nextSpace >= 0 Then value = value.SubString2(0, nextSpace)
+	Return value.Trim
+End Sub
+
+Private Sub ExtractDetailTail(details As String, key As String) As String
+	Dim marker As String = key & "="
+	Dim startIndex As Int = details.IndexOf(marker)
+	If startIndex < 0 Then Return ""
+	Return details.SubString(startIndex + marker.Length).Trim
 End Sub
 
 Private Sub HandleDiagnosticTraceMessage(message As String) As Boolean
 	If message = "" Then Return True
-	If ShouldSuppressTraceMessage(message) Then Return True
+	If ShouldSuppressTraceMessage(message) Then
+		TraceDebug(message)
+		Return True
+	End If
 	If message.StartsWith("Трек сохранен в кэш.") Then
 		TraceInfo("cache", "трек загружен в кэш", NormalizeLegacyDetails(TailAfter(message, "Трек сохранен в кэш.")))
 		Return True
@@ -3437,7 +3892,7 @@ Private Sub HandleDiagnosticTraceMessage(message As String) As Boolean
 		TraceError("cache", "ошибка подготовки трека", NormalizeLegacyDetails(TailAfter(message, "Не удалось подготовить временный файл трека.")))
 		Return True
 	End If
-	WriteTraceEntry("INFO", "player", message, "")
+	TraceDebug(message)
 	Return True
 End Sub
 
@@ -3561,18 +4016,45 @@ Private Sub TraceTrackValue(item As Map) As String
 End Sub
 
 Private Sub WriteHealthSnapshot(trigger As String)
-	TraceState("health", "снимок", "stage=" & playbackFlowState & _
+	Dim baseDetails As String = "trigger=" & trigger
+	TraceState("health", "воспроизведение", baseDetails & _
+		" stage=" & playbackFlowState & _
 		" playing=" & IsPlaybackRunningForTrace & _
 		" currentTrackId=" & ResolveCurrentTrackTraceValue & _
-		" queue=" & playQueue.Size & _
-		" trackCache=" & storage.GetDefault("cached_track_count", 0) & _
-		" adCache=" & storage.GetDefault("cached_ad_count", 0) & _
+		" queue=" & playQueue.Size & BuildHealthAudioTraceDetails)
+	TraceState("health", "кэш", baseDetails & _
+		" trackCache=" & ResolveTrackCacheFileCountText & _
+		" adCache=" & ResolveAdCacheFileCountText & _
+		" trackIndex=" & storage.GetDefault("cached_track_count", 0) & _
+		" adIndex=" & storage.GetDefault("cached_ad_count", 0))
+	TraceState("health", "устройство", baseDetails & _
+		" device=" & ResolveDeviceTraceName & _
+		" deviceId=" & deviceId & _
+		" os=" & ResolveClientPlatformText)
+	TraceState("health", "ресурсы", baseDetails & _
 		" ramFreeMb=" & ResolveFreeRamMbText & _
 		" diskFreeMb=" & ResolveFreeDiskMbText & _
+		" diskTotalMb=" & ResolveTotalDiskMbText)
+	TraceState("health", "сеть", baseDetails & _
 		" netErrors=" & consecutiveNetworkErrors & _
 		" lastDataOkAgoSec=" & SecondsAgoText(lastDataOkAt) & _
-		" lastHistoryOkAgoSec=" & SecondsAgoText(lastHistoryOkAt) & _
-		" trigger=" & trigger)
+		" lastHistoryOkAgoSec=" & SecondsAgoText(lastHistoryOkAt))
+End Sub
+
+Private Sub WriteSystemSnapshot(trigger As String)
+	TraceInfo("system", "источник", trigger)
+	TraceInfo("system", "устройство", "name=" & ResolveDeviceTraceName & " id=" & deviceId)
+	TraceInfo("system", "платформа", "os=" & ResolveClientPlatformText)
+	TraceInfo("system", "память", "ramFreeMb=" & ResolveFreeRamMbText)
+	TraceInfo("system", "память доступно", "ramTotalMb=" & ResolveTotalRamMbText)
+	TraceInfo("system", "диск", "diskFreeMb=" & ResolveFreeDiskMbText & " diskTotalMb=" & ResolveTotalDiskMbText)
+	TraceInfo("system", "кэш треков", "trackCount=" & ResolveTrackCacheFileCountText & _
+		" trackIndex=" & storage.GetDefault("cached_track_count", 0) & _
+		" trackMb=" & ResolveTrackCacheSizeMbText)
+	TraceInfo("system", "кэш рекламы", "adCount=" & ResolveAdCacheFileCountText & _
+		" adIndex=" & storage.GetDefault("cached_ad_count", 0) & _
+		" adMb=" & ResolveAdCacheSizeMbText)
+	TraceInfo("system", "история", "pendingHistory=" & CountAllPendingHistoryRecords)
 End Sub
 
 Private Sub IsPlaybackRunningForTrace As String
@@ -3609,6 +4091,118 @@ Private Sub ResolveFreeDiskMbText As String
 	Catch
 		Return "unknown"
 	End Try
+End Sub
+
+Private Sub ResolveTotalRamMbText As String
+	Try
+		Dim runtime As JavaObject
+		runtime.InitializeStatic("java.lang.Runtime")
+		Dim currentRuntime As JavaObject = runtime.RunMethod("getRuntime", Null)
+		Dim maxBytes As Long = currentRuntime.RunMethod("maxMemory", Null)
+		Return "" & Floor(maxBytes / 1024 / 1024)
+	Catch
+		TraceDebug("не удалось определить общий объем памяти message=" & LastException.Message)
+		Return "unknown"
+	End Try
+End Sub
+
+Private Sub ResolveTotalDiskMbText As String
+	Try
+		Dim fileObject As JavaObject
+		fileObject.InitializeNewInstance("java.io.File", Array As Object(storageDir))
+		Return "" & Floor(fileObject.RunMethod("getTotalSpace", Null) / 1024 / 1024)
+	Catch
+		Return "unknown"
+	End Try
+End Sub
+
+Private Sub ResolveTrackCacheSizeMbText As String
+	Return "" & Floor(ResolveDirectorySizeBytes(mediaCacheService.GetTracksDir) / 1024 / 1024)
+End Sub
+
+Private Sub ResolveAdCacheSizeMbText As String
+	Return "" & Floor(ResolveDirectorySizeBytes(mediaCacheService.GetAdsDir) / 1024 / 1024)
+End Sub
+
+Private Sub ResolveTrackCacheFileCountText As String
+	Return "" & ResolveDirectoryFileCount(mediaCacheService.GetTracksDir)
+End Sub
+
+Private Sub ResolveAdCacheFileCountText As String
+	Return "" & ResolveDirectoryFileCount(mediaCacheService.GetAdsDir)
+End Sub
+
+Private Sub ResolveDirectorySizeBytes(dir As String) As Long
+	If dir = "" Then Return 0
+	Try
+		If File.Exists(dir, "") = False Then Return 0
+		Dim listedFiles As List = File.ListFiles(dir)
+		If listedFiles.IsInitialized = False Then Return 0
+		Dim totalBytes As Long = 0
+		For Each fileName As String In listedFiles
+			If fileName = "" Then Continue
+			Try
+				totalBytes = totalBytes + File.Size(dir, fileName)
+			Catch
+				TraceDebug("не удалось определить размер файла кэша file=" & fileName & " message=" & LastException.Message)
+			End Try
+		Next
+		Return totalBytes
+	Catch
+		TraceDebug("не удалось определить размер каталога кэша dir=" & dir & " message=" & LastException.Message)
+		Return 0
+	End Try
+End Sub
+
+Private Sub ResolveDirectoryFileCount(dir As String) As Int
+	If dir = "" Then Return 0
+	Try
+		If File.Exists(dir, "") = False Then Return 0
+		Dim listedFiles As List = File.ListFiles(dir)
+		If listedFiles.IsInitialized = False Then Return 0
+		Dim totalCount As Int = 0
+		For Each fileName As String In listedFiles
+			If fileName = "" Then Continue
+			If fileName.EndsWith(".tmp") Then Continue
+			totalCount = totalCount + 1
+		Next
+		Return totalCount
+	Catch
+		TraceDebug("не удалось определить количество файлов кэша dir=" & dir & " message=" & LastException.Message)
+		Return 0
+	End Try
+End Sub
+
+Private Sub ResolveDeviceTraceName As String
+	Try
+		Dim jo As JavaObject
+		jo.InitializeStatic("java.lang.System")
+		Dim computerName As String = "" & jo.RunMethod("getenv", Array As Object("COMPUTERNAME"))
+		computerName = computerName.Trim
+		If computerName <> "" And computerName.ToLowerCase <> "null" Then Return computerName
+	Catch
+		TraceDebug("не удалось определить имя устройства message=" & LastException.Message)
+	End Try
+	Return "unknown"
+End Sub
+
+Private Sub ResolveClientPlatformText As String
+	Try
+		Dim jo As JavaObject
+		jo.InitializeStatic("java.lang.System")
+		Dim osName As String = ("" & jo.RunMethod("getProperty", Array As Object("os.name"))).Trim
+		Dim osVersion As String = ("" & jo.RunMethod("getProperty", Array As Object("os.version"))).Trim
+		Dim osArch As String = ("" & jo.RunMethod("getProperty", Array As Object("os.arch"))).Trim
+		Dim parts As List
+		parts.Initialize
+		If osName <> "" And osName.ToLowerCase <> "null" Then parts.Add(osName)
+		If osVersion <> "" And osVersion.ToLowerCase <> "null" Then parts.Add(osVersion)
+		If osArch <> "" And osArch.ToLowerCase <> "null" Then parts.Add(osArch)
+		If parts.Size > 0 Then Return JoinList(parts, " ")
+	Catch
+		TraceDebug("не удалось определить платформу message=" & LastException.Message)
+	End Try
+	Return ResolveClientOsName
 End Sub
 
 Private Sub SecondsAgoText(ticksValue As Long) As String
@@ -3961,13 +4555,34 @@ Private Sub CurrentVolume(item As Map) As Double
 	Return ResolveItemVolume(item)
 End Sub
 
+Private Sub BuildAudioTraceDetails(item As Map, baseDetails As String) As String
+	Dim details As String = baseDetails
+	If item.IsInitialized = False Then Return details
+	details = details & " volume=" & NumberFormat2(CurrentVolume(item), 1, 3, 3, False)
+	details = details & " gainDb=" & NumberFormat2(ResolveItemGainDb(item), 1, 1, 1, False)
+	details = details & " gainApplied=" & IIf(item.ContainsKey("gain"), "yes", "default")
+	Return details
+End Sub
+
+Private Sub BuildHealthAudioTraceDetails As String
+	If runtimeState.ActiveItem.IsInitialized = False Then Return ""
+	Return " volume=" & NumberFormat2(CurrentVolume(runtimeState.ActiveItem), 1, 3, 3, False) & _
+		" gainDb=" & NumberFormat2(ResolveItemGainDb(runtimeState.ActiveItem), 1, 1, 1, False) & _
+		" gainApplied=" & IIf(runtimeState.ActiveItem.ContainsKey("gain"), "yes", "default")
+End Sub
+
 Private Sub ResolveItemVolume(item As Map) As Double
 	If item.IsInitialized = False Then Return 0.7
 	Dim itemType As String = item.GetDefault("type", "")
-	Dim gainDb As Double = NormalizeDbValue(item.GetDefault("gain", -3), -3)
+	Dim gainDb As Double = ResolveItemGainDb(item)
 	Dim baseFactor As Double = 1
 	If itemType = "track" Then baseFactor = ResolvePlayerLevelFactor
 	Return Max(0, Min(1, baseFactor * DbToFactor(gainDb)))
+End Sub
+
+Private Sub ResolveItemGainDb(item As Map) As Double
+	If item.IsInitialized = False Then Return -3
+	Return NormalizeDbValue(item.GetDefault("gain", -3), -3)
 End Sub
 
 Private Sub ResolvePlayerLevelFactor As Double
@@ -4097,12 +4712,10 @@ Private Sub MachineGuidShell_ProcessCompleted (success As Boolean, exitCode As I
 				TraceLog("machine guid пустой")
 				Return
 			End If
-			If deviceId <> machineGuid Then
-				deviceId = machineGuid
-				SaveValue("device_id", deviceId)
-				TraceLog("deviceId обновлен из machine guid value=" & deviceId)
-			Else
+			If deviceId = machineGuid Then
 				TraceLog("machine guid совпадение device=true")
+			Else
+				TraceLog("machine guid прочитан, deviceId сохранен прежним")
 			End If
 		Else
 			TraceLog("machine guid чтение ошибка reason=not_found")

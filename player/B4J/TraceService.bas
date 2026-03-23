@@ -9,6 +9,7 @@ Sub Class_Globals
 	Private storageDir As String
 	Private debugResponsesDir As String
 	Private traceLogs As List
+	Private debugLogs As List
 	Private pendingTraceBatch As List
 	Private serverSnapshots As List
 	Private traceLogLimit As Int
@@ -21,12 +22,13 @@ Public Sub Initialize(storageDirValue As String, debugResponsesDirValue As Strin
 	traceLogLimit = traceLogLimitValue
 	serverSnapshotLimit = serverSnapshotLimitValue
 	traceLogs.Initialize
+	debugLogs.Initialize
 	pendingTraceBatch.Initialize
 	serverSnapshots.Initialize
 End Sub
 
 Public Sub Trace(message As String)
-	Dim entry As String = DateTime.Date(DateTime.Now) & " " & DateTime.Time(DateTime.Now) & " | " & message
+	Dim entry As String = DateTime.Time(DateTime.Now) & " " & message
 	traceLogs.Add(entry)
 	Do While traceLogs.Size > traceLogLimit
 		Dim removedEntry As String = traceLogs.Get(0)
@@ -34,6 +36,15 @@ Public Sub Trace(message As String)
 		If pendingTraceBatch.IsInitialized And pendingTraceBatch.Size > 0 Then
 			If pendingTraceBatch.Get(0) = removedEntry Then pendingTraceBatch.RemoveAt(0)
 		End If
+	Loop
+	Log(entry)
+End Sub
+
+Public Sub TraceDebug(message As String)
+	Dim entry As String = DateTime.Time(DateTime.Now) & " DEBUG " & message
+	debugLogs.Add(entry)
+	Do While debugLogs.Size > traceLogLimit
+		debugLogs.RemoveAt(0)
 	Loop
 	Log(entry)
 End Sub
@@ -49,6 +60,17 @@ Public Sub GetTraceList As List
 	If traceLogs.IsInitialized = False Then Return copy
 	For Each entry As String In traceLogs
 		copy.Add(entry)
+	Next
+	Return copy
+End Sub
+
+Public Sub GetRecentDebugList(maxItems As Int) As List
+	Dim copy As List
+	copy.Initialize
+	If debugLogs.IsInitialized = False Or debugLogs.Size = 0 Then Return copy
+	Dim startIndex As Int = Max(0, debugLogs.Size - Max(1, maxItems))
+	For i = startIndex To debugLogs.Size - 1
+		copy.Add(debugLogs.Get(i))
 	Next
 	Return copy
 End Sub
@@ -96,9 +118,9 @@ Public Sub GetServerTraceList As List
 End Sub
 
 Public Sub SaveServerSnapshot(method As String, url As String, success As Boolean, body As String, errorMessage As String)
-	Dim timestamp As String = DateTime.Date(DateTime.Now) & " " & DateTime.Time(DateTime.Now)
-	Dim header As String = timestamp & " | " & method & " | success=" & success & " | " & url
-	If errorMessage <> "" Then header = header & " | error=" & errorMessage
+	Dim timestamp As String = DateTime.Time(DateTime.Now)
+	Dim header As String = timestamp & " SNAPSHOT method=" & method & " success=" & success & " url=" & url
+	If errorMessage <> "" Then header = header & " error=" & errorMessage
 	Dim entry As Map
 	entry.Initialize
 	entry.Put("Timestamp", timestamp)
