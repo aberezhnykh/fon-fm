@@ -741,7 +741,7 @@ __ref.getField(false,"_pendingtracebatch" /*RemoteObject*/ ).runVoidMethod ("Rem
 ;
  BA.debugLineNum = 38;BA.debugLine="Log(entry)";
 Debug.ShouldStop(32);
-traceservice.__c.runVoidMethod ("LogImpl","230343178",_entry,0);
+traceservice.__c.runVoidMethod ("LogImpl","530343178",_entry,0);
  BA.debugLineNum = 39;BA.debugLine="End Sub";
 Debug.ShouldStop(64);
 return RemoteObject.createImmutable("");
@@ -776,7 +776,7 @@ __ref.getField(false,"_debuglogs" /*RemoteObject*/ ).runVoidMethod ("RemoveAt",(
 ;
  BA.debugLineNum = 48;BA.debugLine="Log(entry)";
 Debug.ShouldStop(32768);
-traceservice.__c.runVoidMethod ("LogImpl","261800454",_entry,0);
+traceservice.__c.runVoidMethod ("LogImpl","561800454",_entry,0);
  BA.debugLineNum = 49;BA.debugLine="End Sub";
 Debug.ShouldStop(65536);
 return RemoteObject.createImmutable("");

@@ -73,6 +73,84 @@ RDebugUtils.currentLine=82444291;
  //BA.debugLineNum = 82444291;BA.debugLine="End Sub";
 return null;
 }
+public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _tryensurequeuelookahead(b4j.example.playerstatestore __ref,anywheresoftware.b4a.objects.collections.List _playqueue,int _minitems) throws Exception{
+RDebugUtils.currentModule="playerstatestore";
+if (Debug.shouldDelegate(ba, "tryensurequeuelookahead", false))
+	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "tryensurequeuelookahead", new Object[] {_playqueue,_minitems}));}
+ResumableSub_TryEnsureQueueLookahead rsub = new ResumableSub_TryEnsureQueueLookahead(this,__ref,_playqueue,_minitems);
+rsub.resume(ba, null);
+return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
+}
+public static class ResumableSub_TryEnsureQueueLookahead extends BA.ResumableSub {
+public ResumableSub_TryEnsureQueueLookahead(b4j.example.playerstatestore parent,b4j.example.playerstatestore __ref,anywheresoftware.b4a.objects.collections.List _playqueue,int _minitems) {
+this.parent = parent;
+this.__ref = __ref;
+this._playqueue = _playqueue;
+this._minitems = _minitems;
+this.__ref = parent;
+}
+b4j.example.playerstatestore __ref;
+b4j.example.playerstatestore parent;
+anywheresoftware.b4a.objects.collections.List _playqueue;
+int _minitems;
+boolean _queueprepared = false;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="playerstatestore";
+
+    while (true) {
+        switch (state) {
+            case -1:
+{
+parent.__c.ReturnFromResumableSub(this,null);return;}
+case 0:
+//C
+this.state = 1;
+RDebugUtils.currentLine=89260033;
+ //BA.debugLineNum = 89260033;BA.debugLine="If CanUseDataPlaybackResolver = False Then Return";
+if (true) break;
+
+case 1:
+//if
+this.state = 6;
+if (__ref._canusedataplaybackresolver /*boolean*/ (null)==parent.__c.False) { 
+this.state = 3;
+;}if (true) break;
+
+case 3:
+//C
+this.state = 6;
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+if (true) break;
+
+case 6:
+//C
+this.state = -1;
+;
+RDebugUtils.currentLine=89260034;
+ //BA.debugLineNum = 89260034;BA.debugLine="Wait For (EnsureDataPlaybackQueue(playQueue, minI";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playerstatestore", "tryensurequeuelookahead"), __ref._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_playqueue,_minitems));
+this.state = 7;
+return;
+case 7:
+//C
+this.state = -1;
+_queueprepared = (boolean) result[1];
+;
+RDebugUtils.currentLine=89260035;
+ //BA.debugLineNum = 89260035;BA.debugLine="Return queuePrepared";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(_queueprepared));return;};
+RDebugUtils.currentLine=89260036;
+ //BA.debugLineNum = 89260036;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
+}
 public boolean  _canusedataplaybackresolver(b4j.example.playerstatestore __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playerstatestore";
@@ -217,137 +295,6 @@ __ref._retryfallbackstateref /*b4j.example.playbackretryfallbackstate*/ ._setmed
 RDebugUtils.currentLine=84672514;
  //BA.debugLineNum = 84672514;BA.debugLine="End Sub";
 return "";
-}
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _ensuredataplaybackqueue(b4j.example.playerstatestore __ref,anywheresoftware.b4a.objects.collections.List _playqueue,int _minitems) throws Exception{
-RDebugUtils.currentModule="playerstatestore";
-if (Debug.shouldDelegate(ba, "ensuredataplaybackqueue", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "ensuredataplaybackqueue", new Object[] {_playqueue,_minitems}));}
-ResumableSub_EnsureDataPlaybackQueue rsub = new ResumableSub_EnsureDataPlaybackQueue(this,__ref,_playqueue,_minitems);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_EnsureDataPlaybackQueue extends BA.ResumableSub {
-public ResumableSub_EnsureDataPlaybackQueue(b4j.example.playerstatestore parent,b4j.example.playerstatestore __ref,anywheresoftware.b4a.objects.collections.List _playqueue,int _minitems) {
-this.parent = parent;
-this.__ref = __ref;
-this._playqueue = _playqueue;
-this._minitems = _minitems;
-this.__ref = parent;
-}
-b4j.example.playerstatestore __ref;
-b4j.example.playerstatestore parent;
-anywheresoftware.b4a.objects.collections.List _playqueue;
-int _minitems;
-boolean _queueprepared = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="playerstatestore";
-
-    while (true) {
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = -1;
-RDebugUtils.currentLine=88670209;
- //BA.debugLineNum = 88670209;BA.debugLine="Wait For (queueBuilderRef.EnsureDataPlaybackQueue";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playerstatestore", "ensuredataplaybackqueue"), __ref._queuebuilderref /*b4j.example.playbackqueuebuilder*/ ._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_playqueue,_minitems,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null),__ref._effectivenowticks /*long*/ (null),__ref._storageref /*b4j.example.keyvaluestore*/ ,__ref._queuestateref /*b4j.example.playbackqueuestate*/ ,__ref._dataresolverref /*b4j.example.dataplaybackresolver*/ ,__ref._mediacacheref /*b4j.example.mediacache*/ ));
-this.state = 1;
-return;
-case 1:
-//C
-this.state = -1;
-_queueprepared = (boolean) result[1];
-;
-RDebugUtils.currentLine=88670210;
- //BA.debugLineNum = 88670210;BA.debugLine="Return queuePrepared";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_queueprepared));return;};
-RDebugUtils.currentLine=88670211;
- //BA.debugLineNum = 88670211;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _ensuredataplaybackready(b4j.example.playerstatestore __ref) throws Exception{
-RDebugUtils.currentModule="playerstatestore";
-if (Debug.shouldDelegate(ba, "ensuredataplaybackready", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "ensuredataplaybackready", null));}
-ResumableSub_EnsureDataPlaybackReady rsub = new ResumableSub_EnsureDataPlaybackReady(this,__ref);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_EnsureDataPlaybackReady extends BA.ResumableSub {
-public ResumableSub_EnsureDataPlaybackReady(b4j.example.playerstatestore parent,b4j.example.playerstatestore __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.playerstatestore __ref;
-b4j.example.playerstatestore parent;
-boolean _resolverready = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="playerstatestore";
-
-    while (true) {
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = 1;
-RDebugUtils.currentLine=88604673;
- //BA.debugLineNum = 88604673;BA.debugLine="Wait For (queueBuilderRef.EnsureDataPlaybackReady";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playerstatestore", "ensuredataplaybackready"), __ref._queuebuilderref /*b4j.example.playbackqueuebuilder*/ ._ensuredataplaybackready /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null)));
-this.state = 5;
-return;
-case 5:
-//C
-this.state = 1;
-_resolverready = (boolean) result[1];
-;
-RDebugUtils.currentLine=88604674;
- //BA.debugLineNum = 88604674;BA.debugLine="If resolverReady = False Then";
-if (true) break;
-
-case 1:
-//if
-this.state = 4;
-if (_resolverready==parent.__c.False) { 
-this.state = 3;
-}if (true) break;
-
-case 3:
-//C
-this.state = 4;
-RDebugUtils.currentLine=88604675;
- //BA.debugLineNum = 88604675;BA.debugLine="TraceLog(\"подготовка data playback ошибка\")";
-__ref._tracelog /*String*/ (null,"подготовка data playback ошибка");
- if (true) break;
-
-case 4:
-//C
-this.state = -1;
-;
-RDebugUtils.currentLine=88604677;
- //BA.debugLineNum = 88604677;BA.debugLine="Return resolverReady";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_resolverready));return;};
-RDebugUtils.currentLine=88604678;
- //BA.debugLineNum = 88604678;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
 }
 public String  _setstartupsequenceinprogress(b4j.example.playerstatestore __ref,boolean _value) throws Exception{
 __ref = this;
@@ -1771,6 +1718,137 @@ __ref._owner /*b4j.example.b4xmainpage*/ ._data_ensureadcachesyncasync /*String*
 RDebugUtils.currentLine=82968578;
  //BA.debugLineNum = 82968578;BA.debugLine="End Sub";
 return "";
+}
+public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _ensuredataplaybackqueue(b4j.example.playerstatestore __ref,anywheresoftware.b4a.objects.collections.List _playqueue,int _minitems) throws Exception{
+RDebugUtils.currentModule="playerstatestore";
+if (Debug.shouldDelegate(ba, "ensuredataplaybackqueue", false))
+	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "ensuredataplaybackqueue", new Object[] {_playqueue,_minitems}));}
+ResumableSub_EnsureDataPlaybackQueue rsub = new ResumableSub_EnsureDataPlaybackQueue(this,__ref,_playqueue,_minitems);
+rsub.resume(ba, null);
+return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
+}
+public static class ResumableSub_EnsureDataPlaybackQueue extends BA.ResumableSub {
+public ResumableSub_EnsureDataPlaybackQueue(b4j.example.playerstatestore parent,b4j.example.playerstatestore __ref,anywheresoftware.b4a.objects.collections.List _playqueue,int _minitems) {
+this.parent = parent;
+this.__ref = __ref;
+this._playqueue = _playqueue;
+this._minitems = _minitems;
+this.__ref = parent;
+}
+b4j.example.playerstatestore __ref;
+b4j.example.playerstatestore parent;
+anywheresoftware.b4a.objects.collections.List _playqueue;
+int _minitems;
+boolean _queueprepared = false;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="playerstatestore";
+
+    while (true) {
+        switch (state) {
+            case -1:
+{
+parent.__c.ReturnFromResumableSub(this,null);return;}
+case 0:
+//C
+this.state = -1;
+RDebugUtils.currentLine=88670209;
+ //BA.debugLineNum = 88670209;BA.debugLine="Wait For (queueBuilderRef.EnsureDataPlaybackQueue";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playerstatestore", "ensuredataplaybackqueue"), __ref._queuebuilderref /*b4j.example.playbackqueuebuilder*/ ._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_playqueue,_minitems,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null),__ref._effectivenowticks /*long*/ (null),__ref._storageref /*b4j.example.keyvaluestore*/ ,__ref._queuestateref /*b4j.example.playbackqueuestate*/ ,__ref._dataresolverref /*b4j.example.dataplaybackresolver*/ ,__ref._mediacacheref /*b4j.example.mediacache*/ ));
+this.state = 1;
+return;
+case 1:
+//C
+this.state = -1;
+_queueprepared = (boolean) result[1];
+;
+RDebugUtils.currentLine=88670210;
+ //BA.debugLineNum = 88670210;BA.debugLine="Return queuePrepared";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(_queueprepared));return;};
+RDebugUtils.currentLine=88670211;
+ //BA.debugLineNum = 88670211;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
+}
+public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _ensuredataplaybackready(b4j.example.playerstatestore __ref) throws Exception{
+RDebugUtils.currentModule="playerstatestore";
+if (Debug.shouldDelegate(ba, "ensuredataplaybackready", false))
+	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "ensuredataplaybackready", null));}
+ResumableSub_EnsureDataPlaybackReady rsub = new ResumableSub_EnsureDataPlaybackReady(this,__ref);
+rsub.resume(ba, null);
+return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
+}
+public static class ResumableSub_EnsureDataPlaybackReady extends BA.ResumableSub {
+public ResumableSub_EnsureDataPlaybackReady(b4j.example.playerstatestore parent,b4j.example.playerstatestore __ref) {
+this.parent = parent;
+this.__ref = __ref;
+this.__ref = parent;
+}
+b4j.example.playerstatestore __ref;
+b4j.example.playerstatestore parent;
+boolean _resolverready = false;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="playerstatestore";
+
+    while (true) {
+        switch (state) {
+            case -1:
+{
+parent.__c.ReturnFromResumableSub(this,null);return;}
+case 0:
+//C
+this.state = 1;
+RDebugUtils.currentLine=88604673;
+ //BA.debugLineNum = 88604673;BA.debugLine="Wait For (queueBuilderRef.EnsureDataPlaybackReady";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playerstatestore", "ensuredataplaybackready"), __ref._queuebuilderref /*b4j.example.playbackqueuebuilder*/ ._ensuredataplaybackready /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._offlinedata /*anywheresoftware.b4a.objects.collections.Map*/ (null)));
+this.state = 5;
+return;
+case 5:
+//C
+this.state = 1;
+_resolverready = (boolean) result[1];
+;
+RDebugUtils.currentLine=88604674;
+ //BA.debugLineNum = 88604674;BA.debugLine="If resolverReady = False Then";
+if (true) break;
+
+case 1:
+//if
+this.state = 4;
+if (_resolverready==parent.__c.False) { 
+this.state = 3;
+}if (true) break;
+
+case 3:
+//C
+this.state = 4;
+RDebugUtils.currentLine=88604675;
+ //BA.debugLineNum = 88604675;BA.debugLine="TraceLog(\"подготовка data playback ошибка\")";
+__ref._tracelog /*String*/ (null,"подготовка data playback ошибка");
+ if (true) break;
+
+case 4:
+//C
+this.state = -1;
+;
+RDebugUtils.currentLine=88604677;
+ //BA.debugLineNum = 88604677;BA.debugLine="Return resolverReady";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(_resolverready));return;};
+RDebugUtils.currentLine=88604678;
+ //BA.debugLineNum = 88604678;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
 }
 public String  _enterlocalplayback(b4j.example.playerstatestore __ref) throws Exception{
 __ref = this;

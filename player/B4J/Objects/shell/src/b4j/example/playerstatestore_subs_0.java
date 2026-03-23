@@ -67,16 +67,16 @@ finally {
 		}}
 public static RemoteObject  _builddataslotkey(RemoteObject __ref,RemoteObject _currentslot) throws Exception{
 try {
-		Debug.PushSubsStack("BuildDataSlotKey (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,630);
+		Debug.PushSubsStack("BuildDataSlotKey (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,638);
 if (RapidSub.canDelegate("builddataslotkey")) { return __ref.runUserSub(false, "playerstatestore","builddataslotkey", __ref, _currentslot);}
 Debug.locals.put("currentSlot", _currentslot);
- BA.debugLineNum = 630;BA.debugLine="Private Sub BuildDataSlotKey(currentSlot As Map) A";
-Debug.ShouldStop(2097152);
- BA.debugLineNum = 631;BA.debugLine="Return currentSlot.GetDefault(\"schedule_title\", \"";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 638;BA.debugLine="Private Sub BuildDataSlotKey(currentSlot As Map) A";
+Debug.ShouldStop(536870912);
+ BA.debugLineNum = 639;BA.debugLine="Return currentSlot.GetDefault(\"schedule_title\", \"";
+Debug.ShouldStop(1073741824);
 if (true) return RemoteObject.concat(_currentslot.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("schedule_title"))),(Object)((RemoteObject.createImmutable("")))),RemoteObject.createImmutable("|"),_currentslot.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("stream_id"))),(Object)((RemoteObject.createImmutable("")))),RemoteObject.createImmutable("|"),_currentslot.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("slot_time"))),(Object)((RemoteObject.createImmutable("")))));
- BA.debugLineNum = 632;BA.debugLine="End Sub";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 640;BA.debugLine="End Sub";
+Debug.ShouldStop(-2147483648);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -87,48 +87,48 @@ finally {
 		}}
 public static RemoteObject  _buildqueuesignature(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("BuildQueueSignature (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,457);
+		Debug.PushSubsStack("BuildQueueSignature (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,465);
 if (RapidSub.canDelegate("buildqueuesignature")) { return __ref.runUserSub(false, "playerstatestore","buildqueuesignature", __ref);}
 RemoteObject _currentslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _signatureparts = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _playlists = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _playlistobject = RemoteObject.declareNull("Object");
 RemoteObject _playlist = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
- BA.debugLineNum = 457;BA.debugLine="Public Sub BuildQueueSignature As String";
-Debug.ShouldStop(256);
- BA.debugLineNum = 458;BA.debugLine="If OfflineData.IsInitialized = False Then Return";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 465;BA.debugLine="Public Sub BuildQueueSignature As String";
+Debug.ShouldStop(65536);
+ BA.debugLineNum = 466;BA.debugLine="If OfflineData.IsInitialized = False Then Return";
+Debug.ShouldStop(131072);
 if (RemoteObject.solveBoolean("=",__ref.runClassMethod (b4j.example.playerstatestore.class, "_offlinedata" /*RemoteObject*/ ).runMethod(true,"IsInitialized"),playerstatestore.__c.getField(true,"False"))) { 
 if (true) return BA.ObjectToString("");};
- BA.debugLineNum = 459;BA.debugLine="Dim currentSlot As Map = dataResolverRef.ResolveD";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 467;BA.debugLine="Dim currentSlot As Map = dataResolverRef.ResolveD";
+Debug.ShouldStop(262144);
 _currentslot = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _currentslot = __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_resolvedataslotatticks" /*RemoteObject*/ ,(Object)(__ref.runClassMethod (b4j.example.playerstatestore.class, "_offlinedata" /*RemoteObject*/ )),(Object)(__ref.runClassMethod (b4j.example.playerstatestore.class, "_effectivenowticks" /*RemoteObject*/ )));Debug.locals.put("currentSlot", _currentslot);Debug.locals.put("currentSlot", _currentslot);
- BA.debugLineNum = 460;BA.debugLine="If currentSlot.IsInitialized = False Or currentSl";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 468;BA.debugLine="If currentSlot.IsInitialized = False Or currentSl";
+Debug.ShouldStop(524288);
 if (RemoteObject.solveBoolean("=",_currentslot.runMethod(true,"IsInitialized"),playerstatestore.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_currentslot.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return BA.ObjectToString("");};
- BA.debugLineNum = 461;BA.debugLine="Dim signatureParts As List";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 469;BA.debugLine="Dim signatureParts As List";
+Debug.ShouldStop(1048576);
 _signatureparts = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("signatureParts", _signatureparts);
- BA.debugLineNum = 462;BA.debugLine="signatureParts.Initialize";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 470;BA.debugLine="signatureParts.Initialize";
+Debug.ShouldStop(2097152);
 _signatureparts.runVoidMethod ("Initialize");
- BA.debugLineNum = 463;BA.debugLine="signatureParts.Add(\"v=4\")";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 471;BA.debugLine="signatureParts.Add(\"v=4\")";
+Debug.ShouldStop(4194304);
 _signatureparts.runVoidMethod ("Add",(Object)((RemoteObject.createImmutable("v=4"))));
- BA.debugLineNum = 464;BA.debugLine="signatureParts.Add(\"slot=\" & BuildDataSlotKey(cur";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 472;BA.debugLine="signatureParts.Add(\"slot=\" & BuildDataSlotKey(cur";
+Debug.ShouldStop(8388608);
 _signatureparts.runVoidMethod ("Add",(Object)((RemoteObject.concat(RemoteObject.createImmutable("slot="),__ref.runClassMethod (b4j.example.playerstatestore.class, "_builddataslotkey" /*RemoteObject*/ ,(Object)(_currentslot))))));
- BA.debugLineNum = 465;BA.debugLine="Dim playlists As List = currentSlot.GetDefault(\"p";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 473;BA.debugLine="Dim playlists As List = currentSlot.GetDefault(\"p";
+Debug.ShouldStop(16777216);
 _playlists = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlists = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _currentslot.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlists"))),(Object)(playerstatestore.__c.getField(false,"Null"))));Debug.locals.put("playlists", _playlists);Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 466;BA.debugLine="If playlists.IsInitialized Then";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 474;BA.debugLine="If playlists.IsInitialized Then";
+Debug.ShouldStop(33554432);
 if (_playlists.runMethod(true,"IsInitialized").<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 467;BA.debugLine="For Each playlistObject As Object In playlists";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 475;BA.debugLine="For Each playlistObject As Object In playlists";
+Debug.ShouldStop(67108864);
 {
 final RemoteObject group10 = _playlists;
 final int groupLen10 = group10.runMethod(true,"getSize").<Integer>get()
@@ -137,29 +137,29 @@ final int groupLen10 = group10.runMethod(true,"getSize").<Integer>get()
 for (; index10 < groupLen10;index10++){
 _playlistobject = group10.runMethod(false,"Get",index10);Debug.locals.put("playlistObject", _playlistobject);
 Debug.locals.put("playlistObject", _playlistobject);
- BA.debugLineNum = 468;BA.debugLine="If playlistObject Is Map Then";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 476;BA.debugLine="If playlistObject Is Map Then";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("i",_playlistobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 469;BA.debugLine="Dim playlist As Map = playlistObject";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 477;BA.debugLine="Dim playlist As Map = playlistObject";
+Debug.ShouldStop(268435456);
 _playlist = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _playlist = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _playlistobject);Debug.locals.put("playlist", _playlist);Debug.locals.put("playlist", _playlist);
- BA.debugLineNum = 470;BA.debugLine="signatureParts.Add(\"playlist=\" & playlist.GetD";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 478;BA.debugLine="signatureParts.Add(\"playlist=\" & playlist.GetD";
+Debug.ShouldStop(536870912);
 _signatureparts.runVoidMethod ("Add",(Object)((RemoteObject.concat(RemoteObject.createImmutable("playlist="),_playlist.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))),RemoteObject.createImmutable(":"),_playlist.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable(""))))))));
  };
  }
 }Debug.locals.put("playlistObject", _playlistobject);
 ;
  };
- BA.debugLineNum = 474;BA.debugLine="signatureParts.Sort(True)";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 482;BA.debugLine="signatureParts.Sort(True)";
+Debug.ShouldStop(2);
 _signatureparts.runVoidMethod ("Sort",(Object)(playerstatestore.__c.getField(true,"True")));
- BA.debugLineNum = 475;BA.debugLine="Return JoinList(signatureParts, \"|\")";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 483;BA.debugLine="Return JoinList(signatureParts, \"|\")";
+Debug.ShouldStop(4);
 if (true) return __ref.runClassMethod (b4j.example.playerstatestore.class, "_joinlist" /*RemoteObject*/ ,(Object)(_signatureparts),(Object)(RemoteObject.createImmutable("|")));
- BA.debugLineNum = 476;BA.debugLine="End Sub";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 484;BA.debugLine="End Sub";
+Debug.ShouldStop(8);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -189,34 +189,34 @@ finally {
 		}}
 public static RemoteObject  _capturestoppedreservequeue(RemoteObject __ref,RemoteObject _playqueue) throws Exception{
 try {
-		Debug.PushSubsStack("CaptureStoppedReserveQueue (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,497);
+		Debug.PushSubsStack("CaptureStoppedReserveQueue (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,505);
 if (RapidSub.canDelegate("capturestoppedreservequeue")) { return __ref.runUserSub(false, "playerstatestore","capturestoppedreservequeue", __ref, _playqueue);}
 RemoteObject _currentsignature = RemoteObject.createImmutable("");
 RemoteObject _reservequeue = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _itemobject = RemoteObject.declareNull("Object");
 RemoteObject _item = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("playQueue", _playqueue);
- BA.debugLineNum = 497;BA.debugLine="Public Sub CaptureStoppedReserveQueue(playQueue As";
-Debug.ShouldStop(65536);
- BA.debugLineNum = 498;BA.debugLine="If playQueue.IsInitialized = False Or playQueue.S";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 505;BA.debugLine="Public Sub CaptureStoppedReserveQueue(playQueue As";
+Debug.ShouldStop(16777216);
+ BA.debugLineNum = 506;BA.debugLine="If playQueue.IsInitialized = False Or playQueue.S";
+Debug.ShouldStop(33554432);
 if (RemoteObject.solveBoolean("=",_playqueue.runMethod(true,"IsInitialized"),playerstatestore.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_playqueue.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 499;BA.debugLine="Dim currentSignature As String = BuildQueueSignat";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 507;BA.debugLine="Dim currentSignature As String = BuildQueueSignat";
+Debug.ShouldStop(67108864);
 _currentsignature = __ref.runClassMethod (b4j.example.playerstatestore.class, "_buildqueuesignature" /*RemoteObject*/ );Debug.locals.put("currentSignature", _currentsignature);Debug.locals.put("currentSignature", _currentsignature);
- BA.debugLineNum = 500;BA.debugLine="If currentSignature = \"\" Then Return";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 508;BA.debugLine="If currentSignature = \"\" Then Return";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("=",_currentsignature,BA.ObjectToString(""))) { 
 if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 501;BA.debugLine="Dim reserveQueue As List";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 509;BA.debugLine="Dim reserveQueue As List";
+Debug.ShouldStop(268435456);
 _reservequeue = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("reserveQueue", _reservequeue);
- BA.debugLineNum = 502;BA.debugLine="reserveQueue.Initialize";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 510;BA.debugLine="reserveQueue.Initialize";
+Debug.ShouldStop(536870912);
 _reservequeue.runVoidMethod ("Initialize");
- BA.debugLineNum = 503;BA.debugLine="For Each itemObject As Object In playQueue";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 511;BA.debugLine="For Each itemObject As Object In playQueue";
+Debug.ShouldStop(1073741824);
 {
 final RemoteObject group6 = _playqueue;
 final int groupLen6 = group6.runMethod(true,"getSize").<Integer>get()
@@ -225,40 +225,40 @@ final int groupLen6 = group6.runMethod(true,"getSize").<Integer>get()
 for (; index6 < groupLen6;index6++){
 _itemobject = group6.runMethod(false,"Get",index6);Debug.locals.put("itemObject", _itemobject);
 Debug.locals.put("itemObject", _itemobject);
- BA.debugLineNum = 504;BA.debugLine="If itemObject Is Map Then";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 512;BA.debugLine="If itemObject Is Map Then";
+Debug.ShouldStop(-2147483648);
 if (RemoteObject.solveBoolean("i",_itemobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 505;BA.debugLine="Dim item As Map = itemObject";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 513;BA.debugLine="Dim item As Map = itemObject";
+Debug.ShouldStop(1);
 _item = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _item = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _itemobject);Debug.locals.put("item", _item);Debug.locals.put("item", _item);
- BA.debugLineNum = 506;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 514;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
+Debug.ShouldStop(2);
 if (RemoteObject.solveBoolean("=",__ref.runClassMethod (b4j.example.playerstatestore.class, "_isvaliddatatrackitem" /*RemoteObject*/ ,(Object)(_item)),playerstatestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 507;BA.debugLine="If mediaCacheRef.IsTrackCached(item.GetDefault(";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 515;BA.debugLine="If mediaCacheRef.IsTrackCached(item.GetDefault(";
+Debug.ShouldStop(4);
 if (RemoteObject.solveBoolean("=",__ref.getField(false,"_mediacacheref" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_istrackcached" /*RemoteObject*/ ,(Object)(BA.ObjectToString(_item.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable(""))))))),playerstatestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 508;BA.debugLine="reserveQueue.Add(CloneMap(item))";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 516;BA.debugLine="reserveQueue.Add(CloneMap(item))";
+Debug.ShouldStop(8);
 _reservequeue.runVoidMethod ("Add",(Object)((__ref.runClassMethod (b4j.example.playerstatestore.class, "_clonemap" /*RemoteObject*/ ,(Object)(_item)).getObject())));
  };
  }
 }Debug.locals.put("itemObject", _itemobject);
 ;
- BA.debugLineNum = 511;BA.debugLine="queueStateRef.CaptureStoppedReserve(reserveQueue,";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 519;BA.debugLine="queueStateRef.CaptureStoppedReserve(reserveQueue,";
+Debug.ShouldStop(64);
 __ref.getField(false,"_queuestateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackqueuestate.class, "_capturestoppedreserve" /*RemoteObject*/ ,(Object)(_reservequeue),(Object)(_currentsignature));
- BA.debugLineNum = 512;BA.debugLine="If queueStateRef.StoppedReserveQueue.Size = 0 The";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 520;BA.debugLine="If queueStateRef.StoppedReserveQueue.Size = 0 The";
+Debug.ShouldStop(128);
 if (RemoteObject.solveBoolean("=",__ref.getField(false,"_queuestateref" /*RemoteObject*/ ).getField(false,"_stoppedreservequeue" /*RemoteObject*/ ).runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 513;BA.debugLine="TraceLog(\"резерв очереди save tracks=\" & queueSta";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 521;BA.debugLine="TraceLog(\"резерв очереди save tracks=\" & queueSta";
+Debug.ShouldStop(256);
 __ref.runClassMethod (b4j.example.playerstatestore.class, "_tracelog" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("резерв очереди save tracks="),__ref.getField(false,"_queuestateref" /*RemoteObject*/ ).getField(false,"_stoppedreservequeue" /*RemoteObject*/ ).runMethod(true,"getSize"))));
- BA.debugLineNum = 514;BA.debugLine="End Sub";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 522;BA.debugLine="End Sub";
+Debug.ShouldStop(512);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -331,15 +331,15 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _cleardispatchretryafter(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearDispatchRetryAfter (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,583);
+		Debug.PushSubsStack("ClearDispatchRetryAfter (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,591);
 if (RapidSub.canDelegate("cleardispatchretryafter")) { return __ref.runUserSub(false, "playerstatestore","cleardispatchretryafter", __ref);}
- BA.debugLineNum = 583;BA.debugLine="Public Sub ClearDispatchRetryAfter";
-Debug.ShouldStop(64);
- BA.debugLineNum = 584;BA.debugLine="retryFallbackStateRef.ClearDispatchRetryAfter";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 591;BA.debugLine="Public Sub ClearDispatchRetryAfter";
+Debug.ShouldStop(16384);
+ BA.debugLineNum = 592;BA.debugLine="retryFallbackStateRef.ClearDispatchRetryAfter";
+Debug.ShouldStop(32768);
 __ref.getField(false,"_retryfallbackstateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackretryfallbackstate.class, "_cleardispatchretryafter" /*RemoteObject*/ );
- BA.debugLineNum = 585;BA.debugLine="End Sub";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 593;BA.debugLine="End Sub";
+Debug.ShouldStop(65536);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -426,18 +426,18 @@ finally {
 		}}
 public static RemoteObject  _clearqueuesnapshotstate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearQueueSnapshotState (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,547);
+		Debug.PushSubsStack("ClearQueueSnapshotState (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,555);
 if (RapidSub.canDelegate("clearqueuesnapshotstate")) { return __ref.runUserSub(false, "playerstatestore","clearqueuesnapshotstate", __ref);}
- BA.debugLineNum = 547;BA.debugLine="Public Sub ClearQueueSnapshotState";
-Debug.ShouldStop(4);
- BA.debugLineNum = 548;BA.debugLine="queueStateRef.ClearQueueSnapshot(storageRef)";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 555;BA.debugLine="Public Sub ClearQueueSnapshotState";
+Debug.ShouldStop(1024);
+ BA.debugLineNum = 556;BA.debugLine="queueStateRef.ClearQueueSnapshot(storageRef)";
+Debug.ShouldStop(2048);
 __ref.getField(false,"_queuestateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackqueuestate.class, "_clearqueuesnapshot" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_storageref" /*RemoteObject*/ )));
- BA.debugLineNum = 549;BA.debugLine="TraceLog(\"снимок очереди clear\")";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 557;BA.debugLine="TraceLog(\"снимок очереди clear\")";
+Debug.ShouldStop(4096);
 __ref.runClassMethod (b4j.example.playerstatestore.class, "_tracelog" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("снимок очереди clear")));
- BA.debugLineNum = 550;BA.debugLine="End Sub";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 558;BA.debugLine="End Sub";
+Debug.ShouldStop(8192);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -467,18 +467,18 @@ finally {
 		}}
 public static RemoteObject  _clearretrytimer(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearRetryTimer (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,556);
+		Debug.PushSubsStack("ClearRetryTimer (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,564);
 if (RapidSub.canDelegate("clearretrytimer")) { return __ref.runUserSub(false, "playerstatestore","clearretrytimer", __ref);}
- BA.debugLineNum = 556;BA.debugLine="Public Sub ClearRetryTimer";
-Debug.ShouldStop(2048);
- BA.debugLineNum = 557;BA.debugLine="retryTimerRef.Enabled = False";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 564;BA.debugLine="Public Sub ClearRetryTimer";
+Debug.ShouldStop(524288);
+ BA.debugLineNum = 565;BA.debugLine="retryTimerRef.Enabled = False";
+Debug.ShouldStop(1048576);
 __ref.getField(false,"_retrytimerref" /*RemoteObject*/ ).runMethod(true,"setEnabled",playerstatestore.__c.getField(true,"False"));
- BA.debugLineNum = 558;BA.debugLine="ClearLastRetryMode";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 566;BA.debugLine="ClearLastRetryMode";
+Debug.ShouldStop(2097152);
 __ref.runClassMethod (b4j.example.playerstatestore.class, "_clearlastretrymode" /*RemoteObject*/ );
- BA.debugLineNum = 559;BA.debugLine="End Sub";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 567;BA.debugLine="End Sub";
+Debug.ShouldStop(4194304);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -508,25 +508,25 @@ finally {
 		}}
 public static RemoteObject  _clonemap(RemoteObject __ref,RemoteObject _sourcemap) throws Exception{
 try {
-		Debug.PushSubsStack("CloneMap (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,634);
+		Debug.PushSubsStack("CloneMap (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,642);
 if (RapidSub.canDelegate("clonemap")) { return __ref.runUserSub(false, "playerstatestore","clonemap", __ref, _sourcemap);}
 RemoteObject _clonedmap = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
 Debug.locals.put("sourceMap", _sourcemap);
- BA.debugLineNum = 634;BA.debugLine="Private Sub CloneMap(sourceMap As Map) As Map";
-Debug.ShouldStop(33554432);
- BA.debugLineNum = 635;BA.debugLine="Dim clonedMap As Map";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 642;BA.debugLine="Private Sub CloneMap(sourceMap As Map) As Map";
+Debug.ShouldStop(2);
+ BA.debugLineNum = 643;BA.debugLine="Dim clonedMap As Map";
+Debug.ShouldStop(4);
 _clonedmap = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("clonedMap", _clonedmap);
- BA.debugLineNum = 636;BA.debugLine="clonedMap.Initialize";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 644;BA.debugLine="clonedMap.Initialize";
+Debug.ShouldStop(8);
 _clonedmap.runVoidMethod ("Initialize");
- BA.debugLineNum = 637;BA.debugLine="If sourceMap.IsInitialized = False Then Return cl";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 645;BA.debugLine="If sourceMap.IsInitialized = False Then Return cl";
+Debug.ShouldStop(16);
 if (RemoteObject.solveBoolean("=",_sourcemap.runMethod(true,"IsInitialized"),playerstatestore.__c.getField(true,"False"))) { 
 if (true) return _clonedmap;};
- BA.debugLineNum = 638;BA.debugLine="For Each key As Object In sourceMap.Keys";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 646;BA.debugLine="For Each key As Object In sourceMap.Keys";
+Debug.ShouldStop(32);
 {
 final RemoteObject group4 = _sourcemap.runMethod(false,"Keys");
 final int groupLen4 = group4.runMethod(true,"getSize").<Integer>get()
@@ -535,17 +535,17 @@ final int groupLen4 = group4.runMethod(true,"getSize").<Integer>get()
 for (; index4 < groupLen4;index4++){
 _key = group4.runMethod(false,"Get",index4);Debug.locals.put("key", _key);
 Debug.locals.put("key", _key);
- BA.debugLineNum = 639;BA.debugLine="clonedMap.Put(key, sourceMap.Get(key))";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 647;BA.debugLine="clonedMap.Put(key, sourceMap.Get(key))";
+Debug.ShouldStop(64);
 _clonedmap.runVoidMethod ("Put",(Object)(_key),(Object)(_sourcemap.runMethod(false,"Get",(Object)(_key))));
  }
 }Debug.locals.put("key", _key);
 ;
- BA.debugLineNum = 641;BA.debugLine="Return clonedMap";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 649;BA.debugLine="Return clonedMap";
+Debug.ShouldStop(256);
 if (true) return _clonedmap;
- BA.debugLineNum = 642;BA.debugLine="End Sub";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 650;BA.debugLine="End Sub";
+Debug.ShouldStop(512);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -556,15 +556,15 @@ finally {
 		}}
 public static RemoteObject  _consumedispatchretryafter(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ConsumeDispatchRetryAfter (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,591);
+		Debug.PushSubsStack("ConsumeDispatchRetryAfter (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,599);
 if (RapidSub.canDelegate("consumedispatchretryafter")) { return __ref.runUserSub(false, "playerstatestore","consumedispatchretryafter", __ref);}
- BA.debugLineNum = 591;BA.debugLine="Public Sub ConsumeDispatchRetryAfter As Int";
-Debug.ShouldStop(16384);
- BA.debugLineNum = 592;BA.debugLine="Return retryFallbackStateRef.ConsumeDispatchRetry";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 599;BA.debugLine="Public Sub ConsumeDispatchRetryAfter As Int";
+Debug.ShouldStop(4194304);
+ BA.debugLineNum = 600;BA.debugLine="Return retryFallbackStateRef.ConsumeDispatchRetry";
+Debug.ShouldStop(8388608);
 if (true) return __ref.getField(false,"_retryfallbackstateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackretryfallbackstate.class, "_consumedispatchretryafter" /*RemoteObject*/ );
- BA.debugLineNum = 593;BA.debugLine="End Sub";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 601;BA.debugLine="End Sub";
+Debug.ShouldStop(16777216);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -701,15 +701,15 @@ finally {
 		}}
 public static RemoteObject  _enableretrytimer(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EnableRetryTimer (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,573);
+		Debug.PushSubsStack("EnableRetryTimer (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,581);
 if (RapidSub.canDelegate("enableretrytimer")) { return __ref.runUserSub(false, "playerstatestore","enableretrytimer", __ref);}
- BA.debugLineNum = 573;BA.debugLine="Public Sub EnableRetryTimer";
-Debug.ShouldStop(268435456);
- BA.debugLineNum = 574;BA.debugLine="retryTimerRef.Enabled = True";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 581;BA.debugLine="Public Sub EnableRetryTimer";
+Debug.ShouldStop(16);
+ BA.debugLineNum = 582;BA.debugLine="retryTimerRef.Enabled = True";
+Debug.ShouldStop(32);
 __ref.getField(false,"_retrytimerref" /*RemoteObject*/ ).runMethod(true,"setEnabled",playerstatestore.__c.getField(true,"True"));
- BA.debugLineNum = 575;BA.debugLine="End Sub";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 583;BA.debugLine="End Sub";
+Debug.ShouldStop(64);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1099,15 +1099,15 @@ finally {
 		}}
 public static RemoteObject  _getretryinterval(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetRetryInterval (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,565);
+		Debug.PushSubsStack("GetRetryInterval (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,573);
 if (RapidSub.canDelegate("getretryinterval")) { return __ref.runUserSub(false, "playerstatestore","getretryinterval", __ref);}
- BA.debugLineNum = 565;BA.debugLine="Public Sub GetRetryInterval As Int";
-Debug.ShouldStop(1048576);
- BA.debugLineNum = 566;BA.debugLine="Return retryTimerRef.Interval";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 573;BA.debugLine="Public Sub GetRetryInterval As Int";
+Debug.ShouldStop(268435456);
+ BA.debugLineNum = 574;BA.debugLine="Return retryTimerRef.Interval";
+Debug.ShouldStop(536870912);
 if (true) return BA.numberCast(int.class, __ref.getField(false,"_retrytimerref" /*RemoteObject*/ ).runMethod(true,"getInterval"));
- BA.debugLineNum = 567;BA.debugLine="End Sub";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 575;BA.debugLine="End Sub";
+Debug.ShouldStop(1073741824);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -1321,15 +1321,15 @@ finally {
 		}}
 public static RemoteObject  _ismediapathdegraded(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsMediaPathDegraded (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,599);
+		Debug.PushSubsStack("IsMediaPathDegraded (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,607);
 if (RapidSub.canDelegate("ismediapathdegraded")) { return __ref.runUserSub(false, "playerstatestore","ismediapathdegraded", __ref);}
- BA.debugLineNum = 599;BA.debugLine="Public Sub IsMediaPathDegraded As Boolean";
-Debug.ShouldStop(4194304);
- BA.debugLineNum = 600;BA.debugLine="Return retryFallbackStateRef.IsMediaPathDegraded";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 607;BA.debugLine="Public Sub IsMediaPathDegraded As Boolean";
+Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 608;BA.debugLine="Return retryFallbackStateRef.IsMediaPathDegraded";
+Debug.ShouldStop(-2147483648);
 if (true) return __ref.getField(false,"_retryfallbackstateref" /*RemoteObject*/ ).getField(true,"_ismediapathdegraded" /*RemoteObject*/ );
- BA.debugLineNum = 601;BA.debugLine="End Sub";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 609;BA.debugLine="End Sub";
+Debug.ShouldStop(1);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -1340,15 +1340,15 @@ finally {
 		}}
 public static RemoteObject  _isplaybackpausedbypolicy(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsPlaybackPausedByPolicy (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,569);
+		Debug.PushSubsStack("IsPlaybackPausedByPolicy (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,577);
 if (RapidSub.canDelegate("isplaybackpausedbypolicy")) { return __ref.runUserSub(false, "playerstatestore","isplaybackpausedbypolicy", __ref);}
- BA.debugLineNum = 569;BA.debugLine="Public Sub IsPlaybackPausedByPolicy As Boolean";
-Debug.ShouldStop(16777216);
- BA.debugLineNum = 570;BA.debugLine="Return policyState.IsPlaybackPausedByPolicy";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 577;BA.debugLine="Public Sub IsPlaybackPausedByPolicy As Boolean";
+Debug.ShouldStop(1);
+ BA.debugLineNum = 578;BA.debugLine="Return policyState.IsPlaybackPausedByPolicy";
+Debug.ShouldStop(2);
 if (true) return __ref.getField(false,"_policystate" /*RemoteObject*/ ).getField(true,"_isplaybackpausedbypolicy" /*RemoteObject*/ );
- BA.debugLineNum = 571;BA.debugLine="End Sub";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 579;BA.debugLine="End Sub";
+Debug.ShouldStop(4);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -1502,16 +1502,16 @@ finally {
 		}}
 public static RemoteObject  _istrackcached(RemoteObject __ref,RemoteObject _trackid) throws Exception{
 try {
-		Debug.PushSubsStack("IsTrackCached (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,619);
+		Debug.PushSubsStack("IsTrackCached (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,627);
 if (RapidSub.canDelegate("istrackcached")) { return __ref.runUserSub(false, "playerstatestore","istrackcached", __ref, _trackid);}
 Debug.locals.put("trackId", _trackid);
- BA.debugLineNum = 619;BA.debugLine="Public Sub IsTrackCached(trackId As String) As Boo";
-Debug.ShouldStop(1024);
- BA.debugLineNum = 620;BA.debugLine="Return mediaCacheRef.IsTrackCached(trackId)";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 627;BA.debugLine="Public Sub IsTrackCached(trackId As String) As Boo";
+Debug.ShouldStop(262144);
+ BA.debugLineNum = 628;BA.debugLine="Return mediaCacheRef.IsTrackCached(trackId)";
+Debug.ShouldStop(524288);
 if (true) return __ref.getField(false,"_mediacacheref" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_istrackcached" /*RemoteObject*/ ,(Object)(_trackid));
- BA.debugLineNum = 621;BA.debugLine="End Sub";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 629;BA.debugLine="End Sub";
+Debug.ShouldStop(1048576);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -1541,28 +1541,28 @@ finally {
 		}}
 public static RemoteObject  _isvaliddatatrackitem(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("IsValidDataTrackItem (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,623);
+		Debug.PushSubsStack("IsValidDataTrackItem (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,631);
 if (RapidSub.canDelegate("isvaliddatatrackitem")) { return __ref.runUserSub(false, "playerstatestore","isvaliddatatrackitem", __ref, _item);}
 Debug.locals.put("item", _item);
- BA.debugLineNum = 623;BA.debugLine="Private Sub IsValidDataTrackItem(item As Map) As B";
-Debug.ShouldStop(16384);
- BA.debugLineNum = 624;BA.debugLine="If item.IsInitialized = False Or item.Size = 0 Th";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 631;BA.debugLine="Private Sub IsValidDataTrackItem(item As Map) As B";
+Debug.ShouldStop(4194304);
+ BA.debugLineNum = 632;BA.debugLine="If item.IsInitialized = False Or item.Size = 0 Th";
+Debug.ShouldStop(8388608);
 if (RemoteObject.solveBoolean("=",_item.runMethod(true,"IsInitialized"),playerstatestore.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_item.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return playerstatestore.__c.getField(true,"False");};
- BA.debugLineNum = 625;BA.debugLine="If item.GetDefault(\"type\", \"\") <> \"track\" Then Re";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 633;BA.debugLine="If item.GetDefault(\"type\", \"\") <> \"track\" Then Re";
+Debug.ShouldStop(16777216);
 if (RemoteObject.solveBoolean("!",_item.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("type"))),(Object)((RemoteObject.createImmutable("")))),RemoteObject.createImmutable(("track")))) { 
 if (true) return playerstatestore.__c.getField(true,"False");};
- BA.debugLineNum = 626;BA.debugLine="If item.GetDefault(\"id\", \"\") = \"\" Then Return Fal";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 634;BA.debugLine="If item.GetDefault(\"id\", \"\") = \"\" Then Return Fal";
+Debug.ShouldStop(33554432);
 if (RemoteObject.solveBoolean("=",_item.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))),RemoteObject.createImmutable(("")))) { 
 if (true) return playerstatestore.__c.getField(true,"False");};
- BA.debugLineNum = 627;BA.debugLine="Return True";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 635;BA.debugLine="Return True";
+Debug.ShouldStop(67108864);
 if (true) return playerstatestore.__c.getField(true,"True");
- BA.debugLineNum = 628;BA.debugLine="End Sub";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 636;BA.debugLine="End Sub";
+Debug.ShouldStop(134217728);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -1573,43 +1573,43 @@ finally {
 		}}
 public static RemoteObject  _joinlist(RemoteObject __ref,RemoteObject _items,RemoteObject _separator) throws Exception{
 try {
-		Debug.PushSubsStack("JoinList (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,644);
+		Debug.PushSubsStack("JoinList (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,652);
 if (RapidSub.canDelegate("joinlist")) { return __ref.runUserSub(false, "playerstatestore","joinlist", __ref, _items, _separator);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 int _i = 0;
 Debug.locals.put("items", _items);
 Debug.locals.put("separator", _separator);
- BA.debugLineNum = 644;BA.debugLine="Private Sub JoinList(items As List, separator As S";
-Debug.ShouldStop(8);
- BA.debugLineNum = 645;BA.debugLine="Dim sb As StringBuilder";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 652;BA.debugLine="Private Sub JoinList(items As List, separator As S";
+Debug.ShouldStop(2048);
+ BA.debugLineNum = 653;BA.debugLine="Dim sb As StringBuilder";
+Debug.ShouldStop(4096);
 _sb = RemoteObject.createNew ("anywheresoftware.b4a.keywords.StringBuilderWrapper");Debug.locals.put("sb", _sb);
- BA.debugLineNum = 646;BA.debugLine="sb.Initialize";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 654;BA.debugLine="sb.Initialize";
+Debug.ShouldStop(8192);
 _sb.runVoidMethod ("Initialize");
- BA.debugLineNum = 647;BA.debugLine="For i = 0 To items.Size - 1";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 655;BA.debugLine="For i = 0 To items.Size - 1";
+Debug.ShouldStop(16384);
 {
 final int step3 = 1;
 final int limit3 = RemoteObject.solve(new RemoteObject[] {_items.runMethod(true,"getSize"),RemoteObject.createImmutable(1)}, "-",1, 1).<Integer>get().intValue();
 _i = 0 ;
 for (;(step3 > 0 && _i <= limit3) || (step3 < 0 && _i >= limit3) ;_i = ((int)(0 + _i + step3))  ) {
 Debug.locals.put("i", _i);
- BA.debugLineNum = 648;BA.debugLine="If i > 0 Then sb.Append(separator)";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 656;BA.debugLine="If i > 0 Then sb.Append(separator)";
+Debug.ShouldStop(32768);
 if (RemoteObject.solveBoolean(">",RemoteObject.createImmutable(_i),BA.numberCast(double.class, 0))) { 
 _sb.runVoidMethod ("Append",(Object)(_separator));};
- BA.debugLineNum = 649;BA.debugLine="sb.Append(items.Get(i))";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 657;BA.debugLine="sb.Append(items.Get(i))";
+Debug.ShouldStop(65536);
 _sb.runVoidMethod ("Append",(Object)(BA.ObjectToString(_items.runMethod(false,"Get",(Object)(BA.numberCast(int.class, _i))))));
  }
 }Debug.locals.put("i", _i);
 ;
- BA.debugLineNum = 651;BA.debugLine="Return sb.ToString";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 659;BA.debugLine="Return sb.ToString";
+Debug.ShouldStop(262144);
 if (true) return _sb.runMethod(true,"ToString");
- BA.debugLineNum = 652;BA.debugLine="End Sub";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 660;BA.debugLine="End Sub";
+Debug.ShouldStop(524288);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1639,16 +1639,16 @@ finally {
 		}}
 public static RemoteObject  _loadcachedplaylistmetadata(RemoteObject __ref,RemoteObject _playlistid) throws Exception{
 try {
-		Debug.PushSubsStack("LoadCachedPlaylistMetadata (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,615);
+		Debug.PushSubsStack("LoadCachedPlaylistMetadata (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,623);
 if (RapidSub.canDelegate("loadcachedplaylistmetadata")) { return __ref.runUserSub(false, "playerstatestore","loadcachedplaylistmetadata", __ref, _playlistid);}
 Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 615;BA.debugLine="Public Sub LoadCachedPlaylistMetadata(playlistId A";
-Debug.ShouldStop(64);
- BA.debugLineNum = 616;BA.debugLine="Return dataResolverRef.LoadCachedPlaylistMetadata";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 623;BA.debugLine="Public Sub LoadCachedPlaylistMetadata(playlistId A";
+Debug.ShouldStop(16384);
+ BA.debugLineNum = 624;BA.debugLine="Return dataResolverRef.LoadCachedPlaylistMetadata";
+Debug.ShouldStop(32768);
 if (true) return __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_loadcachedplaylistmetadata" /*RemoteObject*/ ,(Object)(_playlistid));
- BA.debugLineNum = 617;BA.debugLine="End Sub";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 625;BA.debugLine="End Sub";
+Debug.ShouldStop(65536);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -1801,24 +1801,24 @@ finally {
 		}}
 public static RemoteObject  _resetretrydelaystate(RemoteObject __ref,RemoteObject _localretryinitial,RemoteObject _serverretryinitial) throws Exception{
 try {
-		Debug.PushSubsStack("ResetRetryDelayState (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,577);
+		Debug.PushSubsStack("ResetRetryDelayState (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,585);
 if (RapidSub.canDelegate("resetretrydelaystate")) { return __ref.runUserSub(false, "playerstatestore","resetretrydelaystate", __ref, _localretryinitial, _serverretryinitial);}
 Debug.locals.put("localRetryInitial", _localretryinitial);
 Debug.locals.put("serverRetryInitial", _serverretryinitial);
- BA.debugLineNum = 577;BA.debugLine="Public Sub ResetRetryDelayState(localRetryInitial";
-Debug.ShouldStop(1);
- BA.debugLineNum = 578;BA.debugLine="retryFallbackStateRef.ResetRetryDelays(localRetry";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 585;BA.debugLine="Public Sub ResetRetryDelayState(localRetryInitial";
+Debug.ShouldStop(256);
+ BA.debugLineNum = 586;BA.debugLine="retryFallbackStateRef.ResetRetryDelays(localRetry";
+Debug.ShouldStop(512);
 __ref.getField(false,"_retryfallbackstateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackretryfallbackstate.class, "_resetretrydelays" /*RemoteObject*/ ,(Object)(_localretryinitial),(Object)(_serverretryinitial));
- BA.debugLineNum = 579;BA.debugLine="If GetConsecutiveNetworkErrors > 0 Then TraceInfo";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 587;BA.debugLine="If GetConsecutiveNetworkErrors > 0 Then TraceInfo";
+Debug.ShouldStop(1024);
 if (RemoteObject.solveBoolean(">",__ref.runClassMethod (b4j.example.playerstatestore.class, "_getconsecutivenetworkerrors" /*RemoteObject*/ ),BA.numberCast(double.class, 0))) { 
 __ref.runClassMethod (b4j.example.playerstatestore.class, "_traceinfo" /*RemoteObject*/ ,(Object)(BA.ObjectToString("network")),(Object)(BA.ObjectToString("retry сброшен")),(Object)(RemoteObject.concat(RemoteObject.createImmutable("errors="),__ref.runClassMethod (b4j.example.playerstatestore.class, "_getconsecutivenetworkerrors" /*RemoteObject*/ ))));};
- BA.debugLineNum = 580;BA.debugLine="ResetConsecutiveNetworkErrors";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 588;BA.debugLine="ResetConsecutiveNetworkErrors";
+Debug.ShouldStop(2048);
 __ref.runClassMethod (b4j.example.playerstatestore.class, "_resetconsecutivenetworkerrors" /*RemoteObject*/ );
- BA.debugLineNum = 581;BA.debugLine="End Sub";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 589;BA.debugLine="End Sub";
+Debug.ShouldStop(4096);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1829,16 +1829,16 @@ finally {
 		}}
 public static RemoteObject  _resolvecurrentdataslot(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveCurrentDataSlot (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,607);
+		Debug.PushSubsStack("ResolveCurrentDataSlot (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,615);
 if (RapidSub.canDelegate("resolvecurrentdataslot")) { return __ref.runUserSub(false, "playerstatestore","resolvecurrentdataslot", __ref, _data);}
 Debug.locals.put("data", _data);
- BA.debugLineNum = 607;BA.debugLine="Public Sub ResolveCurrentDataSlot(data As Map) As";
-Debug.ShouldStop(1073741824);
- BA.debugLineNum = 608;BA.debugLine="Return dataResolverRef.ResolveCurrentDataSlot(dat";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 615;BA.debugLine="Public Sub ResolveCurrentDataSlot(data As Map) As";
+Debug.ShouldStop(64);
+ BA.debugLineNum = 616;BA.debugLine="Return dataResolverRef.ResolveCurrentDataSlot(dat";
+Debug.ShouldStop(128);
 if (true) return __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_resolvecurrentdataslot" /*RemoteObject*/ ,(Object)(_data));
- BA.debugLineNum = 609;BA.debugLine="End Sub";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 617;BA.debugLine="End Sub";
+Debug.ShouldStop(256);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -1849,17 +1849,17 @@ finally {
 		}}
 public static RemoteObject  _resolvedataslotatticks(RemoteObject __ref,RemoteObject _data,RemoteObject _targetticks) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveDataSlotAtTicks (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,603);
+		Debug.PushSubsStack("ResolveDataSlotAtTicks (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,611);
 if (RapidSub.canDelegate("resolvedataslotatticks")) { return __ref.runUserSub(false, "playerstatestore","resolvedataslotatticks", __ref, _data, _targetticks);}
 Debug.locals.put("data", _data);
 Debug.locals.put("targetTicks", _targetticks);
- BA.debugLineNum = 603;BA.debugLine="Public Sub ResolveDataSlotAtTicks(data As Map, tar";
-Debug.ShouldStop(67108864);
- BA.debugLineNum = 604;BA.debugLine="Return dataResolverRef.ResolveDataSlotAtTicks(dat";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 611;BA.debugLine="Public Sub ResolveDataSlotAtTicks(data As Map, tar";
+Debug.ShouldStop(4);
+ BA.debugLineNum = 612;BA.debugLine="Return dataResolverRef.ResolveDataSlotAtTicks(dat";
+Debug.ShouldStop(8);
 if (true) return __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_resolvedataslotatticks" /*RemoteObject*/ ,(Object)(_data),(Object)(_targetticks));
- BA.debugLineNum = 605;BA.debugLine="End Sub";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 613;BA.debugLine="End Sub";
+Debug.ShouldStop(16);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -1891,17 +1891,17 @@ finally {
 		}}
 public static RemoteObject  _resolvenextdataslotatticks(RemoteObject __ref,RemoteObject _data,RemoteObject _targetticks) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveNextDataSlotAtTicks (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,611);
+		Debug.PushSubsStack("ResolveNextDataSlotAtTicks (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,619);
 if (RapidSub.canDelegate("resolvenextdataslotatticks")) { return __ref.runUserSub(false, "playerstatestore","resolvenextdataslotatticks", __ref, _data, _targetticks);}
 Debug.locals.put("data", _data);
 Debug.locals.put("targetTicks", _targetticks);
- BA.debugLineNum = 611;BA.debugLine="Public Sub ResolveNextDataSlotAtTicks(data As Map,";
-Debug.ShouldStop(4);
- BA.debugLineNum = 612;BA.debugLine="Return dataResolverRef.ResolveNextDataSlotAtTicks";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 619;BA.debugLine="Public Sub ResolveNextDataSlotAtTicks(data As Map,";
+Debug.ShouldStop(1024);
+ BA.debugLineNum = 620;BA.debugLine="Return dataResolverRef.ResolveNextDataSlotAtTicks";
+Debug.ShouldStop(2048);
 if (true) return __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_resolvenextdataslotatticks" /*RemoteObject*/ ,(Object)(_data),(Object)(_targetticks));
- BA.debugLineNum = 613;BA.debugLine="End Sub";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 621;BA.debugLine="End Sub";
+Debug.ShouldStop(4096);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -1912,20 +1912,20 @@ finally {
 		}}
 public static RemoteObject  _resolveretrydelay(RemoteObject __ref,RemoteObject _mode,RemoteObject _delayms,RemoteObject _localretrymax,RemoteObject _serverretrymax,RemoteObject _blockedretrydelay) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveRetryDelay (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,552);
+		Debug.PushSubsStack("ResolveRetryDelay (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,560);
 if (RapidSub.canDelegate("resolveretrydelay")) { return __ref.runUserSub(false, "playerstatestore","resolveretrydelay", __ref, _mode, _delayms, _localretrymax, _serverretrymax, _blockedretrydelay);}
 Debug.locals.put("mode", _mode);
 Debug.locals.put("delayMs", _delayms);
 Debug.locals.put("localRetryMax", _localretrymax);
 Debug.locals.put("serverRetryMax", _serverretrymax);
 Debug.locals.put("blockedRetryDelay", _blockedretrydelay);
- BA.debugLineNum = 552;BA.debugLine="Public Sub ResolveRetryDelay(mode As String, delay";
-Debug.ShouldStop(128);
- BA.debugLineNum = 553;BA.debugLine="Return retryFallbackStateRef.ResolveRetryDelay(mo";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 560;BA.debugLine="Public Sub ResolveRetryDelay(mode As String, delay";
+Debug.ShouldStop(32768);
+ BA.debugLineNum = 561;BA.debugLine="Return retryFallbackStateRef.ResolveRetryDelay(mo";
+Debug.ShouldStop(65536);
 if (true) return __ref.getField(false,"_retryfallbackstateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackretryfallbackstate.class, "_resolveretrydelay" /*RemoteObject*/ ,(Object)(_mode),(Object)(_delayms),(Object)(_localretrymax),(Object)(_serverretrymax),(Object)(_blockedretrydelay));
- BA.debugLineNum = 554;BA.debugLine="End Sub";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 562;BA.debugLine="End Sub";
+Debug.ShouldStop(131072);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -1936,7 +1936,7 @@ finally {
 		}}
 public static RemoteObject  _restorestoppedreservequeue(RemoteObject __ref,RemoteObject _playqueue) throws Exception{
 try {
-		Debug.PushSubsStack("RestoreStoppedReserveQueue (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,518);
+		Debug.PushSubsStack("RestoreStoppedReserveQueue (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,526);
 if (RapidSub.canDelegate("restorestoppedreservequeue")) { return __ref.runUserSub(false, "playerstatestore","restorestoppedreservequeue", __ref, _playqueue);}
 RemoteObject _currentsignature = RemoteObject.createImmutable("");
 RemoteObject _restoredqueue = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -1945,37 +1945,37 @@ RemoteObject _item = RemoteObject.declareNull("anywheresoftware.b4a.objects.coll
 RemoteObject _restoredcount = RemoteObject.createImmutable(0);
 RemoteObject _restoredobject = RemoteObject.declareNull("Object");
 Debug.locals.put("playQueue", _playqueue);
- BA.debugLineNum = 518;BA.debugLine="Public Sub RestoreStoppedReserveQueue(playQueue As";
-Debug.ShouldStop(32);
- BA.debugLineNum = 519;BA.debugLine="If queueStateRef.StoppedReserveQueue.IsInitialize";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 526;BA.debugLine="Public Sub RestoreStoppedReserveQueue(playQueue As";
+Debug.ShouldStop(8192);
+ BA.debugLineNum = 527;BA.debugLine="If queueStateRef.StoppedReserveQueue.IsInitialize";
+Debug.ShouldStop(16384);
 if (RemoteObject.solveBoolean("=",__ref.getField(false,"_queuestateref" /*RemoteObject*/ ).getField(false,"_stoppedreservequeue" /*RemoteObject*/ ).runMethod(true,"IsInitialized"),playerstatestore.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",__ref.getField(false,"_queuestateref" /*RemoteObject*/ ).getField(false,"_stoppedreservequeue" /*RemoteObject*/ ).runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return playerstatestore.__c.getField(true,"False");};
- BA.debugLineNum = 520;BA.debugLine="Dim currentSignature As String = BuildQueueSignat";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 528;BA.debugLine="Dim currentSignature As String = BuildQueueSignat";
+Debug.ShouldStop(32768);
 _currentsignature = __ref.runClassMethod (b4j.example.playerstatestore.class, "_buildqueuesignature" /*RemoteObject*/ );Debug.locals.put("currentSignature", _currentsignature);Debug.locals.put("currentSignature", _currentsignature);
- BA.debugLineNum = 521;BA.debugLine="If currentSignature = \"\" Then Return False";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 529;BA.debugLine="If currentSignature = \"\" Then Return False";
+Debug.ShouldStop(65536);
 if (RemoteObject.solveBoolean("=",_currentsignature,BA.ObjectToString(""))) { 
 if (true) return playerstatestore.__c.getField(true,"False");};
- BA.debugLineNum = 522;BA.debugLine="If queueStateRef.CanRestoreStoppedReserve(current";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 530;BA.debugLine="If queueStateRef.CanRestoreStoppedReserve(current";
+Debug.ShouldStop(131072);
 if (RemoteObject.solveBoolean("=",__ref.getField(false,"_queuestateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackqueuestate.class, "_canrestorestoppedreserve" /*RemoteObject*/ ,(Object)(_currentsignature)),playerstatestore.__c.getField(true,"False"))) { 
- BA.debugLineNum = 523;BA.debugLine="queueStateRef.ClearStoppedReserve";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 531;BA.debugLine="queueStateRef.ClearStoppedReserve";
+Debug.ShouldStop(262144);
 __ref.getField(false,"_queuestateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackqueuestate.class, "_clearstoppedreserve" /*RemoteObject*/ );
- BA.debugLineNum = 524;BA.debugLine="Return False";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 532;BA.debugLine="Return False";
+Debug.ShouldStop(524288);
 if (true) return playerstatestore.__c.getField(true,"False");
  };
- BA.debugLineNum = 526;BA.debugLine="Dim restoredQueue As List";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 534;BA.debugLine="Dim restoredQueue As List";
+Debug.ShouldStop(2097152);
 _restoredqueue = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("restoredQueue", _restoredqueue);
- BA.debugLineNum = 527;BA.debugLine="restoredQueue.Initialize";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 535;BA.debugLine="restoredQueue.Initialize";
+Debug.ShouldStop(4194304);
 _restoredqueue.runVoidMethod ("Initialize");
- BA.debugLineNum = 528;BA.debugLine="For Each itemObject As Object In queueStateRef.St";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 536;BA.debugLine="For Each itemObject As Object In queueStateRef.St";
+Debug.ShouldStop(8388608);
 {
 final RemoteObject group10 = __ref.getField(false,"_queuestateref" /*RemoteObject*/ ).getField(false,"_stoppedreservequeue" /*RemoteObject*/ );
 final int groupLen10 = group10.runMethod(true,"getSize").<Integer>get()
@@ -1984,43 +1984,43 @@ final int groupLen10 = group10.runMethod(true,"getSize").<Integer>get()
 for (; index10 < groupLen10;index10++){
 _itemobject = group10.runMethod(false,"Get",index10);Debug.locals.put("itemObject", _itemobject);
 Debug.locals.put("itemObject", _itemobject);
- BA.debugLineNum = 529;BA.debugLine="If itemObject Is Map Then";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 537;BA.debugLine="If itemObject Is Map Then";
+Debug.ShouldStop(16777216);
 if (RemoteObject.solveBoolean("i",_itemobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 530;BA.debugLine="Dim item As Map = itemObject";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 538;BA.debugLine="Dim item As Map = itemObject";
+Debug.ShouldStop(33554432);
 _item = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _item = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _itemobject);Debug.locals.put("item", _item);Debug.locals.put("item", _item);
- BA.debugLineNum = 531;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 539;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
+Debug.ShouldStop(67108864);
 if (RemoteObject.solveBoolean("=",__ref.runClassMethod (b4j.example.playerstatestore.class, "_isvaliddatatrackitem" /*RemoteObject*/ ,(Object)(_item)),playerstatestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 532;BA.debugLine="If mediaCacheRef.IsTrackCached(item.GetDefault(";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 540;BA.debugLine="If mediaCacheRef.IsTrackCached(item.GetDefault(";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("=",__ref.getField(false,"_mediacacheref" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_istrackcached" /*RemoteObject*/ ,(Object)(BA.ObjectToString(_item.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable(""))))))),playerstatestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 533;BA.debugLine="restoredQueue.Add(CloneMap(item))";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 541;BA.debugLine="restoredQueue.Add(CloneMap(item))";
+Debug.ShouldStop(268435456);
 _restoredqueue.runVoidMethod ("Add",(Object)((__ref.runClassMethod (b4j.example.playerstatestore.class, "_clonemap" /*RemoteObject*/ ,(Object)(_item)).getObject())));
  };
  }
 }Debug.locals.put("itemObject", _itemobject);
 ;
- BA.debugLineNum = 536;BA.debugLine="queueStateRef.ClearStoppedReserve";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 544;BA.debugLine="queueStateRef.ClearStoppedReserve";
+Debug.ShouldStop(-2147483648);
 __ref.getField(false,"_queuestateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackqueuestate.class, "_clearstoppedreserve" /*RemoteObject*/ );
- BA.debugLineNum = 537;BA.debugLine="If playQueue.IsInitialized = False Then playQueue";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 545;BA.debugLine="If playQueue.IsInitialized = False Then playQueue";
+Debug.ShouldStop(1);
 if (RemoteObject.solveBoolean("=",_playqueue.runMethod(true,"IsInitialized"),playerstatestore.__c.getField(true,"False"))) { 
 _playqueue.runVoidMethod ("Initialize");};
- BA.debugLineNum = 538;BA.debugLine="playQueue.Clear";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 546;BA.debugLine="playQueue.Clear";
+Debug.ShouldStop(2);
 _playqueue.runVoidMethod ("Clear");
- BA.debugLineNum = 539;BA.debugLine="Dim restoredCount As Int = 0";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 547;BA.debugLine="Dim restoredCount As Int = 0";
+Debug.ShouldStop(4);
 _restoredcount = BA.numberCast(int.class, 0);Debug.locals.put("restoredCount", _restoredcount);Debug.locals.put("restoredCount", _restoredcount);
- BA.debugLineNum = 540;BA.debugLine="For Each restoredObject As Object In restoredQueu";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 548;BA.debugLine="For Each restoredObject As Object In restoredQueu";
+Debug.ShouldStop(8);
 {
 final RemoteObject group22 = _restoredqueue;
 final int groupLen22 = group22.runMethod(true,"getSize").<Integer>get()
@@ -2029,20 +2029,20 @@ final int groupLen22 = group22.runMethod(true,"getSize").<Integer>get()
 for (; index22 < groupLen22;index22++){
 _restoredobject = group22.runMethod(false,"Get",index22);Debug.locals.put("restoredObject", _restoredobject);
 Debug.locals.put("restoredObject", _restoredobject);
- BA.debugLineNum = 541;BA.debugLine="playQueue.Add(restoredObject)";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 549;BA.debugLine="playQueue.Add(restoredObject)";
+Debug.ShouldStop(16);
 _playqueue.runVoidMethod ("Add",(Object)(_restoredobject));
- BA.debugLineNum = 542;BA.debugLine="restoredCount = restoredCount + 1";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 550;BA.debugLine="restoredCount = restoredCount + 1";
+Debug.ShouldStop(32);
 _restoredcount = RemoteObject.solve(new RemoteObject[] {_restoredcount,RemoteObject.createImmutable(1)}, "+",1, 1);Debug.locals.put("restoredCount", _restoredcount);
  }
 }Debug.locals.put("restoredObject", _restoredobject);
 ;
- BA.debugLineNum = 544;BA.debugLine="Return restoredCount > 0";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 552;BA.debugLine="Return restoredCount > 0";
+Debug.ShouldStop(128);
 if (true) return BA.ObjectToBoolean(RemoteObject.solveBoolean(">",_restoredcount,BA.numberCast(double.class, 0)));
- BA.debugLineNum = 545;BA.debugLine="End Sub";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 553;BA.debugLine="End Sub";
+Debug.ShouldStop(256);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -2115,34 +2115,34 @@ finally {
 		}}
 public static RemoteObject  _savequeuesnapshotstate(RemoteObject __ref,RemoteObject _playqueue) throws Exception{
 try {
-		Debug.PushSubsStack("SaveQueueSnapshotState (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,479);
+		Debug.PushSubsStack("SaveQueueSnapshotState (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,487);
 if (RapidSub.canDelegate("savequeuesnapshotstate")) { return __ref.runUserSub(false, "playerstatestore","savequeuesnapshotstate", __ref, _playqueue);}
 RemoteObject _signature = RemoteObject.createImmutable("");
 RemoteObject _snapshottracks = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _itemobject = RemoteObject.declareNull("Object");
 RemoteObject _item = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("playQueue", _playqueue);
- BA.debugLineNum = 479;BA.debugLine="Public Sub SaveQueueSnapshotState(playQueue As Lis";
-Debug.ShouldStop(1073741824);
- BA.debugLineNum = 480;BA.debugLine="If playQueue.IsInitialized = False Then Return";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 487;BA.debugLine="Public Sub SaveQueueSnapshotState(playQueue As Lis";
+Debug.ShouldStop(64);
+ BA.debugLineNum = 488;BA.debugLine="If playQueue.IsInitialized = False Then Return";
+Debug.ShouldStop(128);
 if (RemoteObject.solveBoolean("=",_playqueue.runMethod(true,"IsInitialized"),playerstatestore.__c.getField(true,"False"))) { 
 if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 481;BA.debugLine="Dim signature As String = BuildQueueSignature";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 489;BA.debugLine="Dim signature As String = BuildQueueSignature";
+Debug.ShouldStop(256);
 _signature = __ref.runClassMethod (b4j.example.playerstatestore.class, "_buildqueuesignature" /*RemoteObject*/ );Debug.locals.put("signature", _signature);Debug.locals.put("signature", _signature);
- BA.debugLineNum = 482;BA.debugLine="If signature = \"\" Then Return";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 490;BA.debugLine="If signature = \"\" Then Return";
+Debug.ShouldStop(512);
 if (RemoteObject.solveBoolean("=",_signature,BA.ObjectToString(""))) { 
 if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 483;BA.debugLine="Dim snapshotTracks As List";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 491;BA.debugLine="Dim snapshotTracks As List";
+Debug.ShouldStop(1024);
 _snapshottracks = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("snapshotTracks", _snapshottracks);
- BA.debugLineNum = 484;BA.debugLine="snapshotTracks.Initialize";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 492;BA.debugLine="snapshotTracks.Initialize";
+Debug.ShouldStop(2048);
 _snapshottracks.runVoidMethod ("Initialize");
- BA.debugLineNum = 485;BA.debugLine="For Each itemObject As Object In playQueue";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 493;BA.debugLine="For Each itemObject As Object In playQueue";
+Debug.ShouldStop(4096);
 {
 final RemoteObject group6 = _playqueue;
 final int groupLen6 = group6.runMethod(true,"getSize").<Integer>get()
@@ -2151,33 +2151,33 @@ final int groupLen6 = group6.runMethod(true,"getSize").<Integer>get()
 for (; index6 < groupLen6;index6++){
 _itemobject = group6.runMethod(false,"Get",index6);Debug.locals.put("itemObject", _itemobject);
 Debug.locals.put("itemObject", _itemobject);
- BA.debugLineNum = 486;BA.debugLine="If itemObject Is Map Then";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 494;BA.debugLine="If itemObject Is Map Then";
+Debug.ShouldStop(8192);
 if (RemoteObject.solveBoolean("i",_itemobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 487;BA.debugLine="Dim item As Map = itemObject";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 495;BA.debugLine="Dim item As Map = itemObject";
+Debug.ShouldStop(16384);
 _item = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _item = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _itemobject);Debug.locals.put("item", _item);Debug.locals.put("item", _item);
- BA.debugLineNum = 488;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 496;BA.debugLine="If IsValidDataTrackItem(item) = False Then Cont";
+Debug.ShouldStop(32768);
 if (RemoteObject.solveBoolean("=",__ref.runClassMethod (b4j.example.playerstatestore.class, "_isvaliddatatrackitem" /*RemoteObject*/ ,(Object)(_item)),playerstatestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 489;BA.debugLine="snapshotTracks.Add(CloneMap(item))";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 497;BA.debugLine="snapshotTracks.Add(CloneMap(item))";
+Debug.ShouldStop(65536);
 _snapshottracks.runVoidMethod ("Add",(Object)((__ref.runClassMethod (b4j.example.playerstatestore.class, "_clonemap" /*RemoteObject*/ ,(Object)(_item)).getObject())));
- BA.debugLineNum = 490;BA.debugLine="If snapshotTracks.Size >= 20 Then Exit";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 498;BA.debugLine="If snapshotTracks.Size >= 20 Then Exit";
+Debug.ShouldStop(131072);
 if (RemoteObject.solveBoolean("g",_snapshottracks.runMethod(true,"getSize"),BA.numberCast(double.class, 20))) { 
 if (true) break;};
  };
  }
 }Debug.locals.put("itemObject", _itemobject);
 ;
- BA.debugLineNum = 493;BA.debugLine="queueStateRef.SaveQueueSnapshot(storageRef, signa";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 501;BA.debugLine="queueStateRef.SaveQueueSnapshot(storageRef, signa";
+Debug.ShouldStop(1048576);
 __ref.getField(false,"_queuestateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackqueuestate.class, "_savequeuesnapshot" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_storageref" /*RemoteObject*/ )),(Object)(_signature),(Object)(_snapshottracks),(Object)(BA.numberCast(int.class, 20)));
- BA.debugLineNum = 494;BA.debugLine="End Sub";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 502;BA.debugLine="End Sub";
+Debug.ShouldStop(2097152);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -2272,16 +2272,16 @@ finally {
 		}}
 public static RemoteObject  _setdispatchretryafter(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("SetDispatchRetryAfter (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,587);
+		Debug.PushSubsStack("SetDispatchRetryAfter (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,595);
 if (RapidSub.canDelegate("setdispatchretryafter")) { return __ref.runUserSub(false, "playerstatestore","setdispatchretryafter", __ref, _value);}
 Debug.locals.put("value", _value);
- BA.debugLineNum = 587;BA.debugLine="Public Sub SetDispatchRetryAfter(value As Int)";
-Debug.ShouldStop(1024);
- BA.debugLineNum = 588;BA.debugLine="retryFallbackStateRef.SetDispatchRetryAfter(value";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 595;BA.debugLine="Public Sub SetDispatchRetryAfter(value As Int)";
+Debug.ShouldStop(262144);
+ BA.debugLineNum = 596;BA.debugLine="retryFallbackStateRef.SetDispatchRetryAfter(value";
+Debug.ShouldStop(524288);
 __ref.getField(false,"_retryfallbackstateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackretryfallbackstate.class, "_setdispatchretryafter" /*RemoteObject*/ ,(Object)(_value));
- BA.debugLineNum = 589;BA.debugLine="End Sub";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 597;BA.debugLine="End Sub";
+Debug.ShouldStop(1048576);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -2390,16 +2390,16 @@ finally {
 		}}
 public static RemoteObject  _setmediapathdegraded(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("SetMediaPathDegraded (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,595);
+		Debug.PushSubsStack("SetMediaPathDegraded (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,603);
 if (RapidSub.canDelegate("setmediapathdegraded")) { return __ref.runUserSub(false, "playerstatestore","setmediapathdegraded", __ref, _value);}
 Debug.locals.put("value", _value);
- BA.debugLineNum = 595;BA.debugLine="Public Sub SetMediaPathDegraded(value As Boolean)";
-Debug.ShouldStop(262144);
- BA.debugLineNum = 596;BA.debugLine="retryFallbackStateRef.SetMediaPathDegraded(value)";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 603;BA.debugLine="Public Sub SetMediaPathDegraded(value As Boolean)";
+Debug.ShouldStop(67108864);
+ BA.debugLineNum = 604;BA.debugLine="retryFallbackStateRef.SetMediaPathDegraded(value)";
+Debug.ShouldStop(134217728);
 __ref.getField(false,"_retryfallbackstateref" /*RemoteObject*/ ).runClassMethod (b4j.example.playbackretryfallbackstate.class, "_setmediapathdegraded" /*RemoteObject*/ ,(Object)(_value));
- BA.debugLineNum = 597;BA.debugLine="End Sub";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 605;BA.debugLine="End Sub";
+Debug.ShouldStop(268435456);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -2497,16 +2497,16 @@ finally {
 		}}
 public static RemoteObject  _setretryinterval(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("SetRetryInterval (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,561);
+		Debug.PushSubsStack("SetRetryInterval (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,569);
 if (RapidSub.canDelegate("setretryinterval")) { return __ref.runUserSub(false, "playerstatestore","setretryinterval", __ref, _value);}
 Debug.locals.put("value", _value);
- BA.debugLineNum = 561;BA.debugLine="Public Sub SetRetryInterval(value As Int)";
-Debug.ShouldStop(65536);
- BA.debugLineNum = 562;BA.debugLine="retryTimerRef.Interval = value";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 569;BA.debugLine="Public Sub SetRetryInterval(value As Int)";
+Debug.ShouldStop(16777216);
+ BA.debugLineNum = 570;BA.debugLine="retryTimerRef.Interval = value";
+Debug.ShouldStop(33554432);
 __ref.getField(false,"_retrytimerref" /*RemoteObject*/ ).runMethod(true,"setInterval",BA.numberCast(long.class, _value));
- BA.debugLineNum = 563;BA.debugLine="End Sub";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 571;BA.debugLine="End Sub";
+Debug.ShouldStop(67108864);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -2786,9 +2786,105 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
+public static RemoteObject  _tryensurequeuelookahead(RemoteObject __ref,RemoteObject _playqueue,RemoteObject _minitems) throws Exception{
+try {
+		Debug.PushSubsStack("TryEnsureQueueLookahead (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,394);
+if (RapidSub.canDelegate("tryensurequeuelookahead")) { return __ref.runUserSub(false, "playerstatestore","tryensurequeuelookahead", __ref, _playqueue, _minitems);}
+ResumableSub_TryEnsureQueueLookahead rsub = new ResumableSub_TryEnsureQueueLookahead(null,__ref,_playqueue,_minitems);
+rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
+rsub.resume(null, null);
+return RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.keywords.Common.ResumableSubWrapper"), rsub.remoteResumableSub);
+}
+catch (Exception e) {
+			throw Debug.ErrorCaught(e);
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
+public static class ResumableSub_TryEnsureQueueLookahead extends BA.ResumableSub {
+public ResumableSub_TryEnsureQueueLookahead(b4j.example.playerstatestore parent,RemoteObject __ref,RemoteObject _playqueue,RemoteObject _minitems) {
+this.parent = parent;
+this.__ref = __ref;
+this._playqueue = _playqueue;
+this._minitems = _minitems;
+}
+java.util.LinkedHashMap<String, Object> rsLocals = new java.util.LinkedHashMap<String, Object>();
+RemoteObject __ref;
+b4j.example.playerstatestore parent;
+RemoteObject _playqueue;
+RemoteObject _minitems;
+RemoteObject _queueprepared = RemoteObject.createImmutable(false);
+
+@Override
+public void resume(BA ba, RemoteObject result) throws Exception{
+try {
+		Debug.PushSubsStack("TryEnsureQueueLookahead (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,394);
+Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
+
+    while (true) {
+        switch (state) {
+            case -1:
+{
+parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,RemoteObject.createImmutable(null));return;}
+case 0:
+//C
+this.state = 1;
+Debug.locals.put("_ref", __ref);
+Debug.locals.put("playQueue", _playqueue);
+Debug.locals.put("minItems", _minitems);
+ BA.debugLineNum = 395;BA.debugLine="If CanUseDataPlaybackResolver = False Then Return";
+Debug.ShouldStop(1024);
+if (true) break;
+
+case 1:
+//if
+this.state = 6;
+if (RemoteObject.solveBoolean("=",__ref.runClassMethod (b4j.example.playerstatestore.class, "_canusedataplaybackresolver" /*RemoteObject*/ ),parent.__c.getField(true,"False"))) { 
+this.state = 3;
+;}if (true) break;
+
+case 3:
+//C
+this.state = 6;
+if (true) {
+parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(parent.__c.getField(true,"False")));return;};
+if (true) break;
+
+case 6:
+//C
+this.state = -1;
+;
+ BA.debugLineNum = 396;BA.debugLine="Wait For (EnsureDataPlaybackQueue(playQueue, minI";
+Debug.ShouldStop(2048);
+parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playerstatestore", "tryensurequeuelookahead"), __ref.runClassMethod (b4j.example.playerstatestore.class, "_ensuredataplaybackqueue" /*RemoteObject*/ ,(Object)(_playqueue),(Object)(_minitems)));
+this.state = 7;
+return;
+case 7:
+//C
+this.state = -1;
+_queueprepared = (RemoteObject) result.getArrayElement(true,RemoteObject.createImmutable(1));Debug.locals.put("queuePrepared", _queueprepared);
+;
+ BA.debugLineNum = 397;BA.debugLine="Return queuePrepared";
+Debug.ShouldStop(4096);
+if (true) {
+parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_queueprepared));return;};
+ BA.debugLineNum = 398;BA.debugLine="End Sub";
+Debug.ShouldStop(8192);
+if (true) break;
+
+            }
+        }
+    }
+catch (Exception e) {
+			throw Debug.ErrorCaught(e);
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
+}
 public static RemoteObject  _trypopulatequeuefromlocalplan(RemoteObject __ref,RemoteObject _playqueue,RemoteObject _minitems) throws Exception{
 try {
-		Debug.PushSubsStack("TryPopulateQueueFromLocalPlan (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,397);
+		Debug.PushSubsStack("TryPopulateQueueFromLocalPlan (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,405);
 if (RapidSub.canDelegate("trypopulatequeuefromlocalplan")) { return __ref.runUserSub(false, "playerstatestore","trypopulatequeuefromlocalplan", __ref, _playqueue, _minitems);}
 ResumableSub_TryPopulateQueueFromLocalPlan rsub = new ResumableSub_TryPopulateQueueFromLocalPlan(null,__ref,_playqueue,_minitems);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -2820,7 +2916,7 @@ RemoteObject _queueprepared = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("TryPopulateQueueFromLocalPlan (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,397);
+		Debug.PushSubsStack("TryPopulateQueueFromLocalPlan (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,405);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -2834,26 +2930,26 @@ this.state = 1;
 Debug.locals.put("_ref", __ref);
 Debug.locals.put("playQueue", _playqueue);
 Debug.locals.put("minItems", _minitems);
- BA.debugLineNum = 398;BA.debugLine="Dim result As Map";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 406;BA.debugLine="Dim result As Map";
+Debug.ShouldStop(2097152);
 _result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("result", _result);
- BA.debugLineNum = 399;BA.debugLine="result.Initialize";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 407;BA.debugLine="result.Initialize";
+Debug.ShouldStop(4194304);
 _result.runVoidMethod ("Initialize");
- BA.debugLineNum = 400;BA.debugLine="result.Put(\"success\", False)";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 408;BA.debugLine="result.Put(\"success\", False)";
+Debug.ShouldStop(8388608);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("success"))),(Object)((parent.__c.getField(true,"False"))));
- BA.debugLineNum = 401;BA.debugLine="result.Put(\"status\", \"\")";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 409;BA.debugLine="result.Put(\"status\", \"\")";
+Debug.ShouldStop(16777216);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable(""))));
- BA.debugLineNum = 402;BA.debugLine="result.Put(\"idle_text\", \"\")";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 410;BA.debugLine="result.Put(\"idle_text\", \"\")";
+Debug.ShouldStop(33554432);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("idle_text"))),(Object)((RemoteObject.createImmutable(""))));
- BA.debugLineNum = 403;BA.debugLine="ClearDispatchRetryAfter";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 411;BA.debugLine="ClearDispatchRetryAfter";
+Debug.ShouldStop(67108864);
 __ref.runClassMethod (b4j.example.playerstatestore.class, "_cleardispatchretryafter" /*RemoteObject*/ );
- BA.debugLineNum = 404;BA.debugLine="If CanUseDataPlaybackResolver = False Then";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 412;BA.debugLine="If CanUseDataPlaybackResolver = False Then";
+Debug.ShouldStop(134217728);
 if (true) break;
 
 case 1:
@@ -2866,8 +2962,8 @@ this.state = 3;
 case 3:
 //C
 this.state = 4;
- BA.debugLineNum = 405;BA.debugLine="Wait For (EnsureDataPlaybackReady) Complete (res";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 413;BA.debugLine="Wait For (EnsureDataPlaybackReady) Complete (res";
+Debug.ShouldStop(268435456);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playerstatestore", "trypopulatequeuefromlocalplan"), __ref.runClassMethod (b4j.example.playerstatestore.class, "_ensuredataplaybackready" /*RemoteObject*/ ));
 this.state = 13;
 return;
@@ -2876,8 +2972,8 @@ case 13:
 this.state = 4;
 _resolverready = (RemoteObject) result.getArrayElement(true,RemoteObject.createImmutable(1));Debug.locals.put("resolverReady", _resolverready);
 ;
- BA.debugLineNum = 406;BA.debugLine="If resolverReady = False Then";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 414;BA.debugLine="If resolverReady = False Then";
+Debug.ShouldStop(536870912);
 if (true) break;
 
 case 4:
@@ -2890,11 +2986,11 @@ this.state = 6;
 case 6:
 //C
 this.state = 7;
- BA.debugLineNum = 407;BA.debugLine="result.Put(\"status\", \"resolver_unavailable\")";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 415;BA.debugLine="result.Put(\"status\", \"resolver_unavailable\")";
+Debug.ShouldStop(1073741824);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("resolver_unavailable"))));
- BA.debugLineNum = 408;BA.debugLine="Return result";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 416;BA.debugLine="Return result";
+Debug.ShouldStop(-2147483648);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_result));return;};
  if (true) break;
@@ -2909,8 +3005,8 @@ case 8:
 //C
 this.state = 9;
 ;
- BA.debugLineNum = 411;BA.debugLine="Wait For (EnsureDataPlaybackQueue(playQueue, minI";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 419;BA.debugLine="Wait For (EnsureDataPlaybackQueue(playQueue, minI";
+Debug.ShouldStop(4);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playerstatestore", "trypopulatequeuefromlocalplan"), __ref.runClassMethod (b4j.example.playerstatestore.class, "_ensuredataplaybackqueue" /*RemoteObject*/ ,(Object)(_playqueue),(Object)(_minitems)));
 this.state = 14;
 return;
@@ -2919,8 +3015,8 @@ case 14:
 this.state = 9;
 _queueprepared = (RemoteObject) result.getArrayElement(true,RemoteObject.createImmutable(1));Debug.locals.put("queuePrepared", _queueprepared);
 ;
- BA.debugLineNum = 412;BA.debugLine="If queuePrepared = False Then";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 420;BA.debugLine="If queuePrepared = False Then";
+Debug.ShouldStop(8);
 if (true) break;
 
 case 9:
@@ -2933,14 +3029,14 @@ this.state = 11;
 case 11:
 //C
 this.state = 12;
- BA.debugLineNum = 413;BA.debugLine="result.Put(\"status\", \"queue_empty\")";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 421;BA.debugLine="result.Put(\"status\", \"queue_empty\")";
+Debug.ShouldStop(16);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("queue_empty"))));
- BA.debugLineNum = 414;BA.debugLine="result.Put(\"idle_text\", ResolveIdleUntilMessage(";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 422;BA.debugLine="result.Put(\"idle_text\", ResolveIdleUntilMessage(";
+Debug.ShouldStop(32);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("idle_text"))),(Object)((__ref.runClassMethod (b4j.example.playerstatestore.class, "_resolveidleuntilmessage" /*RemoteObject*/ ,(Object)(__ref.runClassMethod (b4j.example.playerstatestore.class, "_offlinedata" /*RemoteObject*/ )),(Object)(__ref.runClassMethod (b4j.example.playerstatestore.class, "_effectivenowticks" /*RemoteObject*/ ))))));
- BA.debugLineNum = 415;BA.debugLine="Return result";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 423;BA.debugLine="Return result";
+Debug.ShouldStop(64);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_result));return;};
  if (true) break;
@@ -2949,18 +3045,18 @@ case 12:
 //C
 this.state = -1;
 ;
- BA.debugLineNum = 417;BA.debugLine="result.Put(\"success\", True)";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 425;BA.debugLine="result.Put(\"success\", True)";
+Debug.ShouldStop(256);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("success"))),(Object)((parent.__c.getField(true,"True"))));
- BA.debugLineNum = 418;BA.debugLine="result.Put(\"status\", \"success\")";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 426;BA.debugLine="result.Put(\"status\", \"success\")";
+Debug.ShouldStop(512);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("success"))));
- BA.debugLineNum = 419;BA.debugLine="Return result";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 427;BA.debugLine="Return result";
+Debug.ShouldStop(1024);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_result));return;};
- BA.debugLineNum = 420;BA.debugLine="End Sub";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 428;BA.debugLine="End Sub";
+Debug.ShouldStop(2048);
 if (true) break;
 
             }
@@ -2975,7 +3071,7 @@ finally {
 }
 public static RemoteObject  _tryseedfirsttrackfromcache(RemoteObject __ref,RemoteObject _playqueue) throws Exception{
 try {
-		Debug.PushSubsStack("TrySeedFirstTrackFromCache (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,424);
+		Debug.PushSubsStack("TrySeedFirstTrackFromCache (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,432);
 if (RapidSub.canDelegate("tryseedfirsttrackfromcache")) { return __ref.runUserSub(false, "playerstatestore","tryseedfirsttrackfromcache", __ref, _playqueue);}
 ResumableSub_TrySeedFirstTrackFromCache rsub = new ResumableSub_TrySeedFirstTrackFromCache(null,__ref,_playqueue);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -3015,7 +3111,7 @@ int limit9;
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("TrySeedFirstTrackFromCache (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,424);
+		Debug.PushSubsStack("TrySeedFirstTrackFromCache (playerstatestore) ","playerstatestore",2,__ref.getField(false, "ba"),__ref,432);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -3028,11 +3124,11 @@ case 0:
 this.state = 1;
 Debug.locals.put("_ref", __ref);
 Debug.locals.put("playQueue", _playqueue);
- BA.debugLineNum = 425;BA.debugLine="Dim emptyResult As Boolean = False";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 433;BA.debugLine="Dim emptyResult As Boolean = False";
+Debug.ShouldStop(65536);
 _emptyresult = parent.__c.getField(true,"False");Debug.locals.put("emptyResult", _emptyresult);Debug.locals.put("emptyResult", _emptyresult);
- BA.debugLineNum = 426;BA.debugLine="If CanUseDataPlaybackResolver = False Then Return";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 434;BA.debugLine="If CanUseDataPlaybackResolver = False Then Return";
+Debug.ShouldStop(131072);
 if (true) break;
 
 case 1:
@@ -3053,12 +3149,12 @@ case 6:
 //C
 this.state = 7;
 ;
- BA.debugLineNum = 427;BA.debugLine="Dim currentSlot As Map = dataResolverRef.ResolveD";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 435;BA.debugLine="Dim currentSlot As Map = dataResolverRef.ResolveD";
+Debug.ShouldStop(262144);
 _currentslot = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _currentslot = __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_resolvedataslotatticks" /*RemoteObject*/ ,(Object)(__ref.runClassMethod (b4j.example.playerstatestore.class, "_offlinedata" /*RemoteObject*/ )),(Object)(__ref.runClassMethod (b4j.example.playerstatestore.class, "_effectivenowticks" /*RemoteObject*/ )));Debug.locals.put("currentSlot", _currentslot);Debug.locals.put("currentSlot", _currentslot);
- BA.debugLineNum = 428;BA.debugLine="If currentSlot.IsInitialized = False Or currentSl";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 436;BA.debugLine="If currentSlot.IsInitialized = False Or currentSl";
+Debug.ShouldStop(524288);
 if (true) break;
 
 case 7:
@@ -3079,12 +3175,12 @@ case 12:
 //C
 this.state = 13;
 ;
- BA.debugLineNum = 429;BA.debugLine="Dim playlists As List = currentSlot.GetDefault(\"p";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 437;BA.debugLine="Dim playlists As List = currentSlot.GetDefault(\"p";
+Debug.ShouldStop(1048576);
 _playlists = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlists = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _currentslot.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlists"))),(Object)(parent.__c.getField(false,"Null"))));Debug.locals.put("playlists", _playlists);Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 430;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 438;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
+Debug.ShouldStop(2097152);
 if (true) break;
 
 case 13:
@@ -3105,15 +3201,15 @@ case 18:
 //C
 this.state = 19;
 ;
- BA.debugLineNum = 431;BA.debugLine="Dim workingCursors As Map = dataResolverRef.Clone";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 439;BA.debugLine="Dim workingCursors As Map = dataResolverRef.Clone";
+Debug.ShouldStop(4194304);
 _workingcursors = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _workingcursors = __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_cloneplaylistcursors" /*RemoteObject*/ );Debug.locals.put("workingCursors", _workingcursors);Debug.locals.put("workingCursors", _workingcursors);
- BA.debugLineNum = 432;BA.debugLine="Dim seeded As Boolean = False";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 440;BA.debugLine="Dim seeded As Boolean = False";
+Debug.ShouldStop(8388608);
 _seeded = parent.__c.getField(true,"False");Debug.locals.put("seeded", _seeded);Debug.locals.put("seeded", _seeded);
- BA.debugLineNum = 433;BA.debugLine="For attempt = 0 To playlists.Size - 1";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 441;BA.debugLine="For attempt = 0 To playlists.Size - 1";
+Debug.ShouldStop(16777216);
 if (true) break;
 
 case 19:
@@ -3142,12 +3238,12 @@ if (true) break;
 case 21:
 //C
 this.state = 22;
- BA.debugLineNum = 434;BA.debugLine="Dim playlistDescriptor As Map = dataResolverRef.";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 442;BA.debugLine="Dim playlistDescriptor As Map = dataResolverRef.";
+Debug.ShouldStop(33554432);
 _playlistdescriptor = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _playlistdescriptor = __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_choosenextplaylistdescriptor" /*RemoteObject*/ ,(Object)(_currentslot),(Object)(_workingcursors));Debug.locals.put("playlistDescriptor", _playlistdescriptor);Debug.locals.put("playlistDescriptor", _playlistdescriptor);
- BA.debugLineNum = 435;BA.debugLine="If playlistDescriptor.IsInitialized = False Or p";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 443;BA.debugLine="If playlistDescriptor.IsInitialized = False Or p";
+Debug.ShouldStop(67108864);
 if (true) break;
 
 case 22:
@@ -3168,11 +3264,11 @@ case 27:
 //C
 this.state = 28;
 ;
- BA.debugLineNum = 436;BA.debugLine="Dim playlistId As String = playlistDescriptor.Ge";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 444;BA.debugLine="Dim playlistId As String = playlistDescriptor.Ge";
+Debug.ShouldStop(134217728);
 _playlistid = BA.ObjectToString(_playlistdescriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 437;BA.debugLine="If playlistId = \"\" Then Continue";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 445;BA.debugLine="If playlistId = \"\" Then Continue";
+Debug.ShouldStop(268435456);
 if (true) break;
 
 case 28:
@@ -3193,12 +3289,12 @@ case 33:
 //C
 this.state = 34;
 ;
- BA.debugLineNum = 438;BA.debugLine="Dim playlistData As Map = dataResolverRef.LoadCa";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 446;BA.debugLine="Dim playlistData As Map = dataResolverRef.LoadCa";
+Debug.ShouldStop(536870912);
 _playlistdata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _playlistdata = __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_loadcachedplaylistmetadata" /*RemoteObject*/ ,(Object)(_playlistid));Debug.locals.put("playlistData", _playlistdata);Debug.locals.put("playlistData", _playlistdata);
- BA.debugLineNum = 439;BA.debugLine="If playlistData.IsInitialized = False Or playlis";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 447;BA.debugLine="If playlistData.IsInitialized = False Or playlis";
+Debug.ShouldStop(1073741824);
 if (true) break;
 
 case 34:
@@ -3219,12 +3315,12 @@ case 39:
 //C
 this.state = 40;
 ;
- BA.debugLineNum = 440;BA.debugLine="Dim cachedTrack As Map = dataResolverRef.ChooseR";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 448;BA.debugLine="Dim cachedTrack As Map = dataResolverRef.ChooseR";
+Debug.ShouldStop(-2147483648);
 _cachedtrack = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _cachedtrack = __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_chooserandomtrackfromplaylist" /*RemoteObject*/ ,(Object)(_playlistdata),(Object)(__ref.getField(false,"_mediacacheref" /*RemoteObject*/ )),(Object)(parent.__c.getField(true,"True")));Debug.locals.put("cachedTrack", _cachedtrack);Debug.locals.put("cachedTrack", _cachedtrack);
- BA.debugLineNum = 441;BA.debugLine="If cachedTrack.IsInitialized = False Or cachedTr";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 449;BA.debugLine="If cachedTrack.IsInitialized = False Or cachedTr";
+Debug.ShouldStop(1);
 if (true) break;
 
 case 40:
@@ -3245,33 +3341,33 @@ case 45:
 //C
 this.state = 48;
 ;
- BA.debugLineNum = 442;BA.debugLine="Dim queueItem As Map = dataResolverRef.CreateQue";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 450;BA.debugLine="Dim queueItem As Map = dataResolverRef.CreateQue";
+Debug.ShouldStop(2);
 _queueitem = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _queueitem = __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_createqueuetrackfromplaylist" /*RemoteObject*/ ,(Object)(_currentslot),(Object)(_playlistdescriptor),(Object)(_cachedtrack),(Object)(__ref.runClassMethod (b4j.example.playerstatestore.class, "_offlinedata" /*RemoteObject*/ )));Debug.locals.put("queueItem", _queueitem);Debug.locals.put("queueItem", _queueitem);
- BA.debugLineNum = 443;BA.debugLine="playQueue.Add(queueItem)";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 451;BA.debugLine="playQueue.Add(queueItem)";
+Debug.ShouldStop(4);
 _playqueue.runVoidMethod ("Add",(Object)((_queueitem.getObject())));
- BA.debugLineNum = 444;BA.debugLine="dataResolverRef.SavePreviewPlaylistCursors(stora";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 452;BA.debugLine="dataResolverRef.SavePreviewPlaylistCursors(stora";
+Debug.ShouldStop(8);
 __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_savepreviewplaylistcursors" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_storageref" /*RemoteObject*/ )),(Object)(_workingcursors));
- BA.debugLineNum = 445;BA.debugLine="dataResolverRef.RememberResolvedTrack(queueItem.";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 453;BA.debugLine="dataResolverRef.RememberResolvedTrack(queueItem.";
+Debug.ShouldStop(16);
 __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_rememberresolvedtrack" /*RemoteObject*/ ,(Object)(BA.ObjectToString(_queueitem.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))))));
- BA.debugLineNum = 446;BA.debugLine="dataResolverRef.RememberResolvedTrackForPlaylist";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 454;BA.debugLine="dataResolverRef.RememberResolvedTrackForPlaylist";
+Debug.ShouldStop(32);
 __ref.getField(false,"_dataresolverref" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_rememberresolvedtrackforplaylist" /*RemoteObject*/ ,(Object)(BA.ObjectToString(_queueitem.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlist_id"))),(Object)((RemoteObject.createImmutable("")))))),(Object)(BA.ObjectToString(_queueitem.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))))));
- BA.debugLineNum = 447;BA.debugLine="SaveQueueSnapshotState(playQueue)";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 455;BA.debugLine="SaveQueueSnapshotState(playQueue)";
+Debug.ShouldStop(64);
 __ref.runClassMethod (b4j.example.playerstatestore.class, "_savequeuesnapshotstate" /*RemoteObject*/ ,(Object)(_playqueue));
- BA.debugLineNum = 448;BA.debugLine="TraceLog(\"первый старт cache hit playlistId=\" &";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 456;BA.debugLine="TraceLog(\"первый старт cache hit playlistId=\" &";
+Debug.ShouldStop(128);
 __ref.runClassMethod (b4j.example.playerstatestore.class, "_tracelog" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("первый старт cache hit playlistId="),_playlistid,RemoteObject.createImmutable(" trackId="),_queueitem.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))))));
- BA.debugLineNum = 449;BA.debugLine="seeded = True";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 457;BA.debugLine="seeded = True";
+Debug.ShouldStop(256);
 _seeded = parent.__c.getField(true,"True");Debug.locals.put("seeded", _seeded);
- BA.debugLineNum = 450;BA.debugLine="Exit";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 458;BA.debugLine="Exit";
+Debug.ShouldStop(512);
 this.state = 46;
 if (true) break;
  if (true) break;
@@ -3282,12 +3378,12 @@ case 46:
 this.state = -1;
 Debug.locals.put("attempt", _attempt);
 ;
- BA.debugLineNum = 452;BA.debugLine="Return seeded";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 460;BA.debugLine="Return seeded";
+Debug.ShouldStop(2048);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_seeded));return;};
- BA.debugLineNum = 453;BA.debugLine="End Sub";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 461;BA.debugLine="End Sub";
+Debug.ShouldStop(4096);
 if (true) break;
 
             }

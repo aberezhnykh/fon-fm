@@ -1079,13 +1079,13 @@ case 27:
 this.state = 28;
 ;
 RDebugUtils.currentLine=6684682;
- //BA.debugLineNum = 6684682;BA.debugLine="If CanUseDataPlaybackResolver = False Then Return";
+ //BA.debugLineNum = 6684682;BA.debugLine="If orchestrationState.BeginQueueBackfill = False";
 if (true) break;
 
 case 28:
 //if
 this.state = 33;
-if (__ref._canusedataplaybackresolver /*boolean*/ (null)==parent.__c.False) { 
+if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._beginqueuebackfill /*boolean*/ (null)==parent.__c.False) { 
 this.state = 30;
 ;}if (true) break;
 
@@ -1100,80 +1100,59 @@ case 33:
 this.state = 34;
 ;
 RDebugUtils.currentLine=6684683;
- //BA.debugLineNum = 6684683;BA.debugLine="If orchestrationState.BeginQueueBackfill = False";
+ //BA.debugLineNum = 6684683;BA.debugLine="TraceLog(\"очередь добор начало current=\" & playQu";
+__ref._tracelog /*String*/ (null,"очередь добор начало current="+BA.NumberToString(__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize())+" target="+BA.NumberToString(__ref._lookahead_queue_target_items /*int*/ ));
+RDebugUtils.currentLine=6684684;
+ //BA.debugLineNum = 6684684;BA.debugLine="Wait For (stateStore.TryEnsureQueueLookahead(play";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "backfillplaybackqueueasync"), __ref._statestore /*b4j.example.playerstatestore*/ ._tryensurequeuelookahead /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,__ref._lookahead_queue_target_items /*int*/ ));
+this.state = 40;
+return;
+case 40:
+//C
+this.state = 34;
+_queueprepared = (boolean) result[1];
+;
+RDebugUtils.currentLine=6684685;
+ //BA.debugLineNum = 6684685;BA.debugLine="orchestrationState.EndQueueBackfill";
+__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._endqueuebackfill /*String*/ (null);
+RDebugUtils.currentLine=6684686;
+ //BA.debugLineNum = 6684686;BA.debugLine="If queuePrepared And playQueue.Size > 0 Then";
 if (true) break;
 
 case 34:
 //if
 this.state = 39;
-if (__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._beginqueuebackfill /*boolean*/ (null)==parent.__c.False) { 
+if (_queueprepared && __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>0) { 
 this.state = 36;
-;}if (true) break;
+}else {
+this.state = 38;
+}if (true) break;
 
 case 36:
 //C
 this.state = 39;
-if (true) return ;
-if (true) break;
-
-case 39:
-//C
-this.state = 40;
-;
-RDebugUtils.currentLine=6684684;
- //BA.debugLineNum = 6684684;BA.debugLine="TraceLog(\"очередь добор начало current=\" & playQu";
-__ref._tracelog /*String*/ (null,"очередь добор начало current="+BA.NumberToString(__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize())+" target="+BA.NumberToString(__ref._lookahead_queue_target_items /*int*/ ));
-RDebugUtils.currentLine=6684685;
- //BA.debugLineNum = 6684685;BA.debugLine="Wait For (EnsureDataPlaybackQueue(LOOKAHEAD_QUEUE";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "backfillplaybackqueueasync"), __ref._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._lookahead_queue_target_items /*int*/ ));
-this.state = 46;
-return;
-case 46:
-//C
-this.state = 40;
-_queueprepared = (boolean) result[1];
-;
-RDebugUtils.currentLine=6684686;
- //BA.debugLineNum = 6684686;BA.debugLine="orchestrationState.EndQueueBackfill";
-__ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._endqueuebackfill /*String*/ (null);
 RDebugUtils.currentLine=6684687;
- //BA.debugLineNum = 6684687;BA.debugLine="If queuePrepared And playQueue.Size > 0 Then";
-if (true) break;
-
-case 40:
-//if
-this.state = 45;
-if (_queueprepared && __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>0) { 
-this.state = 42;
-}else {
-this.state = 44;
-}if (true) break;
-
-case 42:
-//C
-this.state = 45;
-RDebugUtils.currentLine=6684688;
- //BA.debugLineNum = 6684688;BA.debugLine="TraceLog(\"очередь добор итог success=true queue=";
+ //BA.debugLineNum = 6684687;BA.debugLine="TraceLog(\"очередь добор итог success=true queue=";
 __ref._tracelog /*String*/ (null,"очередь добор итог success=true queue="+BA.NumberToString(__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()));
-RDebugUtils.currentLine=6684689;
- //BA.debugLineNum = 6684689;BA.debugLine="ScheduleTrackCacheWarmup";
+RDebugUtils.currentLine=6684688;
+ //BA.debugLineNum = 6684688;BA.debugLine="ScheduleTrackCacheWarmup";
 __ref._scheduletrackcachewarmup /*String*/ (null);
  if (true) break;
 
-case 44:
+case 38:
 //C
-this.state = 45;
-RDebugUtils.currentLine=6684691;
- //BA.debugLineNum = 6684691;BA.debugLine="TraceLog(\"очередь добор итог success=false queue";
+this.state = 39;
+RDebugUtils.currentLine=6684690;
+ //BA.debugLineNum = 6684690;BA.debugLine="TraceLog(\"очередь добор итог success=false queue";
 __ref._tracelog /*String*/ (null,"очередь добор итог success=false queue="+BA.NumberToString(__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()));
  if (true) break;
 
-case 45:
+case 39:
 //C
 this.state = -1;
 ;
-RDebugUtils.currentLine=6684693;
- //BA.debugLineNum = 6684693;BA.debugLine="End Sub";
+RDebugUtils.currentLine=6684692;
+ //BA.debugLineNum = 6684692;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -3900,60 +3879,6 @@ __ref._updatevisiblemode /*String*/ (null);
 RDebugUtils.currentLine=655447;
  //BA.debugLineNum = 655447;BA.debugLine="End Sub";
 return "";
-}
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _ensuredataplaybackqueue(b4j.example.b4xmainpage __ref,int _minitems) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "ensuredataplaybackqueue", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "ensuredataplaybackqueue", new Object[] {_minitems}));}
-ResumableSub_EnsureDataPlaybackQueue rsub = new ResumableSub_EnsureDataPlaybackQueue(this,__ref,_minitems);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_EnsureDataPlaybackQueue extends BA.ResumableSub {
-public ResumableSub_EnsureDataPlaybackQueue(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref,int _minitems) {
-this.parent = parent;
-this.__ref = __ref;
-this._minitems = _minitems;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-int _minitems;
-boolean _queueprepared = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = -1;
-RDebugUtils.currentLine=2359297;
- //BA.debugLineNum = 2359297;BA.debugLine="Wait For (stateStore.EnsureDataPlaybackQueue(play";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensuredataplaybackqueue"), __ref._statestore /*b4j.example.playerstatestore*/ ._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,_minitems));
-this.state = 1;
-return;
-case 1:
-//C
-this.state = -1;
-_queueprepared = (boolean) result[1];
-;
-RDebugUtils.currentLine=2359298;
- //BA.debugLineNum = 2359298;BA.debugLine="Return queuePrepared";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_queueprepared));return;};
-RDebugUtils.currentLine=2359299;
- //BA.debugLineNum = 2359299;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
 }
 public void  _breaktimer_tick(b4j.example.b4xmainpage __ref) throws Exception{
 RDebugUtils.currentModule="b4xmainpage";
@@ -9648,58 +9573,6 @@ RDebugUtils.currentLine=15663112;
  //BA.debugLineNum = 15663112;BA.debugLine="End Sub";
 return "";
 }
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _ensuredataplaybackready(b4j.example.b4xmainpage __ref) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-if (Debug.shouldDelegate(ba, "ensuredataplaybackready", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "ensuredataplaybackready", null));}
-ResumableSub_EnsureDataPlaybackReady rsub = new ResumableSub_EnsureDataPlaybackReady(this,__ref);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_EnsureDataPlaybackReady extends BA.ResumableSub {
-public ResumableSub_EnsureDataPlaybackReady(b4j.example.b4xmainpage parent,b4j.example.b4xmainpage __ref) {
-this.parent = parent;
-this.__ref = __ref;
-this.__ref = parent;
-}
-b4j.example.b4xmainpage __ref;
-b4j.example.b4xmainpage parent;
-boolean _resolverready = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="b4xmainpage";
-
-    while (true) {
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = -1;
-RDebugUtils.currentLine=2228225;
- //BA.debugLineNum = 2228225;BA.debugLine="Wait For (stateStore.EnsureDataPlaybackReady) Com";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensuredataplaybackready"), __ref._statestore /*b4j.example.playerstatestore*/ ._ensuredataplaybackready /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 1;
-return;
-case 1:
-//C
-this.state = -1;
-_resolverready = (boolean) result[1];
-;
-RDebugUtils.currentLine=2228226;
- //BA.debugLineNum = 2228226;BA.debugLine="Return resolverReady";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_resolverready));return;};
-RDebugUtils.currentLine=2228227;
- //BA.debugLineNum = 2228227;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
 public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _ensuresingleplaylistmetadata(b4j.example.b4xmainpage __ref,anywheresoftware.b4a.objects.collections.Map _descriptor) throws Exception{
 RDebugUtils.currentModule="b4xmainpage";
 if (Debug.shouldDelegate(ba, "ensuresingleplaylistmetadata", false))
@@ -9866,8 +9739,8 @@ case 12:
 //C
 this.state = 13;
 RDebugUtils.currentLine=1179652;
- //BA.debugLineNum = 1179652;BA.debugLine="Wait For (EnsureDataPlaybackQueue(LOOKAHEAD_QUE";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensureupcomingtrackscachedasync"), __ref._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._lookahead_queue_target_items /*int*/ ));
+ //BA.debugLineNum = 1179652;BA.debugLine="Wait For (stateStore.TryEnsureQueueLookahead(pl";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "ensureupcomingtrackscachedasync"), __ref._statestore /*b4j.example.playerstatestore*/ ._tryensurequeuelookahead /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,__ref._lookahead_queue_target_items /*int*/ ));
 this.state = 36;
 return;
 case 36:
@@ -10574,8 +10447,7 @@ this.__ref = parent;
 b4j.example.b4xmainpage __ref;
 b4j.example.b4xmainpage parent;
 boolean _preparedok = false;
-boolean _resolverready = false;
-boolean _queueprepared = false;
+anywheresoftware.b4a.objects.collections.Map _localplanresult = null;
 anywheresoftware.b4a.objects.collections.Map _result = null;
 anywheresoftware.b4a.objects.collections.List _queue = null;
 
@@ -10611,9 +10483,9 @@ this.state = 4;
 RDebugUtils.currentLine=7536643;
  //BA.debugLineNum = 7536643;BA.debugLine="Wait For (PrepareNextPlayable) Complete (prepare";
 parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._preparenextplayable /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 39;
+this.state = 29;
 return;
-case 39:
+case 29:
 //C
 this.state = 4;
 _preparedok = (boolean) result[1];
@@ -10632,7 +10504,7 @@ RDebugUtils.currentLine=7536647;
 
 case 4:
 //if
-this.state = 21;
+this.state = 11;
 if (__ref._use_data_playback_resolver /*boolean*/ ) { 
 this.state = 6;
 }if (true) break;
@@ -10641,217 +10513,165 @@ case 6:
 //C
 this.state = 7;
 RDebugUtils.currentLine=7536648;
- //BA.debugLineNum = 7536648;BA.debugLine="If CanUseDataPlaybackResolver = False Then";
+ //BA.debugLineNum = 7536648;BA.debugLine="Wait For (stateStore.TryPopulateQueueFromLocalPl";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._statestore /*b4j.example.playerstatestore*/ ._trypopulatequeuefromlocalplan /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ ,(int) (1)));
+this.state = 30;
+return;
+case 30:
+//C
+this.state = 7;
+_localplanresult = (anywheresoftware.b4a.objects.collections.Map) result[1];
+;
+RDebugUtils.currentLine=7536649;
+ //BA.debugLineNum = 7536649;BA.debugLine="If localPlanResult.GetDefault(\"success\", False)";
 if (true) break;
 
 case 7:
 //if
-this.state = 16;
-if (__ref._canusedataplaybackresolver /*boolean*/ (null)==parent.__c.False) { 
+this.state = 10;
+if (BA.ObjectToBoolean(_localplanresult.GetDefault((Object)("success"),(Object)(parent.__c.False))) && __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>0) { 
 this.state = 9;
 }if (true) break;
 
 case 9:
 //C
 this.state = 10;
-RDebugUtils.currentLine=7536649;
- //BA.debugLineNum = 7536649;BA.debugLine="Wait For (EnsureDataPlaybackReady) Complete (re";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._ensuredataplaybackready /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 40;
+RDebugUtils.currentLine=7536650;
+ //BA.debugLineNum = 7536650;BA.debugLine="Wait For (PrepareNextPlayable) Complete (prepar";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._preparenextplayable /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
+this.state = 31;
 return;
-case 40:
+case 31:
 //C
 this.state = 10;
-_resolverready = (boolean) result[1];
+_preparedok = (boolean) result[1];
 ;
-RDebugUtils.currentLine=7536650;
- //BA.debugLineNum = 7536650;BA.debugLine="If resolverReady = False Then Return False";
-if (true) break;
+RDebugUtils.currentLine=7536651;
+ //BA.debugLineNum = 7536651;BA.debugLine="TraceInfo(\"playback\", IIf(preparedOk, \"prefetch";
+__ref._traceinfo /*String*/ (null,"playback",BA.ObjectToString(((_preparedok) ? ((Object)("prefetch done")) : ((Object)("prefetch fail")))),"queue="+BA.NumberToString(__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()));
+RDebugUtils.currentLine=7536652;
+ //BA.debugLineNum = 7536652;BA.debugLine="Return preparedOk";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(_preparedok));return;};
+ if (true) break;
 
 case 10:
+//C
+this.state = 11;
+;
+RDebugUtils.currentLine=7536654;
+ //BA.debugLineNum = 7536654;BA.debugLine="TraceInfo(\"playback\", \"prefetch fail\", \"reason=\"";
+__ref._traceinfo /*String*/ (null,"playback","prefetch fail","reason="+BA.ObjectToString(_localplanresult.GetDefault((Object)("status"),(Object)("queue_empty"))));
+RDebugUtils.currentLine=7536655;
+ //BA.debugLineNum = 7536655;BA.debugLine="Return False";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
+ if (true) break;
+;
+RDebugUtils.currentLine=7536657;
+ //BA.debugLineNum = 7536657;BA.debugLine="If HasPendingExactBreak Then Return False";
+
+case 11:
 //if
-this.state = 15;
-if (_resolverready==parent.__c.False) { 
-this.state = 12;
+this.state = 16;
+if (__ref._haspendingexactbreak /*boolean*/ (null)) { 
+this.state = 13;
 ;}if (true) break;
 
-case 12:
+case 13:
 //C
-this.state = 15;
+this.state = 16;
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
 if (true) break;
-
-case 15:
-//C
-this.state = 16;
-;
- if (true) break;
 
 case 16:
 //C
 this.state = 17;
 ;
-RDebugUtils.currentLine=7536652;
- //BA.debugLineNum = 7536652;BA.debugLine="Wait For (EnsureDataPlaybackQueue(1)) Complete (";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._ensuredataplaybackqueue /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,(int) (1)));
-this.state = 41;
+RDebugUtils.currentLine=7536658;
+ //BA.debugLineNum = 7536658;BA.debugLine="Wait For (FetchNext) Complete (result As Map)";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._fetchnext /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
+this.state = 32;
 return;
-case 41:
+case 32:
 //C
 this.state = 17;
-_queueprepared = (boolean) result[1];
+_result = (anywheresoftware.b4a.objects.collections.Map) result[1];
 ;
-RDebugUtils.currentLine=7536653;
- //BA.debugLineNum = 7536653;BA.debugLine="If queuePrepared And playQueue.Size > 0 Then";
+RDebugUtils.currentLine=7536659;
+ //BA.debugLineNum = 7536659;BA.debugLine="If result.GetDefault(\"Success\", False) = False Or";
 if (true) break;
 
 case 17:
 //if
-this.state = 20;
-if (_queueprepared && __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()>0) { 
+this.state = 22;
+if ((_result.GetDefault((Object)("Success"),(Object)(parent.__c.False))).equals((Object)(parent.__c.False)) || __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ ==parent.__c.False || __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstoppedbyuser /*boolean*/ ) { 
 this.state = 19;
-}if (true) break;
+;}if (true) break;
 
 case 19:
 //C
-this.state = 20;
-RDebugUtils.currentLine=7536654;
- //BA.debugLineNum = 7536654;BA.debugLine="Wait For (PrepareNextPlayable) Complete (prepar";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._preparenextplayable /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 42;
-return;
-case 42:
-//C
-this.state = 20;
-_preparedok = (boolean) result[1];
-;
-RDebugUtils.currentLine=7536655;
- //BA.debugLineNum = 7536655;BA.debugLine="TraceInfo(\"playback\", IIf(preparedOk, \"prefetch";
-__ref._traceinfo /*String*/ (null,"playback",BA.ObjectToString(((_preparedok) ? ((Object)("prefetch done")) : ((Object)("prefetch fail")))),"queue="+BA.NumberToString(__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()));
-RDebugUtils.currentLine=7536656;
- //BA.debugLineNum = 7536656;BA.debugLine="Return preparedOk";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_preparedok));return;};
- if (true) break;
-
-case 20:
-//C
-this.state = 21;
-;
-RDebugUtils.currentLine=7536658;
- //BA.debugLineNum = 7536658;BA.debugLine="TraceInfo(\"playback\", \"prefetch fail\", \"reason=q";
-__ref._traceinfo /*String*/ (null,"playback","prefetch fail","reason=queue_empty");
-RDebugUtils.currentLine=7536659;
- //BA.debugLineNum = 7536659;BA.debugLine="Return False";
+this.state = 22;
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
- if (true) break;
-;
-RDebugUtils.currentLine=7536661;
- //BA.debugLineNum = 7536661;BA.debugLine="If HasPendingExactBreak Then Return False";
+if (true) break;
 
-case 21:
-//if
-this.state = 26;
-if (__ref._haspendingexactbreak /*boolean*/ (null)) { 
+case 22:
+//C
 this.state = 23;
-;}if (true) break;
-
-case 23:
-//C
-this.state = 26;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 26:
-//C
-this.state = 27;
 ;
-RDebugUtils.currentLine=7536662;
- //BA.debugLineNum = 7536662;BA.debugLine="Wait For (FetchNext) Complete (result As Map)";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._fetchnext /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 43;
-return;
-case 43:
-//C
-this.state = 27;
-_result = (anywheresoftware.b4a.objects.collections.Map) result[1];
-;
-RDebugUtils.currentLine=7536663;
- //BA.debugLineNum = 7536663;BA.debugLine="If result.GetDefault(\"Success\", False) = False Or";
-if (true) break;
-
-case 27:
-//if
-this.state = 32;
-if ((_result.GetDefault((Object)("Success"),(Object)(parent.__c.False))).equals((Object)(parent.__c.False)) || __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstarted /*boolean*/ ==parent.__c.False || __ref._orchestrationstate /*b4j.example.playbackorchestrationstate*/ ._isstoppedbyuser /*boolean*/ ) { 
-this.state = 29;
-;}if (true) break;
-
-case 29:
-//C
-this.state = 32;
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
-if (true) break;
-
-case 32:
-//C
-this.state = 33;
-;
-RDebugUtils.currentLine=7536664;
- //BA.debugLineNum = 7536664;BA.debugLine="Dim queue As List = responseAdapter.NormalizeQueu";
+RDebugUtils.currentLine=7536660;
+ //BA.debugLineNum = 7536660;BA.debugLine="Dim queue As List = responseAdapter.NormalizeQueu";
 _queue = new anywheresoftware.b4a.objects.collections.List();
 _queue = __ref._responseadapter /*b4j.example.playbackresponseadapter*/ ._normalizequeueresponse /*anywheresoftware.b4a.objects.collections.List*/ (null,_result.Get((Object)("Data")));
-RDebugUtils.currentLine=7536665;
- //BA.debugLineNum = 7536665;BA.debugLine="If queue.IsInitialized = False Or queue.Size = 0";
+RDebugUtils.currentLine=7536661;
+ //BA.debugLineNum = 7536661;BA.debugLine="If queue.IsInitialized = False Or queue.Size = 0";
 if (true) break;
 
-case 33:
+case 23:
 //if
-this.state = 38;
+this.state = 28;
 if (_queue.IsInitialized()==parent.__c.False || _queue.getSize()==0) { 
-this.state = 35;
+this.state = 25;
 ;}if (true) break;
 
-case 35:
+case 25:
 //C
-this.state = 38;
+this.state = 28;
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(parent.__c.False));return;};
 if (true) break;
 
-case 38:
+case 28:
 //C
 this.state = -1;
 ;
-RDebugUtils.currentLine=7536666;
- //BA.debugLineNum = 7536666;BA.debugLine="playQueue = queue";
+RDebugUtils.currentLine=7536662;
+ //BA.debugLineNum = 7536662;BA.debugLine="playQueue = queue";
 __ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/  = _queue;
-RDebugUtils.currentLine=7536667;
- //BA.debugLineNum = 7536667;BA.debugLine="SyncExactBreakState";
+RDebugUtils.currentLine=7536663;
+ //BA.debugLineNum = 7536663;BA.debugLine="SyncExactBreakState";
 __ref._syncexactbreakstate /*String*/ (null);
-RDebugUtils.currentLine=7536668;
- //BA.debugLineNum = 7536668;BA.debugLine="Wait For (PrepareNextPlayable) Complete (prepared";
+RDebugUtils.currentLine=7536664;
+ //BA.debugLineNum = 7536664;BA.debugLine="Wait For (PrepareNextPlayable) Complete (prepared";
 parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "b4xmainpage", "prefetchnext"), __ref._preparenextplayable /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
-this.state = 44;
+this.state = 33;
 return;
-case 44:
+case 33:
 //C
 this.state = -1;
 _preparedok = (boolean) result[1];
 ;
-RDebugUtils.currentLine=7536669;
- //BA.debugLineNum = 7536669;BA.debugLine="TraceInfo(\"playback\", IIf(preparedOk, \"prefetch d";
+RDebugUtils.currentLine=7536665;
+ //BA.debugLineNum = 7536665;BA.debugLine="TraceInfo(\"playback\", IIf(preparedOk, \"prefetch d";
 __ref._traceinfo /*String*/ (null,"playback",BA.ObjectToString(((_preparedok) ? ((Object)("prefetch done")) : ((Object)("prefetch fail")))),"queue="+BA.NumberToString(__ref._playqueue /*anywheresoftware.b4a.objects.collections.List*/ .getSize()));
-RDebugUtils.currentLine=7536670;
- //BA.debugLineNum = 7536670;BA.debugLine="Return preparedOk";
+RDebugUtils.currentLine=7536666;
+ //BA.debugLineNum = 7536666;BA.debugLine="Return preparedOk";
 if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(_preparedok));return;};
-RDebugUtils.currentLine=7536671;
- //BA.debugLineNum = 7536671;BA.debugLine="End Sub";
+RDebugUtils.currentLine=7536667;
+ //BA.debugLineNum = 7536667;BA.debugLine="End Sub";
 if (true) break;
 
             }
