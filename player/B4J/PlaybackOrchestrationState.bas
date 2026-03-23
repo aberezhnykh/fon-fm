@@ -13,6 +13,7 @@ Sub Class_Globals
 	Public IsCrossfadeTriggered As Boolean
 	Public IsQueueBackfillInProgress As Boolean
 	Public IsPlaybackDispatchInProgress As Boolean
+	Public ActiveDispatchInitiator As String
 End Sub
 
 Public Sub Initialize
@@ -27,6 +28,7 @@ Public Sub ResetToStopped
 	IsCrossfadeTriggered = False
 	IsQueueBackfillInProgress = False
 	IsPlaybackDispatchInProgress = False
+	ActiveDispatchInitiator = ""
 End Sub
 
 Public Sub ResetTransientFlags
@@ -34,6 +36,7 @@ Public Sub ResetTransientFlags
 	IsCrossfadeTriggered = False
 	IsQueueBackfillInProgress = False
 	IsPlaybackDispatchInProgress = False
+	ActiveDispatchInitiator = ""
 End Sub
 
 Public Sub ClearTrackTransitionFlags
@@ -82,12 +85,14 @@ Public Sub EndQueueBackfill
 	IsQueueBackfillInProgress = False
 End Sub
 
-Public Sub BeginDispatch As Boolean
+Public Sub BeginDispatch(initiator As String) As Boolean
 	If IsPlaybackDispatchInProgress Then Return False
 	IsPlaybackDispatchInProgress = True
+	ActiveDispatchInitiator = initiator
 	Return True
 End Sub
 
 Public Sub EndDispatch
 	IsPlaybackDispatchInProgress = False
+	ActiveDispatchInitiator = ""
 End Sub

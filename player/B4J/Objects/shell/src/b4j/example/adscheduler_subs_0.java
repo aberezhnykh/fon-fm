@@ -8,7 +8,7 @@ public class adscheduler_subs_0 {
 
 public static RemoteObject  _admatchescurrentminute(RemoteObject __ref,RemoteObject _ad,RemoteObject _todaykey,RemoteObject _todayweekday,RemoteObject _currentminuteofday,RemoteObject _allowregularads) throws Exception{
 try {
-		Debug.PushSubsStack("AdMatchesCurrentMinute (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,73);
+		Debug.PushSubsStack("AdMatchesCurrentMinute (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,73);
 if (RapidSub.canDelegate("admatchescurrentminute")) { return __ref.runUserSub(false, "adscheduler","admatchescurrentminute", __ref, _ad, _todaykey, _todayweekday, _currentminuteofday, _allowregularads);}
 RemoteObject _isexact = RemoteObject.createImmutable(false);
 RemoteObject _startdate = RemoteObject.createImmutable("");
@@ -121,7 +121,7 @@ finally {
 		}}
 public static RemoteObject  _buildbreakforminute(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _targetminutetimestamp,RemoteObject _allowregularads) throws Exception{
 try {
-		Debug.PushSubsStack("BuildBreakForMinute (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,43);
+		Debug.PushSubsStack("BuildBreakForMinute (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,43);
 if (RapidSub.canDelegate("buildbreakforminute")) { return __ref.runUserSub(false, "adscheduler","buildbreakforminute", __ref, _offlinedata, _targetminutetimestamp, _allowregularads);}
 RemoteObject _emptybreak = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _ads = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -253,7 +253,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _createadqueueitem(RemoteObject __ref,RemoteObject _ad) throws Exception{
 try {
-		Debug.PushSubsStack("CreateAdQueueItem (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,100);
+		Debug.PushSubsStack("CreateAdQueueItem (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,100);
 if (RapidSub.canDelegate("createadqueueitem")) { return __ref.runUserSub(false, "adscheduler","createadqueueitem", __ref, _ad);}
 RemoteObject _item = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("ad", _ad);
@@ -298,7 +298,7 @@ finally {
 		}}
 public static RemoteObject  _formatisodate(RemoteObject __ref,RemoteObject _ticks) throws Exception{
 try {
-		Debug.PushSubsStack("FormatIsoDate (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,129);
+		Debug.PushSubsStack("FormatIsoDate (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,129);
 if (RapidSub.canDelegate("formatisodate")) { return __ref.runUserSub(false, "adscheduler","formatisodate", __ref, _ticks);}
 RemoteObject _previousdateformat = RemoteObject.createImmutable("");
 RemoteObject _value = RemoteObject.createImmutable("");
@@ -332,7 +332,7 @@ finally {
 		}}
 public static RemoteObject  _hasbreakscheduledat(RemoteObject __ref,RemoteObject _playqueue,RemoteObject _breakat) throws Exception{
 try {
-		Debug.PushSubsStack("HasBreakScheduledAt (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,112);
+		Debug.PushSubsStack("HasBreakScheduledAt (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,112);
 if (RapidSub.canDelegate("hasbreakscheduledat")) { return __ref.runUserSub(false, "adscheduler","hasbreakscheduledat", __ref, _playqueue, _breakat);}
 RemoteObject _itemobject = RemoteObject.declareNull("Object");
 RemoteObject _item = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -384,7 +384,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _targetmodulevalue,RemoteObject _tracesubnamevalue,RemoteObject _adlabeltextvalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,10);
+		Debug.PushSubsStack("Initialize (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,10);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "adscheduler","initialize", __ref, _ba, _targetmodulevalue, _tracesubnamevalue, _adlabeltextvalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -414,7 +414,7 @@ finally {
 		}}
 public static RemoteObject  _isoweekdayfromtimestamp(RemoteObject __ref,RemoteObject _ticks) throws Exception{
 try {
-		Debug.PushSubsStack("IsoWeekdayFromTimestamp (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,147);
+		Debug.PushSubsStack("IsoWeekdayFromTimestamp (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,147);
 if (RapidSub.canDelegate("isoweekdayfromtimestamp")) { return __ref.runUserSub(false, "adscheduler","isoweekdayfromtimestamp", __ref, _ticks);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 RemoteObject _instantclass = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
@@ -487,7 +487,7 @@ finally {
 		}}
 public static RemoteObject  _localtimestamptoticks(RemoteObject __ref,RemoteObject _targettimestamp) throws Exception{
 try {
-		Debug.PushSubsStack("LocalTimestampToTicks (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,176);
+		Debug.PushSubsStack("LocalTimestampToTicks (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,176);
 if (RapidSub.canDelegate("localtimestamptoticks")) { return __ref.runUserSub(false, "adscheduler","localtimestamptoticks", __ref, _targettimestamp);}
 Debug.locals.put("targetTimestamp", _targettimestamp);
  BA.debugLineNum = 176;BA.debugLine="Private Sub LocalTimestampToTicks(targetTimestamp";
@@ -507,7 +507,7 @@ finally {
 		}}
 public static RemoteObject  _minutekeyfromtimestamp(RemoteObject __ref,RemoteObject _targetminutetimestamp) throws Exception{
 try {
-		Debug.PushSubsStack("MinuteKeyFromTimestamp (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,164);
+		Debug.PushSubsStack("MinuteKeyFromTimestamp (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,164);
 if (RapidSub.canDelegate("minutekeyfromtimestamp")) { return __ref.runUserSub(false, "adscheduler","minutekeyfromtimestamp", __ref, _targetminutetimestamp);}
 RemoteObject _previousdateformat = RemoteObject.createImmutable("");
 RemoteObject _previoustimeformat = RemoteObject.createImmutable("");
@@ -555,7 +555,7 @@ finally {
 		}}
 public static RemoteObject  _minutesofdayfromtimestamp(RemoteObject __ref,RemoteObject _ticks) throws Exception{
 try {
-		Debug.PushSubsStack("MinutesOfDayFromTimestamp (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,137);
+		Debug.PushSubsStack("MinutesOfDayFromTimestamp (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,137);
 if (RapidSub.canDelegate("minutesofdayfromtimestamp")) { return __ref.runUserSub(false, "adscheduler","minutesofdayfromtimestamp", __ref, _ticks);}
 RemoteObject _previoustimeformat = RemoteObject.createImmutable("");
 RemoteObject _timevalue = RemoteObject.createImmutable("");
@@ -597,7 +597,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,16);
+		Debug.PushSubsStack("Reset (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,16);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "adscheduler","reset", __ref);}
  BA.debugLineNum = 16;BA.debugLine="Public Sub Reset";
 Debug.ShouldStop(32768);
@@ -619,7 +619,7 @@ finally {
 		}}
 public static RemoteObject  _scantargetminute(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _playqueue,RemoteObject _targetminutetimestamp,RemoteObject _force,RemoteObject _allowregularads) throws Exception{
 try {
-		Debug.PushSubsStack("ScanTargetMinute (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,21);
+		Debug.PushSubsStack("ScanTargetMinute (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,21);
 if (RapidSub.canDelegate("scantargetminute")) { return __ref.runUserSub(false, "adscheduler","scantargetminute", __ref, _offlinedata, _playqueue, _targetminutetimestamp, _force, _allowregularads);}
 RemoteObject _minutekey = RemoteObject.createImmutable("");
 RemoteObject _breakitem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -706,7 +706,7 @@ finally {
 		}}
 public static RemoteObject  _timestringtominutes(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("TimeStringToMinutes (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,189);
+		Debug.PushSubsStack("TimeStringToMinutes (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,189);
 if (RapidSub.canDelegate("timestringtominutes")) { return __ref.runUserSub(false, "adscheduler","timestringtominutes", __ref, _value);}
 RemoteObject _parts = null;
 RemoteObject _hours = RemoteObject.createImmutable(0);
@@ -763,7 +763,7 @@ finally {
 		}}
 public static RemoteObject  _timezoneoffsetminutes(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("TimezoneOffsetMinutes (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,180);
+		Debug.PushSubsStack("TimezoneOffsetMinutes (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,180);
 if (RapidSub.canDelegate("timezoneoffsetminutes")) { return __ref.runUserSub(false, "adscheduler","timezoneoffsetminutes", __ref);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 RemoteObject _nowoffset = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
@@ -803,7 +803,7 @@ finally {
 		}}
 public static RemoteObject  _tolongdefault(RemoteObject __ref,RemoteObject _value,RemoteObject _defaultvalue) throws Exception{
 try {
-		Debug.PushSubsStack("ToLongDefault (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,204);
+		Debug.PushSubsStack("ToLongDefault (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,204);
 if (RapidSub.canDelegate("tolongdefault")) { return __ref.runUserSub(false, "adscheduler","tolongdefault", __ref, _value, _defaultvalue);}
 Debug.locals.put("value", _value);
 Debug.locals.put("defaultValue", _defaultvalue);
@@ -846,7 +846,7 @@ finally {
 		}}
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (adscheduler) ","adscheduler",15,__ref.getField(false, "ba"),__ref,123);
+		Debug.PushSubsStack("Trace (adscheduler) ","adscheduler",16,__ref.getField(false, "ba"),__ref,123);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "adscheduler","trace", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 123;BA.debugLine="Private Sub Trace(message As String)";

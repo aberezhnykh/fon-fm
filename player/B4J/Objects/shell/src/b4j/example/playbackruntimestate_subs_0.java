@@ -31,7 +31,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clearpendingplaystate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearPendingPlayState (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,30);
+		Debug.PushSubsStack("ClearPendingPlayState (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,30);
 if (RapidSub.canDelegate("clearpendingplaystate")) { return __ref.runUserSub(false, "playbackruntimestate","clearpendingplaystate", __ref);}
  BA.debugLineNum = 30;BA.debugLine="Public Sub ClearPendingPlayState";
 Debug.ShouldStop(536870912);
@@ -56,7 +56,7 @@ finally {
 		}}
 public static RemoteObject  _clearpendingpreparestate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearPendingPrepareState (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,36);
+		Debug.PushSubsStack("ClearPendingPrepareState (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,36);
 if (RapidSub.canDelegate("clearpendingpreparestate")) { return __ref.runUserSub(false, "playbackruntimestate","clearpendingpreparestate", __ref);}
  BA.debugLineNum = 36;BA.debugLine="Public Sub ClearPendingPrepareState";
 Debug.ShouldStop(8);
@@ -78,7 +78,7 @@ finally {
 		}}
 public static RemoteObject  _clearpreparedifmatchesaudio(RemoteObject __ref,RemoteObject _audiokey) throws Exception{
 try {
-		Debug.PushSubsStack("ClearPreparedIfMatchesAudio (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,62);
+		Debug.PushSubsStack("ClearPreparedIfMatchesAudio (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,62);
 if (RapidSub.canDelegate("clearpreparedifmatchesaudio")) { return __ref.runUserSub(false, "playbackruntimestate","clearpreparedifmatchesaudio", __ref, _audiokey);}
 Debug.locals.put("audioKey", _audiokey);
  BA.debugLineNum = 62;BA.debugLine="Public Sub ClearPreparedIfMatchesAudio(audioKey As";
@@ -105,7 +105,7 @@ finally {
 		}}
 public static RemoteObject  _clonestatemap(RemoteObject __ref,RemoteObject _source) throws Exception{
 try {
-		Debug.PushSubsStack("CloneStateMap (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,76);
+		Debug.PushSubsStack("CloneStateMap (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,76);
 if (RapidSub.canDelegate("clonestatemap")) { return __ref.runUserSub(false, "playbackruntimestate","clonestatemap", __ref, _source);}
 RemoteObject _cloned = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
@@ -153,7 +153,7 @@ finally {
 		}}
 public static RemoteObject  _haspendingplay(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HasPendingPlay (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,72);
+		Debug.PushSubsStack("HasPendingPlay (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,72);
 if (RapidSub.canDelegate("haspendingplay")) { return __ref.runUserSub(false, "playbackruntimestate","haspendingplay", __ref);}
  BA.debugLineNum = 72;BA.debugLine="Public Sub HasPendingPlay As Boolean";
 Debug.ShouldStop(128);
@@ -172,7 +172,7 @@ finally {
 		}}
 public static RemoteObject  _hasprepared(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HasPrepared (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,68);
+		Debug.PushSubsStack("HasPrepared (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,68);
 if (RapidSub.canDelegate("hasprepared")) { return __ref.runUserSub(false, "playbackruntimestate","hasprepared", __ref);}
  BA.debugLineNum = 68;BA.debugLine="Public Sub HasPrepared As Boolean";
 Debug.ShouldStop(8);
@@ -191,7 +191,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,14);
+		Debug.PushSubsStack("Initialize (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,14);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackruntimestate","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -212,7 +212,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,18);
+		Debug.PushSubsStack("Reset (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,18);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "playbackruntimestate","reset", __ref);}
  BA.debugLineNum = 18;BA.debugLine="Public Sub Reset";
 Debug.ShouldStop(131072);
@@ -255,7 +255,7 @@ finally {
 		}}
 public static RemoteObject  _setactive(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("SetActive (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,41);
+		Debug.PushSubsStack("SetActive (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,41);
 if (RapidSub.canDelegate("setactive")) { return __ref.runUserSub(false, "playbackruntimestate","setactive", __ref, _audiokey, _item);}
 Debug.locals.put("audioKey", _audiokey);
 Debug.locals.put("item", _item);
@@ -279,7 +279,7 @@ finally {
 		}}
 public static RemoteObject  _setpendingplay(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item,RemoteObject _fadeinms) throws Exception{
 try {
-		Debug.PushSubsStack("SetPendingPlay (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,51);
+		Debug.PushSubsStack("SetPendingPlay (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,51);
 if (RapidSub.canDelegate("setpendingplay")) { return __ref.runUserSub(false, "playbackruntimestate","setpendingplay", __ref, _audiokey, _item, _fadeinms);}
 Debug.locals.put("audioKey", _audiokey);
 Debug.locals.put("item", _item);
@@ -307,7 +307,7 @@ finally {
 		}}
 public static RemoteObject  _setpendingprepare(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("SetPendingPrepare (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,57);
+		Debug.PushSubsStack("SetPendingPrepare (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,57);
 if (RapidSub.canDelegate("setpendingprepare")) { return __ref.runUserSub(false, "playbackruntimestate","setpendingprepare", __ref, _audiokey, _item);}
 Debug.locals.put("audioKey", _audiokey);
 Debug.locals.put("item", _item);
@@ -331,7 +331,7 @@ finally {
 		}}
 public static RemoteObject  _setprepared(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("SetPrepared (playbackruntimestate) ","playbackruntimestate",12,__ref.getField(false, "ba"),__ref,46);
+		Debug.PushSubsStack("SetPrepared (playbackruntimestate) ","playbackruntimestate",13,__ref.getField(false, "ba"),__ref,46);
 if (RapidSub.canDelegate("setprepared")) { return __ref.runUserSub(false, "playbackruntimestate","setprepared", __ref, _audiokey, _item);}
 Debug.locals.put("audioKey", _audiokey);
 Debug.locals.put("item", _item);

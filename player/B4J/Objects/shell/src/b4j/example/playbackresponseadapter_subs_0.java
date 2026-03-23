@@ -13,7 +13,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackresponseadapter) ","playbackresponseadapter",5,__ref.getField(false, "ba"),__ref,5);
+		Debug.PushSubsStack("Initialize (playbackresponseadapter) ","playbackresponseadapter",6,__ref.getField(false, "ba"),__ref,5);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackresponseadapter","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -31,7 +31,7 @@ finally {
 		}}
 public static RemoteObject  _normalizequeueresponse(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("NormalizeQueueResponse (playbackresponseadapter) ","playbackresponseadapter",5,__ref.getField(false, "ba"),__ref,8);
+		Debug.PushSubsStack("NormalizeQueueResponse (playbackresponseadapter) ","playbackresponseadapter",6,__ref.getField(false, "ba"),__ref,8);
 if (RapidSub.canDelegate("normalizequeueresponse")) { return __ref.runUserSub(false, "playbackresponseadapter","normalizequeueresponse", __ref, _data);}
 RemoteObject _m = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _items = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -97,7 +97,7 @@ finally {
 		}}
 public static RemoteObject  _normalizeretryafter(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("NormalizeRetryAfter (playbackresponseadapter) ","playbackresponseadapter",5,__ref.getField(false, "ba"),__ref,23);
+		Debug.PushSubsStack("NormalizeRetryAfter (playbackresponseadapter) ","playbackresponseadapter",6,__ref.getField(false, "ba"),__ref,23);
 if (RapidSub.canDelegate("normalizeretryafter")) { return __ref.runUserSub(false, "playbackresponseadapter","normalizeretryafter", __ref, _data);}
 RemoteObject _m = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _value = RemoteObject.createImmutable(0);

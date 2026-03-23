@@ -44,6 +44,20 @@ public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
 public b4j.example.b4xcollections _b4xcollections = null;
 public b4j.example.httputils2service _httputils2service = null;
+public anywheresoftware.b4a.objects.collections.List  _getstoredplaylistdescriptors(b4j.example.offlinestore __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="offlinestore";
+if (Debug.shouldDelegate(ba, "getstoredplaylistdescriptors", false))
+	 {return ((anywheresoftware.b4a.objects.collections.List) Debug.delegate(ba, "getstoredplaylistdescriptors", null));}
+RDebugUtils.currentLine=27394048;
+ //BA.debugLineNum = 27394048;BA.debugLine="Public Sub GetStoredPlaylistDescriptors As List";
+RDebugUtils.currentLine=27394049;
+ //BA.debugLineNum = 27394049;BA.debugLine="Return storage.GetDefault(\"playlist_descriptors\",";
+if (true) return (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(__ref._storage /*b4j.example.keyvaluestore*/ ._getdefault /*Object*/ (null,"playlist_descriptors",(Object)(__ref._createinitializedlist /*anywheresoftware.b4a.objects.collections.List*/ (null).getObject()))));
+RDebugUtils.currentLine=27394050;
+ //BA.debugLineNum = 27394050;BA.debugLine="End Sub";
+return null;
+}
 public String  _playlistmetadataurl(b4j.example.offlinestore __ref,String _playlistid) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="offlinestore";
@@ -113,10 +127,7 @@ RDebugUtils.currentLine=27721742;
  //BA.debugLineNum = 27721742;BA.debugLine="cachedPlaylistIndex.Put(playlistId, cachedEntry)";
 _cachedplaylistindex.Put((Object)(_playlistid),(Object)(_cachedentry.getObject()));
 RDebugUtils.currentLine=27721743;
- //BA.debugLineNum = 27721743;BA.debugLine="Trace(\"Playlist metadata сохранен. id=\" & playlis";
-__ref._trace /*String*/ (null,"Playlist metadata сохранен. id="+_playlistid+", tracks="+BA.ObjectToString(_cachedentry.GetDefault((Object)("track_count"),(Object)(0)))+", updated="+BA.ObjectToString(_cachedentry.GetDefault((Object)("updated"),(Object)(""))));
-RDebugUtils.currentLine=27721744;
- //BA.debugLineNum = 27721744;BA.debugLine="End Sub";
+ //BA.debugLineNum = 27721743;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.Map  _getcachedplaylistindex(b4j.example.offlinestore __ref) throws Exception{
@@ -221,24 +232,21 @@ if (_parsed.IsInitialized()) {
 RDebugUtils.currentLine=27262985;
  //BA.debugLineNum = 27262985;BA.debugLine="data = parsed";
 _data = _parsed;
-RDebugUtils.currentLine=27262986;
- //BA.debugLineNum = 27262986;BA.debugLine="Trace(\"Данные плеера загружены. playlists=\" & Ge";
-__ref._trace /*String*/ (null,"Данные плеера загружены. playlists="+BA.NumberToString(__ref._getofflineplaylistids /*anywheresoftware.b4a.objects.collections.List*/ (null,_data).getSize())+", ads="+BA.NumberToString(__ref._getofflineadscount /*int*/ (null,_data))+", schedules="+BA.NumberToString(__ref._getofflineschedulescount /*int*/ (null,_data)));
  };
  } 
-       catch (Exception e13) {
-			ba.setLastException(e13);RDebugUtils.currentLine=27262989;
- //BA.debugLineNum = 27262989;BA.debugLine="data.Initialize";
+       catch (Exception e12) {
+			ba.setLastException(e12);RDebugUtils.currentLine=27262988;
+ //BA.debugLineNum = 27262988;BA.debugLine="data.Initialize";
 _data.Initialize();
-RDebugUtils.currentLine=27262990;
- //BA.debugLineNum = 27262990;BA.debugLine="Trace(\"Не удалось загрузить player_data.json. \"";
-__ref._trace /*String*/ (null,"Не удалось загрузить player_data.json. "+__c.LastException(ba).getMessage());
+RDebugUtils.currentLine=27262989;
+ //BA.debugLineNum = 27262989;BA.debugLine="Trace(\"данные плеера load ошибка message=\" & Las";
+__ref._trace /*String*/ (null,"данные плеера load ошибка message="+__c.LastException(ba).getMessage());
  };
-RDebugUtils.currentLine=27262992;
- //BA.debugLineNum = 27262992;BA.debugLine="Return data";
+RDebugUtils.currentLine=27262991;
+ //BA.debugLineNum = 27262991;BA.debugLine="Return data";
 if (true) return _data;
-RDebugUtils.currentLine=27262993;
- //BA.debugLineNum = 27262993;BA.debugLine="End Sub";
+RDebugUtils.currentLine=27262992;
+ //BA.debugLineNum = 27262992;BA.debugLine="End Sub";
 return null;
 }
 public anywheresoftware.b4a.objects.collections.Map  _saveofflinedata(b4j.example.offlinestore __ref,anywheresoftware.b4a.objects.collections.Map _sourcedata,String _playercode,String _deviceid) throws Exception{
@@ -316,27 +324,10 @@ RDebugUtils.currentLine=27328531;
  //BA.debugLineNum = 27328531;BA.debugLine="WriteOfflinePlaylistRequirementsFile(playlistDesc";
 __ref._writeofflineplaylistrequirementsfile /*String*/ (null,_playlistdescriptors,_playercode);
 RDebugUtils.currentLine=27328532;
- //BA.debugLineNum = 27328532;BA.debugLine="Trace(\"Данные плеера сохранены. playlists=\" & pla";
-__ref._trace /*String*/ (null,"Данные плеера сохранены. playlists="+BA.NumberToString(_playlistids.getSize())+", ads="+BA.NumberToString(__ref._getofflineadscount /*int*/ (null,_normalizeddata))+", schedules="+BA.NumberToString(__ref._getofflineschedulescount /*int*/ (null,_normalizeddata))+", missingPlaylists="+BA.ObjectToString(_playlistcachestatus.GetDefault((Object)("MissingCount"),(Object)(0)))+", outdatedPlaylists="+BA.ObjectToString(_playlistcachestatus.GetDefault((Object)("OutdatedCount"),(Object)(0))));
-RDebugUtils.currentLine=27328533;
- //BA.debugLineNum = 27328533;BA.debugLine="Return normalizedData";
+ //BA.debugLineNum = 27328532;BA.debugLine="Return normalizedData";
 if (true) return _normalizeddata;
-RDebugUtils.currentLine=27328534;
- //BA.debugLineNum = 27328534;BA.debugLine="End Sub";
-return null;
-}
-public anywheresoftware.b4a.objects.collections.List  _getstoredplaylistdescriptors(b4j.example.offlinestore __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="offlinestore";
-if (Debug.shouldDelegate(ba, "getstoredplaylistdescriptors", false))
-	 {return ((anywheresoftware.b4a.objects.collections.List) Debug.delegate(ba, "getstoredplaylistdescriptors", null));}
-RDebugUtils.currentLine=27394048;
- //BA.debugLineNum = 27394048;BA.debugLine="Public Sub GetStoredPlaylistDescriptors As List";
-RDebugUtils.currentLine=27394049;
- //BA.debugLineNum = 27394049;BA.debugLine="Return storage.GetDefault(\"playlist_descriptors\",";
-if (true) return (anywheresoftware.b4a.objects.collections.List) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.List(), (java.util.List)(__ref._storage /*b4j.example.keyvaluestore*/ ._getdefault /*Object*/ (null,"playlist_descriptors",(Object)(__ref._createinitializedlist /*anywheresoftware.b4a.objects.collections.List*/ (null).getObject()))));
-RDebugUtils.currentLine=27394050;
- //BA.debugLineNum = 27394050;BA.debugLine="End Sub";
+RDebugUtils.currentLine=27328533;
+ //BA.debugLineNum = 27328533;BA.debugLine="End Sub";
 return null;
 }
 public String  _getofflineplaylistsdir(b4j.example.offlinestore __ref) throws Exception{

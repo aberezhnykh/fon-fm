@@ -453,10 +453,7 @@ RDebugUtils.currentLine=22544391;
  //BA.debugLineNum = 22544391;BA.debugLine="storage.Put(\"data_slot_playlist_cursors\", playlis";
 _storage._put /*String*/ (null,"data_slot_playlist_cursors",(Object)(__ref._playlistcursors /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));
 RDebugUtils.currentLine=22544392;
- //BA.debugLineNum = 22544392;BA.debugLine="Trace(\"Зафиксирован курсор playlists. slot=\" & sl";
-__ref._trace /*String*/ (null,"Зафиксирован курсор playlists. slot="+_slotkey+", committed="+BA.NumberToString(_nextstored));
-RDebugUtils.currentLine=22544393;
- //BA.debugLineNum = 22544393;BA.debugLine="End Sub";
+ //BA.debugLineNum = 22544392;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.Map  _resolvecurrentdataslot(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _offlinedata) throws Exception{
@@ -656,6 +653,20 @@ RDebugUtils.currentLine=22216749;
  //BA.debugLineNum = 22216749;BA.debugLine="End Sub";
 return null;
 }
+public anywheresoftware.b4a.objects.collections.Map  _cloneplaylistcursors(b4j.example.dataplaybackresolver __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="dataplaybackresolver";
+if (Debug.shouldDelegate(ba, "cloneplaylistcursors", false))
+	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "cloneplaylistcursors", null));}
+RDebugUtils.currentLine=21954560;
+ //BA.debugLineNum = 21954560;BA.debugLine="Public Sub ClonePlaylistCursors As Map";
+RDebugUtils.currentLine=21954561;
+ //BA.debugLineNum = 21954561;BA.debugLine="Return CloneMap(playlistCursors)";
+if (true) return __ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,__ref._playlistcursors /*anywheresoftware.b4a.objects.collections.Map*/ );
+RDebugUtils.currentLine=21954562;
+ //BA.debugLineNum = 21954562;BA.debugLine="End Sub";
+return null;
+}
 public anywheresoftware.b4a.objects.collections.Map  _choosenextplaylistdescriptor(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _currentslot,anywheresoftware.b4a.objects.collections.Map _workingcursors) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="dataplaybackresolver";
@@ -702,40 +713,34 @@ RDebugUtils.currentLine=22282249;
  //BA.debugLineNum = 22282249;BA.debugLine="workingCursors.Put(slotKey, playlistIndexForSlot";
 _workingcursors.Put((Object)(_slotkey),(Object)(_playlistindexforslot+1));
 RDebugUtils.currentLine=22282250;
- //BA.debugLineNum = 22282250;BA.debugLine="Trace(\"Курсор playlists. slot=\" & slotKey & \", st";
-__ref._trace /*String*/ (null,"Курсор playlists. slot="+_slotkey+", stored="+BA.NumberToString(_cursorvalue)+", previewNextStored="+BA.ObjectToString(_workingcursors.GetDefault((Object)(_slotkey),(Object)(0)))+", playlists="+BA.NumberToString(_playlists.getSize()));
-RDebugUtils.currentLine=22282251;
- //BA.debugLineNum = 22282251;BA.debugLine="Dim playlistObject As Object = playlists.Get(play";
+ //BA.debugLineNum = 22282250;BA.debugLine="Dim playlistObject As Object = playlists.Get(play";
 _playlistobject = _playlists.Get(_playlistindexforslot);
-RDebugUtils.currentLine=22282252;
- //BA.debugLineNum = 22282252;BA.debugLine="If playlistObject Is Map Then";
+RDebugUtils.currentLine=22282251;
+ //BA.debugLineNum = 22282251;BA.debugLine="If playlistObject Is Map Then";
 if (_playlistobject instanceof java.util.Map) { 
-RDebugUtils.currentLine=22282253;
- //BA.debugLineNum = 22282253;BA.debugLine="Dim playlistSource As Map = playlistObject";
+RDebugUtils.currentLine=22282252;
+ //BA.debugLineNum = 22282252;BA.debugLine="Dim playlistSource As Map = playlistObject";
 _playlistsource = new anywheresoftware.b4a.objects.collections.Map();
 _playlistsource = (anywheresoftware.b4a.objects.collections.Map) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.objects.collections.Map(), (java.util.Map)(_playlistobject));
-RDebugUtils.currentLine=22282254;
- //BA.debugLineNum = 22282254;BA.debugLine="Dim playlist As Map = CloneMap(playlistSource)";
+RDebugUtils.currentLine=22282253;
+ //BA.debugLineNum = 22282253;BA.debugLine="Dim playlist As Map = CloneMap(playlistSource)";
 _playlist = new anywheresoftware.b4a.objects.collections.Map();
 _playlist = __ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_playlistsource);
-RDebugUtils.currentLine=22282255;
- //BA.debugLineNum = 22282255;BA.debugLine="playlist.Put(\"_slot_key\", slotKey)";
+RDebugUtils.currentLine=22282254;
+ //BA.debugLineNum = 22282254;BA.debugLine="playlist.Put(\"_slot_key\", slotKey)";
 _playlist.Put((Object)("_slot_key"),(Object)(_slotkey));
-RDebugUtils.currentLine=22282256;
- //BA.debugLineNum = 22282256;BA.debugLine="playlist.Put(\"_playlist_index\", playlistIndexFor";
+RDebugUtils.currentLine=22282255;
+ //BA.debugLineNum = 22282255;BA.debugLine="playlist.Put(\"_playlist_index\", playlistIndexFor";
 _playlist.Put((Object)("_playlist_index"),(Object)(_playlistindexforslot));
-RDebugUtils.currentLine=22282257;
- //BA.debugLineNum = 22282257;BA.debugLine="Trace(\"Выбран playlist для локального воспроизве";
-__ref._trace /*String*/ (null,"Выбран playlist для локального воспроизведения. slot="+_slotkey+", index="+BA.NumberToString(_playlistindexforslot)+", playlistId="+BA.ObjectToString(_playlist.GetDefault((Object)("id"),(Object)("")))+", title="+BA.ObjectToString(_playlist.GetDefault((Object)("title"),(Object)(""))));
-RDebugUtils.currentLine=22282258;
- //BA.debugLineNum = 22282258;BA.debugLine="Return playlist";
+RDebugUtils.currentLine=22282256;
+ //BA.debugLineNum = 22282256;BA.debugLine="Return playlist";
 if (true) return _playlist;
  };
-RDebugUtils.currentLine=22282260;
- //BA.debugLineNum = 22282260;BA.debugLine="Return emptyDescriptor";
+RDebugUtils.currentLine=22282258;
+ //BA.debugLineNum = 22282258;BA.debugLine="Return emptyDescriptor";
 if (true) return _emptydescriptor;
-RDebugUtils.currentLine=22282261;
- //BA.debugLineNum = 22282261;BA.debugLine="End Sub";
+RDebugUtils.currentLine=22282259;
+ //BA.debugLineNum = 22282259;BA.debugLine="End Sub";
 return null;
 }
 public anywheresoftware.b4a.objects.collections.Map  _chooserandomtrackfromplaylist(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _playlistdata,b4j.example.mediacache _mediacacheservice,boolean _cachedonly) throws Exception{
@@ -985,6 +990,27 @@ RDebugUtils.currentLine=22478865;
  //BA.debugLineNum = 22478865;BA.debugLine="End Sub";
 return null;
 }
+public String  _savepreviewplaylistcursors(b4j.example.dataplaybackresolver __ref,b4j.example.keyvaluestore _storage,anywheresoftware.b4a.objects.collections.Map _workingcursors) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="dataplaybackresolver";
+if (Debug.shouldDelegate(ba, "savepreviewplaylistcursors", false))
+	 {return ((String) Debug.delegate(ba, "savepreviewplaylistcursors", new Object[] {_storage,_workingcursors}));}
+RDebugUtils.currentLine=22609920;
+ //BA.debugLineNum = 22609920;BA.debugLine="Public Sub SavePreviewPlaylistCursors(storage As K";
+RDebugUtils.currentLine=22609921;
+ //BA.debugLineNum = 22609921;BA.debugLine="If workingCursors.IsInitialized = False Or workin";
+if (_workingcursors.IsInitialized()==__c.False || _workingcursors.getSize()==0) { 
+if (true) return "";};
+RDebugUtils.currentLine=22609922;
+ //BA.debugLineNum = 22609922;BA.debugLine="playlistCursors = CloneMap(workingCursors)";
+__ref._playlistcursors /*anywheresoftware.b4a.objects.collections.Map*/  = __ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_workingcursors);
+RDebugUtils.currentLine=22609923;
+ //BA.debugLineNum = 22609923;BA.debugLine="storage.Put(\"data_slot_playlist_cursors\", playlis";
+_storage._put /*String*/ (null,"data_slot_playlist_cursors",(Object)(__ref._playlistcursors /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));
+RDebugUtils.currentLine=22609924;
+ //BA.debugLineNum = 22609924;BA.debugLine="End Sub";
+return "";
+}
 public String  _rememberresolvedtrack(b4j.example.dataplaybackresolver __ref,String _trackid) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="dataplaybackresolver";
@@ -1037,44 +1063,6 @@ RDebugUtils.currentLine=22740996;
  //BA.debugLineNum = 22740996;BA.debugLine="End Sub";
 return "";
 }
-public anywheresoftware.b4a.objects.collections.Map  _cloneplaylistcursors(b4j.example.dataplaybackresolver __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="dataplaybackresolver";
-if (Debug.shouldDelegate(ba, "cloneplaylistcursors", false))
-	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "cloneplaylistcursors", null));}
-RDebugUtils.currentLine=21954560;
- //BA.debugLineNum = 21954560;BA.debugLine="Public Sub ClonePlaylistCursors As Map";
-RDebugUtils.currentLine=21954561;
- //BA.debugLineNum = 21954561;BA.debugLine="Return CloneMap(playlistCursors)";
-if (true) return __ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,__ref._playlistcursors /*anywheresoftware.b4a.objects.collections.Map*/ );
-RDebugUtils.currentLine=21954562;
- //BA.debugLineNum = 21954562;BA.debugLine="End Sub";
-return null;
-}
-public String  _savepreviewplaylistcursors(b4j.example.dataplaybackresolver __ref,b4j.example.keyvaluestore _storage,anywheresoftware.b4a.objects.collections.Map _workingcursors) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="dataplaybackresolver";
-if (Debug.shouldDelegate(ba, "savepreviewplaylistcursors", false))
-	 {return ((String) Debug.delegate(ba, "savepreviewplaylistcursors", new Object[] {_storage,_workingcursors}));}
-RDebugUtils.currentLine=22609920;
- //BA.debugLineNum = 22609920;BA.debugLine="Public Sub SavePreviewPlaylistCursors(storage As K";
-RDebugUtils.currentLine=22609921;
- //BA.debugLineNum = 22609921;BA.debugLine="If workingCursors.IsInitialized = False Or workin";
-if (_workingcursors.IsInitialized()==__c.False || _workingcursors.getSize()==0) { 
-if (true) return "";};
-RDebugUtils.currentLine=22609922;
- //BA.debugLineNum = 22609922;BA.debugLine="playlistCursors = CloneMap(workingCursors)";
-__ref._playlistcursors /*anywheresoftware.b4a.objects.collections.Map*/  = __ref._clonemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_workingcursors);
-RDebugUtils.currentLine=22609923;
- //BA.debugLineNum = 22609923;BA.debugLine="storage.Put(\"data_slot_playlist_cursors\", playlis";
-_storage._put /*String*/ (null,"data_slot_playlist_cursors",(Object)(__ref._playlistcursors /*anywheresoftware.b4a.objects.collections.Map*/ .getObject()));
-RDebugUtils.currentLine=22609924;
- //BA.debugLineNum = 22609924;BA.debugLine="Trace(\"Сохранен preview курсор playlists. count=\"";
-__ref._trace /*String*/ (null,"Сохранен preview курсор playlists. count="+BA.NumberToString(__ref._playlistcursors /*anywheresoftware.b4a.objects.collections.Map*/ .getSize()));
-RDebugUtils.currentLine=22609925;
- //BA.debugLineNum = 22609925;BA.debugLine="End Sub";
-return "";
-}
 public String  _builddataslotkey(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _currentslot) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="dataplaybackresolver";
@@ -1087,24 +1075,6 @@ RDebugUtils.currentLine=23134209;
 if (true) return BA.ObjectToString(_currentslot.GetDefault((Object)("schedule_title"),(Object)("")))+"|"+BA.ObjectToString(_currentslot.GetDefault((Object)("stream_id"),(Object)("")))+"|"+BA.ObjectToString(_currentslot.GetDefault((Object)("slot_time"),(Object)("")));
 RDebugUtils.currentLine=23134210;
  //BA.debugLineNum = 23134210;BA.debugLine="End Sub";
-return "";
-}
-public String  _trace(b4j.example.dataplaybackresolver __ref,String _message) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="dataplaybackresolver";
-if (Debug.shouldDelegate(ba, "trace", false))
-	 {return ((String) Debug.delegate(ba, "trace", new Object[] {_message}));}
-RDebugUtils.currentLine=23855104;
- //BA.debugLineNum = 23855104;BA.debugLine="Private Sub Trace(message As String)";
-RDebugUtils.currentLine=23855105;
- //BA.debugLineNum = 23855105;BA.debugLine="If SubExists(targetModule, traceSubName) Then";
-if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,__ref._tracesubname /*String*/ )) { 
-RDebugUtils.currentLine=23855106;
- //BA.debugLineNum = 23855106;BA.debugLine="CallSub2(targetModule, traceSubName, message)";
-__c.CallSubNew2(ba,__ref._targetmodule /*Object*/ ,__ref._tracesubname /*String*/ ,(Object)(_message));
- };
-RDebugUtils.currentLine=23855108;
- //BA.debugLineNum = 23855108;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.Map  _clonemap(b4j.example.dataplaybackresolver __ref,anywheresoftware.b4a.objects.collections.Map _source) throws Exception{
@@ -1426,6 +1396,24 @@ RDebugUtils.currentLine=23265281;
 if (true) return _playlistid+".json";
 RDebugUtils.currentLine=23265282;
  //BA.debugLineNum = 23265282;BA.debugLine="End Sub";
+return "";
+}
+public String  _trace(b4j.example.dataplaybackresolver __ref,String _message) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="dataplaybackresolver";
+if (Debug.shouldDelegate(ba, "trace", false))
+	 {return ((String) Debug.delegate(ba, "trace", new Object[] {_message}));}
+RDebugUtils.currentLine=23855104;
+ //BA.debugLineNum = 23855104;BA.debugLine="Private Sub Trace(message As String)";
+RDebugUtils.currentLine=23855105;
+ //BA.debugLineNum = 23855105;BA.debugLine="If SubExists(targetModule, traceSubName) Then";
+if (__c.SubExists(ba,__ref._targetmodule /*Object*/ ,__ref._tracesubname /*String*/ )) { 
+RDebugUtils.currentLine=23855106;
+ //BA.debugLineNum = 23855106;BA.debugLine="CallSub2(targetModule, traceSubName, message)";
+__c.CallSubNew2(ba,__ref._targetmodule /*Object*/ ,__ref._tracesubname /*String*/ ,(Object)(_message));
+ };
+RDebugUtils.currentLine=23855108;
+ //BA.debugLineNum = 23855108;BA.debugLine="End Sub";
 return "";
 }
 public int  _minutesofdayfromticks(b4j.example.dataplaybackresolver __ref,long _ticks) throws Exception{

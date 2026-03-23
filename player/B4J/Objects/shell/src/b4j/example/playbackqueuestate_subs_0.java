@@ -8,7 +8,7 @@ public class playbackqueuestate_subs_0 {
 
 public static RemoteObject  _canrestorestoppedreserve(RemoteObject __ref,RemoteObject _currentsignature) throws Exception{
 try {
-		Debug.PushSubsStack("CanRestoreStoppedReserve (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,53);
+		Debug.PushSubsStack("CanRestoreStoppedReserve (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,53);
 if (RapidSub.canDelegate("canrestorestoppedreserve")) { return __ref.runUserSub(false, "playbackqueuestate","canrestorestoppedreserve", __ref, _currentsignature);}
 Debug.locals.put("currentSignature", _currentsignature);
  BA.debugLineNum = 53;BA.debugLine="Public Sub CanRestoreStoppedReserve(currentSignatu";
@@ -36,7 +36,7 @@ finally {
 		}}
 public static RemoteObject  _capturestoppedreserve(RemoteObject __ref,RemoteObject _sourcequeue,RemoteObject _signature) throws Exception{
 try {
-		Debug.PushSubsStack("CaptureStoppedReserve (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,40);
+		Debug.PushSubsStack("CaptureStoppedReserve (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,40);
 if (RapidSub.canDelegate("capturestoppedreserve")) { return __ref.runUserSub(false, "playbackqueuestate","capturestoppedreserve", __ref, _sourcequeue, _signature);}
 RemoteObject _itemobject = RemoteObject.declareNull("Object");
 Debug.locals.put("sourceQueue", _sourcequeue);
@@ -106,7 +106,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clearexactbreakstate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearExactBreakState (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,127);
+		Debug.PushSubsStack("ClearExactBreakState (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,127);
 if (RapidSub.canDelegate("clearexactbreakstate")) { return __ref.runUserSub(false, "playbackqueuestate","clearexactbreakstate", __ref);}
  BA.debugLineNum = 127;BA.debugLine="Public Sub ClearExactBreakState";
 Debug.ShouldStop(1073741824);
@@ -125,7 +125,7 @@ finally {
 		}}
 public static RemoteObject  _clearqueuesnapshot(RemoteObject __ref,RemoteObject _storage) throws Exception{
 try {
-		Debug.PushSubsStack("ClearQueueSnapshot (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,104);
+		Debug.PushSubsStack("ClearQueueSnapshot (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,104);
 if (RapidSub.canDelegate("clearqueuesnapshot")) { return __ref.runUserSub(false, "playbackqueuestate","clearqueuesnapshot", __ref, _storage);}
 Debug.locals.put("storage", _storage);
  BA.debugLineNum = 104;BA.debugLine="Public Sub ClearQueueSnapshot(storage As KeyValueS";
@@ -160,7 +160,7 @@ finally {
 		}}
 public static RemoteObject  _clearqueuesnapshotskip(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearQueueSnapshotSkip (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,30);
+		Debug.PushSubsStack("ClearQueueSnapshotSkip (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,30);
 if (RapidSub.canDelegate("clearqueuesnapshotskip")) { return __ref.runUserSub(false, "playbackqueuestate","clearqueuesnapshotskip", __ref);}
  BA.debugLineNum = 30;BA.debugLine="Public Sub ClearQueueSnapshotSkip";
 Debug.ShouldStop(536870912);
@@ -179,7 +179,7 @@ finally {
 		}}
 public static RemoteObject  _clearstoppedreserve(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearStoppedReserve (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,34);
+		Debug.PushSubsStack("ClearStoppedReserve (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,34);
 if (RapidSub.canDelegate("clearstoppedreserve")) { return __ref.runUserSub(false, "playbackqueuestate","clearstoppedreserve", __ref);}
  BA.debugLineNum = 34;BA.debugLine="Public Sub ClearStoppedReserve";
 Debug.ShouldStop(2);
@@ -205,7 +205,7 @@ finally {
 		}}
 public static RemoteObject  _clonestatemap(RemoteObject __ref,RemoteObject _source) throws Exception{
 try {
-		Debug.PushSubsStack("CloneStateMap (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,147);
+		Debug.PushSubsStack("CloneStateMap (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,147);
 if (RapidSub.canDelegate("clonestatemap")) { return __ref.runUserSub(false, "playbackqueuestate","clonestatemap", __ref, _source);}
 RemoteObject _cloned = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
@@ -253,7 +253,7 @@ finally {
 		}}
 public static RemoteObject  _consumeskipqueuesnapshotrestore(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ConsumeSkipQueueSnapshotRestore (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,24);
+		Debug.PushSubsStack("ConsumeSkipQueueSnapshotRestore (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,24);
 if (RapidSub.canDelegate("consumeskipqueuesnapshotrestore")) { return __ref.runUserSub(false, "playbackqueuestate","consumeskipqueuesnapshotrestore", __ref);}
  BA.debugLineNum = 24;BA.debugLine="Public Sub ConsumeSkipQueueSnapshotRestore As Bool";
 Debug.ShouldStop(8388608);
@@ -279,7 +279,7 @@ finally {
 		}}
 public static RemoteObject  _createinitializedlist(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CreateInitializedList (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,157);
+		Debug.PushSubsStack("CreateInitializedList (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,157);
 if (RapidSub.canDelegate("createinitializedlist")) { return __ref.runUserSub(false, "playbackqueuestate","createinitializedlist", __ref);}
 RemoteObject _items = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
  BA.debugLineNum = 157;BA.debugLine="Private Sub CreateInitializedList As List";
@@ -305,7 +305,7 @@ finally {
 		}}
 public static RemoteObject  _haspendingexactbreak(RemoteObject __ref,RemoteObject _localnowtimestamp) throws Exception{
 try {
-		Debug.PushSubsStack("HasPendingExactBreak (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,131);
+		Debug.PushSubsStack("HasPendingExactBreak (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,131);
 if (RapidSub.canDelegate("haspendingexactbreak")) { return __ref.runUserSub(false, "playbackqueuestate","haspendingexactbreak", __ref, _localnowtimestamp);}
 Debug.locals.put("localNowTimestamp", _localnowtimestamp);
  BA.debugLineNum = 131;BA.debugLine="Public Sub HasPendingExactBreak(localNowTimestamp";
@@ -325,7 +325,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,9);
+		Debug.PushSubsStack("Initialize (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,9);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackqueuestate","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -346,7 +346,7 @@ finally {
 		}}
 public static RemoteObject  _limitremainbybreak(RemoteObject __ref,RemoteObject _trackremain,RemoteObject _localnowtimestamp) throws Exception{
 try {
-		Debug.PushSubsStack("LimitRemainByBreak (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,140);
+		Debug.PushSubsStack("LimitRemainByBreak (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,140);
 if (RapidSub.canDelegate("limitremainbybreak")) { return __ref.runUserSub(false, "playbackqueuestate","limitremainbybreak", __ref, _trackremain, _localnowtimestamp);}
 RemoteObject _breakremain = RemoteObject.createImmutable(0L);
 Debug.locals.put("trackRemain", _trackremain);
@@ -379,7 +379,7 @@ finally {
 		}}
 public static RemoteObject  _movestoppedreservetoqueue(RemoteObject __ref,RemoteObject _targetqueue) throws Exception{
 try {
-		Debug.PushSubsStack("MoveStoppedReserveToQueue (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,59);
+		Debug.PushSubsStack("MoveStoppedReserveToQueue (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,59);
 if (RapidSub.canDelegate("movestoppedreservetoqueue")) { return __ref.runUserSub(false, "playbackqueuestate","movestoppedreservetoqueue", __ref, _targetqueue);}
 RemoteObject _restoredcount = RemoteObject.createImmutable(0);
 RemoteObject _itemobject = RemoteObject.declareNull("Object");
@@ -437,7 +437,7 @@ finally {
 		}}
 public static RemoteObject  _requestskipqueuesnapshotrestore(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("RequestSkipQueueSnapshotRestore (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,20);
+		Debug.PushSubsStack("RequestSkipQueueSnapshotRestore (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,20);
 if (RapidSub.canDelegate("requestskipqueuesnapshotrestore")) { return __ref.runUserSub(false, "playbackqueuestate","requestskipqueuesnapshotrestore", __ref);}
  BA.debugLineNum = 20;BA.debugLine="Public Sub RequestSkipQueueSnapshotRestore";
 Debug.ShouldStop(524288);
@@ -456,7 +456,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,13);
+		Debug.PushSubsStack("Reset (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,13);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "playbackqueuestate","reset", __ref);}
  BA.debugLineNum = 13;BA.debugLine="Public Sub Reset";
 Debug.ShouldStop(4096);
@@ -484,7 +484,7 @@ finally {
 		}}
 public static RemoteObject  _resolvescheduledbreakat(RemoteObject __ref,RemoteObject _queue) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveScheduledBreakAt (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,113);
+		Debug.PushSubsStack("ResolveScheduledBreakAt (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,113);
 if (RapidSub.canDelegate("resolvescheduledbreakat")) { return __ref.runUserSub(false, "playbackqueuestate","resolvescheduledbreakat", __ref, _queue);}
 RemoteObject _itemobj = RemoteObject.declareNull("Object");
 RemoteObject _item = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -541,7 +541,7 @@ finally {
 		}}
 public static RemoteObject  _restorequeuesnapshot(RemoteObject __ref,RemoteObject _storage) throws Exception{
 try {
-		Debug.PushSubsStack("RestoreQueueSnapshot (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,89);
+		Debug.PushSubsStack("RestoreQueueSnapshot (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,89);
 if (RapidSub.canDelegate("restorequeuesnapshot")) { return __ref.runUserSub(false, "playbackqueuestate","restorequeuesnapshot", __ref, _storage);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _tracks = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -593,7 +593,7 @@ finally {
 		}}
 public static RemoteObject  _savequeuesnapshot(RemoteObject __ref,RemoteObject _storage,RemoteObject _signature,RemoteObject _queue,RemoteObject _limit) throws Exception{
 try {
-		Debug.PushSubsStack("SaveQueueSnapshot (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,73);
+		Debug.PushSubsStack("SaveQueueSnapshot (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,73);
 if (RapidSub.canDelegate("savequeuesnapshot")) { return __ref.runUserSub(false, "playbackqueuestate","savequeuesnapshot", __ref, _storage, _signature, _queue, _limit);}
 RemoteObject _tracks = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _itemobject = RemoteObject.declareNull("Object");
@@ -658,7 +658,7 @@ finally {
 		}}
 public static RemoteObject  _shouldtriggerbreaknow(RemoteObject __ref,RemoteObject _localnowtimestamp) throws Exception{
 try {
-		Debug.PushSubsStack("ShouldTriggerBreakNow (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,135);
+		Debug.PushSubsStack("ShouldTriggerBreakNow (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,135);
 if (RapidSub.canDelegate("shouldtriggerbreaknow")) { return __ref.runUserSub(false, "playbackqueuestate","shouldtriggerbreaknow", __ref, _localnowtimestamp);}
 Debug.locals.put("localNowTimestamp", _localnowtimestamp);
  BA.debugLineNum = 135;BA.debugLine="Public Sub ShouldTriggerBreakNow(localNowTimestamp";
@@ -682,7 +682,7 @@ finally {
 		}}
 public static RemoteObject  _tolongdefault(RemoteObject __ref,RemoteObject _value,RemoteObject _defaultvalue) throws Exception{
 try {
-		Debug.PushSubsStack("ToLongDefault (playbackqueuestate) ","playbackqueuestate",7,__ref.getField(false, "ba"),__ref,163);
+		Debug.PushSubsStack("ToLongDefault (playbackqueuestate) ","playbackqueuestate",8,__ref.getField(false, "ba"),__ref,163);
 if (RapidSub.canDelegate("tolongdefault")) { return __ref.runUserSub(false, "playbackqueuestate","tolongdefault", __ref, _value, _defaultvalue);}
 Debug.locals.put("value", _value);
 Debug.locals.put("defaultValue", _defaultvalue);

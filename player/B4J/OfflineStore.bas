@@ -37,11 +37,10 @@ Public Sub LoadOfflineData As Map
 		Dim parsed As Map = parser.NextObject
 		If parsed.IsInitialized Then
 			data = parsed
-		Trace("Данные плеера загружены. playlists=" & GetOfflinePlaylistIds(data).Size & ", ads=" & GetOfflineAdsCount(data) & ", schedules=" & GetOfflineSchedulesCount(data))
 		End If
 	Catch
 		data.Initialize
-		Trace("Не удалось загрузить player_data.json. " & LastException.Message)
+		Trace("данные плеера load ошибка message=" & LastException.Message)
 	End Try
 	Return data
 End Sub
@@ -66,7 +65,6 @@ Public Sub SaveOfflineData(sourceData As Map, playerCode As String, deviceId As 
 	generator.Initialize(normalizedData)
 	File.WriteString(storageDir, playerDataFileName, generator.ToString)
 	WriteOfflinePlaylistRequirementsFile(playlistDescriptors, playerCode)
-	Trace("Данные плеера сохранены. playlists=" & playlistIds.Size & ", ads=" & GetOfflineAdsCount(normalizedData) & ", schedules=" & GetOfflineSchedulesCount(normalizedData) & ", missingPlaylists=" & playlistCacheStatus.GetDefault("MissingCount", 0) & ", outdatedPlaylists=" & playlistCacheStatus.GetDefault("OutdatedCount", 0))
 	Return normalizedData
 End Sub
 
@@ -119,7 +117,6 @@ Public Sub SavePlaylistMetadata(descriptor As Map, playlistData As Map, cachedPl
 	cachedEntry.Put("title", descriptor.GetDefault("title", ""))
 	cachedEntry.Put("track_count", GetPlaylistTrackCount(normalizedPlaylistData))
 	cachedPlaylistIndex.Put(playlistId, cachedEntry)
-	Trace("Playlist metadata сохранен. id=" & playlistId & ", tracks=" & cachedEntry.GetDefault("track_count", 0) & ", updated=" & cachedEntry.GetDefault("updated", ""))
 End Sub
 
 Public Sub GetOfflinePlaylistsDir As String

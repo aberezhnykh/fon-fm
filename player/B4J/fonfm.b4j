@@ -1,5 +1,9 @@
 ﻿AppType=JavaFX
 Build1=Default,b4j.example
+File1=icon.ico
+File2=icon.png
+FileGroup1=Default Group
+FileGroup2=Default Group
 Group=Default Group
 Library1=b4xpages
 Library2=javaobject
@@ -27,7 +31,7 @@ Module6=OfflineStore
 Module7=PlaybackDataPolicyState
 Module8=PlaybackFacade
 Module9=PlaybackMetaState
-NumberOfFiles=0
+NumberOfFiles=2
 NumberOfLibraries=8
 NumberOfModules=18
 Version=10.5
@@ -35,9 +39,13 @@ Version=10.5
 #Region Project Attributes 
 	#MainFormWidth: 520
 	#MainFormHeight: 640 
+	#PackagerProperty: IconFile = icon.ico
 #End Region
 
 Sub Process_Globals
+	Public Const LabelName = "FON.FM" As String
+	Public Const VersionName = "1.0.1" As String
+	Public Const VersionCode = 1 As Int
 	Private fx As JFX
 	Private mainForm As Form
 End Sub
@@ -45,6 +53,8 @@ End Sub
 Sub AppStart (form1 As Form, args() As String)
 	mainForm = form1
 	mainForm.SetWindowSizeLimits(520, 640, fx.PrimaryScreen.MaxX - fx.PrimaryScreen.MinX, fx.PrimaryScreen.MaxY - fx.PrimaryScreen.MinY)
+	mainForm.Title = LabelName
+	mainForm.Icon = fx.LoadImage(File.DirAssets, "icon.png")
 	mainForm.Show
 	mainForm.WindowWidth = Max(mainForm.WindowWidth, 520)
 	mainForm.WindowHeight = Max(mainForm.WindowHeight, 640)
@@ -64,6 +74,7 @@ End Sub
 
 Sub MainForm_Closed
 	B4XPages.MainPage.SaveWindowState
+	B4XPages.MainPage.FlushPendingCacheIndexes
 	B4XPages.MainPage.CleanupPlaybackTempFiles
 	B4XPages.Delegate.MainForm_Closed
 End Sub

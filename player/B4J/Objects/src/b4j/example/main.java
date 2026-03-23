@@ -55,6 +55,9 @@ public static void initializeProcessGlobals() {
 		}
     }
 }public static anywheresoftware.b4a.keywords.Common __c = null;
+public static String _labelname = "";
+public static String _versionname = "";
+public static int _versioncode = 0;
 public static anywheresoftware.b4j.objects.JFX _fx = null;
 public static anywheresoftware.b4j.objects.Form _mainform = null;
 public static b4j.example.uistyle _uistyle = null;
@@ -75,22 +78,28 @@ RDebugUtils.currentLine=65538;
  //BA.debugLineNum = 65538;BA.debugLine="mainForm.SetWindowSizeLimits(520, 640, fx.Primary";
 _mainform.SetWindowSizeLimits(520,640,_fx.getPrimaryScreen().getMaxX()-_fx.getPrimaryScreen().getMinX(),_fx.getPrimaryScreen().getMaxY()-_fx.getPrimaryScreen().getMinY());
 RDebugUtils.currentLine=65539;
- //BA.debugLineNum = 65539;BA.debugLine="mainForm.Show";
-_mainform.Show();
+ //BA.debugLineNum = 65539;BA.debugLine="mainForm.Title = LabelName";
+_mainform.setTitle(_labelname);
 RDebugUtils.currentLine=65540;
- //BA.debugLineNum = 65540;BA.debugLine="mainForm.WindowWidth = Max(mainForm.WindowWidth,";
-_mainform.setWindowWidth(anywheresoftware.b4a.keywords.Common.Max(_mainform.getWindowWidth(),520));
+ //BA.debugLineNum = 65540;BA.debugLine="mainForm.Icon = fx.LoadImage(File.DirAssets, \"ico";
+_mainform.setIcon((javafx.scene.image.Image)(_fx.LoadImage(anywheresoftware.b4a.keywords.Common.File.getDirAssets(),"icon.png").getObject()));
 RDebugUtils.currentLine=65541;
- //BA.debugLineNum = 65541;BA.debugLine="mainForm.WindowHeight = Max(mainForm.WindowHeight";
-_mainform.setWindowHeight(anywheresoftware.b4a.keywords.Common.Max(_mainform.getWindowHeight(),640));
+ //BA.debugLineNum = 65541;BA.debugLine="mainForm.Show";
+_mainform.Show();
 RDebugUtils.currentLine=65542;
- //BA.debugLineNum = 65542;BA.debugLine="Dim pagesManager As B4XPagesManager";
-_pagesmanager = new b4j.example.b4xpagesmanager();
+ //BA.debugLineNum = 65542;BA.debugLine="mainForm.WindowWidth = Max(mainForm.WindowWidth,";
+_mainform.setWindowWidth(anywheresoftware.b4a.keywords.Common.Max(_mainform.getWindowWidth(),520));
 RDebugUtils.currentLine=65543;
- //BA.debugLineNum = 65543;BA.debugLine="pagesManager.Initialize(mainForm)";
-_pagesmanager._initialize /*String*/ (null,ba,_mainform);
+ //BA.debugLineNum = 65543;BA.debugLine="mainForm.WindowHeight = Max(mainForm.WindowHeight";
+_mainform.setWindowHeight(anywheresoftware.b4a.keywords.Common.Max(_mainform.getWindowHeight(),640));
 RDebugUtils.currentLine=65544;
- //BA.debugLineNum = 65544;BA.debugLine="End Sub";
+ //BA.debugLineNum = 65544;BA.debugLine="Dim pagesManager As B4XPagesManager";
+_pagesmanager = new b4j.example.b4xpagesmanager();
+RDebugUtils.currentLine=65545;
+ //BA.debugLineNum = 65545;BA.debugLine="pagesManager.Initialize(mainForm)";
+_pagesmanager._initialize /*String*/ (null,ba,_mainform);
+RDebugUtils.currentLine=65546;
+ //BA.debugLineNum = 65546;BA.debugLine="End Sub";
 return "";
 }
 public static String  _mainform_closed() throws Exception{
@@ -103,13 +112,16 @@ RDebugUtils.currentLine=45875201;
  //BA.debugLineNum = 45875201;BA.debugLine="B4XPages.MainPage.SaveWindowState";
 _b4xpages._mainpage /*b4j.example.b4xmainpage*/ ()._savewindowstate /*String*/ (null);
 RDebugUtils.currentLine=45875202;
- //BA.debugLineNum = 45875202;BA.debugLine="B4XPages.MainPage.CleanupPlaybackTempFiles";
-_b4xpages._mainpage /*b4j.example.b4xmainpage*/ ()._cleanupplaybacktempfiles /*String*/ (null);
+ //BA.debugLineNum = 45875202;BA.debugLine="B4XPages.MainPage.FlushPendingCacheIndexes";
+_b4xpages._mainpage /*b4j.example.b4xmainpage*/ ()._flushpendingcacheindexes /*String*/ (null);
 RDebugUtils.currentLine=45875203;
- //BA.debugLineNum = 45875203;BA.debugLine="B4XPages.Delegate.MainForm_Closed";
-_b4xpages._delegate /*b4j.example.b4xpagesdelegator*/ ._mainform_closed /*String*/ (null);
+ //BA.debugLineNum = 45875203;BA.debugLine="B4XPages.MainPage.CleanupPlaybackTempFiles";
+_b4xpages._mainpage /*b4j.example.b4xmainpage*/ ()._cleanupplaybacktempfiles /*String*/ (null);
 RDebugUtils.currentLine=45875204;
- //BA.debugLineNum = 45875204;BA.debugLine="End Sub";
+ //BA.debugLineNum = 45875204;BA.debugLine="B4XPages.Delegate.MainForm_Closed";
+_b4xpages._delegate /*b4j.example.b4xpagesdelegator*/ ._mainform_closed /*String*/ (null);
+RDebugUtils.currentLine=45875205;
+ //BA.debugLineNum = 45875205;BA.debugLine="End Sub";
 return "";
 }
 public static String  _mainform_closerequest(anywheresoftware.b4j.objects.NodeWrapper.ConcreteEventWrapper _eventdata) throws Exception{

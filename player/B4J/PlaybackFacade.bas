@@ -18,19 +18,19 @@ Private Sub Trace(message As String)
 End Sub
 
 Public Sub StartFirstTrack(mode As String) As ResumableSub
-	Trace("PlaybackFacade start requested. mode=" & mode)
+	Trace("сценарий старт запрос mode=" & mode)
 	Wait For (mainPage.Facade_StartFirstTrackCore(mode)) Complete (started As Boolean)
 	Return started
 End Sub
 
 Public Sub LoadNextAndPlay As ResumableSub
-	Trace("PlaybackFacade advance requested. mode=load_next_and_play")
+	Trace("сценарий переход запрос mode=load_next_and_play")
 	Wait For (mainPage.Facade_LoadNextAndPlayCore) Complete (advanced As Boolean)
 	Return advanced
 End Sub
 
 Public Sub DispatchPlaybackAdvance(initiator As String, allowLoad As Boolean) As ResumableSub
-	Trace("PlaybackFacade advance requested. initiator=" & initiator & ", allowLoad=" & allowLoad)
+	Trace("сценарий переход запрос initiator=" & initiator & " allowLoad=" & allowLoad)
 	Wait For (mainPage.Facade_DispatchPlaybackAdvanceCore(initiator, allowLoad)) Complete (advanced As Boolean)
 	Return advanced
 End Sub
@@ -41,30 +41,30 @@ Public Sub PrepareNextPlayable As ResumableSub
 End Sub
 
 Public Sub AdvanceAfterComplete(audioKey As String) As ResumableSub
-	Trace("PlaybackFacade advance requested. initiator=audio_complete:" & audioKey)
+	Trace("сценарий переход запрос initiator=audio_complete:" & audioKey)
 	Wait For (DispatchPlaybackAdvance("audio_complete:" & audioKey, True)) Complete (advanced As Boolean)
 	Return advanced
 End Sub
 
 Public Sub AdvanceAfterError(audioKey As String) As ResumableSub
-	Trace("PlaybackFacade advance requested. initiator=audio_error_recovery:" & audioKey)
+	Trace("сценарий переход запрос initiator=audio_error_recovery:" & audioKey)
 	Wait For (DispatchPlaybackAdvance("audio_error_recovery:" & audioKey, True)) Complete (advanced As Boolean)
 	Return advanced
 End Sub
 
 Public Sub StopPlayback As ResumableSub
-	Trace("PlaybackFacade stop requested.")
+	Trace("сценарий stop запрос")
 	Wait For (mainPage.Facade_StopPlayerCore) Complete (stopped As Boolean)
 	Return stopped
 End Sub
 
 Public Sub PausePlayback(reason As String, connectionMode As String)
-	Trace("PlaybackFacade pause requested. mode=" & connectionMode)
+	Trace("сценарий pause запрос mode=" & connectionMode)
 	mainPage.Facade_PausePlaybackCore(reason, connectionMode)
 End Sub
 
 Public Sub ResumePlaybackAfterPolicyPause As ResumableSub
-	Trace("PlaybackFacade resume requested. reason=policy_pause")
+	Trace("сценарий resume запрос reason=policy_pause")
 	Wait For (mainPage.Facade_ResumePlaybackAfterPolicyPauseCore) Complete (resumed As Boolean)
 	Return resumed
 End Sub

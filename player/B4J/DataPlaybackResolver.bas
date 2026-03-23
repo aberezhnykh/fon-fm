@@ -172,14 +172,12 @@ Public Sub ChooseNextPlaylistDescriptor(currentSlot As Map, workingCursors As Ma
 	If cursorValue < 0 Then cursorValue = 0
 	Dim playlistIndexForSlot As Int = cursorValue Mod playlists.Size
 	workingCursors.Put(slotKey, playlistIndexForSlot + 1)
-	Trace("Курсор playlists. slot=" & slotKey & ", stored=" & cursorValue & ", previewNextStored=" & workingCursors.GetDefault(slotKey, 0) & ", playlists=" & playlists.Size)
 	Dim playlistObject As Object = playlists.Get(playlistIndexForSlot)
 	If playlistObject Is Map Then
 		Dim playlistSource As Map = playlistObject
 		Dim playlist As Map = CloneMap(playlistSource)
 		playlist.Put("_slot_key", slotKey)
 		playlist.Put("_playlist_index", playlistIndexForSlot)
-		Trace("Выбран playlist для локального воспроизведения. slot=" & slotKey & ", index=" & playlistIndexForSlot & ", playlistId=" & playlist.GetDefault("id", "") & ", title=" & playlist.GetDefault("title", ""))
 		Return playlist
 	End If
 	Return emptyDescriptor
@@ -281,14 +279,12 @@ Public Sub CommitPlaylistCursor(storage As KeyValueStore, item As Map)
 	Dim nextStored As Int = item.GetDefault("playlist_index", 0) + 1
 	playlistCursors.Put(slotKey, nextStored)
 	storage.Put("data_slot_playlist_cursors", playlistCursors)
-	Trace("Зафиксирован курсор playlists. slot=" & slotKey & ", committed=" & nextStored)
 End Sub
 
 Public Sub SavePreviewPlaylistCursors(storage As KeyValueStore, workingCursors As Map)
 	If workingCursors.IsInitialized = False Or workingCursors.Size = 0 Then Return
 	playlistCursors = CloneMap(workingCursors)
 	storage.Put("data_slot_playlist_cursors", playlistCursors)
-	Trace("Сохранен preview курсор playlists. count=" & playlistCursors.Size)
 End Sub
 
 Public Sub RememberResolvedTrack(trackId As String)

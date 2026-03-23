@@ -14,6 +14,7 @@ const WATCHED = [
 	'playlists',
 	'tracks',
 	'sets',
+	'settings',
 ];
 
 const emptyPayload = () => ({
@@ -21,6 +22,7 @@ const emptyPayload = () => ({
 	players: [],
 	streams: [],
 	playlists: [],
+	settings: [],
 	delete_clients: [],
 	delete_players: [],
 	delete_player_routes: [],
@@ -357,6 +359,12 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 			});
 		}
 
+		if (collection === 'settings') {
+			return mergePayload({
+				settings: ['settings'],
+			});
+		}
+
 		return emptyPayload();
 	};
 
@@ -668,6 +676,7 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 		await callPhp('players-json.php', payload.players);
 		await callPhp('streams-json.php', payload.streams);
 		await callPhp('playlists-json.php', payload.playlists);
+		await callPhp('settings-json.php', payload.settings);
 	};
 
 	const processPayload = async (payload, source) => {

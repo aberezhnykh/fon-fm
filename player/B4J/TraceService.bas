@@ -9,6 +9,7 @@ Sub Class_Globals
 	Private storageDir As String
 	Private debugResponsesDir As String
 	Private traceLogs As List
+	Private pendingTraceBatch As List
 	Private serverSnapshots As List
 	Private traceLogLimit As Int
 	Private serverSnapshotLimit As Int
@@ -20,6 +21,7 @@ Public Sub Initialize(storageDirValue As String, debugResponsesDirValue As Strin
 	traceLogLimit = traceLogLimitValue
 	serverSnapshotLimit = serverSnapshotLimitValue
 	traceLogs.Initialize
+	pendingTraceBatch.Initialize
 	serverSnapshots.Initialize
 End Sub
 
@@ -27,7 +29,11 @@ Public Sub Trace(message As String)
 	Dim entry As String = DateTime.Date(DateTime.Now) & " " & DateTime.Time(DateTime.Now) & " | " & message
 	traceLogs.Add(entry)
 	Do While traceLogs.Size > traceLogLimit
+		Dim removedEntry As String = traceLogs.Get(0)
 		traceLogs.RemoveAt(0)
+		If pendingTraceBatch.IsInitialized And pendingTraceBatch.Size > 0 Then
+			If pendingTraceBatch.Get(0) = removedEntry Then pendingTraceBatch.RemoveAt(0)
+		End If
 	Loop
 	Log(entry)
 End Sub
@@ -45,6 +51,26 @@ Public Sub GetTraceList As List
 		copy.Add(entry)
 	Next
 	Return copy
+End Sub
+
+Public Sub BeginPendingTraceBatch As List
+	pendingTraceBatch = CloneList(traceLogs)
+	Return CloneList(pendingTraceBatch)
+End Sub
+
+Public Sub ConfirmPendingTraceBatchSent
+	If pendingTraceBatch.IsInitialized = False Or pendingTraceBatch.Size = 0 Then Return
+	Do While pendingTraceBatch.Size > 0 And traceLogs.Size > 0
+		If traceLogs.Get(0) <> pendingTraceBatch.Get(0) Then Exit
+		traceLogs.RemoveAt(0)
+		pendingTraceBatch.RemoveAt(0)
+	Loop
+	pendingTraceBatch.Clear
+End Sub
+
+Public Sub CancelPendingTraceBatch
+	If pendingTraceBatch.IsInitialized = False Then pendingTraceBatch.Initialize
+	pendingTraceBatch.Clear
 End Sub
 
 Public Sub GetServerTraceText As String
@@ -147,6 +173,16 @@ Private Sub CloneMap(source As Map) As Map
 	If source.IsInitialized = False Then Return copy
 	For Each key As Object In source.Keys
 		copy.Put(key, source.Get(key))
+	Next
+	Return copy
+End Sub
+
+Private Sub CloneList(source As List) As List
+	Dim copy As List
+	copy.Initialize
+	If source.IsInitialized = False Then Return copy
+	For Each item As Object In source
+		copy.Add(item)
 	Next
 	Return copy
 End Sub

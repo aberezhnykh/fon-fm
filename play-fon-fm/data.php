@@ -142,6 +142,30 @@ function playlistPath(string $base, string $playlist): string {
     return $base . '/playlists/' . $playlist . '.json';
 }
 
+function settingsPath(string $base): string {
+    return $base . '/settings.json';
+}
+
+function normalizeOs(mixed $value): string {
+    return strtolower(trim((string)$value));
+}
+
+function playerVersionForOs(string $dataDir, string $os): ?string {
+    if ($os !== 'windows' && $os !== 'android') {
+        return null;
+    }
+
+    $settings = runtime_read_json(settingsPath($dataDir));
+    if (!is_array($settings)) {
+        return null;
+    }
+
+    $field = $os === 'windows' ? 'windows_version' : 'android_version';
+    $version = trim((string)($settings[$field] ?? ''));
+
+    return $version !== '' ? $version : null;
+}
+
 function normalizePlaylistInstruction(string $dataDir, string $playlistId): ?array {
     $playlistId = trim($playlistId);
     if ($playlistId === '') {
@@ -257,9 +281,11 @@ function buildSchedulesInstruction(string $dataDir, array $clientData, string $p
 
 $player = isset($_GET['player']) ? runtime_normalize_player_code($_GET['player']) : '';
 $device = isset($_GET['device']) ? normalizeDevice($_GET['device']) : '';
+$os = isset($_GET['os']) ? normalizeOs($_GET['os']) : '';
 $tzOffset = resolveTimezoneOffsetMinutes();
 $clientVersion = isset($_GET['version']) ? trim((string)$_GET['version']) : '';
 $serverVersion = player_settings_app_version($settingsPath);
+$playerVersion = playerVersionForOs($dataDir, $os);
 
 if ($serverVersion !== '' && $clientVersion !== '' && $clientVersion !== $serverVersion) {
     okUpdate();
@@ -361,6 +387,8 @@ respond(cleanArray([
         'status' => $playerData['status'] ?? '',
         'end' => $playerData['end'] ?? '',
         'level' => $playerData['level'] ?? null,
+        'trace' => $playerData['trace'] ?? null,
+        'version' => $playerVersion,
     ],
     'ads' => $adsOut,
     'schedules' => $schedulesOut,

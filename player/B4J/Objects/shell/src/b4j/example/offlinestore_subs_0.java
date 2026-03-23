@@ -8,7 +8,7 @@ public class offlinestore_subs_0 {
 
 public static RemoteObject  _buildofflineplaylistdescriptors(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("BuildOfflinePlaylistDescriptors (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,196);
+		Debug.PushSubsStack("BuildOfflinePlaylistDescriptors (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,193);
 if (RapidSub.canDelegate("buildofflineplaylistdescriptors")) { return __ref.runUserSub(false, "offlinestore","buildofflineplaylistdescriptors", __ref, _data);}
 RemoteObject _descriptors = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _uniquedescriptors = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -29,34 +29,34 @@ RemoteObject _playlist = RemoteObject.declareNull("anywheresoftware.b4a.objects.
 RemoteObject _playlistid = RemoteObject.createImmutable("");
 RemoteObject _descriptor = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("data", _data);
- BA.debugLineNum = 196;BA.debugLine="Private Sub BuildOfflinePlaylistDescriptors(data A";
-Debug.ShouldStop(8);
- BA.debugLineNum = 197;BA.debugLine="Dim descriptors As List";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 193;BA.debugLine="Private Sub BuildOfflinePlaylistDescriptors(data A";
+Debug.ShouldStop(1);
+ BA.debugLineNum = 194;BA.debugLine="Dim descriptors As List";
+Debug.ShouldStop(2);
 _descriptors = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("descriptors", _descriptors);
- BA.debugLineNum = 198;BA.debugLine="descriptors.Initialize";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 195;BA.debugLine="descriptors.Initialize";
+Debug.ShouldStop(4);
 _descriptors.runVoidMethod ("Initialize");
- BA.debugLineNum = 199;BA.debugLine="If data.IsInitialized = False Then Return descrip";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 196;BA.debugLine="If data.IsInitialized = False Then Return descrip";
+Debug.ShouldStop(8);
 if (RemoteObject.solveBoolean("=",_data.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return _descriptors;};
- BA.debugLineNum = 200;BA.debugLine="Dim uniqueDescriptors As Map";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 197;BA.debugLine="Dim uniqueDescriptors As Map";
+Debug.ShouldStop(16);
 _uniquedescriptors = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("uniqueDescriptors", _uniquedescriptors);
- BA.debugLineNum = 201;BA.debugLine="uniqueDescriptors.Initialize";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 198;BA.debugLine="uniqueDescriptors.Initialize";
+Debug.ShouldStop(32);
 _uniquedescriptors.runVoidMethod ("Initialize");
- BA.debugLineNum = 202;BA.debugLine="Dim schedules As List = data.GetDefault(\"schedule";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 199;BA.debugLine="Dim schedules As List = data.GetDefault(\"schedule";
+Debug.ShouldStop(64);
 _schedules = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _schedules = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _data.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("schedules"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("schedules", _schedules);Debug.locals.put("schedules", _schedules);
- BA.debugLineNum = 203;BA.debugLine="If schedules.IsInitialized = False Then Return de";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 200;BA.debugLine="If schedules.IsInitialized = False Then Return de";
+Debug.ShouldStop(128);
 if (RemoteObject.solveBoolean("=",_schedules.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return _descriptors;};
- BA.debugLineNum = 204;BA.debugLine="For Each scheduleObject As Object In schedules";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 201;BA.debugLine="For Each scheduleObject As Object In schedules";
+Debug.ShouldStop(256);
 {
 final RemoteObject group8 = _schedules;
 final int groupLen8 = group8.runMethod(true,"getSize").<Integer>get()
@@ -65,26 +65,26 @@ final int groupLen8 = group8.runMethod(true,"getSize").<Integer>get()
 for (; index8 < groupLen8;index8++){
 _scheduleobject = group8.runMethod(false,"Get",index8);Debug.locals.put("scheduleObject", _scheduleobject);
 Debug.locals.put("scheduleObject", _scheduleobject);
- BA.debugLineNum = 205;BA.debugLine="If scheduleObject Is Map Then";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 202;BA.debugLine="If scheduleObject Is Map Then";
+Debug.ShouldStop(512);
 if (RemoteObject.solveBoolean("i",_scheduleobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 206;BA.debugLine="Dim schedule As Map = scheduleObject";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 203;BA.debugLine="Dim schedule As Map = scheduleObject";
+Debug.ShouldStop(1024);
 _schedule = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _schedule = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _scheduleobject);Debug.locals.put("schedule", _schedule);Debug.locals.put("schedule", _schedule);
- BA.debugLineNum = 207;BA.debugLine="Dim scheduleTitle As String = schedule.GetDefau";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 204;BA.debugLine="Dim scheduleTitle As String = schedule.GetDefau";
+Debug.ShouldStop(2048);
 _scheduletitle = BA.ObjectToString(_schedule.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("title"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("scheduleTitle", _scheduletitle);Debug.locals.put("scheduleTitle", _scheduletitle);
- BA.debugLineNum = 208;BA.debugLine="Dim slots As List = schedule.GetDefault(\"slots\"";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 205;BA.debugLine="Dim slots As List = schedule.GetDefault(\"slots\"";
+Debug.ShouldStop(4096);
 _slots = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _slots = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _schedule.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("slots"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("slots", _slots);Debug.locals.put("slots", _slots);
- BA.debugLineNum = 209;BA.debugLine="If slots.IsInitialized = False Then Continue";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 206;BA.debugLine="If slots.IsInitialized = False Then Continue";
+Debug.ShouldStop(8192);
 if (RemoteObject.solveBoolean("=",_slots.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 210;BA.debugLine="For Each slotObject As Object In slots";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 207;BA.debugLine="For Each slotObject As Object In slots";
+Debug.ShouldStop(16384);
 {
 final RemoteObject group14 = _slots;
 final int groupLen14 = group14.runMethod(true,"getSize").<Integer>get()
@@ -93,36 +93,36 @@ final int groupLen14 = group14.runMethod(true,"getSize").<Integer>get()
 for (; index14 < groupLen14;index14++){
 _slotobject = group14.runMethod(false,"Get",index14);Debug.locals.put("slotObject", _slotobject);
 Debug.locals.put("slotObject", _slotobject);
- BA.debugLineNum = 211;BA.debugLine="If slotObject Is Map Then";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 208;BA.debugLine="If slotObject Is Map Then";
+Debug.ShouldStop(32768);
 if (RemoteObject.solveBoolean("i",_slotobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 212;BA.debugLine="Dim slot As Map = slotObject";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 209;BA.debugLine="Dim slot As Map = slotObject";
+Debug.ShouldStop(65536);
 _slot = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _slot = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _slotobject);Debug.locals.put("slot", _slot);Debug.locals.put("slot", _slot);
- BA.debugLineNum = 213;BA.debugLine="Dim slotTime As String = slot.GetDefault(\"tim";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 210;BA.debugLine="Dim slotTime As String = slot.GetDefault(\"tim";
+Debug.ShouldStop(131072);
 _slottime = BA.ObjectToString(_slot.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("time"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("slotTime", _slottime);Debug.locals.put("slotTime", _slottime);
- BA.debugLineNum = 214;BA.debugLine="Dim streamData As Map = ExtractSlotStreamData";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 211;BA.debugLine="Dim streamData As Map = ExtractSlotStreamData";
+Debug.ShouldStop(262144);
 _streamdata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _streamdata = __ref.runClassMethod (b4j.example.offlinestore.class, "_extractslotstreamdata" /*RemoteObject*/ ,(Object)(_slot));Debug.locals.put("streamData", _streamdata);Debug.locals.put("streamData", _streamdata);
- BA.debugLineNum = 215;BA.debugLine="Dim streamId As String = streamData.GetDefaul";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 212;BA.debugLine="Dim streamId As String = streamData.GetDefaul";
+Debug.ShouldStop(524288);
 _streamid = BA.ObjectToString(_streamdata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("streamId", _streamid);Debug.locals.put("streamId", _streamid);
- BA.debugLineNum = 216;BA.debugLine="Dim streamTitle As String = streamData.GetDef";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 213;BA.debugLine="Dim streamTitle As String = streamData.GetDef";
+Debug.ShouldStop(1048576);
 _streamtitle = BA.ObjectToString(_streamdata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("title"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("streamTitle", _streamtitle);Debug.locals.put("streamTitle", _streamtitle);
- BA.debugLineNum = 217;BA.debugLine="Dim playlists As List = streamData.GetDefault";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 214;BA.debugLine="Dim playlists As List = streamData.GetDefault";
+Debug.ShouldStop(2097152);
 _playlists = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlists = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _streamdata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlists"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("playlists", _playlists);Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 218;BA.debugLine="If playlists.IsInitialized = False Then Conti";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 215;BA.debugLine="If playlists.IsInitialized = False Then Conti";
+Debug.ShouldStop(4194304);
 if (RemoteObject.solveBoolean("=",_playlists.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 219;BA.debugLine="For Each playlistObject As Object In playlist";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 216;BA.debugLine="For Each playlistObject As Object In playlist";
+Debug.ShouldStop(8388608);
 {
 final RemoteObject group23 = _playlists;
 final int groupLen23 = group23.runMethod(true,"getSize").<Integer>get()
@@ -131,56 +131,56 @@ final int groupLen23 = group23.runMethod(true,"getSize").<Integer>get()
 for (; index23 < groupLen23;index23++){
 _playlistobject = group23.runMethod(false,"Get",index23);Debug.locals.put("playlistObject", _playlistobject);
 Debug.locals.put("playlistObject", _playlistobject);
- BA.debugLineNum = 220;BA.debugLine="If playlistObject Is Map Then";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 217;BA.debugLine="If playlistObject Is Map Then";
+Debug.ShouldStop(16777216);
 if (RemoteObject.solveBoolean("i",_playlistobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 221;BA.debugLine="Dim playlist As Map = playlistObject";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 218;BA.debugLine="Dim playlist As Map = playlistObject";
+Debug.ShouldStop(33554432);
 _playlist = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _playlist = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _playlistobject);Debug.locals.put("playlist", _playlist);Debug.locals.put("playlist", _playlist);
- BA.debugLineNum = 222;BA.debugLine="Dim playlistId As String = playlist.GetDefa";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 219;BA.debugLine="Dim playlistId As String = playlist.GetDefa";
+Debug.ShouldStop(67108864);
 _playlistid = BA.ObjectToString(_playlist.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 223;BA.debugLine="If playlistId = \"\" Then Continue";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 220;BA.debugLine="If playlistId = \"\" Then Continue";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
 if (true) continue;};
- BA.debugLineNum = 224;BA.debugLine="If uniqueDescriptors.ContainsKey(playlistId";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 221;BA.debugLine="If uniqueDescriptors.ContainsKey(playlistId";
+Debug.ShouldStop(268435456);
 if (_uniquedescriptors.runMethod(true,"ContainsKey",(Object)((_playlistid))).<Boolean>get().booleanValue()) { 
 if (true) continue;};
- BA.debugLineNum = 225;BA.debugLine="Dim descriptor As Map";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 222;BA.debugLine="Dim descriptor As Map";
+Debug.ShouldStop(536870912);
 _descriptor = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("descriptor", _descriptor);
- BA.debugLineNum = 226;BA.debugLine="descriptor.Initialize";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 223;BA.debugLine="descriptor.Initialize";
+Debug.ShouldStop(1073741824);
 _descriptor.runVoidMethod ("Initialize");
- BA.debugLineNum = 227;BA.debugLine="descriptor.Put(\"id\", playlistId)";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 224;BA.debugLine="descriptor.Put(\"id\", playlistId)";
+Debug.ShouldStop(-2147483648);
 _descriptor.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("id"))),(Object)((_playlistid)));
- BA.debugLineNum = 228;BA.debugLine="descriptor.Put(\"updated\", playlist.GetDefau";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 225;BA.debugLine="descriptor.Put(\"updated\", playlist.GetDefau";
+Debug.ShouldStop(1);
 _descriptor.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("updated"))),(Object)(_playlist.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 229;BA.debugLine="descriptor.Put(\"title\", playlist.GetDefault";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 226;BA.debugLine="descriptor.Put(\"title\", playlist.GetDefault";
+Debug.ShouldStop(2);
 _descriptor.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("title"))),(Object)(_playlist.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("title"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 230;BA.debugLine="descriptor.Put(\"schedule_title\", scheduleTi";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 227;BA.debugLine="descriptor.Put(\"schedule_title\", scheduleTi";
+Debug.ShouldStop(4);
 _descriptor.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("schedule_title"))),(Object)((_scheduletitle)));
- BA.debugLineNum = 231;BA.debugLine="descriptor.Put(\"slot_time\", slotTime)";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 228;BA.debugLine="descriptor.Put(\"slot_time\", slotTime)";
+Debug.ShouldStop(8);
 _descriptor.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("slot_time"))),(Object)((_slottime)));
- BA.debugLineNum = 232;BA.debugLine="descriptor.Put(\"stream_id\", streamId)";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 229;BA.debugLine="descriptor.Put(\"stream_id\", streamId)";
+Debug.ShouldStop(16);
 _descriptor.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("stream_id"))),(Object)((_streamid)));
- BA.debugLineNum = 233;BA.debugLine="descriptor.Put(\"stream_title\", streamTitle)";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 230;BA.debugLine="descriptor.Put(\"stream_title\", streamTitle)";
+Debug.ShouldStop(32);
 _descriptor.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("stream_title"))),(Object)((_streamtitle)));
- BA.debugLineNum = 234;BA.debugLine="uniqueDescriptors.Put(playlistId, descripto";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 231;BA.debugLine="uniqueDescriptors.Put(playlistId, descripto";
+Debug.ShouldStop(64);
 _uniquedescriptors.runVoidMethod ("Put",(Object)((_playlistid)),(Object)((_descriptor.getObject())));
- BA.debugLineNum = 235;BA.debugLine="descriptors.Add(descriptor)";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 232;BA.debugLine="descriptors.Add(descriptor)";
+Debug.ShouldStop(128);
 _descriptors.runVoidMethod ("Add",(Object)((_descriptor.getObject())));
  };
  }
@@ -194,11 +194,11 @@ _descriptors.runVoidMethod ("Add",(Object)((_descriptor.getObject())));
  }
 }Debug.locals.put("scheduleObject", _scheduleobject);
 ;
- BA.debugLineNum = 242;BA.debugLine="Return descriptors";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 239;BA.debugLine="Return descriptors";
+Debug.ShouldStop(16384);
 if (true) return _descriptors;
- BA.debugLineNum = 243;BA.debugLine="End Sub";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 240;BA.debugLine="End Sub";
+Debug.ShouldStop(32768);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -230,7 +230,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _compareofflineplaylistswithcache(RemoteObject __ref,RemoteObject _descriptors) throws Exception{
 try {
-		Debug.PushSubsStack("CompareOfflinePlaylistsWithCache (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,245);
+		Debug.PushSubsStack("CompareOfflinePlaylistsWithCache (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,242);
 if (RapidSub.canDelegate("compareofflineplaylistswithcache")) { return __ref.runUserSub(false, "offlinestore","compareofflineplaylistswithcache", __ref, _descriptors);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _downloadids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -244,35 +244,35 @@ RemoteObject _playlistid = RemoteObject.createImmutable("");
 RemoteObject _cachedentryobject = RemoteObject.declareNull("Object");
 RemoteObject _cachedentry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("descriptors", _descriptors);
- BA.debugLineNum = 245;BA.debugLine="Private Sub CompareOfflinePlaylistsWithCache(descr";
-Debug.ShouldStop(1048576);
- BA.debugLineNum = 246;BA.debugLine="Dim result As Map";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 242;BA.debugLine="Private Sub CompareOfflinePlaylistsWithCache(descr";
+Debug.ShouldStop(131072);
+ BA.debugLineNum = 243;BA.debugLine="Dim result As Map";
+Debug.ShouldStop(262144);
 _result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("result", _result);
- BA.debugLineNum = 247;BA.debugLine="result.Initialize";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 244;BA.debugLine="result.Initialize";
+Debug.ShouldStop(524288);
 _result.runVoidMethod ("Initialize");
- BA.debugLineNum = 248;BA.debugLine="Dim downloadIds As List";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 245;BA.debugLine="Dim downloadIds As List";
+Debug.ShouldStop(1048576);
 _downloadids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("downloadIds", _downloadids);
- BA.debugLineNum = 249;BA.debugLine="downloadIds.Initialize";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 246;BA.debugLine="downloadIds.Initialize";
+Debug.ShouldStop(2097152);
 _downloadids.runVoidMethod ("Initialize");
- BA.debugLineNum = 250;BA.debugLine="Dim cachedPlaylistIndex As Map = storage.GetDefau";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 247;BA.debugLine="Dim cachedPlaylistIndex As Map = storage.GetDefau";
+Debug.ShouldStop(4194304);
 _cachedplaylistindex = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _cachedplaylistindex = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_getdefault" /*RemoteObject*/ ,(Object)(BA.ObjectToString("cached_playlist_index")),(Object)((__ref.runClassMethod (b4j.example.offlinestore.class, "_createinitializedmap" /*RemoteObject*/ ).getObject()))));Debug.locals.put("cachedPlaylistIndex", _cachedplaylistindex);Debug.locals.put("cachedPlaylistIndex", _cachedplaylistindex);
- BA.debugLineNum = 251;BA.debugLine="Dim missingCount As Int = 0";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 248;BA.debugLine="Dim missingCount As Int = 0";
+Debug.ShouldStop(8388608);
 _missingcount = BA.numberCast(int.class, 0);Debug.locals.put("missingCount", _missingcount);Debug.locals.put("missingCount", _missingcount);
- BA.debugLineNum = 252;BA.debugLine="Dim outdatedCount As Int = 0";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 249;BA.debugLine="Dim outdatedCount As Int = 0";
+Debug.ShouldStop(16777216);
 _outdatedcount = BA.numberCast(int.class, 0);Debug.locals.put("outdatedCount", _outdatedcount);Debug.locals.put("outdatedCount", _outdatedcount);
- BA.debugLineNum = 253;BA.debugLine="Dim actualCount As Int = 0";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 250;BA.debugLine="Dim actualCount As Int = 0";
+Debug.ShouldStop(33554432);
 _actualcount = BA.numberCast(int.class, 0);Debug.locals.put("actualCount", _actualcount);Debug.locals.put("actualCount", _actualcount);
- BA.debugLineNum = 254;BA.debugLine="For Each descriptorObject As Object In descriptor";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 251;BA.debugLine="For Each descriptorObject As Object In descriptor";
+Debug.ShouldStop(67108864);
 {
 final RemoteObject group9 = _descriptors;
 final int groupLen9 = group9.runMethod(true,"getSize").<Integer>get()
@@ -281,86 +281,86 @@ final int groupLen9 = group9.runMethod(true,"getSize").<Integer>get()
 for (; index9 < groupLen9;index9++){
 _descriptorobject = group9.runMethod(false,"Get",index9);Debug.locals.put("descriptorObject", _descriptorobject);
 Debug.locals.put("descriptorObject", _descriptorobject);
- BA.debugLineNum = 255;BA.debugLine="If descriptorObject Is Map Then";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 252;BA.debugLine="If descriptorObject Is Map Then";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("i",_descriptorobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 256;BA.debugLine="Dim descriptor As Map = descriptorObject";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 253;BA.debugLine="Dim descriptor As Map = descriptorObject";
+Debug.ShouldStop(268435456);
 _descriptor = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _descriptor = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _descriptorobject);Debug.locals.put("descriptor", _descriptor);Debug.locals.put("descriptor", _descriptor);
- BA.debugLineNum = 257;BA.debugLine="Dim playlistId As String = descriptor.GetDefaul";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 254;BA.debugLine="Dim playlistId As String = descriptor.GetDefaul";
+Debug.ShouldStop(536870912);
 _playlistid = BA.ObjectToString(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 258;BA.debugLine="If playlistId = \"\" Then Continue";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 255;BA.debugLine="If playlistId = \"\" Then Continue";
+Debug.ShouldStop(1073741824);
 if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
 if (true) continue;};
- BA.debugLineNum = 259;BA.debugLine="If cachedPlaylistIndex.ContainsKey(playlistId)";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 256;BA.debugLine="If cachedPlaylistIndex.ContainsKey(playlistId)";
+Debug.ShouldStop(-2147483648);
 if (RemoteObject.solveBoolean("=",_cachedplaylistindex.runMethod(true,"ContainsKey",(Object)((_playlistid))),offlinestore.__c.getField(true,"False"))) { 
- BA.debugLineNum = 260;BA.debugLine="missingCount = missingCount + 1";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 257;BA.debugLine="missingCount = missingCount + 1";
+Debug.ShouldStop(1);
 _missingcount = RemoteObject.solve(new RemoteObject[] {_missingcount,RemoteObject.createImmutable(1)}, "+",1, 1);Debug.locals.put("missingCount", _missingcount);
- BA.debugLineNum = 261;BA.debugLine="downloadIds.Add(playlistId)";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 258;BA.debugLine="downloadIds.Add(playlistId)";
+Debug.ShouldStop(2);
 _downloadids.runVoidMethod ("Add",(Object)((_playlistid)));
- BA.debugLineNum = 262;BA.debugLine="Continue";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 259;BA.debugLine="Continue";
+Debug.ShouldStop(4);
 if (true) continue;
  };
- BA.debugLineNum = 264;BA.debugLine="Dim cachedEntryObject As Object = cachedPlaylis";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 261;BA.debugLine="Dim cachedEntryObject As Object = cachedPlaylis";
+Debug.ShouldStop(16);
 _cachedentryobject = _cachedplaylistindex.runMethod(false,"Get",(Object)((_playlistid)));Debug.locals.put("cachedEntryObject", _cachedentryobject);Debug.locals.put("cachedEntryObject", _cachedentryobject);
- BA.debugLineNum = 265;BA.debugLine="If cachedEntryObject Is Map Then";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 262;BA.debugLine="If cachedEntryObject Is Map Then";
+Debug.ShouldStop(32);
 if (RemoteObject.solveBoolean("i",_cachedentryobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 266;BA.debugLine="Dim cachedEntry As Map = cachedEntryObject";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 263;BA.debugLine="Dim cachedEntry As Map = cachedEntryObject";
+Debug.ShouldStop(64);
 _cachedentry = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _cachedentry = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _cachedentryobject);Debug.locals.put("cachedEntry", _cachedentry);Debug.locals.put("cachedEntry", _cachedentry);
- BA.debugLineNum = 267;BA.debugLine="If cachedEntry.GetDefault(\"updated\", \"\") <> de";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 264;BA.debugLine="If cachedEntry.GetDefault(\"updated\", \"\") <> de";
+Debug.ShouldStop(128);
 if (RemoteObject.solveBoolean("!",_cachedentry.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable("")))),_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable("")))))) { 
- BA.debugLineNum = 268;BA.debugLine="outdatedCount = outdatedCount + 1";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 265;BA.debugLine="outdatedCount = outdatedCount + 1";
+Debug.ShouldStop(256);
 _outdatedcount = RemoteObject.solve(new RemoteObject[] {_outdatedcount,RemoteObject.createImmutable(1)}, "+",1, 1);Debug.locals.put("outdatedCount", _outdatedcount);
- BA.debugLineNum = 269;BA.debugLine="downloadIds.Add(playlistId)";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 266;BA.debugLine="downloadIds.Add(playlistId)";
+Debug.ShouldStop(512);
 _downloadids.runVoidMethod ("Add",(Object)((_playlistid)));
  }else {
- BA.debugLineNum = 271;BA.debugLine="actualCount = actualCount + 1";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 268;BA.debugLine="actualCount = actualCount + 1";
+Debug.ShouldStop(2048);
 _actualcount = RemoteObject.solve(new RemoteObject[] {_actualcount,RemoteObject.createImmutable(1)}, "+",1, 1);Debug.locals.put("actualCount", _actualcount);
  };
  }else {
- BA.debugLineNum = 274;BA.debugLine="missingCount = missingCount + 1";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 271;BA.debugLine="missingCount = missingCount + 1";
+Debug.ShouldStop(16384);
 _missingcount = RemoteObject.solve(new RemoteObject[] {_missingcount,RemoteObject.createImmutable(1)}, "+",1, 1);Debug.locals.put("missingCount", _missingcount);
- BA.debugLineNum = 275;BA.debugLine="downloadIds.Add(playlistId)";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 272;BA.debugLine="downloadIds.Add(playlistId)";
+Debug.ShouldStop(32768);
 _downloadids.runVoidMethod ("Add",(Object)((_playlistid)));
  };
  };
  }
 }Debug.locals.put("descriptorObject", _descriptorobject);
 ;
- BA.debugLineNum = 279;BA.debugLine="result.Put(\"DownloadIds\", downloadIds)";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 276;BA.debugLine="result.Put(\"DownloadIds\", downloadIds)";
+Debug.ShouldStop(524288);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("DownloadIds"))),(Object)((_downloadids.getObject())));
- BA.debugLineNum = 280;BA.debugLine="result.Put(\"MissingCount\", missingCount)";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 277;BA.debugLine="result.Put(\"MissingCount\", missingCount)";
+Debug.ShouldStop(1048576);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("MissingCount"))),(Object)((_missingcount)));
- BA.debugLineNum = 281;BA.debugLine="result.Put(\"OutdatedCount\", outdatedCount)";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 278;BA.debugLine="result.Put(\"OutdatedCount\", outdatedCount)";
+Debug.ShouldStop(2097152);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("OutdatedCount"))),(Object)((_outdatedcount)));
- BA.debugLineNum = 282;BA.debugLine="result.Put(\"ActualCount\", actualCount)";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 279;BA.debugLine="result.Put(\"ActualCount\", actualCount)";
+Debug.ShouldStop(4194304);
 _result.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("ActualCount"))),(Object)((_actualcount)));
- BA.debugLineNum = 283;BA.debugLine="Return result";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 280;BA.debugLine="Return result";
+Debug.ShouldStop(8388608);
 if (true) return _result;
- BA.debugLineNum = 284;BA.debugLine="End Sub";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 281;BA.debugLine="End Sub";
+Debug.ShouldStop(16777216);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -371,22 +371,22 @@ finally {
 		}}
 public static RemoteObject  _createinitializedlist(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CreateInitializedList (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,342);
+		Debug.PushSubsStack("CreateInitializedList (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,339);
 if (RapidSub.canDelegate("createinitializedlist")) { return __ref.runUserSub(false, "offlinestore","createinitializedlist", __ref);}
 RemoteObject _items = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
- BA.debugLineNum = 342;BA.debugLine="Private Sub CreateInitializedList As List";
-Debug.ShouldStop(2097152);
- BA.debugLineNum = 343;BA.debugLine="Dim items As List";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 339;BA.debugLine="Private Sub CreateInitializedList As List";
+Debug.ShouldStop(262144);
+ BA.debugLineNum = 340;BA.debugLine="Dim items As List";
+Debug.ShouldStop(524288);
 _items = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("items", _items);
- BA.debugLineNum = 344;BA.debugLine="items.Initialize";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 341;BA.debugLine="items.Initialize";
+Debug.ShouldStop(1048576);
 _items.runVoidMethod ("Initialize");
- BA.debugLineNum = 345;BA.debugLine="Return items";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 342;BA.debugLine="Return items";
+Debug.ShouldStop(2097152);
 if (true) return _items;
- BA.debugLineNum = 346;BA.debugLine="End Sub";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 343;BA.debugLine="End Sub";
+Debug.ShouldStop(4194304);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -397,22 +397,22 @@ finally {
 		}}
 public static RemoteObject  _createinitializedmap(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CreateInitializedMap (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,336);
+		Debug.PushSubsStack("CreateInitializedMap (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,333);
 if (RapidSub.canDelegate("createinitializedmap")) { return __ref.runUserSub(false, "offlinestore","createinitializedmap", __ref);}
 RemoteObject _m = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
- BA.debugLineNum = 336;BA.debugLine="Private Sub CreateInitializedMap As Map";
-Debug.ShouldStop(32768);
- BA.debugLineNum = 337;BA.debugLine="Dim m As Map";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 333;BA.debugLine="Private Sub CreateInitializedMap As Map";
+Debug.ShouldStop(4096);
+ BA.debugLineNum = 334;BA.debugLine="Dim m As Map";
+Debug.ShouldStop(8192);
 _m = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("m", _m);
- BA.debugLineNum = 338;BA.debugLine="m.Initialize";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 335;BA.debugLine="m.Initialize";
+Debug.ShouldStop(16384);
 _m.runVoidMethod ("Initialize");
- BA.debugLineNum = 339;BA.debugLine="Return m";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 336;BA.debugLine="Return m";
+Debug.ShouldStop(32768);
 if (true) return _m;
- BA.debugLineNum = 340;BA.debugLine="End Sub";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 337;BA.debugLine="End Sub";
+Debug.ShouldStop(65536);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -423,23 +423,23 @@ finally {
 		}}
 public static RemoteObject  _ensuredirectory(RemoteObject __ref,RemoteObject _path) throws Exception{
 try {
-		Debug.PushSubsStack("EnsureDirectory (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,330);
+		Debug.PushSubsStack("EnsureDirectory (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,327);
 if (RapidSub.canDelegate("ensuredirectory")) { return __ref.runUserSub(false, "offlinestore","ensuredirectory", __ref, _path);}
 RemoteObject _jofile = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("path", _path);
- BA.debugLineNum = 330;BA.debugLine="Private Sub EnsureDirectory(path As String)";
-Debug.ShouldStop(512);
- BA.debugLineNum = 331;BA.debugLine="Dim joFile As JavaObject";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 327;BA.debugLine="Private Sub EnsureDirectory(path As String)";
+Debug.ShouldStop(64);
+ BA.debugLineNum = 328;BA.debugLine="Dim joFile As JavaObject";
+Debug.ShouldStop(128);
 _jofile = RemoteObject.createNew ("anywheresoftware.b4j.object.JavaObject");Debug.locals.put("joFile", _jofile);
- BA.debugLineNum = 332;BA.debugLine="joFile.InitializeNewInstance(\"java.io.File\", Arra";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 329;BA.debugLine="joFile.InitializeNewInstance(\"java.io.File\", Arra";
+Debug.ShouldStop(256);
 _jofile.runVoidMethod ("InitializeNewInstance",(Object)(BA.ObjectToString("java.io.File")),(Object)(RemoteObject.createNewArray("Object",new int[] {1},new Object[] {(_path)})));
- BA.debugLineNum = 333;BA.debugLine="joFile.RunMethod(\"mkdirs\", Null)";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 330;BA.debugLine="joFile.RunMethod(\"mkdirs\", Null)";
+Debug.ShouldStop(512);
 _jofile.runVoidMethod ("RunMethod",(Object)(BA.ObjectToString("mkdirs")),(Object)((offlinestore.__c.getField(false,"Null"))));
- BA.debugLineNum = 334;BA.debugLine="End Sub";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 331;BA.debugLine="End Sub";
+Debug.ShouldStop(1024);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -450,49 +450,49 @@ finally {
 		}}
 public static RemoteObject  _extractslotstreamdata(RemoteObject __ref,RemoteObject _slot) throws Exception{
 try {
-		Debug.PushSubsStack("ExtractSlotStreamData (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,316);
+		Debug.PushSubsStack("ExtractSlotStreamData (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,313);
 if (RapidSub.canDelegate("extractslotstreamdata")) { return __ref.runUserSub(false, "offlinestore","extractslotstreamdata", __ref, _slot);}
 RemoteObject _streamdata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _streamobject = RemoteObject.declareNull("Object");
 Debug.locals.put("slot", _slot);
- BA.debugLineNum = 316;BA.debugLine="Private Sub ExtractSlotStreamData(slot As Map) As";
-Debug.ShouldStop(134217728);
- BA.debugLineNum = 317;BA.debugLine="Dim streamData As Map";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 313;BA.debugLine="Private Sub ExtractSlotStreamData(slot As Map) As";
+Debug.ShouldStop(16777216);
+ BA.debugLineNum = 314;BA.debugLine="Dim streamData As Map";
+Debug.ShouldStop(33554432);
 _streamdata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("streamData", _streamdata);
- BA.debugLineNum = 318;BA.debugLine="streamData.Initialize";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 315;BA.debugLine="streamData.Initialize";
+Debug.ShouldStop(67108864);
 _streamdata.runVoidMethod ("Initialize");
- BA.debugLineNum = 319;BA.debugLine="If slot.IsInitialized = False Then Return streamD";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 316;BA.debugLine="If slot.IsInitialized = False Then Return streamD";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("=",_slot.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return _streamdata;};
- BA.debugLineNum = 320;BA.debugLine="Dim streamObject As Object = slot.Get(\"stream\")";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 317;BA.debugLine="Dim streamObject As Object = slot.Get(\"stream\")";
+Debug.ShouldStop(268435456);
 _streamobject = _slot.runMethod(false,"Get",(Object)((RemoteObject.createImmutable("stream"))));Debug.locals.put("streamObject", _streamobject);Debug.locals.put("streamObject", _streamobject);
- BA.debugLineNum = 321;BA.debugLine="If streamObject Is Map Then";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 318;BA.debugLine="If streamObject Is Map Then";
+Debug.ShouldStop(536870912);
 if (RemoteObject.solveBoolean("i",_streamobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 322;BA.debugLine="streamData = streamObject";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 319;BA.debugLine="streamData = streamObject";
+Debug.ShouldStop(1073741824);
 _streamdata = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _streamobject);Debug.locals.put("streamData", _streamdata);
- BA.debugLineNum = 323;BA.debugLine="Return streamData";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 320;BA.debugLine="Return streamData";
+Debug.ShouldStop(-2147483648);
 if (true) return _streamdata;
  };
- BA.debugLineNum = 325;BA.debugLine="If streamObject <> Null Then streamData.Put(\"id\",";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 322;BA.debugLine="If streamObject <> Null Then streamData.Put(\"id\",";
+Debug.ShouldStop(2);
 if (RemoteObject.solveBoolean("N",_streamobject)) { 
 _streamdata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.concat(RemoteObject.createImmutable(""),_streamobject))));};
- BA.debugLineNum = 326;BA.debugLine="If slot.ContainsKey(\"playlists\") Then streamData.";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 323;BA.debugLine="If slot.ContainsKey(\"playlists\") Then streamData.";
+Debug.ShouldStop(4);
 if (_slot.runMethod(true,"ContainsKey",(Object)((RemoteObject.createImmutable("playlists")))).<Boolean>get().booleanValue()) { 
 _streamdata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("playlists"))),(Object)(_slot.runMethod(false,"Get",(Object)((RemoteObject.createImmutable("playlists"))))));};
- BA.debugLineNum = 327;BA.debugLine="Return streamData";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 324;BA.debugLine="Return streamData";
+Debug.ShouldStop(8);
 if (true) return _streamdata;
- BA.debugLineNum = 328;BA.debugLine="End Sub";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 325;BA.debugLine="End Sub";
+Debug.ShouldStop(16);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -503,15 +503,15 @@ finally {
 		}}
 public static RemoteObject  _getcachedplaylistindex(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetCachedPlaylistIndex (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,71);
+		Debug.PushSubsStack("GetCachedPlaylistIndex (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,69);
 if (RapidSub.canDelegate("getcachedplaylistindex")) { return __ref.runUserSub(false, "offlinestore","getcachedplaylistindex", __ref);}
- BA.debugLineNum = 71;BA.debugLine="Public Sub GetCachedPlaylistIndex As Map";
-Debug.ShouldStop(64);
- BA.debugLineNum = 72;BA.debugLine="Return storage.GetDefault(\"cached_playlist_index\"";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 69;BA.debugLine="Public Sub GetCachedPlaylistIndex As Map";
+Debug.ShouldStop(16);
+ BA.debugLineNum = 70;BA.debugLine="Return storage.GetDefault(\"cached_playlist_index\"";
+Debug.ShouldStop(32);
 if (true) return RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_getdefault" /*RemoteObject*/ ,(Object)(BA.ObjectToString("cached_playlist_index")),(Object)((__ref.runClassMethod (b4j.example.offlinestore.class, "_createinitializedmap" /*RemoteObject*/ ).getObject()))));
- BA.debugLineNum = 73;BA.debugLine="End Sub";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 71;BA.debugLine="End Sub";
+Debug.ShouldStop(64);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -522,29 +522,29 @@ finally {
 		}}
 public static RemoteObject  _getofflineadscount(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("GetOfflineAdsCount (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,182);
+		Debug.PushSubsStack("GetOfflineAdsCount (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,179);
 if (RapidSub.canDelegate("getofflineadscount")) { return __ref.runUserSub(false, "offlinestore","getofflineadscount", __ref, _data);}
 RemoteObject _ads = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 Debug.locals.put("data", _data);
- BA.debugLineNum = 182;BA.debugLine="Private Sub GetOfflineAdsCount(data As Map) As Int";
-Debug.ShouldStop(2097152);
- BA.debugLineNum = 183;BA.debugLine="If data.IsInitialized = False Then Return 0";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 179;BA.debugLine="Private Sub GetOfflineAdsCount(data As Map) As Int";
+Debug.ShouldStop(262144);
+ BA.debugLineNum = 180;BA.debugLine="If data.IsInitialized = False Then Return 0";
+Debug.ShouldStop(524288);
 if (RemoteObject.solveBoolean("=",_data.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 184;BA.debugLine="Dim ads As List = data.GetDefault(\"ads\", Null)";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 181;BA.debugLine="Dim ads As List = data.GetDefault(\"ads\", Null)";
+Debug.ShouldStop(1048576);
 _ads = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _ads = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _data.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("ads"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("ads", _ads);Debug.locals.put("ads", _ads);
- BA.debugLineNum = 185;BA.debugLine="If ads.IsInitialized = False Then Return 0";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 182;BA.debugLine="If ads.IsInitialized = False Then Return 0";
+Debug.ShouldStop(2097152);
 if (RemoteObject.solveBoolean("=",_ads.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 186;BA.debugLine="Return ads.Size";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 183;BA.debugLine="Return ads.Size";
+Debug.ShouldStop(4194304);
 if (true) return _ads.runMethod(true,"getSize");
- BA.debugLineNum = 187;BA.debugLine="End Sub";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 184;BA.debugLine="End Sub";
+Debug.ShouldStop(8388608);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -555,7 +555,7 @@ finally {
 		}}
 public static RemoteObject  _getofflineplaylistids(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("GetOfflinePlaylistIds (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,146);
+		Debug.PushSubsStack("GetOfflinePlaylistIds (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,143);
 if (RapidSub.canDelegate("getofflineplaylistids")) { return __ref.runUserSub(false, "offlinestore","getofflineplaylistids", __ref, _data);}
 RemoteObject _playlistids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _uniqueids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -571,34 +571,34 @@ RemoteObject _playlistobject = RemoteObject.declareNull("Object");
 RemoteObject _playlist = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _playlistid = RemoteObject.createImmutable("");
 Debug.locals.put("data", _data);
- BA.debugLineNum = 146;BA.debugLine="Private Sub GetOfflinePlaylistIds(data As Map) As";
-Debug.ShouldStop(131072);
- BA.debugLineNum = 147;BA.debugLine="Dim playlistIds As List";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 143;BA.debugLine="Private Sub GetOfflinePlaylistIds(data As Map) As";
+Debug.ShouldStop(16384);
+ BA.debugLineNum = 144;BA.debugLine="Dim playlistIds As List";
+Debug.ShouldStop(32768);
 _playlistids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("playlistIds", _playlistids);
- BA.debugLineNum = 148;BA.debugLine="playlistIds.Initialize";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 145;BA.debugLine="playlistIds.Initialize";
+Debug.ShouldStop(65536);
 _playlistids.runVoidMethod ("Initialize");
- BA.debugLineNum = 149;BA.debugLine="If data.IsInitialized = False Then Return playlis";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 146;BA.debugLine="If data.IsInitialized = False Then Return playlis";
+Debug.ShouldStop(131072);
 if (RemoteObject.solveBoolean("=",_data.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return _playlistids;};
- BA.debugLineNum = 150;BA.debugLine="Dim uniqueIds As Map";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 147;BA.debugLine="Dim uniqueIds As Map";
+Debug.ShouldStop(262144);
 _uniqueids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("uniqueIds", _uniqueids);
- BA.debugLineNum = 151;BA.debugLine="uniqueIds.Initialize";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 148;BA.debugLine="uniqueIds.Initialize";
+Debug.ShouldStop(524288);
 _uniqueids.runVoidMethod ("Initialize");
- BA.debugLineNum = 152;BA.debugLine="Dim schedules As List = data.GetDefault(\"schedule";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 149;BA.debugLine="Dim schedules As List = data.GetDefault(\"schedule";
+Debug.ShouldStop(1048576);
 _schedules = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _schedules = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _data.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("schedules"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("schedules", _schedules);Debug.locals.put("schedules", _schedules);
- BA.debugLineNum = 153;BA.debugLine="If schedules.IsInitialized = False Then Return pl";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 150;BA.debugLine="If schedules.IsInitialized = False Then Return pl";
+Debug.ShouldStop(2097152);
 if (RemoteObject.solveBoolean("=",_schedules.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return _playlistids;};
- BA.debugLineNum = 154;BA.debugLine="For Each scheduleObject As Object In schedules";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 151;BA.debugLine="For Each scheduleObject As Object In schedules";
+Debug.ShouldStop(4194304);
 {
 final RemoteObject group8 = _schedules;
 final int groupLen8 = group8.runMethod(true,"getSize").<Integer>get()
@@ -607,23 +607,23 @@ final int groupLen8 = group8.runMethod(true,"getSize").<Integer>get()
 for (; index8 < groupLen8;index8++){
 _scheduleobject = group8.runMethod(false,"Get",index8);Debug.locals.put("scheduleObject", _scheduleobject);
 Debug.locals.put("scheduleObject", _scheduleobject);
- BA.debugLineNum = 155;BA.debugLine="If scheduleObject Is Map Then";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 152;BA.debugLine="If scheduleObject Is Map Then";
+Debug.ShouldStop(8388608);
 if (RemoteObject.solveBoolean("i",_scheduleobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 156;BA.debugLine="Dim schedule As Map = scheduleObject";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 153;BA.debugLine="Dim schedule As Map = scheduleObject";
+Debug.ShouldStop(16777216);
 _schedule = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _schedule = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _scheduleobject);Debug.locals.put("schedule", _schedule);Debug.locals.put("schedule", _schedule);
- BA.debugLineNum = 157;BA.debugLine="Dim slots As List = schedule.GetDefault(\"slots\"";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 154;BA.debugLine="Dim slots As List = schedule.GetDefault(\"slots\"";
+Debug.ShouldStop(33554432);
 _slots = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _slots = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _schedule.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("slots"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("slots", _slots);Debug.locals.put("slots", _slots);
- BA.debugLineNum = 158;BA.debugLine="If slots.IsInitialized = False Then Continue";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 155;BA.debugLine="If slots.IsInitialized = False Then Continue";
+Debug.ShouldStop(67108864);
 if (RemoteObject.solveBoolean("=",_slots.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 159;BA.debugLine="For Each slotObject As Object In slots";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 156;BA.debugLine="For Each slotObject As Object In slots";
+Debug.ShouldStop(134217728);
 {
 final RemoteObject group13 = _slots;
 final int groupLen13 = group13.runMethod(true,"getSize").<Integer>get()
@@ -632,27 +632,27 @@ final int groupLen13 = group13.runMethod(true,"getSize").<Integer>get()
 for (; index13 < groupLen13;index13++){
 _slotobject = group13.runMethod(false,"Get",index13);Debug.locals.put("slotObject", _slotobject);
 Debug.locals.put("slotObject", _slotobject);
- BA.debugLineNum = 160;BA.debugLine="If slotObject Is Map Then";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 157;BA.debugLine="If slotObject Is Map Then";
+Debug.ShouldStop(268435456);
 if (RemoteObject.solveBoolean("i",_slotobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 161;BA.debugLine="Dim slot As Map = slotObject";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 158;BA.debugLine="Dim slot As Map = slotObject";
+Debug.ShouldStop(536870912);
 _slot = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _slot = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _slotobject);Debug.locals.put("slot", _slot);Debug.locals.put("slot", _slot);
- BA.debugLineNum = 162;BA.debugLine="Dim streamData As Map = ExtractSlotStreamData";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 159;BA.debugLine="Dim streamData As Map = ExtractSlotStreamData";
+Debug.ShouldStop(1073741824);
 _streamdata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _streamdata = __ref.runClassMethod (b4j.example.offlinestore.class, "_extractslotstreamdata" /*RemoteObject*/ ,(Object)(_slot));Debug.locals.put("streamData", _streamdata);Debug.locals.put("streamData", _streamdata);
- BA.debugLineNum = 163;BA.debugLine="Dim playlists As List = streamData.GetDefault";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 160;BA.debugLine="Dim playlists As List = streamData.GetDefault";
+Debug.ShouldStop(-2147483648);
 _playlists = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlists = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _streamdata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlists"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("playlists", _playlists);Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 164;BA.debugLine="If playlists.IsInitialized = False Then Conti";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 161;BA.debugLine="If playlists.IsInitialized = False Then Conti";
+Debug.ShouldStop(1);
 if (RemoteObject.solveBoolean("=",_playlists.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 165;BA.debugLine="For Each playlistObject As Object In playlist";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 162;BA.debugLine="For Each playlistObject As Object In playlist";
+Debug.ShouldStop(2);
 {
 final RemoteObject group19 = _playlists;
 final int groupLen19 = group19.runMethod(true,"getSize").<Integer>get()
@@ -661,24 +661,24 @@ final int groupLen19 = group19.runMethod(true,"getSize").<Integer>get()
 for (; index19 < groupLen19;index19++){
 _playlistobject = group19.runMethod(false,"Get",index19);Debug.locals.put("playlistObject", _playlistobject);
 Debug.locals.put("playlistObject", _playlistobject);
- BA.debugLineNum = 166;BA.debugLine="If playlistObject Is Map Then";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 163;BA.debugLine="If playlistObject Is Map Then";
+Debug.ShouldStop(4);
 if (RemoteObject.solveBoolean("i",_playlistobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 167;BA.debugLine="Dim playlist As Map = playlistObject";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 164;BA.debugLine="Dim playlist As Map = playlistObject";
+Debug.ShouldStop(8);
 _playlist = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _playlist = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _playlistobject);Debug.locals.put("playlist", _playlist);Debug.locals.put("playlist", _playlist);
- BA.debugLineNum = 168;BA.debugLine="Dim playlistId As String = playlist.GetDefa";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 165;BA.debugLine="Dim playlistId As String = playlist.GetDefa";
+Debug.ShouldStop(16);
 _playlistid = BA.ObjectToString(_playlist.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 169;BA.debugLine="If playlistId <> \"\" And uniqueIds.ContainsK";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 166;BA.debugLine="If playlistId <> \"\" And uniqueIds.ContainsK";
+Debug.ShouldStop(32);
 if (RemoteObject.solveBoolean("!",_playlistid,BA.ObjectToString("")) && RemoteObject.solveBoolean("=",_uniqueids.runMethod(true,"ContainsKey",(Object)((_playlistid))),offlinestore.__c.getField(true,"False"))) { 
- BA.debugLineNum = 170;BA.debugLine="uniqueIds.Put(playlistId, True)";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 167;BA.debugLine="uniqueIds.Put(playlistId, True)";
+Debug.ShouldStop(64);
 _uniqueids.runVoidMethod ("Put",(Object)((_playlistid)),(Object)((offlinestore.__c.getField(true,"True"))));
- BA.debugLineNum = 171;BA.debugLine="playlistIds.Add(playlistId)";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 168;BA.debugLine="playlistIds.Add(playlistId)";
+Debug.ShouldStop(128);
 _playlistids.runVoidMethod ("Add",(Object)((_playlistid)));
  };
  };
@@ -693,11 +693,11 @@ _playlistids.runVoidMethod ("Add",(Object)((_playlistid)));
  }
 }Debug.locals.put("scheduleObject", _scheduleobject);
 ;
- BA.debugLineNum = 179;BA.debugLine="Return playlistIds";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 176;BA.debugLine="Return playlistIds";
+Debug.ShouldStop(32768);
 if (true) return _playlistids;
- BA.debugLineNum = 180;BA.debugLine="End Sub";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 177;BA.debugLine="End Sub";
+Debug.ShouldStop(65536);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -708,15 +708,15 @@ finally {
 		}}
 public static RemoteObject  _getofflineplaylistsdir(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetOfflinePlaylistsDir (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,119);
+		Debug.PushSubsStack("GetOfflinePlaylistsDir (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,116);
 if (RapidSub.canDelegate("getofflineplaylistsdir")) { return __ref.runUserSub(false, "offlinestore","getofflineplaylistsdir", __ref);}
- BA.debugLineNum = 119;BA.debugLine="Public Sub GetOfflinePlaylistsDir As String";
-Debug.ShouldStop(4194304);
- BA.debugLineNum = 120;BA.debugLine="Return File.Combine(storageDir, playlistsDirName)";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 116;BA.debugLine="Public Sub GetOfflinePlaylistsDir As String";
+Debug.ShouldStop(524288);
+ BA.debugLineNum = 117;BA.debugLine="Return File.Combine(storageDir, playlistsDirName)";
+Debug.ShouldStop(1048576);
 if (true) return offlinestore.__c.getField(false,"File").runMethod(true,"Combine",(Object)(__ref.getField(true,"_storagedir" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_playlistsdirname" /*RemoteObject*/ )));
- BA.debugLineNum = 121;BA.debugLine="End Sub";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 118;BA.debugLine="End Sub";
+Debug.ShouldStop(2097152);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -727,29 +727,29 @@ finally {
 		}}
 public static RemoteObject  _getofflineschedulescount(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("GetOfflineSchedulesCount (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,189);
+		Debug.PushSubsStack("GetOfflineSchedulesCount (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,186);
 if (RapidSub.canDelegate("getofflineschedulescount")) { return __ref.runUserSub(false, "offlinestore","getofflineschedulescount", __ref, _data);}
 RemoteObject _schedules = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 Debug.locals.put("data", _data);
- BA.debugLineNum = 189;BA.debugLine="Private Sub GetOfflineSchedulesCount(data As Map)";
-Debug.ShouldStop(268435456);
- BA.debugLineNum = 190;BA.debugLine="If data.IsInitialized = False Then Return 0";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 186;BA.debugLine="Private Sub GetOfflineSchedulesCount(data As Map)";
+Debug.ShouldStop(33554432);
+ BA.debugLineNum = 187;BA.debugLine="If data.IsInitialized = False Then Return 0";
+Debug.ShouldStop(67108864);
 if (RemoteObject.solveBoolean("=",_data.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 191;BA.debugLine="Dim schedules As List = data.GetDefault(\"schedule";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 188;BA.debugLine="Dim schedules As List = data.GetDefault(\"schedule";
+Debug.ShouldStop(134217728);
 _schedules = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _schedules = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _data.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("schedules"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("schedules", _schedules);Debug.locals.put("schedules", _schedules);
- BA.debugLineNum = 192;BA.debugLine="If schedules.IsInitialized = False Then Return 0";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 189;BA.debugLine="If schedules.IsInitialized = False Then Return 0";
+Debug.ShouldStop(268435456);
 if (RemoteObject.solveBoolean("=",_schedules.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 193;BA.debugLine="Return schedules.Size";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 190;BA.debugLine="Return schedules.Size";
+Debug.ShouldStop(536870912);
 if (true) return _schedules.runMethod(true,"getSize");
- BA.debugLineNum = 194;BA.debugLine="End Sub";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 191;BA.debugLine="End Sub";
+Debug.ShouldStop(1073741824);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -760,29 +760,29 @@ finally {
 		}}
 public static RemoteObject  _getplaylisttrackcount(RemoteObject __ref,RemoteObject _playlistdata) throws Exception{
 try {
-		Debug.PushSubsStack("GetPlaylistTrackCount (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,309);
+		Debug.PushSubsStack("GetPlaylistTrackCount (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,306);
 if (RapidSub.canDelegate("getplaylisttrackcount")) { return __ref.runUserSub(false, "offlinestore","getplaylisttrackcount", __ref, _playlistdata);}
 RemoteObject _tracks = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 Debug.locals.put("playlistData", _playlistdata);
- BA.debugLineNum = 309;BA.debugLine="Private Sub GetPlaylistTrackCount(playlistData As";
-Debug.ShouldStop(1048576);
- BA.debugLineNum = 310;BA.debugLine="If playlistData.IsInitialized = False Then Return";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 306;BA.debugLine="Private Sub GetPlaylistTrackCount(playlistData As";
+Debug.ShouldStop(131072);
+ BA.debugLineNum = 307;BA.debugLine="If playlistData.IsInitialized = False Then Return";
+Debug.ShouldStop(262144);
 if (RemoteObject.solveBoolean("=",_playlistdata.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 311;BA.debugLine="Dim tracks As List = playlistData.GetDefault(\"tra";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 308;BA.debugLine="Dim tracks As List = playlistData.GetDefault(\"tra";
+Debug.ShouldStop(524288);
 _tracks = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _tracks = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _playlistdata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("tracks"))),(Object)(offlinestore.__c.getField(false,"Null"))));Debug.locals.put("tracks", _tracks);Debug.locals.put("tracks", _tracks);
- BA.debugLineNum = 312;BA.debugLine="If tracks.IsInitialized = False Then Return 0";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 309;BA.debugLine="If tracks.IsInitialized = False Then Return 0";
+Debug.ShouldStop(1048576);
 if (RemoteObject.solveBoolean("=",_tracks.runMethod(true,"IsInitialized"),offlinestore.__c.getField(true,"False"))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 313;BA.debugLine="Return tracks.Size";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 310;BA.debugLine="Return tracks.Size";
+Debug.ShouldStop(2097152);
 if (true) return _tracks.runMethod(true,"getSize");
- BA.debugLineNum = 314;BA.debugLine="End Sub";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 311;BA.debugLine="End Sub";
+Debug.ShouldStop(4194304);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -793,15 +793,15 @@ finally {
 		}}
 public static RemoteObject  _getstoredplaylistdescriptors(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetStoredPlaylistDescriptors (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,67);
+		Debug.PushSubsStack("GetStoredPlaylistDescriptors (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,65);
 if (RapidSub.canDelegate("getstoredplaylistdescriptors")) { return __ref.runUserSub(false, "offlinestore","getstoredplaylistdescriptors", __ref);}
- BA.debugLineNum = 67;BA.debugLine="Public Sub GetStoredPlaylistDescriptors As List";
-Debug.ShouldStop(4);
- BA.debugLineNum = 68;BA.debugLine="Return storage.GetDefault(\"playlist_descriptors\",";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 65;BA.debugLine="Public Sub GetStoredPlaylistDescriptors As List";
+Debug.ShouldStop(1);
+ BA.debugLineNum = 66;BA.debugLine="Return storage.GetDefault(\"playlist_descriptors\",";
+Debug.ShouldStop(2);
 if (true) return RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_getdefault" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_descriptors")),(Object)((__ref.runClassMethod (b4j.example.offlinestore.class, "_createinitializedlist" /*RemoteObject*/ ).getObject()))));
- BA.debugLineNum = 69;BA.debugLine="End Sub";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 67;BA.debugLine="End Sub";
+Debug.ShouldStop(4);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -812,7 +812,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _storagedirvalue,RemoteObject _storagevalue,RemoteObject _targetmodulevalue,RemoteObject _tracesubnamevalue,RemoteObject _playerdatafilenamevalue,RemoteObject _playlistrequirementsfilenamevalue,RemoteObject _playlistsdirnamevalue,RemoteObject _playlistcdnbaseurlvalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,13);
+		Debug.PushSubsStack("Initialize (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,13);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "offlinestore","initialize", __ref, _ba, _storagedirvalue, _storagevalue, _targetmodulevalue, _tracesubnamevalue, _playerdatafilenamevalue, _playlistrequirementsfilenamevalue, _playlistsdirnamevalue, _playlistcdnbaseurlvalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -862,7 +862,7 @@ finally {
 		}}
 public static RemoteObject  _loadofflinedata(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("LoadOfflineData (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,24);
+		Debug.PushSubsStack("LoadOfflineData (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,24);
 if (RapidSub.canDelegate("loadofflinedata")) { return __ref.runUserSub(false, "offlinestore","loadofflinedata", __ref);}
 RemoteObject _data = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _parser = RemoteObject.declareNull("anywheresoftware.b4j.objects.collections.JSONParser");
@@ -897,25 +897,22 @@ if (_parsed.runMethod(true,"IsInitialized").<Boolean>get().booleanValue()) {
  BA.debugLineNum = 33;BA.debugLine="data = parsed";
 Debug.ShouldStop(1);
 _data = _parsed;Debug.locals.put("data", _data);
- BA.debugLineNum = 34;BA.debugLine="Trace(\"Данные плеера загружены. playlists=\" & Ge";
-Debug.ShouldStop(2);
-__ref.runClassMethod (b4j.example.offlinestore.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("Данные плеера загружены. playlists="),__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineplaylistids" /*RemoteObject*/ ,(Object)(_data)).runMethod(true,"getSize"),RemoteObject.createImmutable(", ads="),__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineadscount" /*RemoteObject*/ ,(Object)(_data)),RemoteObject.createImmutable(", schedules="),__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineschedulescount" /*RemoteObject*/ ,(Object)(_data)))));
  };
  Debug.CheckDeviceExceptions();
 } 
-       catch (Exception e13) {
-			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e13.toString()); BA.debugLineNum = 37;BA.debugLine="data.Initialize";
-Debug.ShouldStop(16);
+       catch (Exception e12) {
+			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e12.toString()); BA.debugLineNum = 36;BA.debugLine="data.Initialize";
+Debug.ShouldStop(8);
 _data.runVoidMethod ("Initialize");
- BA.debugLineNum = 38;BA.debugLine="Trace(\"Не удалось загрузить player_data.json. \"";
-Debug.ShouldStop(32);
-__ref.runClassMethod (b4j.example.offlinestore.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("Не удалось загрузить player_data.json. "),offlinestore.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"))));
+ BA.debugLineNum = 37;BA.debugLine="Trace(\"данные плеера load ошибка message=\" & Las";
+Debug.ShouldStop(16);
+__ref.runClassMethod (b4j.example.offlinestore.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("данные плеера load ошибка message="),offlinestore.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"))));
  };
- BA.debugLineNum = 40;BA.debugLine="Return data";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 39;BA.debugLine="Return data";
+Debug.ShouldStop(64);
 if (true) return _data;
- BA.debugLineNum = 41;BA.debugLine="End Sub";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 40;BA.debugLine="End Sub";
+Debug.ShouldStop(128);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -926,55 +923,55 @@ finally {
 		}}
 public static RemoteObject  _normalizeofflinedata(RemoteObject __ref,RemoteObject _sourcedata,RemoteObject _playercode,RemoteObject _deviceid) throws Exception{
 try {
-		Debug.PushSubsStack("NormalizeOfflineData (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,131);
+		Debug.PushSubsStack("NormalizeOfflineData (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,128);
 if (RapidSub.canDelegate("normalizeofflinedata")) { return __ref.runUserSub(false, "offlinestore","normalizeofflinedata", __ref, _sourcedata, _playercode, _deviceid);}
 RemoteObject _normalizeddata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("sourceData", _sourcedata);
 Debug.locals.put("playerCode", _playercode);
 Debug.locals.put("deviceId", _deviceid);
- BA.debugLineNum = 131;BA.debugLine="Private Sub NormalizeOfflineData(sourceData As Map";
-Debug.ShouldStop(4);
- BA.debugLineNum = 132;BA.debugLine="Dim normalizedData As Map";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 128;BA.debugLine="Private Sub NormalizeOfflineData(sourceData As Map";
+Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 129;BA.debugLine="Dim normalizedData As Map";
+Debug.ShouldStop(1);
 _normalizeddata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("normalizedData", _normalizeddata);
- BA.debugLineNum = 133;BA.debugLine="normalizedData.Initialize";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 130;BA.debugLine="normalizedData.Initialize";
+Debug.ShouldStop(2);
 _normalizeddata.runVoidMethod ("Initialize");
- BA.debugLineNum = 134;BA.debugLine="normalizedData.Put(\"ok\", sourceData.GetDefault(\"o";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 131;BA.debugLine="normalizedData.Put(\"ok\", sourceData.GetDefault(\"o";
+Debug.ShouldStop(4);
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("ok"))),(Object)(_sourcedata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("ok"))),(Object)((offlinestore.__c.getField(true,"False"))))));
- BA.debugLineNum = 135;BA.debugLine="normalizedData.Put(\"type\", sourceData.GetDefault(";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 132;BA.debugLine="normalizedData.Put(\"type\", sourceData.GetDefault(";
+Debug.ShouldStop(8);
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("type"))),(Object)(_sourcedata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("type"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 136;BA.debugLine="normalizedData.Put(\"updated\", sourceData.GetDefau";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 133;BA.debugLine="normalizedData.Put(\"updated\", sourceData.GetDefau";
+Debug.ShouldStop(16);
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("updated"))),(Object)(_sourcedata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 137;BA.debugLine="normalizedData.Put(\"saved_at\", DateTime.Now)";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 134;BA.debugLine="normalizedData.Put(\"saved_at\", DateTime.Now)";
+Debug.ShouldStop(32);
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("saved_at"))),(Object)((offlinestore.__c.getField(false,"DateTime").runMethod(true,"getNow"))));
- BA.debugLineNum = 138;BA.debugLine="normalizedData.Put(\"player_code\", playerCode)";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 135;BA.debugLine="normalizedData.Put(\"player_code\", playerCode)";
+Debug.ShouldStop(64);
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("player_code"))),(Object)((_playercode)));
- BA.debugLineNum = 139;BA.debugLine="normalizedData.Put(\"device_id\", deviceId)";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 136;BA.debugLine="normalizedData.Put(\"device_id\", deviceId)";
+Debug.ShouldStop(128);
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("device_id"))),(Object)((_deviceid)));
- BA.debugLineNum = 140;BA.debugLine="If sourceData.ContainsKey(\"player\") Then normaliz";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 137;BA.debugLine="If sourceData.ContainsKey(\"player\") Then normaliz";
+Debug.ShouldStop(256);
 if (_sourcedata.runMethod(true,"ContainsKey",(Object)((RemoteObject.createImmutable("player")))).<Boolean>get().booleanValue()) { 
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("player"))),(Object)(_sourcedata.runMethod(false,"Get",(Object)((RemoteObject.createImmutable("player"))))));};
- BA.debugLineNum = 141;BA.debugLine="If sourceData.ContainsKey(\"ads\") Then normalizedD";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 138;BA.debugLine="If sourceData.ContainsKey(\"ads\") Then normalizedD";
+Debug.ShouldStop(512);
 if (_sourcedata.runMethod(true,"ContainsKey",(Object)((RemoteObject.createImmutable("ads")))).<Boolean>get().booleanValue()) { 
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("ads"))),(Object)(_sourcedata.runMethod(false,"Get",(Object)((RemoteObject.createImmutable("ads"))))));};
- BA.debugLineNum = 142;BA.debugLine="If sourceData.ContainsKey(\"schedules\") Then norma";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 139;BA.debugLine="If sourceData.ContainsKey(\"schedules\") Then norma";
+Debug.ShouldStop(1024);
 if (_sourcedata.runMethod(true,"ContainsKey",(Object)((RemoteObject.createImmutable("schedules")))).<Boolean>get().booleanValue()) { 
 _normalizeddata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("schedules"))),(Object)(_sourcedata.runMethod(false,"Get",(Object)((RemoteObject.createImmutable("schedules"))))));};
- BA.debugLineNum = 143;BA.debugLine="Return normalizedData";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 140;BA.debugLine="Return normalizedData";
+Debug.ShouldStop(2048);
 if (true) return _normalizeddata;
- BA.debugLineNum = 144;BA.debugLine="End Sub";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 141;BA.debugLine="End Sub";
+Debug.ShouldStop(4096);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -985,22 +982,22 @@ finally {
 		}}
 public static RemoteObject  _normalizeofflineplaylistdata(RemoteObject __ref,RemoteObject _descriptor,RemoteObject _playlistdata) throws Exception{
 try {
-		Debug.PushSubsStack("NormalizeOfflinePlaylistData (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,297);
+		Debug.PushSubsStack("NormalizeOfflinePlaylistData (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,294);
 if (RapidSub.canDelegate("normalizeofflineplaylistdata")) { return __ref.runUserSub(false, "offlinestore","normalizeofflineplaylistdata", __ref, _descriptor, _playlistdata);}
 RemoteObject _normalizedplaylistdata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.createImmutable("");
 Debug.locals.put("descriptor", _descriptor);
 Debug.locals.put("playlistData", _playlistdata);
- BA.debugLineNum = 297;BA.debugLine="Private Sub NormalizeOfflinePlaylistData(descripto";
-Debug.ShouldStop(256);
- BA.debugLineNum = 298;BA.debugLine="Dim normalizedPlaylistData As Map";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 294;BA.debugLine="Private Sub NormalizeOfflinePlaylistData(descripto";
+Debug.ShouldStop(32);
+ BA.debugLineNum = 295;BA.debugLine="Dim normalizedPlaylistData As Map";
+Debug.ShouldStop(64);
 _normalizedplaylistdata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("normalizedPlaylistData", _normalizedplaylistdata);
- BA.debugLineNum = 299;BA.debugLine="normalizedPlaylistData.Initialize";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 296;BA.debugLine="normalizedPlaylistData.Initialize";
+Debug.ShouldStop(128);
 _normalizedplaylistdata.runVoidMethod ("Initialize");
- BA.debugLineNum = 300;BA.debugLine="For Each key As String In playlistData.Keys";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 297;BA.debugLine="For Each key As String In playlistData.Keys";
+Debug.ShouldStop(256);
 {
 final RemoteObject group3 = _playlistdata.runMethod(false,"Keys");
 final int groupLen3 = group3.runMethod(true,"getSize").<Integer>get()
@@ -1009,26 +1006,26 @@ final int groupLen3 = group3.runMethod(true,"getSize").<Integer>get()
 for (; index3 < groupLen3;index3++){
 _key = BA.ObjectToString(group3.runMethod(false,"Get",index3));Debug.locals.put("key", _key);
 Debug.locals.put("key", _key);
- BA.debugLineNum = 301;BA.debugLine="normalizedPlaylistData.Put(key, playlistData.Get";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 298;BA.debugLine="normalizedPlaylistData.Put(key, playlistData.Get";
+Debug.ShouldStop(512);
 _normalizedplaylistdata.runVoidMethod ("Put",(Object)((_key)),(Object)(_playlistdata.runMethod(false,"Get",(Object)((_key)))));
  }
 }Debug.locals.put("key", _key);
 ;
- BA.debugLineNum = 303;BA.debugLine="normalizedPlaylistData.Put(\"id\", descriptor.GetDe";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 300;BA.debugLine="normalizedPlaylistData.Put(\"id\", descriptor.GetDe";
+Debug.ShouldStop(2048);
 _normalizedplaylistdata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("id"))),(Object)(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 304;BA.debugLine="normalizedPlaylistData.Put(\"required_updated\", de";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 301;BA.debugLine="normalizedPlaylistData.Put(\"required_updated\", de";
+Debug.ShouldStop(4096);
 _normalizedplaylistdata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("required_updated"))),(Object)(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 305;BA.debugLine="normalizedPlaylistData.Put(\"saved_at\", DateTime.N";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 302;BA.debugLine="normalizedPlaylistData.Put(\"saved_at\", DateTime.N";
+Debug.ShouldStop(8192);
 _normalizedplaylistdata.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("saved_at"))),(Object)((offlinestore.__c.getField(false,"DateTime").runMethod(true,"getNow"))));
- BA.debugLineNum = 306;BA.debugLine="Return normalizedPlaylistData";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 303;BA.debugLine="Return normalizedPlaylistData";
+Debug.ShouldStop(16384);
 if (true) return _normalizedplaylistdata;
- BA.debugLineNum = 307;BA.debugLine="End Sub";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 304;BA.debugLine="End Sub";
+Debug.ShouldStop(32768);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -1039,16 +1036,16 @@ finally {
 		}}
 public static RemoteObject  _playlistmetadatafilename(RemoteObject __ref,RemoteObject _playlistid) throws Exception{
 try {
-		Debug.PushSubsStack("PlaylistMetadataFileName (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,123);
+		Debug.PushSubsStack("PlaylistMetadataFileName (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,120);
 if (RapidSub.canDelegate("playlistmetadatafilename")) { return __ref.runUserSub(false, "offlinestore","playlistmetadatafilename", __ref, _playlistid);}
 Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 123;BA.debugLine="Public Sub PlaylistMetadataFileName(playlistId As";
-Debug.ShouldStop(67108864);
- BA.debugLineNum = 124;BA.debugLine="Return playlistId & \".json\"";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 120;BA.debugLine="Public Sub PlaylistMetadataFileName(playlistId As";
+Debug.ShouldStop(8388608);
+ BA.debugLineNum = 121;BA.debugLine="Return playlistId & \".json\"";
+Debug.ShouldStop(16777216);
 if (true) return RemoteObject.concat(_playlistid,RemoteObject.createImmutable(".json"));
- BA.debugLineNum = 125;BA.debugLine="End Sub";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 122;BA.debugLine="End Sub";
+Debug.ShouldStop(33554432);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1059,16 +1056,16 @@ finally {
 		}}
 public static RemoteObject  _playlistmetadataurl(RemoteObject __ref,RemoteObject _playlistid) throws Exception{
 try {
-		Debug.PushSubsStack("PlaylistMetadataUrl (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,127);
+		Debug.PushSubsStack("PlaylistMetadataUrl (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,124);
 if (RapidSub.canDelegate("playlistmetadataurl")) { return __ref.runUserSub(false, "offlinestore","playlistmetadataurl", __ref, _playlistid);}
 Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 127;BA.debugLine="Public Sub PlaylistMetadataUrl(playlistId As Strin";
-Debug.ShouldStop(1073741824);
- BA.debugLineNum = 128;BA.debugLine="Return playlistCdnBaseUrl & playlistId & \".json\"";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 124;BA.debugLine="Public Sub PlaylistMetadataUrl(playlistId As Strin";
+Debug.ShouldStop(134217728);
+ BA.debugLineNum = 125;BA.debugLine="Return playlistCdnBaseUrl & playlistId & \".json\"";
+Debug.ShouldStop(268435456);
 if (true) return RemoteObject.concat(__ref.getField(true,"_playlistcdnbaseurl" /*RemoteObject*/ ),_playlistid,RemoteObject.createImmutable(".json"));
- BA.debugLineNum = 129;BA.debugLine="End Sub";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 126;BA.debugLine="End Sub";
+Debug.ShouldStop(536870912);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1079,30 +1076,30 @@ finally {
 		}}
 public static RemoteObject  _refreshplaylistcachestatus(RemoteObject __ref,RemoteObject _playlistdescriptors) throws Exception{
 try {
-		Debug.PushSubsStack("RefreshPlaylistCacheStatus (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,79);
+		Debug.PushSubsStack("RefreshPlaylistCacheStatus (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,77);
 if (RapidSub.canDelegate("refreshplaylistcachestatus")) { return __ref.runUserSub(false, "offlinestore","refreshplaylistcachestatus", __ref, _playlistdescriptors);}
 RemoteObject _refreshedcachestatus = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("playlistDescriptors", _playlistdescriptors);
- BA.debugLineNum = 79;BA.debugLine="Public Sub RefreshPlaylistCacheStatus(playlistDesc";
-Debug.ShouldStop(16384);
- BA.debugLineNum = 80;BA.debugLine="Dim refreshedCacheStatus As Map = CompareOfflineP";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 77;BA.debugLine="Public Sub RefreshPlaylistCacheStatus(playlistDesc";
+Debug.ShouldStop(4096);
+ BA.debugLineNum = 78;BA.debugLine="Dim refreshedCacheStatus As Map = CompareOfflineP";
+Debug.ShouldStop(8192);
 _refreshedcachestatus = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _refreshedcachestatus = __ref.runClassMethod (b4j.example.offlinestore.class, "_compareofflineplaylistswithcache" /*RemoteObject*/ ,(Object)(_playlistdescriptors));Debug.locals.put("refreshedCacheStatus", _refreshedcachestatus);Debug.locals.put("refreshedCacheStatus", _refreshedcachestatus);
- BA.debugLineNum = 81;BA.debugLine="storage.Put(\"playlist_download_ids\", refreshedCac";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 79;BA.debugLine="storage.Put(\"playlist_download_ids\", refreshedCac";
+Debug.ShouldStop(16384);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_download_ids")),(Object)(_refreshedcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("DownloadIds"))),(Object)((__ref.runClassMethod (b4j.example.offlinestore.class, "_createinitializedlist" /*RemoteObject*/ ).getObject())))));
- BA.debugLineNum = 82;BA.debugLine="storage.Put(\"playlist_missing_count\", refreshedCa";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 80;BA.debugLine="storage.Put(\"playlist_missing_count\", refreshedCa";
+Debug.ShouldStop(32768);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_missing_count")),(Object)(_refreshedcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("MissingCount"))),(Object)(RemoteObject.createImmutable((0))))));
- BA.debugLineNum = 83;BA.debugLine="storage.Put(\"playlist_outdated_count\", refreshedC";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 81;BA.debugLine="storage.Put(\"playlist_outdated_count\", refreshedC";
+Debug.ShouldStop(65536);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_outdated_count")),(Object)(_refreshedcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("OutdatedCount"))),(Object)(RemoteObject.createImmutable((0))))));
- BA.debugLineNum = 84;BA.debugLine="storage.Put(\"playlist_actual_count\", refreshedCac";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 82;BA.debugLine="storage.Put(\"playlist_actual_count\", refreshedCac";
+Debug.ShouldStop(131072);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_actual_count")),(Object)(_refreshedcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("ActualCount"))),(Object)(RemoteObject.createImmutable((0))))));
- BA.debugLineNum = 85;BA.debugLine="End Sub";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 83;BA.debugLine="End Sub";
+Debug.ShouldStop(262144);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1113,53 +1110,53 @@ finally {
 		}}
 public static RemoteObject  _resolveplaylistsyncaction(RemoteObject __ref,RemoteObject _descriptor,RemoteObject _cachedplaylistindex) throws Exception{
 try {
-		Debug.PushSubsStack("ResolvePlaylistSyncAction (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,87);
+		Debug.PushSubsStack("ResolvePlaylistSyncAction (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,85);
 if (RapidSub.canDelegate("resolveplaylistsyncaction")) { return __ref.runUserSub(false, "offlinestore","resolveplaylistsyncaction", __ref, _descriptor, _cachedplaylistindex);}
 RemoteObject _playlistid = RemoteObject.createImmutable("");
 RemoteObject _cachedentryobject = RemoteObject.declareNull("Object");
 RemoteObject _cachedentry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("descriptor", _descriptor);
 Debug.locals.put("cachedPlaylistIndex", _cachedplaylistindex);
- BA.debugLineNum = 87;BA.debugLine="Public Sub ResolvePlaylistSyncAction(descriptor As";
-Debug.ShouldStop(4194304);
- BA.debugLineNum = 88;BA.debugLine="Dim playlistId As String = descriptor.GetDefault(";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 85;BA.debugLine="Public Sub ResolvePlaylistSyncAction(descriptor As";
+Debug.ShouldStop(1048576);
+ BA.debugLineNum = 86;BA.debugLine="Dim playlistId As String = descriptor.GetDefault(";
+Debug.ShouldStop(2097152);
 _playlistid = BA.ObjectToString(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 89;BA.debugLine="If playlistId = \"\" Then Return \"skip\"";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 87;BA.debugLine="If playlistId = \"\" Then Return \"skip\"";
+Debug.ShouldStop(4194304);
 if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
 if (true) return BA.ObjectToString("skip");};
- BA.debugLineNum = 90;BA.debugLine="If cachedPlaylistIndex.ContainsKey(playlistId) =";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 88;BA.debugLine="If cachedPlaylistIndex.ContainsKey(playlistId) =";
+Debug.ShouldStop(8388608);
 if (RemoteObject.solveBoolean("=",_cachedplaylistindex.runMethod(true,"ContainsKey",(Object)((_playlistid))),offlinestore.__c.getField(true,"False"))) { 
 if (true) return BA.ObjectToString("missing");};
- BA.debugLineNum = 91;BA.debugLine="Dim cachedEntryObject As Object = cachedPlaylistI";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 89;BA.debugLine="Dim cachedEntryObject As Object = cachedPlaylistI";
+Debug.ShouldStop(16777216);
 _cachedentryobject = _cachedplaylistindex.runMethod(false,"Get",(Object)((_playlistid)));Debug.locals.put("cachedEntryObject", _cachedentryobject);Debug.locals.put("cachedEntryObject", _cachedentryobject);
- BA.debugLineNum = 92;BA.debugLine="If cachedEntryObject Is Map Then";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 90;BA.debugLine="If cachedEntryObject Is Map Then";
+Debug.ShouldStop(33554432);
 if (RemoteObject.solveBoolean("i",_cachedentryobject, RemoteObject.createImmutable("java.util.Map"))) { 
- BA.debugLineNum = 93;BA.debugLine="Dim cachedEntry As Map = cachedEntryObject";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 91;BA.debugLine="Dim cachedEntry As Map = cachedEntryObject";
+Debug.ShouldStop(67108864);
 _cachedentry = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _cachedentry = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _cachedentryobject);Debug.locals.put("cachedEntry", _cachedentry);Debug.locals.put("cachedEntry", _cachedentry);
- BA.debugLineNum = 94;BA.debugLine="If cachedEntry.GetDefault(\"updated\", \"\") <> desc";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 92;BA.debugLine="If cachedEntry.GetDefault(\"updated\", \"\") <> desc";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("!",_cachedentry.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable("")))),_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable("")))))) { 
 if (true) return BA.ObjectToString("outdated");};
- BA.debugLineNum = 95;BA.debugLine="If File.Exists(GetOfflinePlaylistsDir, PlaylistM";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 93;BA.debugLine="If File.Exists(GetOfflinePlaylistsDir, PlaylistM";
+Debug.ShouldStop(268435456);
 if (RemoteObject.solveBoolean("=",offlinestore.__c.getField(false,"File").runMethod(true,"Exists",(Object)(__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineplaylistsdir" /*RemoteObject*/ )),(Object)(__ref.runClassMethod (b4j.example.offlinestore.class, "_playlistmetadatafilename" /*RemoteObject*/ ,(Object)(_playlistid)))),offlinestore.__c.getField(true,"False"))) { 
 if (true) return BA.ObjectToString("missing");};
- BA.debugLineNum = 96;BA.debugLine="Return \"skip\"";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 94;BA.debugLine="Return \"skip\"";
+Debug.ShouldStop(536870912);
 if (true) return BA.ObjectToString("skip");
  };
- BA.debugLineNum = 98;BA.debugLine="Return \"missing\"";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 96;BA.debugLine="Return \"missing\"";
+Debug.ShouldStop(-2147483648);
 if (true) return BA.ObjectToString("missing");
- BA.debugLineNum = 99;BA.debugLine="End Sub";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 97;BA.debugLine="End Sub";
+Debug.ShouldStop(1);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1170,16 +1167,16 @@ finally {
 		}}
 public static RemoteObject  _savecachedplaylistindex(RemoteObject __ref,RemoteObject _cachedplaylistindex) throws Exception{
 try {
-		Debug.PushSubsStack("SaveCachedPlaylistIndex (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,75);
+		Debug.PushSubsStack("SaveCachedPlaylistIndex (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,73);
 if (RapidSub.canDelegate("savecachedplaylistindex")) { return __ref.runUserSub(false, "offlinestore","savecachedplaylistindex", __ref, _cachedplaylistindex);}
 Debug.locals.put("cachedPlaylistIndex", _cachedplaylistindex);
- BA.debugLineNum = 75;BA.debugLine="Public Sub SaveCachedPlaylistIndex(cachedPlaylistI";
-Debug.ShouldStop(1024);
- BA.debugLineNum = 76;BA.debugLine="storage.Put(\"cached_playlist_index\", cachedPlayli";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 73;BA.debugLine="Public Sub SaveCachedPlaylistIndex(cachedPlaylistI";
+Debug.ShouldStop(256);
+ BA.debugLineNum = 74;BA.debugLine="storage.Put(\"cached_playlist_index\", cachedPlayli";
+Debug.ShouldStop(512);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("cached_playlist_index")),(Object)((_cachedplaylistindex.getObject())));
- BA.debugLineNum = 77;BA.debugLine="End Sub";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 75;BA.debugLine="End Sub";
+Debug.ShouldStop(1024);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1190,7 +1187,7 @@ finally {
 		}}
 public static RemoteObject  _saveofflinedata(RemoteObject __ref,RemoteObject _sourcedata,RemoteObject _playercode,RemoteObject _deviceid) throws Exception{
 try {
-		Debug.PushSubsStack("SaveOfflineData (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,43);
+		Debug.PushSubsStack("SaveOfflineData (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,42);
 if (RapidSub.canDelegate("saveofflinedata")) { return __ref.runUserSub(false, "offlinestore","saveofflinedata", __ref, _sourcedata, _playercode, _deviceid);}
 RemoteObject _normalizeddata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _offlinedataupdatedat = RemoteObject.createImmutable(0L);
@@ -1201,77 +1198,74 @@ RemoteObject _generator = RemoteObject.declareNull("anywheresoftware.b4j.objects
 Debug.locals.put("sourceData", _sourcedata);
 Debug.locals.put("playerCode", _playercode);
 Debug.locals.put("deviceId", _deviceid);
- BA.debugLineNum = 43;BA.debugLine="Public Sub SaveOfflineData(sourceData As Map, play";
+ BA.debugLineNum = 42;BA.debugLine="Public Sub SaveOfflineData(sourceData As Map, play";
+Debug.ShouldStop(512);
+ BA.debugLineNum = 43;BA.debugLine="Dim normalizedData As Map = NormalizeOfflineData(";
 Debug.ShouldStop(1024);
- BA.debugLineNum = 44;BA.debugLine="Dim normalizedData As Map = NormalizeOfflineData(";
-Debug.ShouldStop(2048);
 _normalizeddata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _normalizeddata = __ref.runClassMethod (b4j.example.offlinestore.class, "_normalizeofflinedata" /*RemoteObject*/ ,(Object)(_sourcedata),(Object)(_playercode),(Object)(_deviceid));Debug.locals.put("normalizedData", _normalizeddata);Debug.locals.put("normalizedData", _normalizeddata);
- BA.debugLineNum = 45;BA.debugLine="Dim offlineDataUpdatedAt As Long = DateTime.Now";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 44;BA.debugLine="Dim offlineDataUpdatedAt As Long = DateTime.Now";
+Debug.ShouldStop(2048);
 _offlinedataupdatedat = offlinestore.__c.getField(false,"DateTime").runMethod(true,"getNow");Debug.locals.put("offlineDataUpdatedAt", _offlinedataupdatedat);Debug.locals.put("offlineDataUpdatedAt", _offlinedataupdatedat);
- BA.debugLineNum = 46;BA.debugLine="storage.Put(\"player_data_updated_at\", offlineData";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 45;BA.debugLine="storage.Put(\"player_data_updated_at\", offlineData";
+Debug.ShouldStop(4096);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("player_data_updated_at")),(Object)((_offlinedataupdatedat)));
- BA.debugLineNum = 47;BA.debugLine="storage.Put(\"player_data_source_updated\", normali";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 46;BA.debugLine="storage.Put(\"player_data_source_updated\", normali";
+Debug.ShouldStop(8192);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("player_data_source_updated")),(Object)(_normalizeddata.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 48;BA.debugLine="Dim playlistIds As List = GetOfflinePlaylistIds(n";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 47;BA.debugLine="Dim playlistIds As List = GetOfflinePlaylistIds(n";
+Debug.ShouldStop(16384);
 _playlistids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlistids = __ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineplaylistids" /*RemoteObject*/ ,(Object)(_normalizeddata));Debug.locals.put("playlistIds", _playlistids);Debug.locals.put("playlistIds", _playlistids);
- BA.debugLineNum = 49;BA.debugLine="Dim playlistDescriptors As List = BuildOfflinePla";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 48;BA.debugLine="Dim playlistDescriptors As List = BuildOfflinePla";
+Debug.ShouldStop(32768);
 _playlistdescriptors = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlistdescriptors = __ref.runClassMethod (b4j.example.offlinestore.class, "_buildofflineplaylistdescriptors" /*RemoteObject*/ ,(Object)(_normalizeddata));Debug.locals.put("playlistDescriptors", _playlistdescriptors);Debug.locals.put("playlistDescriptors", _playlistdescriptors);
- BA.debugLineNum = 50;BA.debugLine="Dim playlistCacheStatus As Map = CompareOfflinePl";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 49;BA.debugLine="Dim playlistCacheStatus As Map = CompareOfflinePl";
+Debug.ShouldStop(65536);
 _playlistcachestatus = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _playlistcachestatus = __ref.runClassMethod (b4j.example.offlinestore.class, "_compareofflineplaylistswithcache" /*RemoteObject*/ ,(Object)(_playlistdescriptors));Debug.locals.put("playlistCacheStatus", _playlistcachestatus);Debug.locals.put("playlistCacheStatus", _playlistcachestatus);
- BA.debugLineNum = 51;BA.debugLine="storage.Put(\"playlist_ids\", playlistIds)";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 50;BA.debugLine="storage.Put(\"playlist_ids\", playlistIds)";
+Debug.ShouldStop(131072);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_ids")),(Object)((_playlistids.getObject())));
- BA.debugLineNum = 52;BA.debugLine="storage.Put(\"playlist_descriptors\", playlistDescr";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 51;BA.debugLine="storage.Put(\"playlist_descriptors\", playlistDescr";
+Debug.ShouldStop(262144);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_descriptors")),(Object)((_playlistdescriptors.getObject())));
- BA.debugLineNum = 53;BA.debugLine="storage.Put(\"playlist_download_ids\", playlistCach";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 52;BA.debugLine="storage.Put(\"playlist_download_ids\", playlistCach";
+Debug.ShouldStop(524288);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_download_ids")),(Object)(_playlistcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("DownloadIds"))),(Object)((__ref.runClassMethod (b4j.example.offlinestore.class, "_createinitializedlist" /*RemoteObject*/ ).getObject())))));
- BA.debugLineNum = 54;BA.debugLine="storage.Put(\"playlist_missing_count\", playlistCac";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 53;BA.debugLine="storage.Put(\"playlist_missing_count\", playlistCac";
+Debug.ShouldStop(1048576);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_missing_count")),(Object)(_playlistcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("MissingCount"))),(Object)(RemoteObject.createImmutable((0))))));
- BA.debugLineNum = 55;BA.debugLine="storage.Put(\"playlist_outdated_count\", playlistCa";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 54;BA.debugLine="storage.Put(\"playlist_outdated_count\", playlistCa";
+Debug.ShouldStop(2097152);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_outdated_count")),(Object)(_playlistcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("OutdatedCount"))),(Object)(RemoteObject.createImmutable((0))))));
- BA.debugLineNum = 56;BA.debugLine="storage.Put(\"playlist_actual_count\", playlistCach";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 55;BA.debugLine="storage.Put(\"playlist_actual_count\", playlistCach";
+Debug.ShouldStop(4194304);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("playlist_actual_count")),(Object)(_playlistcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("ActualCount"))),(Object)(RemoteObject.createImmutable((0))))));
- BA.debugLineNum = 57;BA.debugLine="storage.Put(\"ad_count\", GetOfflineAdsCount(normal";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 56;BA.debugLine="storage.Put(\"ad_count\", GetOfflineAdsCount(normal";
+Debug.ShouldStop(8388608);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("ad_count")),(Object)((__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineadscount" /*RemoteObject*/ ,(Object)(_normalizeddata)))));
- BA.debugLineNum = 58;BA.debugLine="storage.Put(\"schedule_count\", GetOfflineSchedules";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 57;BA.debugLine="storage.Put(\"schedule_count\", GetOfflineSchedules";
+Debug.ShouldStop(16777216);
 __ref.getField(false,"_storage" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_put" /*RemoteObject*/ ,(Object)(BA.ObjectToString("schedule_count")),(Object)((__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineschedulescount" /*RemoteObject*/ ,(Object)(_normalizeddata)))));
- BA.debugLineNum = 59;BA.debugLine="Dim generator As JSONGenerator";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 58;BA.debugLine="Dim generator As JSONGenerator";
+Debug.ShouldStop(33554432);
 _generator = RemoteObject.createNew ("anywheresoftware.b4j.objects.collections.JSONParser.JSONGenerator");Debug.locals.put("generator", _generator);
- BA.debugLineNum = 60;BA.debugLine="generator.Initialize(normalizedData)";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 59;BA.debugLine="generator.Initialize(normalizedData)";
+Debug.ShouldStop(67108864);
 _generator.runVoidMethod ("Initialize",(Object)(_normalizeddata));
- BA.debugLineNum = 61;BA.debugLine="File.WriteString(storageDir, playerDataFileName,";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 60;BA.debugLine="File.WriteString(storageDir, playerDataFileName,";
+Debug.ShouldStop(134217728);
 offlinestore.__c.getField(false,"File").runVoidMethod ("WriteString",(Object)(__ref.getField(true,"_storagedir" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_playerdatafilename" /*RemoteObject*/ )),(Object)(_generator.runMethod(true,"ToString")));
- BA.debugLineNum = 62;BA.debugLine="WriteOfflinePlaylistRequirementsFile(playlistDesc";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 61;BA.debugLine="WriteOfflinePlaylistRequirementsFile(playlistDesc";
+Debug.ShouldStop(268435456);
 __ref.runClassMethod (b4j.example.offlinestore.class, "_writeofflineplaylistrequirementsfile" /*RemoteObject*/ ,(Object)(_playlistdescriptors),(Object)(_playercode));
- BA.debugLineNum = 63;BA.debugLine="Trace(\"Данные плеера сохранены. playlists=\" & pla";
-Debug.ShouldStop(1073741824);
-__ref.runClassMethod (b4j.example.offlinestore.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("Данные плеера сохранены. playlists="),_playlistids.runMethod(true,"getSize"),RemoteObject.createImmutable(", ads="),__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineadscount" /*RemoteObject*/ ,(Object)(_normalizeddata)),RemoteObject.createImmutable(", schedules="),__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineschedulescount" /*RemoteObject*/ ,(Object)(_normalizeddata)),RemoteObject.createImmutable(", missingPlaylists="),_playlistcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("MissingCount"))),(Object)(RemoteObject.createImmutable((0)))),RemoteObject.createImmutable(", outdatedPlaylists="),_playlistcachestatus.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("OutdatedCount"))),(Object)(RemoteObject.createImmutable((0)))))));
- BA.debugLineNum = 64;BA.debugLine="Return normalizedData";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 62;BA.debugLine="Return normalizedData";
+Debug.ShouldStop(536870912);
 if (true) return _normalizeddata;
- BA.debugLineNum = 65;BA.debugLine="End Sub";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 63;BA.debugLine="End Sub";
+Debug.ShouldStop(1073741824);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -1282,7 +1276,7 @@ finally {
 		}}
 public static RemoteObject  _saveplaylistmetadata(RemoteObject __ref,RemoteObject _descriptor,RemoteObject _playlistdata,RemoteObject _cachedplaylistindex) throws Exception{
 try {
-		Debug.PushSubsStack("SavePlaylistMetadata (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,101);
+		Debug.PushSubsStack("SavePlaylistMetadata (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,99);
 if (RapidSub.canDelegate("saveplaylistmetadata")) { return __ref.runUserSub(false, "offlinestore","saveplaylistmetadata", __ref, _descriptor, _playlistdata, _cachedplaylistindex);}
 RemoteObject _playlistid = RemoteObject.createImmutable("");
 RemoteObject _normalizedplaylistdata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -1291,56 +1285,53 @@ RemoteObject _cachedentry = RemoteObject.declareNull("anywheresoftware.b4a.objec
 Debug.locals.put("descriptor", _descriptor);
 Debug.locals.put("playlistData", _playlistdata);
 Debug.locals.put("cachedPlaylistIndex", _cachedplaylistindex);
- BA.debugLineNum = 101;BA.debugLine="Public Sub SavePlaylistMetadata(descriptor As Map,";
-Debug.ShouldStop(16);
- BA.debugLineNum = 102;BA.debugLine="EnsureDirectory(GetOfflinePlaylistsDir)";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 99;BA.debugLine="Public Sub SavePlaylistMetadata(descriptor As Map,";
+Debug.ShouldStop(4);
+ BA.debugLineNum = 100;BA.debugLine="EnsureDirectory(GetOfflinePlaylistsDir)";
+Debug.ShouldStop(8);
 __ref.runClassMethod (b4j.example.offlinestore.class, "_ensuredirectory" /*RemoteObject*/ ,(Object)(__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineplaylistsdir" /*RemoteObject*/ )));
- BA.debugLineNum = 103;BA.debugLine="Dim playlistId As String = descriptor.GetDefault(";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 101;BA.debugLine="Dim playlistId As String = descriptor.GetDefault(";
+Debug.ShouldStop(16);
 _playlistid = BA.ObjectToString(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 104;BA.debugLine="Dim normalizedPlaylistData As Map = NormalizeOffl";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 102;BA.debugLine="Dim normalizedPlaylistData As Map = NormalizeOffl";
+Debug.ShouldStop(32);
 _normalizedplaylistdata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _normalizedplaylistdata = __ref.runClassMethod (b4j.example.offlinestore.class, "_normalizeofflineplaylistdata" /*RemoteObject*/ ,(Object)(_descriptor),(Object)(_playlistdata));Debug.locals.put("normalizedPlaylistData", _normalizedplaylistdata);Debug.locals.put("normalizedPlaylistData", _normalizedplaylistdata);
- BA.debugLineNum = 105;BA.debugLine="Dim generator As JSONGenerator";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 103;BA.debugLine="Dim generator As JSONGenerator";
+Debug.ShouldStop(64);
 _generator = RemoteObject.createNew ("anywheresoftware.b4j.objects.collections.JSONParser.JSONGenerator");Debug.locals.put("generator", _generator);
- BA.debugLineNum = 106;BA.debugLine="generator.Initialize(normalizedPlaylistData)";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 104;BA.debugLine="generator.Initialize(normalizedPlaylistData)";
+Debug.ShouldStop(128);
 _generator.runVoidMethod ("Initialize",(Object)(_normalizedplaylistdata));
- BA.debugLineNum = 107;BA.debugLine="File.WriteString(GetOfflinePlaylistsDir, Playlist";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 105;BA.debugLine="File.WriteString(GetOfflinePlaylistsDir, Playlist";
+Debug.ShouldStop(256);
 offlinestore.__c.getField(false,"File").runVoidMethod ("WriteString",(Object)(__ref.runClassMethod (b4j.example.offlinestore.class, "_getofflineplaylistsdir" /*RemoteObject*/ )),(Object)(__ref.runClassMethod (b4j.example.offlinestore.class, "_playlistmetadatafilename" /*RemoteObject*/ ,(Object)(_playlistid))),(Object)(_generator.runMethod(true,"ToString")));
- BA.debugLineNum = 108;BA.debugLine="Dim cachedEntry As Map";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 106;BA.debugLine="Dim cachedEntry As Map";
+Debug.ShouldStop(512);
 _cachedentry = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("cachedEntry", _cachedentry);
- BA.debugLineNum = 109;BA.debugLine="cachedEntry.Initialize";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 107;BA.debugLine="cachedEntry.Initialize";
+Debug.ShouldStop(1024);
 _cachedentry.runVoidMethod ("Initialize");
- BA.debugLineNum = 110;BA.debugLine="cachedEntry.Put(\"id\", playlistId)";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 108;BA.debugLine="cachedEntry.Put(\"id\", playlistId)";
+Debug.ShouldStop(2048);
 _cachedentry.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("id"))),(Object)((_playlistid)));
- BA.debugLineNum = 111;BA.debugLine="cachedEntry.Put(\"updated\", descriptor.GetDefault(";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 109;BA.debugLine="cachedEntry.Put(\"updated\", descriptor.GetDefault(";
+Debug.ShouldStop(4096);
 _cachedentry.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("updated"))),(Object)(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 112;BA.debugLine="cachedEntry.Put(\"saved_at\", DateTime.Now)";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 110;BA.debugLine="cachedEntry.Put(\"saved_at\", DateTime.Now)";
+Debug.ShouldStop(8192);
 _cachedentry.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("saved_at"))),(Object)((offlinestore.__c.getField(false,"DateTime").runMethod(true,"getNow"))));
- BA.debugLineNum = 113;BA.debugLine="cachedEntry.Put(\"title\", descriptor.GetDefault(\"t";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 111;BA.debugLine="cachedEntry.Put(\"title\", descriptor.GetDefault(\"t";
+Debug.ShouldStop(16384);
 _cachedentry.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("title"))),(Object)(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("title"))),(Object)((RemoteObject.createImmutable(""))))));
- BA.debugLineNum = 114;BA.debugLine="cachedEntry.Put(\"track_count\", GetPlaylistTrackCo";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 112;BA.debugLine="cachedEntry.Put(\"track_count\", GetPlaylistTrackCo";
+Debug.ShouldStop(32768);
 _cachedentry.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("track_count"))),(Object)((__ref.runClassMethod (b4j.example.offlinestore.class, "_getplaylisttrackcount" /*RemoteObject*/ ,(Object)(_normalizedplaylistdata)))));
- BA.debugLineNum = 115;BA.debugLine="cachedPlaylistIndex.Put(playlistId, cachedEntry)";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 113;BA.debugLine="cachedPlaylistIndex.Put(playlistId, cachedEntry)";
+Debug.ShouldStop(65536);
 _cachedplaylistindex.runVoidMethod ("Put",(Object)((_playlistid)),(Object)((_cachedentry.getObject())));
- BA.debugLineNum = 116;BA.debugLine="Trace(\"Playlist metadata сохранен. id=\" & playlis";
-Debug.ShouldStop(524288);
-__ref.runClassMethod (b4j.example.offlinestore.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("Playlist metadata сохранен. id="),_playlistid,RemoteObject.createImmutable(", tracks="),_cachedentry.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("track_count"))),(Object)(RemoteObject.createImmutable((0)))),RemoteObject.createImmutable(", updated="),_cachedentry.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("updated"))),(Object)((RemoteObject.createImmutable("")))))));
- BA.debugLineNum = 117;BA.debugLine="End Sub";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 114;BA.debugLine="End Sub";
+Debug.ShouldStop(131072);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1351,20 +1342,20 @@ finally {
 		}}
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,348);
+		Debug.PushSubsStack("Trace (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,345);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "offlinestore","trace", __ref, _message);}
 Debug.locals.put("message", _message);
- BA.debugLineNum = 348;BA.debugLine="Private Sub Trace(message As String)";
-Debug.ShouldStop(134217728);
- BA.debugLineNum = 349;BA.debugLine="If SubExists(targetModule, traceSubName) Then";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 345;BA.debugLine="Private Sub Trace(message As String)";
+Debug.ShouldStop(16777216);
+ BA.debugLineNum = 346;BA.debugLine="If SubExists(targetModule, traceSubName) Then";
+Debug.ShouldStop(33554432);
 if (offlinestore.__c.runMethod(true,"SubExists",__ref.getField(false, "ba"),(Object)(__ref.getField(false,"_targetmodule" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_tracesubname" /*RemoteObject*/ ))).<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 350;BA.debugLine="CallSub2(targetModule, traceSubName, message)";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 347;BA.debugLine="CallSub2(targetModule, traceSubName, message)";
+Debug.ShouldStop(67108864);
 offlinestore.__c.runMethodAndSync(false,"CallSubNew2",__ref.getField(false, "ba"),(Object)(__ref.getField(false,"_targetmodule" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_tracesubname" /*RemoteObject*/ )),(Object)((_message)));
  };
- BA.debugLineNum = 352;BA.debugLine="End Sub";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 349;BA.debugLine="End Sub";
+Debug.ShouldStop(268435456);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1375,40 +1366,40 @@ finally {
 		}}
 public static RemoteObject  _writeofflineplaylistrequirementsfile(RemoteObject __ref,RemoteObject _descriptors,RemoteObject _playercode) throws Exception{
 try {
-		Debug.PushSubsStack("WriteOfflinePlaylistRequirementsFile (offlinestore) ","offlinestore",13,__ref.getField(false, "ba"),__ref,286);
+		Debug.PushSubsStack("WriteOfflinePlaylistRequirementsFile (offlinestore) ","offlinestore",14,__ref.getField(false, "ba"),__ref,283);
 if (RapidSub.canDelegate("writeofflineplaylistrequirementsfile")) { return __ref.runUserSub(false, "offlinestore","writeofflineplaylistrequirementsfile", __ref, _descriptors, _playercode);}
 RemoteObject _payload = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _generator = RemoteObject.declareNull("anywheresoftware.b4j.objects.collections.JSONParser.JSONGenerator");
 Debug.locals.put("descriptors", _descriptors);
 Debug.locals.put("playerCode", _playercode);
- BA.debugLineNum = 286;BA.debugLine="Private Sub WriteOfflinePlaylistRequirementsFile(d";
-Debug.ShouldStop(536870912);
- BA.debugLineNum = 287;BA.debugLine="Dim payload As Map";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 283;BA.debugLine="Private Sub WriteOfflinePlaylistRequirementsFile(d";
+Debug.ShouldStop(67108864);
+ BA.debugLineNum = 284;BA.debugLine="Dim payload As Map";
+Debug.ShouldStop(134217728);
 _payload = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("payload", _payload);
- BA.debugLineNum = 288;BA.debugLine="payload.Initialize";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 285;BA.debugLine="payload.Initialize";
+Debug.ShouldStop(268435456);
 _payload.runVoidMethod ("Initialize");
- BA.debugLineNum = 289;BA.debugLine="payload.Put(\"saved_at\", DateTime.Now)";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 286;BA.debugLine="payload.Put(\"saved_at\", DateTime.Now)";
+Debug.ShouldStop(536870912);
 _payload.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("saved_at"))),(Object)((offlinestore.__c.getField(false,"DateTime").runMethod(true,"getNow"))));
- BA.debugLineNum = 290;BA.debugLine="payload.Put(\"player_code\", playerCode)";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 287;BA.debugLine="payload.Put(\"player_code\", playerCode)";
+Debug.ShouldStop(1073741824);
 _payload.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("player_code"))),(Object)((_playercode)));
- BA.debugLineNum = 291;BA.debugLine="payload.Put(\"descriptors\", descriptors)";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 288;BA.debugLine="payload.Put(\"descriptors\", descriptors)";
+Debug.ShouldStop(-2147483648);
 _payload.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("descriptors"))),(Object)((_descriptors.getObject())));
- BA.debugLineNum = 292;BA.debugLine="Dim generator As JSONGenerator";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 289;BA.debugLine="Dim generator As JSONGenerator";
+Debug.ShouldStop(1);
 _generator = RemoteObject.createNew ("anywheresoftware.b4j.objects.collections.JSONParser.JSONGenerator");Debug.locals.put("generator", _generator);
- BA.debugLineNum = 293;BA.debugLine="generator.Initialize(payload)";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 290;BA.debugLine="generator.Initialize(payload)";
+Debug.ShouldStop(2);
 _generator.runVoidMethod ("Initialize",(Object)(_payload));
- BA.debugLineNum = 294;BA.debugLine="File.WriteString(storageDir, playlistRequirements";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 291;BA.debugLine="File.WriteString(storageDir, playlistRequirements";
+Debug.ShouldStop(4);
 offlinestore.__c.getField(false,"File").runVoidMethod ("WriteString",(Object)(__ref.getField(true,"_storagedir" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_playlistrequirementsfilename" /*RemoteObject*/ )),(Object)(_generator.runMethod(true,"ToString")));
- BA.debugLineNum = 295;BA.debugLine="End Sub";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 292;BA.debugLine="End Sub";
+Debug.ShouldStop(8);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {

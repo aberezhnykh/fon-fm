@@ -120,6 +120,20 @@ RDebugUtils.currentLine=29622275;
  //BA.debugLineNum = 29622275;BA.debugLine="End Sub";
 return "";
 }
+public boolean  _hasprepared(b4j.example.playbackruntimestate __ref) throws Exception{
+__ref = this;
+RDebugUtils.currentModule="playbackruntimestate";
+if (Debug.shouldDelegate(ba, "hasprepared", false))
+	 {return ((Boolean) Debug.delegate(ba, "hasprepared", null));}
+RDebugUtils.currentLine=30015488;
+ //BA.debugLineNum = 30015488;BA.debugLine="Public Sub HasPrepared As Boolean";
+RDebugUtils.currentLine=30015489;
+ //BA.debugLineNum = 30015489;BA.debugLine="Return PreparedAudioKey <> \"\" And PreparedItem.Is";
+if (true) return (__ref._preparedaudiokey /*String*/ ).equals("") == false && __ref._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized();
+RDebugUtils.currentLine=30015490;
+ //BA.debugLineNum = 30015490;BA.debugLine="End Sub";
+return false;
+}
 public String  _reset(b4j.example.playbackruntimestate __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackruntimestate";
@@ -209,20 +223,6 @@ __ref._pendingplayfadeinms /*int*/  = _fadeinms;
 RDebugUtils.currentLine=29818884;
  //BA.debugLineNum = 29818884;BA.debugLine="End Sub";
 return "";
-}
-public boolean  _hasprepared(b4j.example.playbackruntimestate __ref) throws Exception{
-__ref = this;
-RDebugUtils.currentModule="playbackruntimestate";
-if (Debug.shouldDelegate(ba, "hasprepared", false))
-	 {return ((Boolean) Debug.delegate(ba, "hasprepared", null));}
-RDebugUtils.currentLine=30015488;
- //BA.debugLineNum = 30015488;BA.debugLine="Public Sub HasPrepared As Boolean";
-RDebugUtils.currentLine=30015489;
- //BA.debugLineNum = 30015489;BA.debugLine="Return PreparedAudioKey <> \"\" And PreparedItem.Is";
-if (true) return (__ref._preparedaudiokey /*String*/ ).equals("") == false && __ref._prepareditem /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized();
-RDebugUtils.currentLine=30015490;
- //BA.debugLineNum = 30015490;BA.debugLine="End Sub";
-return false;
 }
 public String  _setpendingprepare(b4j.example.playbackruntimestate __ref,String _audiokey,anywheresoftware.b4a.objects.collections.Map _item) throws Exception{
 __ref = this;

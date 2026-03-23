@@ -43,6 +43,19 @@ RDebugUtils.currentLine=32505858;
  //BA.debugLineNum = 32505858;BA.debugLine="End Sub";
 return null;
 }
+public static String  _settitle(Object _b4xpage,Object _title) throws Exception{
+RDebugUtils.currentModule="b4xpages";
+if (Debug.shouldDelegate(ba, "settitle", true))
+	 {return ((String) Debug.delegate(ba, "settitle", new Object[] {_b4xpage,_title}));}
+RDebugUtils.currentLine=32440320;
+ //BA.debugLineNum = 32440320;BA.debugLine="Public Sub SetTitle (B4XPage As Object, Title As O";
+RDebugUtils.currentLine=32440321;
+ //BA.debugLineNum = 32440321;BA.debugLine="GetManager.SetTitle(B4XPage, Title)";
+_getmanager()._settitle /*String*/ (null,_b4xpage,_title);
+RDebugUtils.currentLine=32440322;
+ //BA.debugLineNum = 32440322;BA.debugLine="End Sub";
+return "";
+}
 public static anywheresoftware.b4j.objects.Form  _getnativeparent(Object _b4xpage) throws Exception{
 RDebugUtils.currentModule="b4xpages";
 if (Debug.shouldDelegate(ba, "getnativeparent", true))
@@ -162,19 +175,6 @@ if (true) return _mpm instanceof b4j.example.b4xpagesmanager;
 RDebugUtils.currentLine=31784962;
  //BA.debugLineNum = 31784962;BA.debugLine="End Sub";
 return false;
-}
-public static String  _settitle(Object _b4xpage,Object _title) throws Exception{
-RDebugUtils.currentModule="b4xpages";
-if (Debug.shouldDelegate(ba, "settitle", true))
-	 {return ((String) Debug.delegate(ba, "settitle", new Object[] {_b4xpage,_title}));}
-RDebugUtils.currentLine=32440320;
- //BA.debugLineNum = 32440320;BA.debugLine="Public Sub SetTitle (B4XPage As Object, Title As O";
-RDebugUtils.currentLine=32440321;
- //BA.debugLineNum = 32440321;BA.debugLine="GetManager.SetTitle(B4XPage, Title)";
-_getmanager()._settitle /*String*/ (null,_b4xpage,_title);
-RDebugUtils.currentLine=32440322;
- //BA.debugLineNum = 32440322;BA.debugLine="End Sub";
-return "";
 }
 public static String  _showpage(String _id) throws Exception{
 RDebugUtils.currentModule="b4xpages";

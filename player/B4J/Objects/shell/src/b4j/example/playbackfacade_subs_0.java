@@ -8,7 +8,7 @@ public class playbackfacade_subs_0 {
 
 public static RemoteObject  _advanceaftercomplete(RemoteObject __ref,RemoteObject _audiokey) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceAfterComplete (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,37);
+		Debug.PushSubsStack("AdvanceAfterComplete (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,37);
 if (RapidSub.canDelegate("advanceaftercomplete")) { return __ref.runUserSub(false, "playbackfacade","advanceaftercomplete", __ref, _audiokey);}
 ResumableSub_AdvanceAfterComplete rsub = new ResumableSub_AdvanceAfterComplete(null,__ref,_audiokey);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -36,7 +36,7 @@ RemoteObject _advanced = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceAfterComplete (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,37);
+		Debug.PushSubsStack("AdvanceAfterComplete (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,37);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -49,9 +49,9 @@ case 0:
 this.state = -1;
 Debug.locals.put("_ref", __ref);
 Debug.locals.put("audioKey", _audiokey);
- BA.debugLineNum = 38;BA.debugLine="Trace(\"PlaybackFacade advance requested. initiato";
+ BA.debugLineNum = 38;BA.debugLine="Trace(\"сценарий переход запрос initiator=audio_co";
 Debug.ShouldStop(32);
-__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("PlaybackFacade advance requested. initiator=audio_complete:"),_audiokey)));
+__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("сценарий переход запрос initiator=audio_complete:"),_audiokey)));
  BA.debugLineNum = 39;BA.debugLine="Wait For (DispatchPlaybackAdvance(\"audio_complete";
 Debug.ShouldStop(64);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playbackfacade", "advanceaftercomplete"), __ref.runClassMethod (b4j.example.playbackfacade.class, "_dispatchplaybackadvance" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("audio_complete:"),_audiokey)),(Object)(parent.__c.getField(true,"True"))));
@@ -84,7 +84,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _advanced) throws 
 }
 public static RemoteObject  _advanceaftererror(RemoteObject __ref,RemoteObject _audiokey) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceAfterError (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,43);
+		Debug.PushSubsStack("AdvanceAfterError (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,43);
 if (RapidSub.canDelegate("advanceaftererror")) { return __ref.runUserSub(false, "playbackfacade","advanceaftererror", __ref, _audiokey);}
 ResumableSub_AdvanceAfterError rsub = new ResumableSub_AdvanceAfterError(null,__ref,_audiokey);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -112,7 +112,7 @@ RemoteObject _advanced = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceAfterError (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,43);
+		Debug.PushSubsStack("AdvanceAfterError (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,43);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -125,9 +125,9 @@ case 0:
 this.state = -1;
 Debug.locals.put("_ref", __ref);
 Debug.locals.put("audioKey", _audiokey);
- BA.debugLineNum = 44;BA.debugLine="Trace(\"PlaybackFacade advance requested. initiato";
+ BA.debugLineNum = 44;BA.debugLine="Trace(\"сценарий переход запрос initiator=audio_er";
 Debug.ShouldStop(2048);
-__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("PlaybackFacade advance requested. initiator=audio_error_recovery:"),_audiokey)));
+__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("сценарий переход запрос initiator=audio_error_recovery:"),_audiokey)));
  BA.debugLineNum = 45;BA.debugLine="Wait For (DispatchPlaybackAdvance(\"audio_error_re";
 Debug.ShouldStop(4096);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playbackfacade", "advanceaftererror"), __ref.runClassMethod (b4j.example.playbackfacade.class, "_dispatchplaybackadvance" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("audio_error_recovery:"),_audiokey)),(Object)(parent.__c.getField(true,"True"))));
@@ -165,7 +165,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _completestartupsequence(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CompleteStartupSequence (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,66);
+		Debug.PushSubsStack("CompleteStartupSequence (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,66);
 if (RapidSub.canDelegate("completestartupsequence")) { return __ref.runUserSub(false, "playbackfacade","completestartupsequence", __ref);}
  BA.debugLineNum = 66;BA.debugLine="Public Sub CompleteStartupSequence";
 Debug.ShouldStop(2);
@@ -184,7 +184,7 @@ finally {
 		}}
 public static RemoteObject  _dispatchplaybackadvance(RemoteObject __ref,RemoteObject _initiator,RemoteObject _allowload) throws Exception{
 try {
-		Debug.PushSubsStack("DispatchPlaybackAdvance (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,26);
+		Debug.PushSubsStack("DispatchPlaybackAdvance (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,26);
 if (RapidSub.canDelegate("dispatchplaybackadvance")) { return __ref.runUserSub(false, "playbackfacade","dispatchplaybackadvance", __ref, _initiator, _allowload);}
 ResumableSub_DispatchPlaybackAdvance rsub = new ResumableSub_DispatchPlaybackAdvance(null,__ref,_initiator,_allowload);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -214,7 +214,7 @@ RemoteObject _advanced = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("DispatchPlaybackAdvance (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,26);
+		Debug.PushSubsStack("DispatchPlaybackAdvance (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,26);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -228,9 +228,9 @@ this.state = -1;
 Debug.locals.put("_ref", __ref);
 Debug.locals.put("initiator", _initiator);
 Debug.locals.put("allowLoad", _allowload);
- BA.debugLineNum = 27;BA.debugLine="Trace(\"PlaybackFacade advance requested. initiato";
+ BA.debugLineNum = 27;BA.debugLine="Trace(\"сценарий переход запрос initiator=\" & init";
 Debug.ShouldStop(67108864);
-__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("PlaybackFacade advance requested. initiator="),_initiator,RemoteObject.createImmutable(", allowLoad="),_allowload)));
+__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("сценарий переход запрос initiator="),_initiator,RemoteObject.createImmutable(" allowLoad="),_allowload)));
  BA.debugLineNum = 28;BA.debugLine="Wait For (mainPage.Facade_DispatchPlaybackAdvance";
 Debug.ShouldStop(134217728);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playbackfacade", "dispatchplaybackadvance"), __ref.getField(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_facade_dispatchplaybackadvancecore" /*RemoteObject*/ ,(Object)(_initiator),(Object)(_allowload)));
@@ -261,7 +261,7 @@ finally {
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _target) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,6);
+		Debug.PushSubsStack("Initialize (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,6);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackfacade","initialize", __ref, _ba, _target);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -283,7 +283,7 @@ finally {
 		}}
 public static RemoteObject  _loadnextandplay(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("LoadNextAndPlay (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,20);
+		Debug.PushSubsStack("LoadNextAndPlay (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,20);
 if (RapidSub.canDelegate("loadnextandplay")) { return __ref.runUserSub(false, "playbackfacade","loadnextandplay", __ref);}
 ResumableSub_LoadNextAndPlay rsub = new ResumableSub_LoadNextAndPlay(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -309,7 +309,7 @@ RemoteObject _advanced = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("LoadNextAndPlay (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,20);
+		Debug.PushSubsStack("LoadNextAndPlay (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,20);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -321,9 +321,9 @@ case 0:
 //C
 this.state = -1;
 Debug.locals.put("_ref", __ref);
- BA.debugLineNum = 21;BA.debugLine="Trace(\"PlaybackFacade advance requested. mode=loa";
+ BA.debugLineNum = 21;BA.debugLine="Trace(\"сценарий переход запрос mode=load_next_and";
 Debug.ShouldStop(1048576);
-__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("PlaybackFacade advance requested. mode=load_next_and_play")));
+__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("сценарий переход запрос mode=load_next_and_play")));
  BA.debugLineNum = 22;BA.debugLine="Wait For (mainPage.Facade_LoadNextAndPlayCore) Co";
 Debug.ShouldStop(2097152);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playbackfacade", "loadnextandplay"), __ref.getField(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_facade_loadnextandplaycore" /*RemoteObject*/ ));
@@ -354,15 +354,15 @@ finally {
 }
 public static RemoteObject  _pauseplayback(RemoteObject __ref,RemoteObject _reason,RemoteObject _connectionmode) throws Exception{
 try {
-		Debug.PushSubsStack("PausePlayback (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,55);
+		Debug.PushSubsStack("PausePlayback (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,55);
 if (RapidSub.canDelegate("pauseplayback")) { return __ref.runUserSub(false, "playbackfacade","pauseplayback", __ref, _reason, _connectionmode);}
 Debug.locals.put("reason", _reason);
 Debug.locals.put("connectionMode", _connectionmode);
  BA.debugLineNum = 55;BA.debugLine="Public Sub PausePlayback(reason As String, connect";
 Debug.ShouldStop(4194304);
- BA.debugLineNum = 56;BA.debugLine="Trace(\"PlaybackFacade pause requested. mode=\" & c";
+ BA.debugLineNum = 56;BA.debugLine="Trace(\"сценарий pause запрос mode=\" & connectionM";
 Debug.ShouldStop(8388608);
-__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("PlaybackFacade pause requested. mode="),_connectionmode)));
+__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("сценарий pause запрос mode="),_connectionmode)));
  BA.debugLineNum = 57;BA.debugLine="mainPage.Facade_PausePlaybackCore(reason, connect";
 Debug.ShouldStop(16777216);
 __ref.getField(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_facade_pauseplaybackcore" /*RemoteObject*/ ,(Object)(_reason),(Object)(_connectionmode));
@@ -378,7 +378,7 @@ finally {
 		}}
 public static RemoteObject  _preparenextplayable(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareNextPlayable (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,32);
+		Debug.PushSubsStack("PrepareNextPlayable (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,32);
 if (RapidSub.canDelegate("preparenextplayable")) { return __ref.runUserSub(false, "playbackfacade","preparenextplayable", __ref);}
 ResumableSub_PrepareNextPlayable rsub = new ResumableSub_PrepareNextPlayable(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -404,7 +404,7 @@ RemoteObject _prepared = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareNextPlayable (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,32);
+		Debug.PushSubsStack("PrepareNextPlayable (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,32);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -446,7 +446,7 @@ finally {
 }
 public static RemoteObject  _resumeplaybackafterpolicypause(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ResumePlaybackAfterPolicyPause (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,60);
+		Debug.PushSubsStack("ResumePlaybackAfterPolicyPause (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,60);
 if (RapidSub.canDelegate("resumeplaybackafterpolicypause")) { return __ref.runUserSub(false, "playbackfacade","resumeplaybackafterpolicypause", __ref);}
 ResumableSub_ResumePlaybackAfterPolicyPause rsub = new ResumableSub_ResumePlaybackAfterPolicyPause(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -472,7 +472,7 @@ RemoteObject _resumed = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("ResumePlaybackAfterPolicyPause (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,60);
+		Debug.PushSubsStack("ResumePlaybackAfterPolicyPause (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,60);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -484,9 +484,9 @@ case 0:
 //C
 this.state = -1;
 Debug.locals.put("_ref", __ref);
- BA.debugLineNum = 61;BA.debugLine="Trace(\"PlaybackFacade resume requested. reason=po";
+ BA.debugLineNum = 61;BA.debugLine="Trace(\"сценарий resume запрос reason=policy_pause";
 Debug.ShouldStop(268435456);
-__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("PlaybackFacade resume requested. reason=policy_pause")));
+__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("сценарий resume запрос reason=policy_pause")));
  BA.debugLineNum = 62;BA.debugLine="Wait For (mainPage.Facade_ResumePlaybackAfterPoli";
 Debug.ShouldStop(536870912);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playbackfacade", "resumeplaybackafterpolicypause"), __ref.getField(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_facade_resumeplaybackafterpolicypausecore" /*RemoteObject*/ ));
@@ -517,7 +517,7 @@ finally {
 }
 public static RemoteObject  _startfirsttrack(RemoteObject __ref,RemoteObject _mode) throws Exception{
 try {
-		Debug.PushSubsStack("StartFirstTrack (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,14);
+		Debug.PushSubsStack("StartFirstTrack (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,14);
 if (RapidSub.canDelegate("startfirsttrack")) { return __ref.runUserSub(false, "playbackfacade","startfirsttrack", __ref, _mode);}
 ResumableSub_StartFirstTrack rsub = new ResumableSub_StartFirstTrack(null,__ref,_mode);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -545,7 +545,7 @@ RemoteObject _started = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("StartFirstTrack (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,14);
+		Debug.PushSubsStack("StartFirstTrack (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,14);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -558,9 +558,9 @@ case 0:
 this.state = -1;
 Debug.locals.put("_ref", __ref);
 Debug.locals.put("mode", _mode);
- BA.debugLineNum = 15;BA.debugLine="Trace(\"PlaybackFacade start requested. mode=\" & m";
+ BA.debugLineNum = 15;BA.debugLine="Trace(\"сценарий старт запрос mode=\" & mode)";
 Debug.ShouldStop(16384);
-__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("PlaybackFacade start requested. mode="),_mode)));
+__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("сценарий старт запрос mode="),_mode)));
  BA.debugLineNum = 16;BA.debugLine="Wait For (mainPage.Facade_StartFirstTrackCore(mod";
 Debug.ShouldStop(32768);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playbackfacade", "startfirsttrack"), __ref.getField(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_facade_startfirsttrackcore" /*RemoteObject*/ ,(Object)(_mode)));
@@ -591,7 +591,7 @@ finally {
 }
 public static RemoteObject  _stopplayback(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StopPlayback (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,49);
+		Debug.PushSubsStack("StopPlayback (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,49);
 if (RapidSub.canDelegate("stopplayback")) { return __ref.runUserSub(false, "playbackfacade","stopplayback", __ref);}
 ResumableSub_StopPlayback rsub = new ResumableSub_StopPlayback(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -617,7 +617,7 @@ RemoteObject _stopped = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("StopPlayback (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,49);
+		Debug.PushSubsStack("StopPlayback (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,49);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -629,9 +629,9 @@ case 0:
 //C
 this.state = -1;
 Debug.locals.put("_ref", __ref);
- BA.debugLineNum = 50;BA.debugLine="Trace(\"PlaybackFacade stop requested.\")";
+ BA.debugLineNum = 50;BA.debugLine="Trace(\"сценарий stop запрос\")";
 Debug.ShouldStop(131072);
-__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("PlaybackFacade stop requested.")));
+__ref.runClassMethod (b4j.example.playbackfacade.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("сценарий stop запрос")));
  BA.debugLineNum = 51;BA.debugLine="Wait For (mainPage.Facade_StopPlayerCore) Complet";
 Debug.ShouldStop(262144);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "playbackfacade", "stopplayback"), __ref.getField(false,"_mainpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xmainpage.class, "_facade_stopplayercore" /*RemoteObject*/ ));
@@ -662,7 +662,7 @@ finally {
 }
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (playbackfacade) ","playbackfacade",6,__ref.getField(false, "ba"),__ref,10);
+		Debug.PushSubsStack("Trace (playbackfacade) ","playbackfacade",7,__ref.getField(false, "ba"),__ref,10);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "playbackfacade","trace", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 10;BA.debugLine="Private Sub Trace(message As String)";

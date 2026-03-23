@@ -59,7 +59,10 @@ Public Sub Play
 End Sub
 
 Public Sub PlayWithFade(fadeTimeMs As Int)
-	If playerState <> STATE_READY Then Return
+	If playerState <> STATE_READY Then
+		TraceInternalError("play_with_fade_not_ready state=" & playerState)
+		Return
+	End If
 	playerState = STATE_PLAYING
 	lastPosition = 0
 	stalledCheckCount = 0
@@ -110,13 +113,13 @@ Public Sub Reset
 			player.Volume = 0
 			player.Stop
 		Catch
-			Log(LastException.Message)
+			TraceInternalError("reset_stop")
 		End Try
 		If jo.IsInitialized Then
 			Try
 				jo.RunMethod("dispose", Null)
 			Catch
-				Log(LastException.Message)
+				TraceInternalError("reset_dispose")
 			End Try
 		End If
 	End If
@@ -217,8 +220,16 @@ Private Sub CheckTimer_Tick
 		Return
 	End If
 	Dim durationNow As Long = Duration
-	If durationNow > 0 And positionNow >= Max(0, durationNow - 2000) Then Return
+	Dim remainMs As Long = -1
+	If durationNow > 0 Then remainMs = Max(0, durationNow - positionNow)
+	If durationNow > 0 And positionNow >= Max(0, durationNow - 2000) Then
+		TraceDiagnostic("хвост audio=" & eventName & " positionMs=" & positionNow & " durationMs=" & durationNow & " remainMs=" & remainMs & " stalled=" & stalledCheckCount)
+		Return
+	End If
 	stalledCheckCount = stalledCheckCount + 1
+	If stalledCheckCount = 1 Or stalledCheckCount = 3 Then
+		TraceDiagnostic("задержка audio=" & eventName & " positionMs=" & positionNow & " durationMs=" & durationNow & " remainMs=" & remainMs & " stalled=" & stalledCheckCount)
+	End If
 	If stalledCheckCount < 3 Then Return
 	NotifyError("Silence detected 3")
 End Sub
@@ -278,7 +289,7 @@ Private Sub SetPlayerVolume(volumeValue As Double)
 	Try
 		player.Volume = currentVolume
 	Catch
-		Log(LastException.Message)
+		TraceInternalError("set_volume")
 	End Try
 End Sub
 
@@ -293,8 +304,22 @@ Private Sub StopImmediately
 		player.Volume = 0
 		player.Stop
 	Catch
-		Log(LastException.Message)
+		TraceInternalError("stop_immediately")
 	End Try
+End Sub
+
+Private Sub TraceInternalError(context As String)
+	Dim subName As String = "TraceLog"
+	If SubExists(targetModule, subName) Then
+		CallSubDelayed2(targetModule, subName, "ошибка аудио internal context=" & context & " message=" & LastException.Message)
+	End If
+End Sub
+
+Private Sub TraceDiagnostic(message As String)
+	Dim subName As String = "TraceLog"
+	If SubExists(targetModule, subName) Then
+		CallSubDelayed2(targetModule, subName, message)
+	End If
 End Sub
 
 Private Sub TraceAudio(message As String)

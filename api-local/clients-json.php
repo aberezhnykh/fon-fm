@@ -50,6 +50,10 @@ function client_json_normalize_ad(array $adJson): array {
 
 function client_json_normalize_player(array $playerJson): array {
     if (array_key_exists('level', $playerJson)) $playerJson['level'] = json_number($playerJson['level']);
+    if (array_key_exists('trace', $playerJson)) {
+        $playerJson['trace'] = json_bool($playerJson['trace']);
+        if ($playerJson['trace'] !== true) unset($playerJson['trace']);
+    }
     return $playerJson;
 }
 
@@ -104,6 +108,7 @@ $playerFields = [
     'end',
     'code',
     'level',
+    'trace',
 ];
 $junctionFields = ['schedules_id.id', 'players_id.id'];
 $scheduleFields = [
@@ -232,6 +237,7 @@ foreach ($ids as $id) {
                 'end' => (string)($row['end'] ?? ''),
                 'code' => $code,
                 'level' => $row['level'] ?? null,
+                'trace' => $row['trace'] ?? null,
             ]);
             $playerJson = clean_array($playerJson);
 

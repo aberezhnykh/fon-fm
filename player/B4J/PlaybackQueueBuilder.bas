@@ -6,17 +6,11 @@ Version=10.5
 @EndOfDesignText@
 
 Sub Class_Globals
-	Private targetModule As Object
-	Private traceSubName As String
-	Private refreshDataSubName As String
-	Private ensurePlaylistMetadataSubName As String
+	Private targetPage As B4XMainPage
 End Sub
 
-Public Sub Initialize(targetModuleValue As Object, traceSubNameValue As String, refreshDataSubNameValue As String, ensurePlaylistMetadataSubNameValue As String)
-	targetModule = targetModuleValue
-	traceSubName = traceSubNameValue
-	refreshDataSubName = refreshDataSubNameValue
-	ensurePlaylistMetadataSubName = ensurePlaylistMetadataSubNameValue
+Public Sub Initialize(targetPageValue As B4XMainPage)
+	targetPage = targetPageValue
 End Sub
 
 Public Sub CanUseDataPlaybackResolver(offlineData As Map) As Boolean
@@ -28,38 +22,20 @@ Public Sub CanUseDataPlaybackResolver(offlineData As Map) As Boolean
 End Sub
 
 Public Sub EnsureDataPlaybackReady(offlineData As Map) As ResumableSub
-	If CanUseDataPlaybackResolver(offlineData) Then
-		Trace("PlaybackQueueBuilder resolver ready check succeeded.")
-		Return True
-	End If
-	Trace("PlaybackQueueBuilder resolver ready check failed. Refresh required.")
-	Wait For (CallSub(targetModule, refreshDataSubName)) Complete (refreshed As Boolean)
-	If refreshed = False Then
-		Trace("PlaybackQueueBuilder resolver ready check failed after refresh.")
-		Return False
-	End If
-	Dim refreshedOfflineData As Map = CallSub(targetModule, "GetQueueBuilderOfflineData")
-	If CanUseDataPlaybackResolver(refreshedOfflineData) Then
-		Trace("PlaybackQueueBuilder resolver ready check succeeded after refresh.")
-		Return True
-	End If
-	Trace("PlaybackQueueBuilder resolver ready check failed after refresh.")
-	Return False
+	If CanUseDataPlaybackResolver(offlineData) Then Return True
+	Wait For (targetPage.QueueBuilder_RefreshOfflineDataNow) Complete (refreshed As Boolean)
+	If refreshed = False Then Return False
+	Dim refreshedOfflineData As Map = targetPage.GetQueueBuilderOfflineData
+	Return CanUseDataPlaybackResolver(refreshedOfflineData)
 End Sub
 
 Public Sub EnsureDataPlaybackQueue(playQueue As List, minItems As Int, offlineData As Map, nowTicks As Long, storage As KeyValueStore, queueState As PlaybackQueueState, dataResolver As DataPlaybackResolver, mediaCacheService As MediaCache) As ResumableSub
 	If minItems <= 0 Then Return False
-	Trace("PlaybackQueueBuilder queue build started. minItems=" & minItems & ", queueSize=" & playQueue.Size)
 	If playQueue.Size = 0 Then
 		If queueState.ConsumeSkipQueueSnapshotRestore Then
-			Trace("PlaybackQueueBuilder queue snapshot restore skipped.")
 		Else
-			Trace("PlaybackQueueBuilder queue snapshot restore attempted.")
 			If RestoreQueueSnapshotFromStorage(playQueue, offlineData, nowTicks, storage, queueState, dataResolver, mediaCacheService) Then
-				If playQueue.Size >= minItems Then
-					Trace("PlaybackQueueBuilder queue build completed from snapshot. queueSize=" & playQueue.Size)
-					Return True
-				End If
+				If playQueue.Size >= minItems Then Return True
 			End If
 		End If
 	End If
@@ -72,10 +48,8 @@ Public Sub EnsureDataPlaybackQueue(playQueue As List, minItems As Int, offlineDa
 	Loop
 	If playQueue.Size > 0 Then
 		dataResolver.SavePreviewPlaylistCursors(storage, workingCursors)
-		Trace("PlaybackQueueBuilder playlist cursor preview updated. count=" & dataResolver.CursorCount)
 	End If
 	SaveQueueSnapshotState(playQueue, offlineData, nowTicks, storage, queueState, dataResolver)
-	Trace("PlaybackQueueBuilder queue build completed. queueSize=" & playQueue.Size)
 	Return playQueue.Size >= minItems
 End Sub
 
@@ -92,7 +66,6 @@ Private Sub ApplyExistingQueueToWorkingCursors(workingCursors As Map, playQueue 
 			workingCursors.Put(slotKey, nextStored)
 		End If
 	Next
-	Trace("PlaybackQueueBuilder queue state rebuilt. queueSize=" & playQueue.Size & ", cursorCount=" & workingCursors.Size)
 End Sub
 
 Public Sub BuildNextTrackFromDataPlayback(workingCursors As Map, offlineData As Map, nowTicks As Long, dataResolver As DataPlaybackResolver, mediaCacheService As MediaCache) As ResumableSub
@@ -100,12 +73,12 @@ Public Sub BuildNextTrackFromDataPlayback(workingCursors As Map, offlineData As 
 	emptyItem.Initialize
 	Dim currentSlot As Map = dataResolver.ResolveDataSlotAtTicks(offlineData, nowTicks)
 	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then
-		Trace("PlaybackQueueBuilder next track resolve failed: current slot unavailable.")
+		Trace("очередь next ошибка reason=current_slot_unavailable")
 		Return emptyItem
 	End If
 	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
 	If playlists.IsInitialized = False Or playlists.Size = 0 Then
-		Trace("PlaybackQueueBuilder next track resolve failed: no playlists in current slot.")
+		Trace("очередь next ошибка reason=no_playlists")
 		Return emptyItem
 	End If
 	For attempt = 0 To playlists.Size - 1
@@ -114,7 +87,7 @@ Public Sub BuildNextTrackFromDataPlayback(workingCursors As Map, offlineData As 
 		Dim canUsePlaylist As Boolean = True
 		Dim playlistData As Map = dataResolver.LoadCachedPlaylistMetadata(playlistDescriptor.GetDefault("id", ""))
 		If playlistData.IsInitialized = False Or playlistData.Size = 0 Then
-			Wait For (CallSub2(targetModule, ensurePlaylistMetadataSubName, playlistDescriptor)) Complete (downloaded As Boolean)
+			Wait For (targetPage.QueueBuilder_EnsureSinglePlaylistMetadata(playlistDescriptor)) Complete (downloaded As Boolean)
 			If downloaded = False Then
 				canUsePlaylist = False
 			Else
@@ -123,42 +96,38 @@ Public Sub BuildNextTrackFromDataPlayback(workingCursors As Map, offlineData As 
 			End If
 		End If
 		If canUsePlaylist = False Then
-			Trace("PlaybackQueueBuilder playlist skipped: metadata unavailable. playlistId=" & playlistDescriptor.GetDefault("id", ""))
+			Trace("очередь playlist skip reason=metadata_unavailable playlistId=" & playlistDescriptor.GetDefault("id", ""))
 		Else
 			Dim chosenTrack As Map = dataResolver.ChooseRandomTrackFromPlaylist(playlistData, mediaCacheService, False)
 			If chosenTrack.IsInitialized = False Or chosenTrack.Size = 0 Then
-				Trace("PlaybackQueueBuilder next track resolve failed: playlist has no track. playlistId=" & playlistDescriptor.GetDefault("id", ""))
+				Trace("очередь next ошибка reason=no_track playlistId=" & playlistDescriptor.GetDefault("id", ""))
 			Else
 				Dim chosenQueueItem As Map = dataResolver.CreateQueueTrackFromPlaylist(currentSlot, playlistDescriptor, chosenTrack, offlineData)
 				If mediaCacheService.IsTrackCached(chosenQueueItem.GetDefault("id", "")) Then
-					Trace("PlaybackQueueBuilder next track resolved from slot/playlist. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & chosenQueueItem.GetDefault("id", "") & ", source=cache")
+					Trace("очередь next итог playlistId=" & playlistDescriptor.GetDefault("id", "") & " trackId=" & chosenQueueItem.GetDefault("id", "") & " source=cache")
 					dataResolver.RememberResolvedTrack(chosenQueueItem.GetDefault("id", ""))
 					dataResolver.RememberResolvedTrackForPlaylist(chosenQueueItem.GetDefault("playlist_id", ""), chosenQueueItem.GetDefault("id", ""))
 					Return chosenQueueItem
 				End If
-				Trace("Выбран новый track из playlist. Пробую подготовить локально. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & chosenQueueItem.GetDefault("id", ""))
 				Dim singleTrackItems As List
 				singleTrackItems.Initialize
 				singleTrackItems.Add(chosenQueueItem)
 				Wait For (mediaCacheService.EnsureTracksCached(singleTrackItems, 1)) Complete (downloadedTrack As Boolean)
 				If mediaCacheService.IsTrackCached(chosenQueueItem.GetDefault("id", "")) Then
-					Trace("Новый track подготовлен для локального воспроизведения. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & chosenQueueItem.GetDefault("id", "") & ", downloaded=" & downloadedTrack)
-					Trace("PlaybackQueueBuilder next track resolved from slot/playlist. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & chosenQueueItem.GetDefault("id", "") & ", source=downloaded")
+					Trace("очередь next итог playlistId=" & playlistDescriptor.GetDefault("id", "") & " trackId=" & chosenQueueItem.GetDefault("id", "") & " source=downloaded")
 					dataResolver.RememberResolvedTrack(chosenQueueItem.GetDefault("id", ""))
 					dataResolver.RememberResolvedTrackForPlaylist(chosenQueueItem.GetDefault("playlist_id", ""), chosenQueueItem.GetDefault("id", ""))
 					Return chosenQueueItem
 				End If
-				Trace("Не удалось подготовить выбранный track. Пробую cached fallback. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & chosenQueueItem.GetDefault("id", ""))
 				Dim fallbackTrack As Map = dataResolver.ChooseRandomTrackFromPlaylist(playlistData, mediaCacheService, True)
 				If fallbackTrack.IsInitialized And fallbackTrack.Size > 0 Then
 					Dim fallbackQueueItem As Map = dataResolver.CreateQueueTrackFromPlaylist(currentSlot, playlistDescriptor, fallbackTrack, offlineData)
-					Trace("Использую cached fallback track. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & fallbackQueueItem.GetDefault("id", ""))
-					Trace("PlaybackQueueBuilder next track resolved from slot/playlist. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & fallbackQueueItem.GetDefault("id", "") & ", source=fallback")
+					Trace("очередь next итог playlistId=" & playlistDescriptor.GetDefault("id", "") & " trackId=" & fallbackQueueItem.GetDefault("id", "") & " source=fallback")
 					dataResolver.RememberResolvedTrack(fallbackQueueItem.GetDefault("id", ""))
 					dataResolver.RememberResolvedTrackForPlaylist(fallbackQueueItem.GetDefault("playlist_id", ""), fallbackQueueItem.GetDefault("id", ""))
 					Return fallbackQueueItem
 				End If
-				Trace("Не удалось подготовить track для локального воспроизведения. playlistId=" & playlistDescriptor.GetDefault("id", "") & ", trackId=" & chosenQueueItem.GetDefault("id", ""))
+				Trace("очередь next ошибка reason=local_prepare_failed playlistId=" & playlistDescriptor.GetDefault("id", "") & " trackId=" & chosenQueueItem.GetDefault("id", ""))
 			End If
 		End If
 	Next
@@ -173,7 +142,7 @@ Public Sub RestoreQueueSnapshotFromStorage(playQueue As List, offlineData As Map
 	Dim currentSignature As String = BuildQueueSignature(offlineData, nowTicks, dataResolver)
 	If currentSignature = "" Then Return False
 	If storedSignature <> currentSignature Then
-		Trace("PlaybackQueueBuilder queue signature mismatch. stored=" & storedSignature & ", current=" & currentSignature)
+		Trace("очередь signature mismatch stored=" & storedSignature & " current=" & currentSignature)
 		Return False
 	End If
 	Dim storedTracks As List = snapshot.GetDefault("tracks", CreateInitializedList)
@@ -191,7 +160,6 @@ Public Sub RestoreQueueSnapshotFromStorage(playQueue As List, offlineData As Map
 		End If
 	Next
 	If restoredCount = 0 Then Return False
-	Trace("PlaybackQueueBuilder queue snapshot restored. tracks=" & restoredCount)
 	Return True
 End Sub
 
@@ -210,7 +178,6 @@ Public Sub SaveQueueSnapshotState(playQueue As List, offlineData As Map, nowTick
 		End If
 	Next
 	queueState.SaveQueueSnapshot(storage, signature, snapshotTracks, 20)
-	Trace("PlaybackQueueBuilder queue snapshot saved. tracks=" & snapshotTracks.Size)
 End Sub
 
 Public Sub BuildQueueSignature(offlineData As Map, nowTicks As Long, dataResolver As DataPlaybackResolver) As String
@@ -272,7 +239,5 @@ Private Sub JoinList(items As List, separator As String) As String
 End Sub
 
 Private Sub Trace(message As String)
-	If SubExists(targetModule, traceSubName) Then
-		CallSub2(targetModule, traceSubName, message)
-	End If
+	targetPage.TraceLog(message)
 End Sub

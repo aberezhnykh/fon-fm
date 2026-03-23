@@ -86,8 +86,8 @@ case 0:
 //C
 this.state = -1;
 RDebugUtils.currentLine=54132737;
- //BA.debugLineNum = 54132737;BA.debugLine="Trace(\"PlaybackFacade advance requested. initiato";
-__ref._trace /*String*/ (null,"PlaybackFacade advance requested. initiator="+_initiator+", allowLoad="+BA.ObjectToString(_allowload));
+ //BA.debugLineNum = 54132737;BA.debugLine="Trace(\"сценарий переход запрос initiator=\" & init";
+__ref._trace /*String*/ (null,"сценарий переход запрос initiator="+_initiator+" allowLoad="+BA.ObjectToString(_allowload));
 RDebugUtils.currentLine=54132738;
  //BA.debugLineNum = 54132738;BA.debugLine="Wait For (mainPage.Facade_DispatchPlaybackAdvance";
 parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "dispatchplaybackadvance"), __ref._mainpage /*b4j.example.b4xmainpage*/ ._facade_dispatchplaybackadvancecore /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_initiator,_allowload));
@@ -104,120 +104,6 @@ if (true) {
 parent.__c.ReturnFromResumableSub(this,(Object)(_advanced));return;};
 RDebugUtils.currentLine=54132740;
  //BA.debugLineNum = 54132740;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _advanceaftercomplete(b4j.example.playbackfacade __ref,String _audiokey) throws Exception{
-RDebugUtils.currentModule="playbackfacade";
-if (Debug.shouldDelegate(ba, "advanceaftercomplete", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "advanceaftercomplete", new Object[] {_audiokey}));}
-ResumableSub_AdvanceAfterComplete rsub = new ResumableSub_AdvanceAfterComplete(this,__ref,_audiokey);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_AdvanceAfterComplete extends BA.ResumableSub {
-public ResumableSub_AdvanceAfterComplete(b4j.example.playbackfacade parent,b4j.example.playbackfacade __ref,String _audiokey) {
-this.parent = parent;
-this.__ref = __ref;
-this._audiokey = _audiokey;
-this.__ref = parent;
-}
-b4j.example.playbackfacade __ref;
-b4j.example.playbackfacade parent;
-String _audiokey;
-boolean _advanced = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="playbackfacade";
-
-    while (true) {
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = -1;
-RDebugUtils.currentLine=54263809;
- //BA.debugLineNum = 54263809;BA.debugLine="Trace(\"PlaybackFacade advance requested. initiato";
-__ref._trace /*String*/ (null,"PlaybackFacade advance requested. initiator=audio_complete:"+_audiokey);
-RDebugUtils.currentLine=54263810;
- //BA.debugLineNum = 54263810;BA.debugLine="Wait For (DispatchPlaybackAdvance(\"audio_complete";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "advanceaftercomplete"), __ref._dispatchplaybackadvance /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,"audio_complete:"+_audiokey,parent.__c.True));
-this.state = 1;
-return;
-case 1:
-//C
-this.state = -1;
-_advanced = (boolean) result[1];
-;
-RDebugUtils.currentLine=54263811;
- //BA.debugLineNum = 54263811;BA.debugLine="Return advanced";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_advanced));return;};
-RDebugUtils.currentLine=54263812;
- //BA.debugLineNum = 54263812;BA.debugLine="End Sub";
-if (true) break;
-
-            }
-        }
-    }
-}
-public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _advanceaftererror(b4j.example.playbackfacade __ref,String _audiokey) throws Exception{
-RDebugUtils.currentModule="playbackfacade";
-if (Debug.shouldDelegate(ba, "advanceaftererror", false))
-	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "advanceaftererror", new Object[] {_audiokey}));}
-ResumableSub_AdvanceAfterError rsub = new ResumableSub_AdvanceAfterError(this,__ref,_audiokey);
-rsub.resume(ba, null);
-return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
-}
-public static class ResumableSub_AdvanceAfterError extends BA.ResumableSub {
-public ResumableSub_AdvanceAfterError(b4j.example.playbackfacade parent,b4j.example.playbackfacade __ref,String _audiokey) {
-this.parent = parent;
-this.__ref = __ref;
-this._audiokey = _audiokey;
-this.__ref = parent;
-}
-b4j.example.playbackfacade __ref;
-b4j.example.playbackfacade parent;
-String _audiokey;
-boolean _advanced = false;
-
-@Override
-public void resume(BA ba, Object[] result) throws Exception{
-RDebugUtils.currentModule="playbackfacade";
-
-    while (true) {
-        switch (state) {
-            case -1:
-{
-parent.__c.ReturnFromResumableSub(this,null);return;}
-case 0:
-//C
-this.state = -1;
-RDebugUtils.currentLine=54329345;
- //BA.debugLineNum = 54329345;BA.debugLine="Trace(\"PlaybackFacade advance requested. initiato";
-__ref._trace /*String*/ (null,"PlaybackFacade advance requested. initiator=audio_error_recovery:"+_audiokey);
-RDebugUtils.currentLine=54329346;
- //BA.debugLineNum = 54329346;BA.debugLine="Wait For (DispatchPlaybackAdvance(\"audio_error_re";
-parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "advanceaftererror"), __ref._dispatchplaybackadvance /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,"audio_error_recovery:"+_audiokey,parent.__c.True));
-this.state = 1;
-return;
-case 1:
-//C
-this.state = -1;
-_advanced = (boolean) result[1];
-;
-RDebugUtils.currentLine=54329347;
- //BA.debugLineNum = 54329347;BA.debugLine="Return advanced";
-if (true) {
-parent.__c.ReturnFromResumableSub(this,(Object)(_advanced));return;};
-RDebugUtils.currentLine=54329348;
- //BA.debugLineNum = 54329348;BA.debugLine="End Sub";
 if (true) break;
 
             }
@@ -270,8 +156,8 @@ case 0:
 //C
 this.state = -1;
 RDebugUtils.currentLine=54067201;
- //BA.debugLineNum = 54067201;BA.debugLine="Trace(\"PlaybackFacade advance requested. mode=loa";
-__ref._trace /*String*/ (null,"PlaybackFacade advance requested. mode=load_next_and_play");
+ //BA.debugLineNum = 54067201;BA.debugLine="Trace(\"сценарий переход запрос mode=load_next_and";
+__ref._trace /*String*/ (null,"сценарий переход запрос mode=load_next_and_play");
 RDebugUtils.currentLine=54067202;
  //BA.debugLineNum = 54067202;BA.debugLine="Wait For (mainPage.Facade_LoadNextAndPlayCore) Co";
 parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "loadnextandplay"), __ref._mainpage /*b4j.example.b4xmainpage*/ ._facade_loadnextandplaycore /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
@@ -302,8 +188,8 @@ if (Debug.shouldDelegate(ba, "pauseplayback", false))
 RDebugUtils.currentLine=54460416;
  //BA.debugLineNum = 54460416;BA.debugLine="Public Sub PausePlayback(reason As String, connect";
 RDebugUtils.currentLine=54460417;
- //BA.debugLineNum = 54460417;BA.debugLine="Trace(\"PlaybackFacade pause requested. mode=\" & c";
-__ref._trace /*String*/ (null,"PlaybackFacade pause requested. mode="+_connectionmode);
+ //BA.debugLineNum = 54460417;BA.debugLine="Trace(\"сценарий pause запрос mode=\" & connectionM";
+__ref._trace /*String*/ (null,"сценарий pause запрос mode="+_connectionmode);
 RDebugUtils.currentLine=54460418;
  //BA.debugLineNum = 54460418;BA.debugLine="mainPage.Facade_PausePlaybackCore(reason, connect";
 __ref._mainpage /*b4j.example.b4xmainpage*/ ._facade_pauseplaybackcore /*String*/ (null,_reason,_connectionmode);
@@ -394,8 +280,8 @@ case 0:
 //C
 this.state = -1;
 RDebugUtils.currentLine=54525953;
- //BA.debugLineNum = 54525953;BA.debugLine="Trace(\"PlaybackFacade resume requested. reason=po";
-__ref._trace /*String*/ (null,"PlaybackFacade resume requested. reason=policy_pause");
+ //BA.debugLineNum = 54525953;BA.debugLine="Trace(\"сценарий resume запрос reason=policy_pause";
+__ref._trace /*String*/ (null,"сценарий resume запрос reason=policy_pause");
 RDebugUtils.currentLine=54525954;
  //BA.debugLineNum = 54525954;BA.debugLine="Wait For (mainPage.Facade_ResumePlaybackAfterPoli";
 parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "resumeplaybackafterpolicypause"), __ref._mainpage /*b4j.example.b4xmainpage*/ ._facade_resumeplaybackafterpolicypausecore /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
@@ -451,8 +337,8 @@ case 0:
 //C
 this.state = -1;
 RDebugUtils.currentLine=54001665;
- //BA.debugLineNum = 54001665;BA.debugLine="Trace(\"PlaybackFacade start requested. mode=\" & m";
-__ref._trace /*String*/ (null,"PlaybackFacade start requested. mode="+_mode);
+ //BA.debugLineNum = 54001665;BA.debugLine="Trace(\"сценарий старт запрос mode=\" & mode)";
+__ref._trace /*String*/ (null,"сценарий старт запрос mode="+_mode);
 RDebugUtils.currentLine=54001666;
  //BA.debugLineNum = 54001666;BA.debugLine="Wait For (mainPage.Facade_StartFirstTrackCore(mod";
 parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "startfirsttrack"), __ref._mainpage /*b4j.example.b4xmainpage*/ ._facade_startfirsttrackcore /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,_mode));
@@ -506,8 +392,8 @@ case 0:
 //C
 this.state = -1;
 RDebugUtils.currentLine=54394881;
- //BA.debugLineNum = 54394881;BA.debugLine="Trace(\"PlaybackFacade stop requested.\")";
-__ref._trace /*String*/ (null,"PlaybackFacade stop requested.");
+ //BA.debugLineNum = 54394881;BA.debugLine="Trace(\"сценарий stop запрос\")";
+__ref._trace /*String*/ (null,"сценарий stop запрос");
 RDebugUtils.currentLine=54394882;
  //BA.debugLineNum = 54394882;BA.debugLine="Wait For (mainPage.Facade_StopPlayerCore) Complet";
 parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "stopplayback"), __ref._mainpage /*b4j.example.b4xmainpage*/ ._facade_stopplayercore /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null));
@@ -530,6 +416,63 @@ if (true) break;
         }
     }
 }
+public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _advanceaftercomplete(b4j.example.playbackfacade __ref,String _audiokey) throws Exception{
+RDebugUtils.currentModule="playbackfacade";
+if (Debug.shouldDelegate(ba, "advanceaftercomplete", false))
+	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "advanceaftercomplete", new Object[] {_audiokey}));}
+ResumableSub_AdvanceAfterComplete rsub = new ResumableSub_AdvanceAfterComplete(this,__ref,_audiokey);
+rsub.resume(ba, null);
+return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
+}
+public static class ResumableSub_AdvanceAfterComplete extends BA.ResumableSub {
+public ResumableSub_AdvanceAfterComplete(b4j.example.playbackfacade parent,b4j.example.playbackfacade __ref,String _audiokey) {
+this.parent = parent;
+this.__ref = __ref;
+this._audiokey = _audiokey;
+this.__ref = parent;
+}
+b4j.example.playbackfacade __ref;
+b4j.example.playbackfacade parent;
+String _audiokey;
+boolean _advanced = false;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="playbackfacade";
+
+    while (true) {
+        switch (state) {
+            case -1:
+{
+parent.__c.ReturnFromResumableSub(this,null);return;}
+case 0:
+//C
+this.state = -1;
+RDebugUtils.currentLine=54263809;
+ //BA.debugLineNum = 54263809;BA.debugLine="Trace(\"сценарий переход запрос initiator=audio_co";
+__ref._trace /*String*/ (null,"сценарий переход запрос initiator=audio_complete:"+_audiokey);
+RDebugUtils.currentLine=54263810;
+ //BA.debugLineNum = 54263810;BA.debugLine="Wait For (DispatchPlaybackAdvance(\"audio_complete";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "advanceaftercomplete"), __ref._dispatchplaybackadvance /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,"audio_complete:"+_audiokey,parent.__c.True));
+this.state = 1;
+return;
+case 1:
+//C
+this.state = -1;
+_advanced = (boolean) result[1];
+;
+RDebugUtils.currentLine=54263811;
+ //BA.debugLineNum = 54263811;BA.debugLine="Return advanced";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(_advanced));return;};
+RDebugUtils.currentLine=54263812;
+ //BA.debugLineNum = 54263812;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
+}
 public String  _trace(b4j.example.playbackfacade __ref,String _message) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackfacade";
@@ -543,6 +486,63 @@ __ref._mainpage /*b4j.example.b4xmainpage*/ ._playbackfacade_trace /*String*/ (n
 RDebugUtils.currentLine=53936130;
  //BA.debugLineNum = 53936130;BA.debugLine="End Sub";
 return "";
+}
+public anywheresoftware.b4a.keywords.Common.ResumableSubWrapper  _advanceaftererror(b4j.example.playbackfacade __ref,String _audiokey) throws Exception{
+RDebugUtils.currentModule="playbackfacade";
+if (Debug.shouldDelegate(ba, "advanceaftererror", false))
+	 {return ((anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) Debug.delegate(ba, "advanceaftererror", new Object[] {_audiokey}));}
+ResumableSub_AdvanceAfterError rsub = new ResumableSub_AdvanceAfterError(this,__ref,_audiokey);
+rsub.resume(ba, null);
+return (anywheresoftware.b4a.keywords.Common.ResumableSubWrapper) anywheresoftware.b4a.AbsObjectWrapper.ConvertToWrapper(new anywheresoftware.b4a.keywords.Common.ResumableSubWrapper(), rsub);
+}
+public static class ResumableSub_AdvanceAfterError extends BA.ResumableSub {
+public ResumableSub_AdvanceAfterError(b4j.example.playbackfacade parent,b4j.example.playbackfacade __ref,String _audiokey) {
+this.parent = parent;
+this.__ref = __ref;
+this._audiokey = _audiokey;
+this.__ref = parent;
+}
+b4j.example.playbackfacade __ref;
+b4j.example.playbackfacade parent;
+String _audiokey;
+boolean _advanced = false;
+
+@Override
+public void resume(BA ba, Object[] result) throws Exception{
+RDebugUtils.currentModule="playbackfacade";
+
+    while (true) {
+        switch (state) {
+            case -1:
+{
+parent.__c.ReturnFromResumableSub(this,null);return;}
+case 0:
+//C
+this.state = -1;
+RDebugUtils.currentLine=54329345;
+ //BA.debugLineNum = 54329345;BA.debugLine="Trace(\"сценарий переход запрос initiator=audio_er";
+__ref._trace /*String*/ (null,"сценарий переход запрос initiator=audio_error_recovery:"+_audiokey);
+RDebugUtils.currentLine=54329346;
+ //BA.debugLineNum = 54329346;BA.debugLine="Wait For (DispatchPlaybackAdvance(\"audio_error_re";
+parent.__c.WaitFor("complete", ba, new anywheresoftware.b4a.shell.DebugResumableSub.DelegatableResumableSub(this, "playbackfacade", "advanceaftererror"), __ref._dispatchplaybackadvance /*anywheresoftware.b4a.keywords.Common.ResumableSubWrapper*/ (null,"audio_error_recovery:"+_audiokey,parent.__c.True));
+this.state = 1;
+return;
+case 1:
+//C
+this.state = -1;
+_advanced = (boolean) result[1];
+;
+RDebugUtils.currentLine=54329347;
+ //BA.debugLineNum = 54329347;BA.debugLine="Return advanced";
+if (true) {
+parent.__c.ReturnFromResumableSub(this,(Object)(_advanced));return;};
+RDebugUtils.currentLine=54329348;
+ //BA.debugLineNum = 54329348;BA.debugLine="End Sub";
+if (true) break;
+
+            }
+        }
+    }
 }
 public String  _class_globals(b4j.example.playbackfacade __ref) throws Exception{
 __ref = this;

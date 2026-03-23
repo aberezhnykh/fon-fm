@@ -13,12 +13,13 @@ Sub Class_Globals
 	Private Const NEXT_BASE_URL As String = "https://play.fon.fm/next"
 	Private Const CLAIM_BASE_URL As String = "https://play.fon.fm/claim"
 	Private Const HISTORY_BASE_URL As String = "https://play.fon.fm/history"
+	Private Const TRACE_BASE_URL As String = "https://play.fon.fm/trace"
 	Private Const HISTORY_FLUSH_INTERVAL_MS As Int = 30000
+Private Const TRACE_FLUSH_INTERVAL_MS As Int = 60 * 1000
 	Private Const DATA_BASE_URL As String = "https://play.fon.fm/data"
 	Private Const PLAYLIST_CDN_BASE_URL As String = "https://cdn.fon.fm/data/playlists/"
 	Private Const SERVICE_CHECK_URL As String = "https://play.fon.fm/data"
 	Private Const EXTERNAL_CONNECTIVITY_CHECK_URL As String = "https://radiosparx.ru/img/logo-dark.svg"
-	Private Const APP_VERSION As String = "1.0.1"
 	Private Const USE_DATA_PLAYBACK_RESOLVER As Boolean = True
 	Private Const ICON_PLAY As String = Chr(0xE037)
 	Private Const ICON_STOP As String = Chr(0xE047)
@@ -38,8 +39,15 @@ Sub Class_Globals
 	Private Const CACHE_AUDIT_START_DELAY_MS As Int = 20000
 	Private Const CACHE_AUDIT_STEP_INTERVAL_MS As Int = 2000
 	Private Const CACHE_AUDIT_RECHECK_INTERVAL_MS As Int = 30 * 60 * 1000
+	Private Const TRACK_CACHE_PRUNE_COOLDOWN_MS As Long = 10 * 60 * 1000
 	Private Const DATA_REFRESH_MS As Int = 5 * 60 * 1000
 	Private Const FETCH_TIMEOUT_MS As Int = 4000
+	Private Const AUDIO_READY_TIMEOUT_MS As Int = 5000
+	Private Const PLAYBACK_WATCHDOG_INTERVAL_MS As Int = 1000
+	Private Const PLAYBACK_WATCHDOG_STALL_MS As Long = 4000
+	Private Const PLAYBACK_WATCHDOG_RECOVERY_COOLDOWN_MS As Long = 10000
+	Private Const PLAYBACK_WATCHDOG_PROGRESS_DELTA_MS As Long = 150
+	Private Const PLAYBACK_WATCHDOG_GRACE_MS As Long = 3000
 	Private Const CONNECTIVITY_CHECK_TIMEOUT_MS As Int = 2500
 	Private Const PAUSE_RETRY_DELAY As Int = 300000
 	Private Const LOCAL_RETRY_DELAY_INITIAL As Int = 5000
@@ -126,11 +134,13 @@ Sub Class_Globals
 	Private retryTimer As Timer
 	Private breakTimer As Timer
 	Private historyFlushTimer As Timer
+	Private traceUploadTimer As Timer
 	Private orbitTimer As Timer
 	Private offlineDataRefreshTimer As Timer
 	Private localAdMinuteTimer As Timer
 	Private trackCacheWarmupTimer As Timer
 	Private cacheAuditTimer As Timer
+	Private playbackWatchdogTimer As Timer
 	Private machineGuidShell As Shell
 
 	Private playerCode As String
@@ -149,6 +159,17 @@ Sub Class_Globals
 	Private responseAdapter As PlaybackResponseAdapter
 	Private initialStartFadePending As Boolean
 	Private isHistoryFlushInProgress As Boolean
+	Private isTraceUploadInProgress As Boolean
+	Private cachedRelevantTrackIds As List
+	Private lastTrackCachePruneAt As Long
+	Private consecutiveNetworkErrors As Int
+	Private lastDataOkAt As Long
+	Private lastHistoryOkAt As Long
+	Private lastPlaybackWatchdogPositionMs As Long
+	Private lastPlaybackWatchdogTrackId As String
+	Private lastPlaybackWatchdogProgressAt As Long
+	Private lastPlaybackWatchdogRecoveryAt As Long
+	Private isPlaybackWatchdogTickInProgress As Boolean
 
 	Private playlistIndex As Int = -1
 	Private orbitPulseStep As Int
@@ -165,6 +186,7 @@ End Sub
 
 Private Sub B4XPage_Created (root1 As B4XView)
 	rootView = root1
+	B4XPages.SetTitle(Me, Main.LabelName)
 	rootView.Color = 0xFF0E0F11
 	InitSettings
 	InitState
@@ -172,7 +194,7 @@ Private Sub B4XPage_Created (root1 As B4XView)
 	RestoreWindowState
 	audioPrimary.Initialize("AudioPrimary", Me)
 	audioSecondary.Initialize("AudioSecondary", Me)
-	TraceLog("Приложение запущено. Версия=" & APP_VERSION & ", код плеера=" & FormatPlayerCodeForDisplay(playerCode) & ", deviceId=" & deviceId)
+	TraceInfo("app", "запуск", "version=" & ResolveAppVersion & " player=" & FormatPlayerCodeForDisplay(playerCode))
 	StartOfflineDataRefresh
 	ShowInitialScreen
 End Sub
@@ -216,6 +238,24 @@ Private Sub InitSettings
 	messages.Put("settings_thanks", "Спасибо!")
 End Sub
 
+Private Sub ResolveAppVersion As String
+	If Main.VersionName <> "" Then Return Main.VersionName
+	Return "" & Main.VersionCode
+End Sub
+
+Private Sub IsReleaseBuild As Boolean
+	#If Release
+	Return True
+	#Else
+	Return False
+	#End If
+End Sub
+
+Private Sub ConsumeLastException
+	Dim ignored As String = LastException.Message
+	If ignored = "__never__" Then Return
+End Sub
+
 Private Sub InitState
 	storageDir = File.DirData("fonfm")
 	debugResponsesDir = File.Combine(storageDir, "debugresponses")
@@ -234,35 +274,43 @@ Private Sub InitState
 	dataPolicyState.Initialize
 	retryFallbackState.Initialize(LOCAL_RETRY_DELAY_INITIAL, SERVER_RETRY_DELAY_INITIAL)
 	queueState.Initialize
-	queueBuilder.Initialize(Me, "TraceLog", "QueueBuilder_RefreshOfflineDataNow", "QueueBuilder_EnsureSinglePlaylistMetadata")
-	transitionCoordinator.Initialize(Me, "TraceLog")
+	queueBuilder.Initialize(Me)
+	transitionCoordinator.Initialize(Me)
 	facade.Initialize(Me)
 	responseAdapter.Initialize
 	localAdScheduler.Initialize(Me, "TraceLog", MessageValue("ad_label"))
 	dataResolver.Initialize(storageDir, Me, "TraceLog")
 	dataResolver.LoadState(storage)
-	TraceLog("Загружены курсоры playlists. count=" & dataResolver.CursorCount)
+	TraceLog("курсор плейлистов load count=" & dataResolver.CursorCount)
 	deviceId = GetOrCreateDeviceId
 	mediaCacheService.Initialize(storageDir, storage, Me, "TraceLog", deviceId)
 	mediaCacheService.CleanupPlaybackTempFiles
 	retryTimer.Initialize("RetryTimer", SERVER_RETRY_DELAY_INITIAL)
 	breakTimer.Initialize("BreakTimer", 1000)
 	historyFlushTimer.Initialize("HistoryFlushTimer", HISTORY_FLUSH_INTERVAL_MS)
+	traceUploadTimer.Initialize("TraceUploadTimer", TRACE_FLUSH_INTERVAL_MS)
 	orbitTimer.Initialize("OrbitTimer", 70)
 	offlineDataRefreshTimer.Initialize("OfflineDataRefreshTimer", DATA_REFRESH_MS)
 	localAdMinuteTimer.Initialize("LocalAdMinuteTimer", 1000)
 	trackCacheWarmupTimer.Initialize("TrackCacheWarmupTimer", TRACK_CACHE_WARMUP_DELAY_MS)
 	cacheAuditTimer.Initialize("CacheAuditTimer", CACHE_AUDIT_START_DELAY_MS)
+	playbackWatchdogTimer.Initialize("PlaybackWatchdogTimer", PLAYBACK_WATCHDOG_INTERVAL_MS)
+	playbackWatchdogTimer.Enabled = True
 	isHistoryFlushInProgress = False
+	isTraceUploadInProgress = False
+	isPlaybackWatchdogTickInProgress = False
 	isStartupSequenceInProgress = False
 	isAdWarmupDeferredAfterStartup = False
 	isPostStartTasksDeferredAfterStartup = False
+	cachedRelevantTrackIds.Initialize
+	lastTrackCachePruneAt = 0
 	playbackFlowState = FLOW_IDLE
+	ResetPlaybackWatchdogState
 	offlineStoreService.Initialize(storageDir, storage, Me, "TraceLog", playerDataFile, playlistRequirementsFile, localPlaylistsDirName, PLAYLIST_CDN_BASE_URL)
 	offlineData = offlineStoreService.LoadOfflineData
 	RefreshPendingHistoryState
 	ResolveMachineGuidAsync
-	TraceLog("Состояние инициализировано. Папка=" & storageDir & ", сохраненный код=" & FormatPlayerCodeForDisplay(playerCode))
+	TraceLog("состояние init dir=" & storageDir & " player=" & FormatPlayerCodeForDisplay(playerCode))
 End Sub
 
 Private Sub BuildUi
@@ -301,7 +349,7 @@ Private Sub BuildUi
 	lblPlayIcon = CreateLabel(ICON_PLAY, 48, 0xFFD0FF71, False, False)
 	lblStream = CreateLabel("", 36, 0xFFD0FF71, True, True)
 	lblInfo = CreateLabel("", 17, 0xFFBCC3CD, False, True)
-	lblFooter = CreateLabel("FON.FM APP " & APP_VERSION, 12, 0xFF747B86, False, True)
+	lblFooter = CreateLabel(Main.LabelName & " " & ResolveAppVersion, 12, 0xFF747B86, False, True)
 	lblConnectionIcon = CreateLabel(ICON_CLOUD_OK, 16, 0xFF747B86, False, False)
 	lblSetupMessage = CreateLabel("", 17, 0xFFBCC3CD, False, True)
 
@@ -390,6 +438,7 @@ Private Sub LayoutUi(width As Int, height As Int)
 	Dim cardHeight As Int = Min(preferredHeight, safeHeight - 8dip)
 	Dim cardLeft As Int = (safeWidth - cardWidth) / 2
 	Dim cardTop As Int = (safeHeight - cardHeight) / 2
+	UpdateResponsiveStyles(safeWidth)
 
 	card.SetLayoutAnimated(0, cardLeft, cardTop, cardWidth, cardHeight)
 	headerPane.SetLayoutAnimated(0, 0, 0, cardWidth, headerHeight)
@@ -454,12 +503,23 @@ Private Sub LayoutUi(width As Int, height As Int)
 	btnConfirmYes.SetLayoutAnimated(0, Max(0, (confirmPane.Width - 236dip) / 2), 14dip, 112dip, 44dip)
 	btnConfirmNo.SetLayoutAnimated(0, btnConfirmYes.Left + 124dip, 14dip, 112dip, 44dip)
 
-	lblFooter.SetLayoutAnimated(0, horizontalPad, 0, cardWidth - horizontalPad * 2, footerHeight)
 	Dim connectionIconSize As Int = ScaleValue(safeWidth, 18dip, 20dip, 20dip)
-	lblConnectionIcon.SetLayoutAnimated(0, cardWidth - horizontalPad - connectionIconSize, (footerHeight - connectionIconSize) / 2, connectionIconSize, connectionIconSize)
-	lblFooter.SetLayoutAnimated(0, horizontalPad, 0, cardWidth - horizontalPad * 2 - connectionIconSize - 8dip, footerHeight)
-	UpdateResponsiveStyles(safeWidth)
+	Dim footerGap As Int = 8dip
+	Dim footerTextWidth As Int = MeasureViewTextWidth(lblFooter)
+	Dim footerGroupWidth As Int = connectionIconSize + footerGap + footerTextWidth
+	Dim footerGroupLeft As Int = Max(horizontalPad, (cardWidth - footerGroupWidth) / 2)
+	lblConnectionIcon.SetLayoutAnimated(0, footerGroupLeft, (footerHeight - connectionIconSize) / 2, connectionIconSize, connectionIconSize)
+	lblFooter.SetLayoutAnimated(0, footerGroupLeft + connectionIconSize + footerGap, 0, footerTextWidth + 4dip, footerHeight)
 	UpdateVisibleMode
+End Sub
+
+Private Sub MeasureViewTextWidth(view As B4XView) As Int
+	Dim textNode As JavaObject
+	textNode.InitializeNewInstance("javafx.scene.text.Text", Array As Object(view.Text))
+	Dim fontObject As JavaObject = view.Font
+	textNode.RunMethod("setFont", Array As Object(fontObject))
+	Dim bounds As JavaObject = textNode.RunMethod("getLayoutBounds", Null)
+	Return Ceil(bounds.RunMethod("getWidth", Null))
 End Sub
 
 Private Sub ConfirmReservedHeight As Int
@@ -530,13 +590,14 @@ Private Sub ShowInitialScreen
 		ShowPlayerScreen(True)
 		SetStopIcon
 		UpdateConnectionIndicator("connecting")
-		CallSubDelayed(Me, "AutoStartSavedPlayer")
+		AutoStartSavedPlayer
 	End If
 End Sub
 
 Private Sub StartOfflineDataRefresh
 	offlineDataRefreshTimer.Enabled = False
 	historyFlushTimer.Enabled = False
+	traceUploadTimer.Enabled = False
 	localAdMinuteTimer.Interval = 1000
 	localAdMinuteTimer.Enabled = True
 	If playerCode = "" Then Return
@@ -544,49 +605,121 @@ Private Sub StartOfflineDataRefresh
 	offlineDataRefreshTimer.Enabled = True
 	historyFlushTimer.Interval = HISTORY_FLUSH_INTERVAL_MS
 	historyFlushTimer.Enabled = True
+	traceUploadTimer.Interval = TRACE_FLUSH_INTERVAL_MS
+	traceUploadTimer.Enabled = True
 	cacheAuditTimer.Enabled = False
-	TraceLog("Запущено обновление данных плеера. Интервал=" & DATA_REFRESH_MS & " ms")
 End Sub
 
 Private Sub HistoryFlushTimer_Tick
 	If playerCode = "" Then Return
 	If GetPendingHistoryFileCount <= 0 Then Return
 	If isHistoryFlushInProgress Then Return
-	TraceLog("HistoryFlushTimer_Tick. pendingFiles=" & GetPendingHistoryFileCount)
-	CallSubDelayed(Me, "FlushHistoryBufferAsync")
+	FlushHistoryBufferAsync
 End Sub
 
 Private Sub FlushHistoryBufferAsync
 	Wait For (FlushHistoryBuffer) Complete (unused As Boolean)
 End Sub
 
+Private Sub FlushTraceBufferAsync
+	Wait For (FlushTraceBuffer) Complete (unused As Boolean)
+End Sub
+
+Private Sub TraceUploadTimer_Tick
+	If playerCode = "" Or deviceId = "" Then Return
+	If isTraceUploadInProgress Then Return
+	WriteHealthSnapshot("таймер")
+	If IsTraceUploadEnabled = False Then Return
+	Wait For (FlushTraceBuffer) Complete (unused As Boolean)
+End Sub
+
+Private Sub IsTraceUploadEnabled As Boolean
+	If offlineData.IsInitialized = False Then Return False
+	If offlineData.GetDefault("ok", False) <> True Then Return False
+	If offlineData.ContainsKey("trace") Then
+		Return offlineData.GetDefault("trace", False) = True
+	End If
+	Dim playerData As Map = offlineData.GetDefault("player", Null)
+	If playerData.IsInitialized = False Then Return False
+	Return playerData.ContainsKey("trace") And playerData.GetDefault("trace", False) = True
+End Sub
+
+Private Sub FlushTraceBuffer As ResumableSub
+	If playerCode = "" Or deviceId = "" Then Return False
+	If isTraceUploadInProgress Then Return False
+	If IsTraceUploadEnabled = False Then Return False
+	Dim traceLines As List = appTraceService.BeginPendingTraceBatch
+	If traceLines.IsInitialized = False Or traceLines.Size = 0 Then Return False
+	Dim payload As String = JoinList(traceLines, CRLF)
+	If payload.Trim = "" Then
+		appTraceService.CancelPendingTraceBatch
+		Return False
+	End If
+	isTraceUploadInProgress = True
+	Dim queryParams As Map
+	queryParams.Initialize
+	queryParams.Put("player", playerCode)
+	queryParams.Put("device", deviceId)
+	queryParams.Put("tz", TimezoneOffsetMinutes)
+	queryParams.Put("version", ResolveAppVersion)
+	Dim requestUrl As String = TRACE_BASE_URL & "?" & BuildParams(queryParams)
+	Dim j As HttpJob
+	j.Initialize("", Me)
+	j.PostString(requestUrl, payload)
+	j.GetRequest.Timeout = 5000
+	j.GetRequest.SetContentType("text/plain; charset=utf-8")
+	Wait For (j) JobDone(j As HttpJob)
+	Dim success As Boolean = False
+	If j.Success Then
+		Dim responseText As String = ""
+		Try
+			responseText = j.GetString
+		Catch
+			responseText = ""
+		End Try
+		SaveServerSnapshot("POST", requestUrl, True, responseText, "")
+		success = True
+	Else
+		Dim statusCode As Int = 0
+		Try
+			statusCode = j.Response.StatusCode
+		Catch
+			statusCode = 0
+		End Try
+		If statusCode = 204 Then
+			SaveServerSnapshot("POST", requestUrl, True, "", "")
+			success = True
+		Else
+			SaveServerSnapshot("POST", requestUrl, False, "", j.ErrorMessage)
+			LogHttpFailure(requestUrl, ClassifyHttpFailure(j.ErrorMessage))
+		End If
+	End If
+	If success Then
+		appTraceService.ConfirmPendingTraceBatchSent
+	Else
+		appTraceService.CancelPendingTraceBatch
+	End If
+	j.Release
+	isTraceUploadInProgress = False
+	Return success
+End Sub
+
 Private Sub EnsureAdCacheSyncAsync
 	If isStartupSequenceInProgress Then
 		isAdWarmupDeferredAfterStartup = True
-		TraceLog("StartupLifecycle deferred tasks skipped. initiator=EnsureAdCacheSyncAsync, reason=startup_in_progress")
 		Return
 	End If
-	If offlineData.IsInitialized = False Then
-		TraceLog("Прогрев кэша рекламы пропущен: offlineData не инициализирован.")
-		Return
-	End If
-	If offlineData.GetDefault("ok", False) <> True Then
-		TraceLog("Прогрев кэша рекламы пропущен: offlineData.ok=False.")
-		Return
-	End If
-	TraceLog("Запуск прогрева кэша рекламы. ads=" & storage.GetDefault("ad_count", 0))
+	If offlineData.IsInitialized = False Then Return
+	If offlineData.GetDefault("ok", False) <> True Then Return
 	Wait For (mediaCacheService.EnsureAdsCached(offlineData)) Complete (downloaded As Boolean)
 	UpdateMediaConnectivityStateFromCacheSync(downloaded)
-	TraceLog("Прогрев кэша рекламы завершен. downloaded=" & downloaded & ", cached=" & storage.GetDefault("cached_ad_count", 0))
 End Sub
 
 Private Sub EnsureUpcomingTracksCachedAsync
 	If dataPolicyState.BeginTrackCacheRefresh = False Then Return
 	If USE_DATA_PLAYBACK_RESOLVER And metaState.CurrentMediaType = "track" And CanUseDataPlaybackResolver Then
 		If playQueue.Size < LOOKAHEAD_QUEUE_TARGET_ITEMS Then
-			TraceLog("Добираю запас очереди перед прогревом кэша. currentQueueSize=" & playQueue.Size & ", target=" & LOOKAHEAD_QUEUE_TARGET_ITEMS)
 			Wait For (EnsureDataPlaybackQueue(LOOKAHEAD_QUEUE_TARGET_ITEMS)) Complete (queuePrepared As Boolean)
-			TraceLog("Добирание запаса очереди завершено. success=" & queuePrepared & ", queueSize=" & playQueue.Size)
 		End If
 	End If
 	Dim trackItems As List
@@ -603,18 +736,16 @@ Private Sub EnsureUpcomingTracksCachedAsync
 		dataPolicyState.EndTrackCacheRefresh
 		Return
 	End If
-	TraceLog("Запуск прогрева кэша треков. items=" & trackItems.Size)
 	Wait For (mediaCacheService.EnsureTracksCached(trackItems, 5)) Complete (downloaded As Boolean)
 	UpdateMediaConnectivityStateFromCacheSync(downloaded)
-	TraceLog("Прогрев кэша треков завершен. downloaded=" & downloaded & ", cached=" & storage.GetDefault("cached_track_count", 0))
+	PruneTrackCacheIfNeeded("track_warmup")
 	dataPolicyState.EndTrackCacheRefresh
 End Sub
 
 Private Sub ScheduleTrackCacheWarmup
 	trackCacheWarmupTimer.Enabled = False
 	If isStartupSequenceInProgress Then
-		RequestDeferredPostStartTasks("track_cache_warmup_during_startup")
-		TraceLog("StartupLifecycle deferred tasks skipped. initiator=ScheduleTrackCacheWarmup, reason=startup_in_progress")
+		RequestDeferredPostStartTasks
 		Return
 	End If
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Then Return
@@ -622,12 +753,11 @@ Private Sub ScheduleTrackCacheWarmup
 	If playQueue.IsInitialized = False Or playQueue.Size = 0 Then Return
 	trackCacheWarmupTimer.Interval = TRACK_CACHE_WARMUP_DELAY_MS
 	trackCacheWarmupTimer.Enabled = True
-	TraceLog("Запланирован прогрев кэша треков. delayMs=" & TRACK_CACHE_WARMUP_DELAY_MS & ", queueSize=" & playQueue.Size)
 End Sub
 
 Private Sub TrackCacheWarmupTimer_Tick
 	trackCacheWarmupTimer.Enabled = False
-	CallSubDelayed(Me, "EnsureUpcomingTracksCachedAsync")
+	EnsureUpcomingTracksCachedAsync
 End Sub
 
 Private Sub CacheAuditTimer_Tick
@@ -642,85 +772,172 @@ Private Sub CacheAuditTimer_Tick
 	If hasMore Then
 		cacheAuditTimer.Interval = CACHE_AUDIT_STEP_INTERVAL_MS
 	Else
+		PruneTrackCacheIfNeeded("cache_audit")
 		cacheAuditTimer.Interval = CACHE_AUDIT_RECHECK_INTERVAL_MS
 	End If
 	cacheAuditTimer.Enabled = True
 End Sub
 
-Private Sub TryEnterStartupSequence(initiator As String) As Boolean
-	If isStartupSequenceInProgress Then
-		TraceLog("StartupLifecycle startup skipped. initiator=" & initiator & ", reason=already_in_progress")
-		Return False
+Private Sub PruneTrackCacheIfNeeded(initiator As String)
+	If DateTime.Now - lastTrackCachePruneAt < TRACK_CACHE_PRUNE_COOLDOWN_MS Then Return
+	Dim protectedTrackIds As List = CollectProtectedTrackIds
+	Dim relevantTrackIds As List = CollectRelevantTrackIds
+	Dim removedCount As Int = mediaCacheService.PruneTrackCacheIfNeeded(protectedTrackIds, relevantTrackIds)
+	If removedCount > 0 Then
+		lastTrackCachePruneAt = DateTime.Now
+		TraceLog("кэш треков очистка итог initiator=" & initiator & " removed=" & removedCount)
 	End If
+End Sub
+
+Private Sub CollectProtectedTrackIds As List
+	Dim result As List
+	result.Initialize
+	Dim protectedIds As Map
+	protectedIds.Initialize
+	AddProtectedTrackId(protectedIds, runtimeState.ActiveItem)
+	AddProtectedTrackId(protectedIds, runtimeState.PreparedItem)
+	AddProtectedTrackId(protectedIds, runtimeState.PendingPlayItem)
+	AddProtectedTrackId(protectedIds, runtimeState.PendingPrepareItem)
+	If playQueue.IsInitialized Then
+		For Each itemObject As Object In playQueue
+			If itemObject Is Map Then
+				Dim item As Map = itemObject
+				AddProtectedTrackId(protectedIds, item)
+			End If
+		Next
+	End If
+	If queueState.StoppedReserveQueue.IsInitialized Then
+		For Each itemObject As Object In queueState.StoppedReserveQueue
+			If itemObject Is Map Then
+				Dim item As Map = itemObject
+				AddProtectedTrackId(protectedIds, item)
+			End If
+		Next
+	End If
+	For Each trackId As String In protectedIds.Keys
+		result.Add(trackId)
+	Next
+	Return result
+End Sub
+
+Private Sub CollectRelevantTrackIds As List
+	If cachedRelevantTrackIds.IsInitialized And cachedRelevantTrackIds.Size > 0 Then Return CloneList(cachedRelevantTrackIds)
+	Dim result As List
+	result.Initialize
+	Dim relevantIds As Map
+	relevantIds.Initialize
+	Dim descriptors As List = offlineStoreService.GetStoredPlaylistDescriptors
+	If descriptors.IsInitialized = False Then Return result
+	For Each descriptorObject As Object In descriptors
+		If descriptorObject Is Map Then
+			Dim descriptor As Map = descriptorObject
+			Dim playlistId As String = descriptor.GetDefault("id", "")
+			If playlistId = "" Then Continue
+			Dim playlistData As Map = dataResolver.LoadCachedPlaylistMetadata(playlistId)
+			If playlistData.IsInitialized = False Then Continue
+			Dim tracks As List = playlistData.GetDefault("tracks", Null)
+			If tracks.IsInitialized = False Then Continue
+			For Each trackObject As Object In tracks
+				If trackObject Is Map Then
+					Dim track As Map = trackObject
+					Dim trackId As String = track.GetDefault("id", "")
+					If trackId <> "" Then relevantIds.Put(trackId, True)
+				End If
+			Next
+		End If
+	Next
+	For Each trackId As String In relevantIds.Keys
+		result.Add(trackId)
+	Next
+	cachedRelevantTrackIds = CloneList(result)
+	Return result
+End Sub
+
+Private Sub InvalidateRelevantTrackIdsCache
+	If cachedRelevantTrackIds.IsInitialized = False Then cachedRelevantTrackIds.Initialize
+	cachedRelevantTrackIds.Clear
+End Sub
+
+Private Sub CloneList(source As List) As List
+	Dim copy As List
+	copy.Initialize
+	If source.IsInitialized = False Then Return copy
+	For Each item As Object In source
+		copy.Add(item)
+	Next
+	Return copy
+End Sub
+
+Private Sub AddProtectedTrackId(protectedIds As Map, item As Map)
+	If item.IsInitialized = False Then Return
+	If item.GetDefault("type", "") <> "track" Then Return
+	Dim trackId As String = item.GetDefault("id", "")
+	If trackId = "" Then Return
+	protectedIds.Put(trackId, True)
+End Sub
+
+Private Sub TryEnterStartupSequence As Boolean
+	If isStartupSequenceInProgress Then Return False
 	isStartupSequenceInProgress = True
 	isAdWarmupDeferredAfterStartup = False
 	isPostStartTasksDeferredAfterStartup = False
 	retryFallbackState.ClearDispatchRetryAfter
 	cacheAuditTimer.Enabled = False
-	TraceLog("StartupLifecycle startup entered. initiator=" & initiator)
 	Return True
 End Sub
 
-Private Sub CancelDeferredPostStartTasks(reason As String)
+Private Sub CancelDeferredPostStartTasks
 	If isAdWarmupDeferredAfterStartup = False And isPostStartTasksDeferredAfterStartup = False Then Return
 	isAdWarmupDeferredAfterStartup = False
 	isPostStartTasksDeferredAfterStartup = False
-	TraceLog("StartupLifecycle deferred tasks cancelled. reason=" & reason)
 End Sub
 
-Private Sub RequestDeferredPostStartTasks(reason As String)
+Private Sub RequestDeferredPostStartTasks
 	isPostStartTasksDeferredAfterStartup = True
-	TraceLog("StartupLifecycle deferred tasks requested. reason=" & reason)
 End Sub
 
-Private Sub CanRunDeferredPostStartTasks(logDecision As Boolean) As Boolean
+Private Sub CanRunDeferredPostStartTasks As Boolean
 	If isStartupSequenceInProgress Then
-		If logDecision Then TraceLog("StartupLifecycle deferred tasks skipped. reason=startup_in_progress")
 		Return False
 	End If
 	If orchestrationState.IsStopping Or orchestrationState.IsStoppedByUser Then
-		If logDecision Then TraceLog("StartupLifecycle deferred tasks skipped. reason=playback_not_active")
 		Return False
 	End If
 	If orchestrationState.IsStarted = False Then
-		If logDecision Then TraceLog("StartupLifecycle deferred tasks skipped. reason=not_started")
 		Return False
 	End If
 	Return True
 End Sub
 
-Private Sub RunDeferredPostStartTasks(initiator As String)
-	If isAdWarmupDeferredAfterStartup = False And isPostStartTasksDeferredAfterStartup = False Then
-		TraceLog("StartupLifecycle deferred tasks skipped. initiator=" & initiator & ", reason=nothing_pending")
+Private Sub RunDeferredPostStartTasks
+	If isAdWarmupDeferredAfterStartup = False And isPostStartTasksDeferredAfterStartup = False Then Return
+	If CanRunDeferredPostStartTasks = False Then
+		CancelDeferredPostStartTasks
 		Return
 	End If
-	If CanRunDeferredPostStartTasks(True) = False Then
-		CancelDeferredPostStartTasks("cannot_run:" & initiator)
-		Return
-	End If
-	TraceLog("StartupLifecycle deferred tasks started. initiator=" & initiator)
 	If isAdWarmupDeferredAfterStartup Then
 		isAdWarmupDeferredAfterStartup = False
-		CallSubDelayed(Me, "EnsureAdCacheSyncAsync")
+		EnsureAdCacheSyncAsync
 	End If
 	If isPostStartTasksDeferredAfterStartup Then
 		isPostStartTasksDeferredAfterStartup = False
-		CallSubDelayed(Me, "BackfillPlaybackQueueAsync")
+		BackfillPlaybackQueueAsync
 		ScheduleTrackCacheWarmup
 	End If
 End Sub
 
 Private Sub RunDeferredPostStartTasksAsync
-	RunDeferredPostStartTasks("async")
+	RunDeferredPostStartTasks
 End Sub
 
-Private Sub FailStartupSequence(initiator As String, reason As String)
+Private Sub FailStartupSequence(reason As String)
 	If isStartupSequenceInProgress = False Then Return
-	CancelDeferredPostStartTasks("startup_failed:" & reason)
+	CancelDeferredPostStartTasks
 	isStartupSequenceInProgress = False
 	cacheAuditTimer.Interval = CACHE_AUDIT_START_DELAY_MS
 	cacheAuditTimer.Enabled = True
-	TraceLog("StartupLifecycle startup failed. initiator=" & initiator & ", reason=" & reason)
+	TraceWarn("player", "старт не завершен", "reason=" & reason)
+	WriteHealthSnapshot("ошибка_старта")
 End Sub
 
 Private Sub CompleteStartupSequence
@@ -732,9 +949,9 @@ Public Sub Facade_CompleteStartupSequenceCore
 	isStartupSequenceInProgress = False
 	cacheAuditTimer.Interval = CACHE_AUDIT_START_DELAY_MS
 	cacheAuditTimer.Enabled = True
-	TraceLog("StartupLifecycle startup completed. initiator=complete_startup_sequence")
-	CallSubDelayed(Me, "RunDeferredPostStartTasksAsync")
-	TraceLog("Стартовая последовательность завершена.")
+	TraceInfo("player", "старт завершен", "stage=" & playbackFlowState)
+	RunDeferredPostStartTasksAsync
+	WriteHealthSnapshot("старт")
 End Sub
 
 Private Sub OfflineDataRefreshTimer_Tick
@@ -750,29 +967,34 @@ End Sub
 Private Sub RefreshOfflineDataNow As ResumableSub
 	If playerCode = "" Then Return False
 	If dataPolicyState.BeginOfflineDataRefresh = False Then Return False
-	TraceLog("Запрос офлайн-метаданных. playerCode=" & FormatPlayerCodeForDisplay(playerCode) & ", deviceId=" & deviceId)
 	Wait For (FetchJsonWithTimeout(DATA_BASE_URL & "?" & BuildParams(CreateDataParams), FETCH_TIMEOUT_MS)) Complete (result As Map)
 	If result.GetDefault("Success", False) = False Then
-		TraceLog("Не удалось обновить офлайн-метаданные. kind=" & result.GetDefault("Kind", "") & ", message=" & result.GetDefault("ErrorMessage", ""))
+		consecutiveNetworkErrors = consecutiveNetworkErrors + 1
+		TraceWarn("network", "data ошибка", "kind=" & result.GetDefault("Kind", "") & " lastDataOkAgoSec=" & SecondsAgoText(lastDataOkAt))
 		dataPolicyState.EndOfflineDataRefresh("http_failed")
+		WriteHealthSnapshot("ошибка_data")
 		Return False
 	End If
 	Dim resultData As Object = result.Get("Data")
 	If resultData Is Map Then
 		Dim data As Map = resultData
 		If data.GetDefault("ok", False) = True And data.GetDefault("type", "") = "data" Then
+			lastDataOkAt = DateTime.Now
+			consecutiveNetworkErrors = 0
 			dataPolicyState.LastOfflineDataRefreshState = "data"
 			UpdateTrustedOnlineTimeFromData(data)
 			offlineData = offlineStoreService.SaveOfflineData(data, playerCode, deviceId)
+			If IsTraceUploadEnabled Then FlushTraceBufferAsync
+			InvalidateRelevantTrackIdsCache
 			dataPolicyState.SetRemoteDataReady
 			RefreshConnectionIndicatorState
+			TraceInfo("network", "data загружены", "trace=" & IsTraceUploadEnabled)
+			WriteHealthSnapshot("data")
 			Wait For (SyncOfflinePlaylistMetadata) Complete (unused As Boolean)
 			If isStartupSequenceInProgress Then
 				isAdWarmupDeferredAfterStartup = True
-				TraceLog("Прогрев кэша рекламы отложен до завершения стартовой последовательности. cached=" & storage.GetDefault("cached_ad_count", 0))
 			Else
-				CallSubDelayed(Me, "EnsureAdCacheSyncAsync")
-				TraceLog("Кэш рекламы поставлен в фоновый прогрев после обновления data.php. cached=" & storage.GetDefault("cached_ad_count", 0))
+				EnsureAdCacheSyncAsync
 			End If
 			If IsPlaybackAllowedByCurrentData = False Then
 				PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
@@ -780,21 +1002,21 @@ Private Sub RefreshOfflineDataNow As ResumableSub
 				Return True
 			End If
 			If dataPolicyState.ResumePlaybackWhenServerAllows And ShouldResumeWithNewStart = False And IsUserStoppedState = False And orchestrationState.IsStopping = False Then
-				TraceLog("Сервер снова разрешил playback. Возобновляю воспроизведение автоматически.")
+				TraceLog("policy resume авто mode=server_allow")
 				dataPolicyState.ResumePlaybackWhenServerAllows = False
 				orchestrationState.EnterStartedState
 				SetStopIcon
 				HideContentBlocks
-				CallSubDelayed(Me, "ResumePlaybackAfterPolicyPause")
+				ResumePlaybackAfterPolicyPause
 			End If
 			If IsPolicyPauseState Then
 				dataPolicyState.ClearPolicyPause
 				If IsUserStoppedState = False And orchestrationState.IsStarted = False And orchestrationState.IsStopping = False Then
-					TraceLog("Playback снова разрешен. Возобновляю воспроизведение автоматически.")
+					TraceLog("policy resume авто mode=policy_pause_clear")
 					orchestrationState.EnterStartedState
 					SetStopIcon
 					HideContentBlocks
-					CallSubDelayed(Me, "ResumePlaybackAfterPolicyPause")
+					ResumePlaybackAfterPolicyPause
 				End If
 			End If
 			dataPolicyState.EndOfflineDataRefresh("data")
@@ -802,20 +1024,21 @@ Private Sub RefreshOfflineDataNow As ResumableSub
 		End If
 		If data.GetDefault("type", "") = "message" Then
 			dataPolicyState.LastOfflineDataRefreshState = "message"
-			TraceLog("data.php вернул message. action=" & data.GetDefault("action", "") & ", reason=" & data.GetDefault("reason", "") & ", message=" & data.GetDefault("message", ""))
+			TraceWarn("network", "data сообщение", "action=" & data.GetDefault("action", "") & " reason=" & data.GetDefault("reason", ""))
 			HandleMessageItem(data)
 			dataPolicyState.EndOfflineDataRefresh("message")
 			Return False
 		End If
 		dataPolicyState.LastOfflineDataRefreshState = "invalid_data"
-		TraceLog("Ответ data.php не подходит для офлайн-режима. type=" & data.GetDefault("type", "") & ", ok=" & data.GetDefault("ok", False))
+		TraceWarn("network", "data некорректны", "type=" & data.GetDefault("type", "") & " ok=" & data.GetDefault("ok", False))
 		PausePlaybackByPolicy(MessageValue("invalid_data_response"), "server")
 	Else
 		dataPolicyState.LastOfflineDataRefreshState = "invalid_payload"
-		TraceLog("Ответ data.php не является Map.")
+		TraceWarn("network", "data некорректны", "payload=not_map")
 		PausePlaybackByPolicy(MessageValue("invalid_data_response"), "server")
 	End If
 	dataPolicyState.EndOfflineDataRefresh(dataPolicyState.LastOfflineDataRefreshState)
+	WriteHealthSnapshot("ошибка_data")
 	Return False
 End Sub
 
@@ -826,10 +1049,10 @@ End Sub
 Public Sub Facade_ResumePlaybackAfterPolicyPauseCore As ResumableSub
 	If CanResumePlaybackNow("policy_pause", True) = False Then Return False
 	If ShouldResumeWithNewStart = False Then
-		TraceLog("PlaybackLifecycle resume denied. reason=policy_pause, state=no_new_start")
+		TraceLog("возобновление запрет reason=policy_pause state=no_new_start")
 		Return False
 	End If
-	TraceLog("PlaybackLifecycle resume executed. mode=auto_restart")
+	TraceLog("возобновление итог mode=auto_restart")
 	Wait For (StartFirstTrack("auto")) Complete (unused As Boolean)
 	Return True
 End Sub
@@ -837,7 +1060,7 @@ End Sub
 Private Sub EnsureDataPlaybackReady As ResumableSub
 	Wait For (queueBuilder.EnsureDataPlaybackReady(offlineData)) Complete (resolverReady As Boolean)
 	If resolverReady = False Then
-		TraceLog("Не удалось подготовить data/playlists для локального воспроизведения.")
+		TraceLog("подготовка data playback ошибка")
 	End If
 	Return resolverReady
 End Sub
@@ -861,7 +1084,7 @@ End Sub
 
 Private Sub RequestSkipQueueSnapshotRestore(reason As String)
 	queueState.RequestSkipQueueSnapshotRestore
-	TraceLog("PlaybackQueueState queue snapshot restore skipped. reason=" & reason)
+	TraceLog("снимок очереди восстановление skip reason=" & reason)
 End Sub
 
 Private Sub SaveQueueSnapshotState
@@ -918,6 +1141,17 @@ Public Sub Transition_ActivateLoadedItem(args As Map)
 	ActivateLoadedItem(args.GetDefault("audioKey", ""), args.Get("item"), args.GetDefault("fadeInMs", 0))
 End Sub
 
+Public Sub Transition_WaitForPreparedAudio(args As Map) As ResumableSub
+	Dim audioKey As String = args.GetDefault("audioKey", "")
+	Dim item As Map = args.Get("item")
+	Dim timeoutMs As Int = args.GetDefault("timeoutMs", AUDIO_READY_TIMEOUT_MS)
+	Dim result As Map
+	result.Initialize
+	Wait For (WaitForPreparedAudio(audioKey, item, timeoutMs)) Complete (prepared As Boolean)
+	result.Put("Success", prepared)
+	Return result
+End Sub
+
 Public Sub Transition_DescribeItem(item As Map) As String
 	Return DescribeItem(item)
 End Sub
@@ -933,26 +1167,26 @@ End Sub
 Private Sub AutoStartSavedPlayer As ResumableSub
 	If playerCode = "" Then Return False
 	If orchestrationState.IsStarted Or orchestrationState.IsStopping Then Return False
-	If TryEnterStartupSequence("auto_start_saved_player") = False Then Return False
+	If TryEnterStartupSequence = False Then Return False
 	SetStopIcon
 	ShowMessage(MessageValue("connecting"))
 	UpdateConnectionIndicator("connecting")
 	If USE_DATA_PLAYBACK_RESOLVER Then
-		TraceLog("Автозапуск: сначала пробую получить свежий data.php.")
+		TraceLog("автостарт сначала обновление данных")
 		Wait For (RefreshOfflineDataNow) Complete (refreshed As Boolean)
 		If refreshed = False Then
 			If dataPolicyState.LastOfflineDataRefreshState = "message" Then
-				TraceLog("Автозапуск остановлен: data.php вернул серверное message-состояние.")
-				FailStartupSequence("auto_start_saved_player", "server_message")
+				TraceLog("автостарт stop reason=server_message")
+				FailStartupSequence("server_message")
 				Return False
 			End If
 			If HasLocalPlaybackFallback Then
 				SwitchToLocalPlayback(False, "startup_local")
-				TraceLog("Свежие данные недоступны. Перехожу в локальное воспроизведение по валидному кэшу.")
+				TraceLog("автостарт fallback reason=fresh_data_unavailable")
 			Else
-				TraceLog("Свежие данные недоступны, но подходящая локальная очередь отсутствует.")
+				TraceLog("автостарт ошибка reason=no_local_queue")
 				HandleLocalTemporaryState("")
-				FailStartupSequence("auto_start_saved_player", "no_local_fallback")
+				FailStartupSequence("no_local_fallback")
 				Return False
 			End If
 		Else
@@ -960,22 +1194,22 @@ Private Sub AutoStartSavedPlayer As ResumableSub
 			RequestSkipQueueSnapshotRestore("fresh_sync")
 		End If
 		If CanUseDataPlaybackResolver = False Then
-			TraceLog("Автозапуск отменен: нет ни свежих, ни сохраненных data/playlists.")
-			FailStartupSequence("auto_start_saved_player", "resolver_unavailable")
+			TraceLog("автостарт отмена reason=no_data")
+			FailStartupSequence("resolver_unavailable")
 			Return False
 		End If
 	End If
 	ShowMessage(MessageValue("syncing"))
 	If IsPlaybackAllowedByCurrentData = False Then
 		PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
-		FailStartupSequence("auto_start_saved_player", "playback_not_allowed")
+		FailStartupSequence("playback_not_allowed")
 		Return False
 	End If
 	orchestrationState.EnterStartedState
 	dataPolicyState.ClearPolicyPause
 	SetStopIcon
 	HideContentBlocks
-	TraceLog("Автозапуск воспроизведения при старте приложения.")
+	TraceLog("автостарт воспроизведение начало")
 	Wait For (StartFirstTrack("auto")) Complete (unused As Boolean)
 	CompleteStartupSequence
 	Return True
@@ -1064,14 +1298,14 @@ Private Sub PlayButtonPane_Click
 	End If
 	If orchestrationState.IsStarted = False And IsPolicyPauseState = False And IsUserStoppedState Then
 		If orchestrationState.IsStopping Then
-			TraceLog("PlaybackLifecycle resume denied. reason=manual_start, state=stopping")
+			TraceLog("возобновление запрет reason=manual_start state=stopping")
 			Return
 		End If
 		If IsPlaybackAllowedByCurrentData = False Then
 			PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
 			Return
 		End If
-		TraceLog("PlaybackLifecycle resume executed. mode=manual_start")
+		TraceLog("возобновление итог mode=manual_start")
 		orchestrationState.EnterStartedState
 		dataPolicyState.ClearPolicyPause
 		SetStopIcon
@@ -1186,7 +1420,7 @@ Private Sub SubmitPlayerCode As ResumableSub
 	txtPlayerCode.Text = FormatPlayerCodeForDisplay(playerCode)
 	StartOfflineDataRefresh
 	ShowPlayerScreen(True)
-	CallSubDelayed(Me, "AutoStartSavedPlayer")
+	AutoStartSavedPlayer
 	Return True
 End Sub
 
@@ -1212,16 +1446,6 @@ Private Sub RefreshPlayerHeaderFromCurrentData
 	RenderPlayerHead(safeCode, title)
 End Sub
 
-Private Sub PlaybackStartDone(unusedResult As Map)
-	If unusedResult.IsInitialized Then
-	End If
-End Sub
-
-Private Sub PreloadDone(unusedResult As Map)
-	If unusedResult.IsInitialized Then
-	End If
-End Sub
-
 Private Sub GetAudioByKey(audioKey As String) As AudioPlayer
 	If audioKey = "secondary" Then Return audioSecondary
 	Return audioPrimary
@@ -1244,10 +1468,117 @@ Private Sub ClearPendingPlayState
 	runtimeState.ClearPendingPlayState
 End Sub
 
+Private Sub ResetPlaybackWatchdogState
+	lastPlaybackWatchdogPositionMs = -1
+	lastPlaybackWatchdogTrackId = ""
+	lastPlaybackWatchdogProgressAt = 0
+	lastPlaybackWatchdogRecoveryAt = 0
+End Sub
+
+Private Sub ActiveTrackIdForWatchdog As String
+	If runtimeState.ActiveItem.IsInitialized = False Then Return ""
+	Return runtimeState.ActiveItem.GetDefault("id", "")
+End Sub
+
+Private Sub ActivePlaybackPositionMs As Long
+	If runtimeState.ActiveAudioKey = "" Then Return -1
+	Return Max(-1, GetAudioByKey(runtimeState.ActiveAudioKey).Position)
+End Sub
+
+Private Sub ShouldWatchPlaybackProgress As Boolean
+	If orchestrationState.IsStarted = False Then Return False
+	If orchestrationState.IsStoppedByUser Then Return False
+	If orchestrationState.IsStopping Then Return False
+	If IsPolicyPauseState Then Return False
+	Return True
+End Sub
+
+Private Sub MarkPlaybackWatchdogProgress(trackId As String, positionMs As Long)
+	lastPlaybackWatchdogTrackId = trackId
+	lastPlaybackWatchdogPositionMs = positionMs
+	lastPlaybackWatchdogProgressAt = DateTime.Now
+End Sub
+
+Private Sub PlaybackWatchdogTimer_Tick
+	If isPlaybackWatchdogTickInProgress Then Return
+	isPlaybackWatchdogTickInProgress = True
+	Wait For (RunPlaybackWatchdogTick) Complete (unused As Boolean)
+	isPlaybackWatchdogTickInProgress = False
+End Sub
+
+Private Sub RunPlaybackWatchdogTick As ResumableSub
+	If ShouldWatchPlaybackProgress = False Then
+		ResetPlaybackWatchdogState
+		Return False
+	End If
+	Dim nowTicks As Long = DateTime.Now
+	Dim currentTrackId As String = ActiveTrackIdForWatchdog
+	Dim currentPositionMs As Long = ActivePlaybackPositionMs
+	If lastPlaybackWatchdogProgressAt = 0 Then
+		MarkPlaybackWatchdogProgress(currentTrackId, currentPositionMs)
+		Return True
+	End If
+	If currentTrackId <> "" And currentTrackId <> lastPlaybackWatchdogTrackId Then
+		MarkPlaybackWatchdogProgress(currentTrackId, currentPositionMs)
+		Return True
+	End If
+	If currentPositionMs >= 0 And currentPositionMs > lastPlaybackWatchdogPositionMs + PLAYBACK_WATCHDOG_PROGRESS_DELTA_MS Then
+		MarkPlaybackWatchdogProgress(currentTrackId, currentPositionMs)
+		Return True
+	End If
+	If nowTicks - lastPlaybackWatchdogRecoveryAt < PLAYBACK_WATCHDOG_GRACE_MS Then Return False
+	If nowTicks - lastPlaybackWatchdogProgressAt < PLAYBACK_WATCHDOG_STALL_MS Then Return False
+	Wait For (RecoverFromPlaybackStall(currentTrackId, currentPositionMs)) Complete (recovered As Boolean)
+	If recovered Then
+		lastPlaybackWatchdogRecoveryAt = DateTime.Now
+		MarkPlaybackWatchdogProgress(ActiveTrackIdForWatchdog, ActivePlaybackPositionMs)
+	End If
+	Return recovered
+End Sub
+
+Private Sub RecoverFromPlaybackStall(trackId As String, positionMs As Long) As ResumableSub
+	Dim nowTicks As Long = DateTime.Now
+	If nowTicks - lastPlaybackWatchdogRecoveryAt < PLAYBACK_WATCHDOG_RECOVERY_COOLDOWN_MS Then Return False
+	lastPlaybackWatchdogRecoveryAt = nowTicks
+	TraceWarn("playback", "watchdog stall", "trackId=" & trackId & " posMs=" & positionMs & " stage=" & playbackFlowState & " queue=" & playQueue.Size)
+	If runtimeState.ActiveAudioKey <> "" Then GetAudioByKey(runtimeState.ActiveAudioKey).Reset
+	If runtimeState.PreparedAudioKey <> "" And runtimeState.PreparedAudioKey <> runtimeState.ActiveAudioKey Then
+		GetAudioByKey(runtimeState.PreparedAudioKey).Reset
+	End If
+	runtimeState.ActiveAudioKey = ""
+	runtimeState.ActiveItem.Initialize
+	metaState.Reset
+	ClearPendingPlayState
+	ClearPreparedState(False)
+	orchestrationState.ClearTrackTransitionFlags
+	orchestrationState.EndDispatch
+	retryFallbackState.ClearDispatchRetryAfter
+	ClearRetryTimer
+	ClearExactBreakState
+	ClearHistoryLogTimer
+	If playbackFlowState <> FLOW_STOPPING And playbackFlowState <> FLOW_PAUSED_POLICY Then
+		SetPlaybackFlowState(FLOW_IDLE, "watchdog_stall")
+	End If
+	If playQueue.Size = 0 Then
+		Wait For (PopulatePlaybackQueue) Complete (queuePrepared As Boolean)
+		If queuePrepared = False And playQueue.Size = 0 Then
+			TraceWarn("playback", "watchdog recovery", "step=populate_failed")
+		End If
+	End If
+	Wait For (DispatchPlaybackAdvance("watchdog_stall", True)) Complete (dispatched As Boolean)
+	If dispatched Then
+		TraceInfo("playback", "watchdog recovery", "result=dispatch queue=" & playQueue.Size)
+		Return True
+	End If
+	Wait For (LoadNextAndPlay) Complete (advanced As Boolean)
+	TraceInfo("playback", "watchdog recovery", "result=" & IIf(advanced, "restart", "failed") & " queue=" & playQueue.Size)
+	Return advanced
+End Sub
+
 Private Sub SetPlaybackFlowState(newState As String, reason As String)
 	If newState = "" Then newState = FLOW_IDLE
 	If playbackFlowState = newState Then Return
-	TraceLog("PlaybackFlowState. from=" & playbackFlowState & ", to=" & newState & ", reason=" & reason)
+	TraceLog("flow переход from=" & playbackFlowState & " to=" & newState & " reason=" & reason)
 	playbackFlowState = newState
 End Sub
 
@@ -1265,19 +1596,19 @@ End Sub
 
 Private Sub CanAdvancePlaybackNow(initiator As String, logDecision As Boolean) As Boolean
 	If orchestrationState.IsStoppedByUser Then
-		If logDecision Then TraceLog("PlaybackGuard deny advance. initiator=" & initiator & ", reason=stopped_by_user")
+		If logDecision Then TraceLog("guard переход запрет initiator=" & initiator & " reason=stopped_by_user")
 		Return False
 	End If
 	If orchestrationState.IsStopping Then
-		If logDecision Then TraceLog("PlaybackGuard deny advance. initiator=" & initiator & ", reason=stopping")
+		If logDecision Then TraceLog("guard переход запрет initiator=" & initiator & " reason=stopping")
 		Return False
 	End If
 	If playbackFlowState = FLOW_STOPPING Then
-		If logDecision Then TraceLog("PlaybackGuard deny advance. initiator=" & initiator & ", reason=flow_stopping")
+		If logDecision Then TraceLog("guard переход запрет initiator=" & initiator & " reason=flow_stopping")
 		Return False
 	End If
 	If playbackFlowState = FLOW_PAUSED_POLICY Then
-		If logDecision Then TraceLog("PlaybackGuard deny advance. initiator=" & initiator & ", reason=flow_paused_policy")
+		If logDecision Then TraceLog("guard переход запрет initiator=" & initiator & " reason=flow_paused_policy")
 		Return False
 	End If
 	Return True
@@ -1293,7 +1624,7 @@ End Sub
 
 Private Sub CanStopPlaybackNow(logDecision As Boolean) As Boolean
 	If orchestrationState.IsStopping Then
-		If logDecision Then TraceLog("PlaybackLifecycle stop ignored. reason=already_stopping")
+		If logDecision Then TraceLog("stop skip reason=already_stopping")
 		Return False
 	End If
 	Return True
@@ -1301,19 +1632,19 @@ End Sub
 
 Private Sub CanResumePlaybackNow(reason As String, logDecision As Boolean) As Boolean
 	If IsUserStoppedState Then
-		If logDecision Then TraceLog("PlaybackLifecycle resume denied. reason=" & reason & ", state=user_stopped")
+		If logDecision Then TraceLog("возобновление запрет reason=" & reason & " state=user_stopped")
 		Return False
 	End If
 	If orchestrationState.IsStopping Then
-		If logDecision Then TraceLog("PlaybackLifecycle resume denied. reason=" & reason & ", state=stopping")
+		If logDecision Then TraceLog("возобновление запрет reason=" & reason & " state=stopping")
 		Return False
 	End If
 	If IsPolicyPauseState Then
-		If logDecision Then TraceLog("PlaybackLifecycle resume denied. reason=" & reason & ", state=policy_pause")
+		If logDecision Then TraceLog("возобновление запрет reason=" & reason & " state=policy_pause")
 		Return False
 	End If
 	If orchestrationState.IsStarted = False Then
-		If logDecision Then TraceLog("PlaybackLifecycle resume denied. reason=" & reason & ", state=not_started")
+		If logDecision Then TraceLog("возобновление запрет reason=" & reason & " state=not_started")
 		Return False
 	End If
 	Return True
@@ -1324,7 +1655,7 @@ Private Sub ShouldResumeWithNewStart As Boolean
 End Sub
 
 Private Sub EnterPolicyPauseState(reason As String, connectionMode As String)
-	TraceLog("PlaybackLifecycle pause by policy entered. reason=" & reason & ", connectionMode=" & connectionMode)
+	TraceLog("policy pause reason=" & reason & " mode=" & connectionMode)
 	SetPlaybackFlowState(FLOW_PAUSED_POLICY, "policy_pause")
 	dataPolicyState.EnterPolicyPause(connectionMode)
 	orchestrationState.EnterPolicyPausedState
@@ -1337,7 +1668,7 @@ End Sub
 
 Private Sub CanPrepareNextPlayableNow(logDecision As Boolean) As Boolean
 	If orchestrationState.IsStarted = False Then
-		If logDecision Then TraceLog("PlaybackGuard deny prepare. reason=not_started")
+		If logDecision Then TraceLog("guard подготовка запрет reason=not_started")
 		Return False
 	End If
 	Return CanAdvancePlaybackNow("prepare_next", logDecision)
@@ -1345,7 +1676,7 @@ End Sub
 
 Private Sub CanPrefetchNextNow(logDecision As Boolean) As Boolean
 	If orchestrationState.PrefetchDone Then
-		If logDecision Then TraceLog("PlaybackGuard deny prefetch. reason=already_done")
+		If logDecision Then TraceLog("guard prefetch запрет reason=already_done")
 		Return False
 	End If
 	Return CanPrepareNextPlayableNow(logDecision)
@@ -1356,15 +1687,16 @@ Private Sub CanUsePreparedItemNow As Boolean
 End Sub
 
 Private Sub TryEnterPlaybackDispatch(initiator As String) As Boolean
-	If orchestrationState.BeginDispatch = False Then
-		TraceLog("PlaybackDispatch skipped re-entry. initiator=" & initiator)
+	If orchestrationState.BeginDispatch(initiator) = False Then
+		TraceLog("переход dispatch skip reason=reentry initiator=" & initiator & " active=" & orchestrationState.ActiveDispatchInitiator & " stage=" & playbackFlowState)
 		Return False
 	End If
-	TraceLog("PlaybackDispatch start. initiator=" & initiator & ", hasPrepared=" & runtimeState.HasPrepared & ", queueSize=" & playQueue.Size)
+	TraceLog("переход dispatch начало initiator=" & initiator & " prepared=" & runtimeState.HasPrepared & " queue=" & playQueue.Size)
 	Return True
 End Sub
 
 Private Sub ExitPlaybackDispatch(result As Boolean) As Boolean
+	TraceLog("переход dispatch итог initiator=" & orchestrationState.ActiveDispatchInitiator & " result=" & result & " stage=" & playbackFlowState & " queue=" & playQueue.Size)
 	orchestrationState.EndDispatch
 	Return result
 End Sub
@@ -1420,23 +1752,25 @@ Private Sub ActivateLoadedItem(audioKey As String, item As Map, fadeInMs As Int)
 	runtimeState.ClearPreparedIfMatchesAudio(audioKey)
 	UpdatePlaybackMeta(item)
 	mediaCacheService.TouchCachedItem(item)
-	TraceLog("ActivateLoadedItem. audio=" & audioKey & ", item=" & DescribeItem(item) & ", fadeInMs=" & fadeInMs)
+	TraceLog("воспроизведение activate audio=" & audioKey & " item=" & DescribeItem(item) & " fadeInMs=" & fadeInMs)
+	TraceInfo("audio", "плеер play", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(item) & " id=" & TraceTrackValue(item))
 	GetAudioByKey(audioKey).PlayWithFade(fadeInMs)
+	MarkPlaybackWatchdogProgress(item.GetDefault("id", ""), 0)
 	ScheduleTrackCacheWarmup
 	ScheduleHistoryLog(item)
 	ResetRetryDelay
 	orchestrationState.ClearTrackTransitionFlags
 	If isStartupSequenceInProgress Then
-		RequestDeferredPostStartTasks("activate_loaded_item_startup")
+		RequestDeferredPostStartTasks
 	Else If metaState.CurrentMediaType = "track" And playQueue.Size = 0 Then
-		CallSubDelayed(Me, "BackfillPlaybackQueueAsync")
+		BackfillPlaybackQueueAsync
 	End If
 End Sub
 
 Private Sub BackfillPlaybackQueueAsync
 	If isStartupSequenceInProgress Then
-		RequestDeferredPostStartTasks("queue_backfill_during_startup")
-		TraceLog("StartupLifecycle deferred tasks skipped. initiator=BackfillPlaybackQueueAsync, reason=startup_in_progress")
+		RequestDeferredPostStartTasks
+		TraceLog("отложенный старт skip initiator=BackfillPlaybackQueueAsync reason=startup_in_progress")
 		Return
 	End If
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Or orchestrationState.IsStopping Then Return
@@ -1445,14 +1779,14 @@ Private Sub BackfillPlaybackQueueAsync
 	If USE_DATA_PLAYBACK_RESOLVER = False Then Return
 	If CanUseDataPlaybackResolver = False Then Return
 	If orchestrationState.BeginQueueBackfill = False Then Return
-	TraceLog("Фоновое добирание запаса треков в очередь. currentQueueSize=" & playQueue.Size & ", target=" & LOOKAHEAD_QUEUE_TARGET_ITEMS)
+	TraceLog("очередь добор начало current=" & playQueue.Size & " target=" & LOOKAHEAD_QUEUE_TARGET_ITEMS)
 	Wait For (EnsureDataPlaybackQueue(LOOKAHEAD_QUEUE_TARGET_ITEMS)) Complete (queuePrepared As Boolean)
 	orchestrationState.EndQueueBackfill
 	If queuePrepared And playQueue.Size > 0 Then
-		TraceLog("Запас треков добавлен в очередь после старта. queueSize=" & playQueue.Size)
+		TraceLog("очередь добор итог success=true queue=" & playQueue.Size)
 		ScheduleTrackCacheWarmup
 	Else
-		TraceLog("Не удалось заранее добрать запас треков в очередь.")
+		TraceLog("очередь добор итог success=false queue=" & playQueue.Size)
 	End If
 End Sub
 
@@ -1462,14 +1796,45 @@ Private Sub StartPlaybackWithAudioKey(audioKey As String, item As Map, fadeInMs 
 	SetPlaybackFlowState(FLOW_STARTING, "start_playback:" & item.GetDefault("type", ""))
 	Dim itemUrl As String = ResolvePlaybackMediaUrl(audioKey, item)
 	If itemUrl = "" Then
-		TraceLog("Не удалось подготовить media url для воспроизведения. audio=" & audioKey & ", item=" & DescribeItem(item))
+		TraceError("playback", "не удалось запустить трек", "reason=media_url trackId=" & TraceTrackValue(item))
+		WriteHealthSnapshot("ошибка_playback")
 		Return False
 	End If
-	TraceLog("StartPlaybackWithAudioKey. audio=" & audioKey & ", item=" & DescribeItem(item) & ", volume=" & NumberFormat2(CurrentVolume(item), 1, 3, 3, False) & ", fadeInMs=" & fadeInMs & ", source=" & mediaCacheService.ResolveMediaSource(item))
+	TraceInfo("audio", "плеер load", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(item) & " id=" & TraceTrackValue(item))
 	GetAudioByKey(audioKey).LoadUrl(itemUrl, CurrentVolume(item))
-	Wait For PlaybackStartDone(result As Map)
-	TraceLog("PlaybackStartDone. audio=" & audioKey & ", success=" & result.GetDefault("Success", False) & ", message=" & result.GetDefault("Message", ""))
-	Return result.GetDefault("Success", False)
+	Wait For (WaitForPlaybackActivation(audioKey, item, AUDIO_READY_TIMEOUT_MS)) Complete (playbackStarted As Boolean)
+	If playbackStarted Then
+		TraceInfo("playback", "старт трека", "trackId=" & TraceTrackValue(item) & " source=" & mediaCacheService.ResolveMediaSource(item) & " queue=" & playQueue.Size)
+		WriteHealthSnapshot("старт_трека")
+	Else
+		TraceError("audio", "не удалось запустить трек", "trackId=" & TraceTrackValue(item))
+		WriteHealthSnapshot("ошибка_audio")
+	End If
+	Return playbackStarted
+End Sub
+
+Private Sub WaitForPlaybackActivation(audioKey As String, item As Map, timeoutMs As Int) As ResumableSub
+	Dim startedAt As Long = DateTime.Now
+	Do While DateTime.Now - startedAt < timeoutMs
+		If runtimeState.PendingPlayAudioKey = "" Then
+			Return runtimeState.ActiveAudioKey = audioKey And ItemsMatch(runtimeState.ActiveItem, item)
+		End If
+		Sleep(25)
+	Loop
+	TraceWarn("audio", "таймаут старта трека", "audio=" & audioKey & " trackId=" & TraceTrackValue(item) & " pendingPlayAudio=" & runtimeState.PendingPlayAudioKey & " activeAudio=" & runtimeState.ActiveAudioKey)
+	Return False
+End Sub
+
+Private Sub WaitForPreparedAudio(audioKey As String, item As Map, timeoutMs As Int) As ResumableSub
+	Dim startedAt As Long = DateTime.Now
+	Do While DateTime.Now - startedAt < timeoutMs
+		If runtimeState.PendingPrepareAudioKey = "" Then
+			Return runtimeState.PreparedAudioKey = audioKey And ItemsMatch(runtimeState.PreparedItem, item)
+		End If
+		Sleep(25)
+	Loop
+	TraceWarn("audio", "таймаут preload", "audio=" & audioKey & " trackId=" & TraceTrackValue(item) & " pendingPrepareAudio=" & runtimeState.PendingPrepareAudioKey & " preparedAudio=" & runtimeState.PreparedAudioKey)
+	Return False
 End Sub
 
 Private Sub PrepareNextPlayable As ResumableSub
@@ -1512,14 +1877,18 @@ Public Sub Facade_StartFirstTrackCore(mode As String) As ResumableSub
 	nextStartMode = mode
 	SetPlaybackFlowState(FLOW_STARTING, "start_first_track:" & mode)
 	If mode = "manual" And RestoreStoppedReserveQueue Then
-		TraceLog("Ручной старт: использую ранее подготовленный резерв. queueSize=" & playQueue.Size)
 	Else
 		playQueue.Clear
 	End If
 	orchestrationState.ClearTrackTransitionFlags
 	initialStartFadePending = True
+	If playQueue.Size = 0 Then
+		Wait For (TrySeedFirstTrackFromCache) Complete (seededFromCache As Boolean)
+		If seededFromCache Then
+			TraceInfo("playback", "первый трек выбран из кэша", "queue=" & playQueue.Size)
+		End If
+	End If
 	If runtimeState.ActiveAudioKey = "" And metaState.CurrentMediaType = "" Then ShowMessage(MessageValue("syncing"))
-	TraceLog("Запуск первого трека. Режим=" & mode)
 	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
 	Return True
 End Sub
@@ -1529,7 +1898,6 @@ Private Sub RestoreStoppedReserveQueue As Boolean
 	Dim currentSignature As String = BuildQueueSignature
 	If currentSignature = "" Then Return False
 	If queueState.CanRestoreStoppedReserve(currentSignature) = False Then
-		TraceLog("Резерв после stop не восстановлен: сигнатура изменилась.")
 		queueState.ClearStoppedReserve
 		Return False
 	End If
@@ -1551,8 +1919,38 @@ Private Sub RestoreStoppedReserveQueue As Boolean
 		restoredCount = restoredCount + 1
 	Next
 	If restoredCount = 0 Then Return False
-	TraceLog("Восстановлен резерв после stop. tracks=" & restoredCount)
 	Return True
+End Sub
+
+Private Sub TrySeedFirstTrackFromCache As ResumableSub
+	Dim emptyResult As Boolean = False
+	If USE_DATA_PLAYBACK_RESOLVER = False Then Return emptyResult
+	If CanUseDataPlaybackResolver = False Then Return emptyResult
+	Dim currentSlot As Map = dataResolver.ResolveDataSlotAtTicks(offlineData, EffectiveNowTicks)
+	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return emptyResult
+	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
+	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return emptyResult
+	Dim workingCursors As Map = dataResolver.ClonePlaylistCursors
+	For attempt = 0 To playlists.Size - 1
+		Dim playlistDescriptor As Map = dataResolver.ChooseNextPlaylistDescriptor(currentSlot, workingCursors)
+		If playlistDescriptor.IsInitialized = False Or playlistDescriptor.Size = 0 Then Exit
+		Dim playlistId As String = playlistDescriptor.GetDefault("id", "")
+		If playlistId = "" Then Continue
+		Dim playlistData As Map = dataResolver.LoadCachedPlaylistMetadata(playlistId)
+		If playlistData.IsInitialized = False Or playlistData.Size = 0 Then Continue
+		Dim cachedTrack As Map = dataResolver.ChooseRandomTrackFromPlaylist(playlistData, mediaCacheService, True)
+		If cachedTrack.IsInitialized = False Or cachedTrack.Size = 0 Then Continue
+		Dim queueItem As Map = dataResolver.CreateQueueTrackFromPlaylist(currentSlot, playlistDescriptor, cachedTrack, offlineData)
+		If mediaCacheService.IsTrackCached(queueItem.GetDefault("id", "")) = False Then Continue
+		playQueue.Add(queueItem)
+		dataResolver.SavePreviewPlaylistCursors(storage, workingCursors)
+		dataResolver.RememberResolvedTrack(queueItem.GetDefault("id", ""))
+		dataResolver.RememberResolvedTrackForPlaylist(queueItem.GetDefault("playlist_id", ""), queueItem.GetDefault("id", ""))
+		SaveQueueSnapshotState
+		TraceLog("первый старт cache hit playlistId=" & playlistId & " trackId=" & queueItem.GetDefault("id", ""))
+		Return True
+	Next
+	Return False
 End Sub
 
 Private Sub LoadNextAndPlay As ResumableSub
@@ -1563,7 +1961,6 @@ End Sub
 Public Sub Facade_LoadNextAndPlayCore As ResumableSub
 	ClearRetryTimer
 	If playbackFlowState = FLOW_STOPPING Then Return False
-	TraceLog("Запрос очереди и запуск. Режим старта=" & nextStartMode & ", размер очереди до запроса=" & playQueue.Size)
 	Wait For (PopulatePlaybackQueue) Complete (queuePrepared As Boolean)
 	If queuePrepared = False Then Return False
 	Wait For (DispatchPlaybackAdvance("load_next_and_play:" & nextStartMode, False)) Complete (dispatched As Boolean)
@@ -1571,7 +1968,13 @@ Public Sub Facade_LoadNextAndPlayCore As ResumableSub
 End Sub
 
 Private Sub PopulatePlaybackQueue As ResumableSub
+	#If Release
+	TraceInfo("playback", "populate queue start", "queue=" & playQueue.Size & " stage=" & playbackFlowState)
+	#End If
 	If IsPlaybackAllowedByCurrentData = False Then
+		#If Release
+		TraceWarn("playback", "populate queue fail", "reason=playback_blocked")
+		#End If
 		PausePlaybackByPolicy(ResolvePlaybackBlockReason(offlineData), "server")
 		Return False
 	End If
@@ -1581,14 +1984,20 @@ Private Sub PopulatePlaybackQueue As ResumableSub
 		If CanUseDataPlaybackResolver = False Then
 			Wait For (EnsureDataPlaybackReady) Complete (resolverReady As Boolean)
 			If resolverReady = False Then
-				TraceLog("Локальный resolver недоступен. Запуск через next.php отключен в тестовом режиме.")
+				#If Release
+				TraceWarn("playback", "populate queue fail", "reason=resolver_unavailable")
+				#End If
+				TraceLog("очередь запрос ошибка reason=resolver_unavailable")
 				HandleTemporaryState("server", "")
 				Return False
 			End If
 		End If
 		Wait For (EnsureDataPlaybackQueue(1)) Complete (queuePrepared As Boolean)
 		If queuePrepared = False Then
-			TraceLog("Не удалось собрать очередь из data/playlists. Запуск через next.php отключен в тестовом режиме.")
+			#If Release
+			TraceWarn("playback", "populate queue fail", "reason=resolver_queue_empty")
+			#End If
+			TraceLog("очередь запрос ошибка reason=resolver_queue_empty")
 			Dim idleText As String = ResolveIdleUntilMessage
 			If idleText <> "" Then
 				HandleTemporaryState("server", idleText)
@@ -1598,12 +2007,17 @@ Private Sub PopulatePlaybackQueue As ResumableSub
 			Return False
 		Else
 			SyncExactBreakState
-			TraceLog("Локальная очередь из data/playlists готова. Элементов=" & playQueue.Size)
+			#If Release
+			TraceInfo("playback", "populate queue done", "queue=" & playQueue.Size)
+			#End If
 			Return True
 		End If
 	End If
 	Wait For (FetchNext) Complete (result As Map)
 	If result.GetDefault("Success", False) = False Then
+		#If Release
+		TraceWarn("playback", "populate queue fail", "reason=fetch_failed")
+		#End If
 		Wait For (HandleFetchFailure(result)) Complete (unused As Boolean)
 		Return False
 	End If
@@ -1611,14 +2025,19 @@ Private Sub PopulatePlaybackQueue As ResumableSub
 	ResetRetryDelay
 	Dim queue As List = responseAdapter.NormalizeQueueResponse(result.Get("Data"))
 	If queue.IsInitialized = False Or queue.Size = 0 Then
+		#If Release
+		TraceWarn("playback", "populate queue fail", "reason=empty_queue")
+		#End If
 		HandleTemporaryState("server", "")
 		Return False
 	End If
 	playQueue = queue
 	SyncExactBreakState
+	#If Release
+	TraceInfo("playback", "populate queue done", "queue=" & playQueue.Size)
+	#End If
 	Dim retryAfter As Int = responseAdapter.NormalizeRetryAfter(result.Get("Data"))
 	retryFallbackState.SetDispatchRetryAfter(retryAfter)
-	TraceLog("Очередь загружена. Элементов=" & playQueue.Size & ", retryAfter=" & retryAfter)
 	Return True
 End Sub
 
@@ -1629,20 +2048,23 @@ End Sub
 
 Public Sub Facade_DispatchPlaybackAdvanceCore(initiator As String, allowLoad As Boolean) As ResumableSub
 	If TryEnterPlaybackDispatch(initiator) = False Then Return False
+	TraceInfo("playback", "dispatch переход", "initiator=" & initiator & " queue=" & playQueue.Size & " prepared=" & runtimeState.HasPrepared)
 	Do While playbackFlowState <> FLOW_STOPPING
 		If CanUsePreparedItemNow Then
-			TraceLog("PlaybackDispatch using prepared item. initiator=" & initiator & ", item=" & DescribeItem(runtimeState.PreparedItem))
+			TraceInfo("playback", "dispatch prepared", "initiator=" & initiator)
 			Return ExitPlaybackDispatch(PromotePreparedPlayer(0, 0))
 		End If
 		If playQueue.Size > 0 Then
 			Dim nextObject As Object = ShiftQueueItem
-			TraceLog("PlaybackDispatch dequeued item. initiator=" & initiator & ", remainingQueue=" & playQueue.Size)
+			If nextObject Is Map Then
+				Dim nextItem As Map = nextObject
+				TraceInfo("playback", "dispatch next", "type=" & nextItem.GetDefault("type", "") & " id=" & nextItem.GetDefault("id", ""))
+			End If
 			Dim retryAfter As Int = retryFallbackState.ConsumeDispatchRetryAfter
 			Wait For (PlayQueueItem(nextObject, retryAfter)) Complete (continueQueue As Boolean)
 			If continueQueue = False Then Return ExitPlaybackDispatch(True)
 		Else
 			If allowLoad = False Then Return ExitPlaybackDispatch(True)
-			TraceLog("PlaybackDispatch loading next queue. initiator=" & initiator)
 			Wait For (PopulatePlaybackQueue) Complete (queuePrepared As Boolean)
 			If queuePrepared = False Then Return ExitPlaybackDispatch(False)
 		End If
@@ -1694,7 +2116,7 @@ Private Sub FetchJsonWithTimeout(url As String, timeoutMs As Int) As ResumableSu
 	result.Put("ErrorMessage", "")
 	Dim j As HttpJob
 	j.Initialize("", Me)
-	TraceLog("HTTP GET. timeoutMs=" & timeoutMs & ", url=" & url)
+	TraceLog("http get начало timeoutMs=" & timeoutMs & " url=" & url)
 	j.Download(url)
 	j.GetRequest.Timeout = timeoutMs
 	Wait For (j) JobDone(j As HttpJob)
@@ -1707,12 +2129,12 @@ Private Sub FetchJsonWithTimeout(url As String, timeoutMs As Int) As ResumableSu
 			result.Put("Data", parser.NextObject)
 			result.Put("Success", True)
 			result.Put("Kind", "")
-			TraceLog("HTTP OK. url=" & url)
+			TraceLog("http get итог success=true url=" & url)
 		Catch
 			result.Put("Kind", "server")
 			result.Put("ErrorMessage", "bad_json")
 			SaveServerSnapshot("GET", url, False, "", "bad_json")
-			TraceLog("HTTP parse error. url=" & url & ", message=bad_json")
+			TraceLog("http get ошибка kind=server url=" & url & " message=bad_json")
 		End Try
 	Else
 		Dim errorMessage As String = j.ErrorMessage
@@ -1720,7 +2142,7 @@ Private Sub FetchJsonWithTimeout(url As String, timeoutMs As Int) As ResumableSu
 		Dim failureKind As String = ClassifyHttpFailure(errorMessage)
 		result.Put("Kind", failureKind)
 		SaveServerSnapshot("GET", url, False, "", errorMessage)
-		LogHttpFailure("HTTP", url, errorMessage, failureKind)
+		LogHttpFailure(url, failureKind)
 	End If
 	j.Release
 	Return result
@@ -1731,8 +2153,15 @@ Private Sub ClassifyHttpFailure(errorMessage As String) As String
 	Return "server"
 End Sub
 
-Private Sub LogHttpFailure(scope As String, url As String, errorMessage As String, kind As String)
-	TraceLog(scope & " failed. kind=" & kind & ", url=" & url & ", message=" & errorMessage)
+Private Sub LogHttpFailure(url As String, kind As String)
+	consecutiveNetworkErrors = consecutiveNetworkErrors + 1
+	If url.Contains("/data") Then
+		TraceWarn("network", "data timeout", "retry=" & consecutiveNetworkErrors & " lastDataOkAgoSec=" & SecondsAgoText(lastDataOkAt))
+	Else If url.Contains("/history") Then
+		TraceWarn("history", "ошибка отправки", "kind=" & kind)
+	Else If url.Contains("/next") Then
+		TraceWarn("network", "ошибка очереди", "kind=" & kind)
+	End If
 End Sub
 
 Private Sub IsOfflineHttpError(errorMessage As String) As Boolean
@@ -1752,7 +2181,7 @@ End Sub
 Private Sub SubmitClaim As ResumableSub
 	btnConfirmYes.Enabled = False
 	btnConfirmNo.Enabled = False
-	TraceLog("SubmitClaim. playerCode=" & FormatPlayerCodeForDisplay(playerCode) & ", deviceId=" & deviceId)
+	TraceLog("claim начало player=" & FormatPlayerCodeForDisplay(playerCode) & " device=" & deviceId)
 	Wait For (FetchJsonWithTimeout(CLAIM_BASE_URL & "?" & BuildParams(CreateClaimParams), FETCH_TIMEOUT_MS)) Complete (result As Map)
 	If result.GetDefault("Success", False) Then
 		Dim resultData As Object = result.Get("Data")
@@ -1762,7 +2191,7 @@ Private Sub SubmitClaim As ResumableSub
 				orchestrationState.EnterStartedState
 				SetStopIcon
 				HideContentBlocks
-				TraceLog("Claim OK. starting playback.")
+				TraceLog("claim итог success=true")
 				Wait For (StartFirstTrack("manual")) Complete (unused As Boolean)
 				btnConfirmYes.Enabled = True
 				btnConfirmNo.Enabled = True
@@ -1770,7 +2199,7 @@ Private Sub SubmitClaim As ResumableSub
 			End If
 		End If
 	End If
-	TraceLog("Claim rejected. message=" & ResolveErrorMessage(result, MessageValue("device_busy")))
+	TraceLog("claim итог success=false message=" & ResolveErrorMessage(result, MessageValue("device_busy")))
 	ShowClaimPrompt(ResolveErrorMessage(result, MessageValue("device_busy")))
 	btnConfirmYes.Enabled = True
 	btnConfirmNo.Enabled = True
@@ -1783,7 +2212,6 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 	If current Is Map Then
 		Dim item As Map = current
 		Dim itemType As String = item.GetDefault("type", "")
-		TraceLog("PlayQueueItem. type=" & itemType & ", retryAfter=" & retryAfter & ", item=" & DescribeItem(item))
 		
 		If itemType = "message" Then
 			HandleMessageItem(item)
@@ -1826,7 +2254,7 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 		
 		Dim url As String = MediaUrl(item)
 		If url = "" Then
-			TraceLog("Пропуск элемента: нет локального файла для воспроизведения. item=" & DescribeItem(item))
+			TraceWarn("cache", "нет локального файла", "trackId=" & TraceTrackValue(item))
 			If HasLocalPlaybackFallback Then
 				SwitchToLocalPlayback(retryFallbackState.IsMediaPathDegraded, "missing_local_media")
 			End If
@@ -1835,7 +2263,6 @@ Private Sub PlayQueueItem(current As Object, retryAfter As Int) As ResumableSub
 		
 		If item.ContainsKey("playlist") Then playlistIndex = item.Get("playlist")
 		dataResolver.CommitPlaylistCursor(storage, item)
-		TraceLog("PlaybackQueueState playlist cursor committed. item=" & DescribeItem(item))
 		SaveQueueSnapshotState
 		orchestrationState.PrefetchDone = False
 		Dim fadeInMs As Int = ResolveStartFadeInMs
@@ -1861,7 +2288,7 @@ End Sub
 
 Private Sub HandleMessageItem(item As Map)
 	Dim action As String = item.GetDefault("action", "")
-	TraceLog("HandleMessageItem. action=" & action & ", message=" & item.GetDefault("message", ""))
+	TraceLog("сообщение handle action=" & action & " text=" & item.GetDefault("message", ""))
 	If action = "claim" Then
 		dataPolicyState.ClearPolicyPause
 		ClearPlaybackState
@@ -1892,14 +2319,14 @@ Private Sub MergeBreakItems(item As Map)
 	Next
 	playQueue = merged
 	SyncExactBreakState
-	TraceLog("В очередь добавлен break. Размер очереди=" & playQueue.Size & ", scheduledBreakAt=" & queueState.ScheduledBreakAt)
+	TraceLog("брейк очередь add queue=" & playQueue.Size & " at=" & queueState.ScheduledBreakAt)
 End Sub
 
 Private Sub DeferFutureExactBreak(item As Map)
 	Dim insertIndex As Int = Min(1, playQueue.Size)
 	playQueue.InsertAt(insertIndex, item)
 	SyncExactBreakState
-	TraceLog("Exact-break отложен до своей минуты. at=" & ToLongDefault(item.GetDefault("at", -1), -1) & ", queueSize=" & playQueue.Size)
+	TraceLog("брейк exact defer at=" & ToLongDefault(item.GetDefault("at", -1), -1) & " queue=" & playQueue.Size)
 End Sub
 
 Private Sub ScanLocalAdsForTimestamp(targetMinuteTimestamp As Long, force As Boolean)
@@ -1936,7 +2363,7 @@ Private Sub PruneQueuedBreakItemsByLocalCache
 			End If
 		Next
 		If filteredItems.Size = 0 Then
-			TraceLog("Локальный break удален из очереди: нет playable cached ads.")
+			TraceLog("брейк очередь drop reason=no_cached_ads")
 			playQueue.RemoveAt(i)
 			changed = True
 		Else If filteredItems.Size <> breakItems.Size Then
@@ -1954,7 +2381,7 @@ Private Sub PreScanUpcomingAdMinute(force As Boolean)
 	Dim targetTimestamp As Long = LocalNowTimestamp + (60 - CurrentSecondOfMinute)
 	If (MinuteOfHourFromTimestamp(targetTimestamp) Mod 5) <> 0 Then Return
 	If CurrentSecondOfMinute = 50 Then
-		TraceLog("Предскан рекламы за 10 секунд до блока. target=" & FormatTimestampForTrace(targetTimestamp))
+		TraceLog("реклама prescan начало target=" & FormatTimestampForTrace(targetTimestamp))
 	End If
 	ScanLocalAdsForTimestamp(targetTimestamp, force)
 End Sub
@@ -1986,13 +2413,13 @@ Private Sub LocalTimestampToTicks(targetTimestamp As Long) As Long
 End Sub
 
 Private Sub HandleFetchFailure(result As Map) As ResumableSub
-	TraceLog("Ошибка загрузки данных. kind=" & result.GetDefault("Kind", "") & ", message=" & result.GetDefault("ErrorMessage", ""))
+	TraceLog("очередь fetch ошибка kind=" & result.GetDefault("Kind", "") & " message=" & result.GetDefault("ErrorMessage", ""))
 	If result.GetDefault("Kind", "") = "offline" Then
 		HandleLocalTemporaryState("")
 		Return True
 	End If
 	If HasLocalPlaybackFallback Then
-		TraceLog("Переход в локальный fallback после ошибки загрузки данных.")
+		TraceLog("fallback выбор mode=local reason=data_fetch_error")
 		HandleLocalTemporaryState("")
 		Return True
 	End If
@@ -2035,7 +2462,7 @@ Private Sub CheckExternalConnectivity As ResumableSub
 End Sub
 
 Private Sub HandleTemporaryState(mode As String, text As String)
-	TraceLog("Временное состояние. mode=" & mode & ", text=" & text)
+	TraceLog("состояние temporary mode=" & mode & " text=" & text)
 	dataPolicyState.ApplyTemporaryMode(mode)
 	RefreshConnectionIndicatorState
 	ClearPlaybackState
@@ -2051,13 +2478,13 @@ Private Sub HandleTemporaryState(mode As String, text As String)
 End Sub
 
 Private Sub HandleBlockedState
-	TraceLog("Плеер заблокирован.")
+	TraceLog("состояние blocked")
 	EnterPolicyPauseState(MessageValue("blocked"), "blocked")
 	ScheduleRetry("blocked", 0)
 End Sub
 
 Private Sub StopForMissingData(text As String)
-	TraceLog("Остановка из-за отсутствующих данных. text=" & text)
+	TraceLog("состояние stop reason=missing_data text=" & text)
 	SetPlaybackFlowState(FLOW_IDLE, "missing_data")
 	dataPolicyState.ClearPolicyPauseAndResumeRequest
 	RefreshConnectionIndicatorState
@@ -2071,7 +2498,7 @@ End Sub
 Private Sub HandleMediaError As ResumableSub
 	SetPlaybackFlowState(FLOW_ERROR, "media_error")
 	If HasLocalPlaybackFallback Then
-		TraceLog("Переход в локальный fallback после ошибки загрузки media.")
+		TraceLog("fallback выбор mode=local reason=media_error")
 		SwitchToLocalPlayback(True, "media_failure")
 		Return True
 	End If
@@ -2080,8 +2507,7 @@ Private Sub HandleMediaError As ResumableSub
 End Sub
 
 Private Sub SwitchToLocalPlayback(markDegraded As Boolean, reason As String)
-	TraceLog("Переключение в чистый локальный режим. reason=" & reason)
-	TraceLog("PlaybackRetryFallback fallback selected. mode=local, reason=" & reason & ", degraded=" & markDegraded)
+	TraceLog("fallback activate mode=local reason=" & reason & " degraded=" & markDegraded)
 	SetPlaybackFlowState(FLOW_IDLE, "switch_local:" & reason)
 	dataPolicyState.EnterLocalPlayback
 	retryFallbackState.SetMediaPathDegraded(markDegraded)
@@ -2099,8 +2525,8 @@ End Sub
 
 Private Sub HandleLocalTemporaryState(text As String)
 	Dim fallbackReady As Boolean = HasLocalPlaybackFallback
-	TraceLog("Временное offline-состояние. playableFallback=" & fallbackReady & ", text=" & text)
-	If fallbackReady Then TraceLog("PlaybackRetryFallback fallback selected. mode=temporary_local, reason=playable_local_fallback")
+	TraceLog("состояние temporary mode=offline playableFallback=" & fallbackReady & " text=" & text)
+	If fallbackReady Then TraceLog("fallback выбор mode=temporary_local reason=playable_local_fallback")
 	SetPlaybackFlowState(FLOW_IDLE, "temporary_local_state")
 	dataPolicyState.SetLocalFallbackReady(fallbackReady)
 	RefreshConnectionIndicatorState
@@ -2170,7 +2596,7 @@ End Sub
 Private Sub HandleShutdownMessage(text As String)
 	Dim safeText As String = text
 	If safeText = "" Then safeText = MessageValue("server_wait")
-	TraceLog("Получен shutdown message. text=" & safeText)
+	TraceLog("message shutdown text=" & safeText)
 	SetPlaybackFlowState(FLOW_IDLE, "shutdown")
 	dataPolicyState.ClearPolicyPauseAndResumeRequest
 	ClearPlaybackState
@@ -2235,7 +2661,7 @@ Private Sub ParseEndValueToTimestamp(value As Object) As Long
 		Dim instant As JavaObject = instantClass.RunMethod("parse", Array As Object(textValue))
 		Return instant.RunMethod("getEpochSecond", Null)
 	Catch
-		Log(LastException.Message)
+		ConsumeLastException
 	End Try
 	Try
 		Dim offsetDateTimeClass As JavaObject
@@ -2244,9 +2670,9 @@ Private Sub ParseEndValueToTimestamp(value As Object) As Long
 		Dim instant As JavaObject = offsetDateTime.RunMethod("toInstant", Null)
 		Return instant.RunMethod("getEpochSecond", Null)
 	Catch
-		Log(LastException.Message)
+		ConsumeLastException
 	End Try
-	TraceLog("Не удалось разобрать player.end: " & textValue)
+	TraceLog("player end parse fail value=" & textValue)
 	Return 0
 End Sub
 
@@ -2261,7 +2687,7 @@ Private Sub UpdateTrustedOnlineTimeTicks(candidateTicks As Long)
 	Dim storedTicks As Long = storage.GetDefault(trustedSyncTimeKey, 0)
 	If candidateTicks <= storedTicks Then Return
 	storage.Put(trustedSyncTimeKey, candidateTicks)
-	TraceLog("Обновлено доверенное онлайн-время. ticks=" & candidateTicks)
+	TraceLog("trusted time update ticks=" & candidateTicks)
 End Sub
 
 Private Sub ParseTrustedOnlineTicks(data As Map) As Long
@@ -2281,7 +2707,7 @@ Private Sub ParseTrustedOnlineTicks(data As Map) As Long
 			Dim instant As JavaObject = offsetDateTime.RunMethod("toInstant", Null)
 			Return instant.RunMethod("toEpochMilli", Null)
 		Catch
-			Log(LastException.Message)
+			ConsumeLastException
 		End Try
 	End Try
 	Return 0
@@ -2296,7 +2722,7 @@ Private Sub ParseDateOnlyEndTimestamp(textValue As String) As Long
 		Return Floor((dayStartTicks + DateTime.TicksPerDay) / 1000)
 	Catch
 		DateTime.DateFormat = previousDateFormat
-		Log(LastException.Message)
+		ConsumeLastException
 		Return 0
 	End Try
 End Sub
@@ -2323,15 +2749,13 @@ Private Sub ScheduleRetry(mode As String, delayMs As Int)
 	ClearRetryTimer
 	retryTimer.Interval = ResolveRetryDelay(mode, delayMs)
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Then
-		TraceLog("PlaybackRetryFallback retry skipped. mode=" & mode & ", reason=playback_not_active")
 		Return
 	End If
 	If dataPolicyState.IsPlaybackPausedByPolicy And mode <> "blocked" Then
-		TraceLog("PlaybackRetryFallback retry skipped. mode=" & mode & ", reason=policy_pause")
 		Return
 	End If
-	TraceLog("PlaybackRetryFallback retry scheduled. mode=" & mode & ", delayMs=" & retryTimer.Interval)
-	TraceLog("ScheduleRetry. mode=" & mode & ", delayMs=" & retryTimer.Interval)
+	TraceWarn("network", "переход в retry", "mode=" & mode & " delaySec=" & Floor(retryTimer.Interval / 1000))
+	WriteHealthSnapshot("retry")
 	retryTimer.Enabled = True
 End Sub
 
@@ -2339,13 +2763,13 @@ Private Sub RetryTimer_Tick
 	retryTimer.Enabled = False
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Then Return
 	If dataPolicyState.IsPlaybackPausedByPolicy Then Return
-	TraceLog("RetryTimer_Tick. reloading next queue chunk.")
 	Wait For (LoadNextAndPlay) Complete (unused As Boolean)
 End Sub
 
 Private Sub ResetRetryDelay
 	retryFallbackState.ResetRetryDelays(LOCAL_RETRY_DELAY_INITIAL, SERVER_RETRY_DELAY_INITIAL)
-	TraceLog("PlaybackRetryFallback retry state reset after success.")
+	If consecutiveNetworkErrors > 0 Then TraceInfo("network", "retry сброшен", "errors=" & consecutiveNetworkErrors)
+	consecutiveNetworkErrors = 0
 End Sub
 
 Private Sub ClearRetryTimer
@@ -2354,7 +2778,7 @@ End Sub
 
 Private Sub ResolveScheduledBreakAt
 	queueState.ResolveScheduledBreakAt(playQueue)
-	TraceLog("Определена точка exact-break. value=" & queueState.ScheduledBreakAt & ", queueSize=" & playQueue.Size)
+	TraceLog("брейк exact sync value=" & queueState.ScheduledBreakAt & " queue=" & playQueue.Size)
 End Sub
 
 Private Sub SyncExactBreakState
@@ -2374,7 +2798,7 @@ Private Sub BreakTimer_Tick
 	breakTimer.Enabled = False
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Then Return
 	If ShouldTriggerBreakNow = False Then Return
-	TraceLog("Сработал таймер exact-break.")
+	TraceLog("брейк exact timer hit")
 	Wait For (FadeOutAndContinue) Complete (unused As Boolean)
 End Sub
 
@@ -2403,9 +2827,14 @@ End Sub
 Private Sub FadeOutAndContinue As ResumableSub
 	If CanAdvancePlaybackNow("fade_out_and_continue", True) = False Then Return False
 	If IsPlaybackTransitionInProgress Then
-		TraceLog("PlaybackGuard deny fade-out continue. reason=transition_in_progress")
+		TraceLog("guard fade запрет reason=transition_in_progress")
 		Return False
 	End If
+	If orchestrationState.IsPlaybackDispatchInProgress Then
+		TraceWarn("playback", "break переход пропущен", "reason=dispatch_busy active=" & orchestrationState.ActiveDispatchInitiator & " queue=" & playQueue.Size)
+		Return False
+	End If
+	TraceInfo("playback", "break переход начало", "type=" & metaState.CurrentMediaType & " queue=" & playQueue.Size)
 	SetPlaybackFlowState(FLOW_TRANSITIONING, "fade_out_and_continue")
 	ClearExactBreakState
 	Dim fadeMs As Int
@@ -2414,10 +2843,12 @@ Private Sub FadeOutAndContinue As ResumableSub
 	Else
 		fadeMs = 0
 	End If
-	TraceLog("Переход через fade-out. currentType=" & metaState.CurrentMediaType & ", fadeMs=" & fadeMs)
+	TraceLog("fade начало type=" & metaState.CurrentMediaType & " fadeMs=" & fadeMs)
 	If runtimeState.ActiveAudioKey <> "" Then GetAudioByKey(runtimeState.ActiveAudioKey).Stop(fadeMs)
+	TraceInfo("playback", "break переход fade", "audio=" & runtimeState.ActiveAudioKey & " fadeMs=" & fadeMs)
 	ClearPreparedState(False)
 	Wait For (DispatchPlaybackAdvance("fade_out_and_continue", True)) Complete (dispatched As Boolean)
+	TraceInfo("playback", "break переход итог", "dispatched=" & dispatched & " queue=" & playQueue.Size & " stage=" & playbackFlowState)
 	Return dispatched
 End Sub
 
@@ -2427,12 +2858,12 @@ Private Sub ScheduleHistoryLog(item As Map)
 	If itemType <> "track" And itemType <> "ad" Then Return
 	If item.GetDefault("id", "") = "" Then Return
 	If itemType = "track" Then
-		TraceLog("История подтверждена. reason=playback_start, item=" & DescribeItem(item))
+		TraceLog("история confirm reason=playback_start item=" & DescribeItem(item))
 		QueueHistoryRecordAt(item, DateTime.Now)
 		ClearHistoryLogTimer
 		Return
 	End If
-	TraceLog("ScheduleHistoryLog. item=" & DescribeItem(item) & ", mode=ad_complete")
+	TraceLog("история stage mode=ad_complete item=" & DescribeItem(item))
 	ClearHistoryLogTimer
 	metaState.StageHistoryItem(item, DateTime.Now)
 End Sub
@@ -2440,7 +2871,7 @@ End Sub
 Private Sub ConfirmPendingHistoryItem(reason As String) As Boolean
 	If metaState.PendingHistoryItem.IsInitialized = False Then Return False
 	If metaState.PendingHistoryItem.GetDefault("id", "") = "" Then Return False
-	TraceLog("История подтверждена. reason=" & reason & ", item=" & DescribeItem(metaState.PendingHistoryItem))
+	TraceLog("история confirm reason=" & reason & " item=" & DescribeItem(metaState.PendingHistoryItem))
 	QueueHistoryRecordAt(metaState.PendingHistoryItem, metaState.HistoryStartedAtTicks)
 	ClearHistoryLogTimer
 	Return True
@@ -2459,7 +2890,7 @@ Private Sub QueueHistoryRecordAt(item As Map, startedAtValue As Long)
 	record.Put("type", item.GetDefault("type", ""))
 	record.Put("id", item.GetDefault("id", ""))
 	AppendHistoryRecord(recordDate, record)
-	TraceLog("История добавлена в локальный буфер. date=" & record.Get("date") & ", time=" & record.Get("time") & ", type=" & record.Get("type") & ", id=" & record.Get("id") & ", pendingFiles=" & GetPendingHistoryFileCount)
+	TraceLog("история буфер add date=" & record.Get("date") & " time=" & record.Get("time") & " type=" & record.Get("type") & " id=" & record.Get("id") & " files=" & GetPendingHistoryFileCount)
 End Sub
 
 Private Sub FlushHistoryBuffer As ResumableSub
@@ -2473,7 +2904,7 @@ Private Sub FlushHistoryBuffer As ResumableSub
 	Try
 		payload = File.ReadString(GetHistoryDir, pendingHistoryFileName)
 	Catch
-		TraceLog("Не удалось прочитать history file. file=" & pendingHistoryFileName & ", message=" & LastException.Message)
+		TraceLog("история чтение ошибка file=" & pendingHistoryFileName & " message=" & LastException.Message)
 	End Try
 	payload = NormalizeNdjsonPayload(payload)
 	If payload = "" Or batchDate = "" Then
@@ -2483,14 +2914,12 @@ Private Sub FlushHistoryBuffer As ResumableSub
 		Return False
 	End If
 	Dim recordCount As Int = CountNdjsonRecords(payload)
-	TraceLog("SendHistory batch. date=" & batchDate & ", records=" & recordCount & ", file=" & pendingHistoryFileName)
 	Dim queryParams As Map
 	queryParams.Initialize
 	queryParams.Put("player", playerCode)
 	queryParams.Put("device", deviceId)
 	queryParams.Put("date", batchDate)
 	Dim requestUrl As String = HISTORY_BASE_URL & "?" & BuildParams(queryParams)
-	TraceLog("SendHistory payload. player=" & playerCode & ", device=" & deviceId & ", date=" & batchDate & ", records=" & recordCount)
 	Dim j As HttpJob
 	j.Initialize("", Me)
 	j.PostString(requestUrl, payload)
@@ -2505,14 +2934,17 @@ Private Sub FlushHistoryBuffer As ResumableSub
 	Else
 		Dim failureKind As String = ClassifyHttpFailure(j.ErrorMessage)
 		SaveServerSnapshot("POST", requestUrl, False, "", j.ErrorMessage)
-		LogHttpFailure("SendHistory", requestUrl, j.ErrorMessage, failureKind)
+		LogHttpFailure(requestUrl, failureKind)
 	End If
 	If success Then
+		lastHistoryOkAt = DateTime.Now
 		DeleteHistoryPendingFile(pendingHistoryFileName)
 		RefreshPendingHistoryState
-		TraceLog("Локальный буфер истории обновлен. removedFile=" & pendingHistoryFileName & ", pendingFiles=" & GetPendingHistoryFileCount)
+		TraceInfo("history", "история отправлена", "records=" & recordCount)
+	Else
+		TraceWarn("history", "история не отправлена", "records=" & recordCount)
 	End If
-	TraceLog("SendHistory complete. success=" & success)
+	WriteHealthSnapshot("history")
 	j.Release
 	isHistoryFlushInProgress = False
 	Return success
@@ -2576,7 +3008,7 @@ Private Sub CountAllPendingHistoryRecords As Int
 		Try
 			total = total + CountNdjsonRecords(File.ReadString(GetHistoryDir, fileName))
 		Catch
-			Log(LastException.Message)
+			TraceWarn("history", "не удалось прочитать файл истории", "file=" & fileName)
 		End Try
 	Next
 	Return total
@@ -2600,7 +3032,7 @@ Private Sub IsHistoryBatchAccepted(responseText As String) As Boolean
 		Dim response As Map = parser.NextObject
 		Return response.GetDefault("ok", False) = True
 	Catch
-		TraceLog("История: не удалось разобрать ответ сервера.")
+		TraceLog("история response parse ошибка")
 	End Try
 	Return False
 End Sub
@@ -2664,13 +3096,14 @@ Public Sub Facade_StopPlayerCore As ResumableSub
 	If CanStopPlaybackNow(True) = False Then Return False
 	SetPlaybackFlowState(FLOW_STOPPING, "stop_requested")
 	orchestrationState.EnterInternalStoppingState
-	TraceLog("StopPlayer requested. currentType=" & metaState.CurrentMediaType & ", activeAudio=" & runtimeState.ActiveAudioKey & ", preparedAudio=" & runtimeState.PreparedAudioKey)
+	TraceLog("stop запрос type=" & metaState.CurrentMediaType & " activeAudio=" & runtimeState.ActiveAudioKey & " preparedAudio=" & runtimeState.PreparedAudioKey)
 	CaptureStoppedReserveQueue
 	dataPolicyState.ClearPolicyPauseAndResumeRequest
 	orchestrationState.EndDispatch
 	ClearRetryTimer
 	ClearExactBreakState
 	ClearHistoryLogTimer
+	ResetPlaybackWatchdogState
 	ResetRetryDelay
 	retryFallbackState.ClearDispatchRetryAfter
 	If runtimeState.ActiveAudioKey <> "" Then
@@ -2688,6 +3121,7 @@ Public Sub Facade_StopPlayerCore As ResumableSub
 	orchestrationState.EnterUserStoppedState
 	orchestrationState.ClearTrackTransitionFlags
 	ClearQueueSnapshotState
+	mediaCacheService.FlushPendingIndexSaves
 	mediaCacheService.CleanupPlaybackTempFiles
 	SetStatusText("")
 	HidePin
@@ -2713,18 +3147,19 @@ Private Sub CaptureStoppedReserveQueue
 	Next
 	queueState.CaptureStoppedReserve(reserveQueue, currentSignature)
 	If queueState.StoppedReserveQueue.Size = 0 Then Return
-	TraceLog("Сохранен резерв подготовленных треков после stop. tracks=" & queueState.StoppedReserveQueue.Size)
+	TraceLog("резерв очереди save tracks=" & queueState.StoppedReserveQueue.Size)
 End Sub
 
 Private Sub ClearQueueSnapshotState
 	queueState.ClearQueueSnapshot(storage)
-	TraceLog("PlaybackQueueState queue snapshot cleared.")
+	TraceLog("снимок очереди clear")
 End Sub
 
 Private Sub ClearPlaybackState
-	TraceLog("ClearPlaybackState")
+	TraceLog("состояние воспроизведения clear")
 	audioPrimary.Reset
 	audioSecondary.Reset
+	mediaCacheService.FlushPendingIndexSaves
 	mediaCacheService.CleanupPlaybackTempFiles
 	runtimeState.ActiveAudioKey = ""
 	runtimeState.PreparedAudioKey = ""
@@ -2741,6 +3176,7 @@ Private Sub ClearPlaybackState
 	ClearRetryTimer
 	ClearExactBreakState
 	ClearHistoryLogTimer
+	ResetPlaybackWatchdogState
 	SetStatusText("")
 End Sub
 
@@ -2760,78 +3196,96 @@ Private Sub AudioSecondary_Ready
 End Sub
 
 Private Sub AudioPrimary_Error(message As String)
-	HandleAudioError("primary", message)
+	HandleAudioErrorAsync(CreateMap("audioKey": "primary", "message": message))
 End Sub
 
 Private Sub AudioSecondary_Error(message As String)
-	HandleAudioError("secondary", message)
+	HandleAudioErrorAsync(CreateMap("audioKey": "secondary", "message": message))
 End Sub
 
 Private Sub AudioPrimary_Complete
-	HandleAudioComplete("primary")
+	HandleAudioCompleteAsync("primary")
 End Sub
 
 Private Sub AudioSecondary_Complete
-	HandleAudioComplete("secondary")
+	HandleAudioCompleteAsync("secondary")
 End Sub
 
 Private Sub AudioPrimary_Timeupdate
-	HandleAudioTimeupdate("primary")
+	HandleAudioTimeupdateAsync("primary")
 End Sub
 
 Private Sub AudioSecondary_Timeupdate
-	HandleAudioTimeupdate("secondary")
+	HandleAudioTimeupdateAsync("secondary")
+End Sub
+
+Private Sub HandleAudioErrorAsync(args As Map)
+	Wait For (HandleAudioError(args.GetDefault("audioKey", ""), args.GetDefault("message", ""))) Complete (unused As Boolean)
+End Sub
+
+Private Sub HandleAudioCompleteAsync(audioKey As String)
+	Wait For (HandleAudioComplete(audioKey)) Complete (unused As Boolean)
+End Sub
+
+Private Sub HandleAudioTimeupdateAsync(audioKey As String)
+	Wait For (HandleAudioTimeupdate(audioKey)) Complete (unused As Boolean)
 End Sub
 
 Private Sub HandleAudioReady(audioKey As String)
-	TraceLog("Аудио готово. audio=" & audioKey)
 	RefreshConnectionIndicatorState
 	If runtimeState.PendingPlayAudioKey = audioKey Then
+		TraceInfo("audio", "плеер ready", "player=" & TracePlayerNumber(audioKey) & " mode=play type=" & TraceItemType(runtimeState.PendingPlayItem) & " id=" & TraceTrackValue(runtimeState.PendingPlayItem))
 		ActivateLoadedItem(audioKey, runtimeState.PendingPlayItem, runtimeState.PendingPlayFadeInMs)
 		ClearPendingPlayState
-		CallSubDelayed2(Me, "PlaybackStartDone", CreateMap("Success": True))
 		Return
 	End If
 	If runtimeState.PendingPrepareAudioKey = audioKey Then
+		TraceInfo("audio", "плеер ready", "player=" & TracePlayerNumber(audioKey) & " mode=prepare type=" & TraceItemType(runtimeState.PendingPrepareItem) & " id=" & TraceTrackValue(runtimeState.PendingPrepareItem))
 		runtimeState.SetPrepared(audioKey, runtimeState.PendingPrepareItem)
 		runtimeState.ClearPendingPrepareState
-		CallSubDelayed2(Me, "PreloadDone", CreateMap("Success": True))
 	End If
 End Sub
 
 Private Sub HandleAudioError(audioKey As String, message As String) As ResumableSub
-	TraceLog("Ошибка аудио. audio=" & audioKey & ", message=" & message)
+	Dim errorItem As Map = runtimeState.ActiveItem
+	If runtimeState.PendingPlayAudioKey = audioKey Then errorItem = runtimeState.PendingPlayItem
+	If runtimeState.PendingPrepareAudioKey = audioKey Then errorItem = runtimeState.PendingPrepareItem
+	TraceError("audio", "плеер error", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(errorItem) & " id=" & TraceTrackValue(errorItem) & " message=" & message)
+	WriteHealthSnapshot("ошибка_audio")
 	SetPlaybackFlowState(FLOW_ERROR, "audio_error:" & audioKey)
 	If runtimeState.PendingPlayAudioKey = audioKey Then
 		ClearPendingPlayState
-		CallSubDelayed2(Me, "PlaybackStartDone", CreateMap("Success": False, "Message": message))
 		Return True
 	End If
 	If runtimeState.PendingPrepareAudioKey = audioKey Then
 		ClearPreparedState(False)
-		CallSubDelayed2(Me, "PreloadDone", CreateMap("Success": False, "Message": message))
 		Return True
 	End If
 	If audioKey <> runtimeState.ActiveAudioKey Then Return False
 	If CanAdvancePlaybackNow("audio_error:" & audioKey, True) = False Then Return False
 	Wait For (HandleMediaError) Complete (unused As Boolean)
 	If dataPolicyState.IsLocalPlaybackMode And orchestrationState.IsStarted Then
-		Wait For (facade.AdvanceAfterError(audioKey)) Complete (unusedRecovery As Boolean)
+		Wait For (DispatchPlaybackAdvance("audio_error_recovery:" & audioKey, True)) Complete (unusedRecovery As Boolean)
 	End If
 	Return True
 End Sub
 
 Private Sub HandleAudioComplete(audioKey As String) As ResumableSub
 	If CanAdvancePlaybackNow("audio_complete:" & audioKey, True) = False Then Return False
+	If audioKey <> runtimeState.ActiveAudioKey Then
+		TraceWarn("playback", "audio complete пропущен", "reason=inactive_audio audio=" & audioKey & " active=" & runtimeState.ActiveAudioKey)
+		Return False
+	End If
 	SetPlaybackFlowState(FLOW_TRANSITIONING, "audio_complete:" & audioKey)
-	If audioKey <> runtimeState.ActiveAudioKey Then Return False
-	TraceLog("Аудио завершилось. audio=" & audioKey & ", элемент=" & DescribeItem(runtimeState.ActiveItem))
+	If runtimeState.ActiveItem.IsInitialized Then
+		TraceInfo("audio", "плеер complete", "player=" & TracePlayerNumber(audioKey) & " type=" & TraceItemType(runtimeState.ActiveItem) & " id=" & TraceTrackValue(runtimeState.ActiveItem))
+		TraceInfo("playback", "смена трека", "trackId=" & TraceTrackValue(runtimeState.ActiveItem))
+	End If
 	If runtimeState.ActiveItem.GetDefault("type", "") = "ad" Then
-		TraceLog("История подтверждена. reason=ad_complete, item=" & DescribeItem(runtimeState.ActiveItem))
 		QueueHistoryRecordAt(runtimeState.ActiveItem, metaState.HistoryStartedAtTicks)
 		ClearHistoryLogTimer
 	End If
-	Wait For (facade.AdvanceAfterComplete(audioKey)) Complete (dispatched As Boolean)
+	Wait For (DispatchPlaybackAdvance("audio_complete:" & audioKey, True)) Complete (dispatched As Boolean)
 	Return dispatched
 End Sub
 
@@ -2844,20 +3298,19 @@ Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
 		End If
 	End If
 	If ShouldTriggerBreakNow Then
-		TraceLog("Достигнута точка exact-break.")
+		TraceInfo("playback", "вставлен break", "mode=exact")
 		Wait For (FadeOutAndContinue) Complete (unused As Boolean)
 		Return True
 	End If
 	Dim remain As Long = EffectiveTrackRemainMs
 	If CanCrossfadePreparedItem And remain > 0 And remain <= TRACK_OVERLAP_MS Then
 		orchestrationState.IsCrossfadeTriggered = True
-		TraceLog("Запуск overlap треков. remainMs=" & remain & ", next=" & DescribeItem(runtimeState.PreparedItem))
 		PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
 		Return True
 	End If
 	If CanStartPreparedOnTrackTail And remain > 0 And remain <= AD_TAIL_OVERLAP_MS Then
 		orchestrationState.IsCrossfadeTriggered = True
-		TraceLog("Запуск ролика на хвосте трека. remainMs=" & remain & ", next=" & DescribeItem(runtimeState.PreparedItem))
+		TraceInfo("playback", "вставлена реклама", "queue=" & playQueue.Size)
 		PromotePreparedPlayer(PreparedFadeInMs, PreparedFadeOutMs)
 		Return True
 	End If
@@ -2865,14 +3318,302 @@ Private Sub HandleAudioTimeupdate(audioKey As String) As ResumableSub
 	If remain <= PREFETCH_SECONDS * 1000 Then
 		If CanPrefetchNextNow(False) = False Then Return False
 		orchestrationState.PrefetchDone = True
-		TraceLog("Запуск предзагрузки следующего элемента. remainMs=" & remain)
 		Wait For (PrefetchNext) Complete (unused2 As Boolean)
 	End If
 	Return True
 End Sub
 
 Public Sub TraceLog(message As String)
-	appTraceService.Trace(message)
+	If HandleDiagnosticTraceMessage(message) Then Return
+End Sub
+
+Private Sub TraceInfo(category As String, message As String, details As String)
+	WriteTraceEntry("INFO", category, message, details)
+End Sub
+
+Private Sub TraceWarn(category As String, message As String, details As String)
+	WriteTraceEntry("WARN", category, message, details)
+End Sub
+
+Private Sub TraceError(category As String, message As String, details As String)
+	WriteTraceEntry("ERROR", category, message, details)
+End Sub
+
+Private Sub TraceState(category As String, message As String, details As String)
+	WriteTraceEntry("STATE", category, message, details)
+End Sub
+
+Private Sub WriteTraceEntry(level As String, category As String, message As String, details As String)
+	Dim line As String = level & " | " & category & " | " & message
+	Dim safeDetails As String = details.Trim
+	If safeDetails <> "" Then line = line & " | " & safeDetails
+	appTraceService.Trace(line)
+End Sub
+
+Private Sub HandleDiagnosticTraceMessage(message As String) As Boolean
+	If message = "" Then Return True
+	If ShouldSuppressTraceMessage(message) Then Return True
+	If message.StartsWith("Трек сохранен в кэш.") Then
+		TraceInfo("cache", "трек загружен в кэш", NormalizeLegacyDetails(TailAfter(message, "Трек сохранен в кэш.")))
+		Return True
+	End If
+	If message.StartsWith("Не удалось скачать трек.") Or message.StartsWith("Не удалось сохранить трек в кэш.") Then
+		TraceError("cache", "ошибка загрузки трека", NormalizeLegacyDetails(TailAfterFirstSpace(message)))
+		Return True
+	End If
+	If message.StartsWith("Синхронизация кэша треков завершена.") Then
+		TraceInfo("cache", "кэш треков обновлен", NormalizeLegacyDetails(TailAfter(message, "Синхронизация кэша треков завершена.")))
+		Return True
+	End If
+	If message.StartsWith("ad cache sync done") Then
+		TraceInfo("cache", "кэш рекламы обновлен", NormalizeLegacyDetails(TailAfter(message, "ad cache sync done")))
+		Return True
+	End If
+	If message.StartsWith("Аудит кэша завершен.") Then
+		TraceInfo("cache", "аудит кэша", NormalizeLegacyDetails(TailAfter(message, "Аудит кэша завершен.")))
+		Return True
+	End If
+	If message.StartsWith("Очистка кэша треков завершена.") Then
+		TraceInfo("cache", "очистка кэша", NormalizeLegacyDetails(TailAfter(message, "Очистка кэша треков завершена.")))
+		Return True
+	End If
+	If message.StartsWith("кэш треков очистка итог") Then
+		TraceInfo("cache", "очистка кэша", NormalizeLegacyDetails(TailAfter(message, "кэш треков очистка итог")))
+		Return True
+	End If
+	If message.StartsWith("Удален cached ad, отсутствующий в актуальном data.") Then
+		TraceInfo("cache", "реклама удалена из кэша", NormalizeLegacyDetails(TailAfter(message, "Удален cached ad, отсутствующий в актуальном data.")))
+		Return True
+	End If
+	If message.StartsWith("подготовка data playback ошибка") Then
+		TraceWarn("playback", "очередь пуста", "")
+		Return True
+	End If
+	If message.StartsWith("очередь запрос ошибка") Then
+		TraceWarn("playback", "очередь пуста", NormalizeLegacyDetails(TailAfter(message, "очередь запрос ошибка")))
+		Return True
+	End If
+	If message.StartsWith("очередь next ошибка") Then
+		TraceWarn("playback", "очередь пуста", NormalizeLegacyDetails(TailAfter(message, "очередь next ошибка")))
+		Return True
+	End If
+	If message.StartsWith("очередь fetch ошибка") Then
+		TraceWarn("network", "ошибка очереди", NormalizeLegacyDetails(TailAfter(message, "очередь fetch ошибка")))
+		Return True
+	End If
+	If message.StartsWith("состояние blocked") Then
+		TraceWarn("player", "плеер заблокирован", "")
+		Return True
+	End If
+	If message.StartsWith("состояние stop") Or message.StartsWith("message shutdown") Then
+		TraceWarn("player", "воспроизведение остановлено", NormalizeLegacyDetails(TailAfterFirstSpace(message)))
+		Return True
+	End If
+	If message.StartsWith("fallback activate") Then
+		TraceWarn("playback", "включен локальный fallback", NormalizeLegacyDetails(TailAfter(message, "fallback activate")))
+		Return True
+	End If
+	If message.StartsWith("degraded path вход") Then
+		TraceWarn("network", "деградация media path", "")
+		Return True
+	End If
+	If message.StartsWith("degraded path восстановлен") Then
+		TraceInfo("network", "media path восстановлен", "")
+		Return True
+	End If
+	If message.StartsWith("история чтение ошибка") Or message.StartsWith("история response parse ошибка") Then
+		TraceWarn("history", "ошибка истории", "")
+		Return True
+	End If
+	If message.StartsWith("метаданные плейлистов sync итог") Then
+		TraceInfo("network", "метаданные плейлистов обновлены", NormalizeLegacyDetails(TailAfter(message, "метаданные плейлистов sync итог")))
+		Return True
+	End If
+	If message.StartsWith("метаданные плейлиста fetch ошибка") Then
+		TraceWarn("network", "ошибка метаданных плейлиста", NormalizeLegacyDetails(TailAfter(message, "метаданные плейлиста fetch ошибка")))
+		Return True
+	End If
+	If message.StartsWith("Не удалось подготовить временный файл трека.") Then
+		TraceError("cache", "ошибка подготовки трека", NormalizeLegacyDetails(TailAfter(message, "Не удалось подготовить временный файл трека.")))
+		Return True
+	End If
+	WriteTraceEntry("INFO", "player", message, "")
+	Return True
+End Sub
+
+Private Sub ShouldSuppressTraceMessage(message As String) As Boolean
+	If message.StartsWith("guard переход") Or message.StartsWith("переход dispatch") Then
+		If IsReleaseBuild Then
+			Return False
+		Else
+			Return True
+		End If
+	End If
+	Dim noisyPrefixes As List
+	noisyPrefixes.Initialize
+	noisyPrefixes.Add("курсор плейлистов load")
+	noisyPrefixes.Add("состояние init")
+	noisyPrefixes.Add("старт skip")
+	noisyPrefixes.Add("старт вход")
+	noisyPrefixes.Add("отложенный старт")
+	noisyPrefixes.Add("сценарий ")
+	noisyPrefixes.Add("flow переход")
+	noisyPrefixes.Add("guard переход")
+	noisyPrefixes.Add("guard подготовка")
+	noisyPrefixes.Add("guard prefetch")
+	noisyPrefixes.Add("guard fade")
+	noisyPrefixes.Add("переход dispatch")
+	noisyPrefixes.Add("воспроизведение activate")
+	noisyPrefixes.Add("очередь добор")
+	noisyPrefixes.Add("очередь next итог")
+	noisyPrefixes.Add("очередь playlist skip")
+	noisyPrefixes.Add("очередь signature mismatch")
+	noisyPrefixes.Add("автостарт сначала обновление данных")
+	noisyPrefixes.Add("policy resume авто")
+	noisyPrefixes.Add("возобновление запрет")
+	noisyPrefixes.Add("возобновление итог")
+	noisyPrefixes.Add("снимок очереди восстановление skip")
+	noisyPrefixes.Add("http get начало")
+	noisyPrefixes.Add("http get итог")
+	noisyPrefixes.Add("claim начало")
+	noisyPrefixes.Add("claim итог")
+	noisyPrefixes.Add("элемент очереди play")
+	noisyPrefixes.Add("курсор плейлистов commit")
+	noisyPrefixes.Add("реклама prescan начало")
+	noisyPrefixes.Add("брейк exact defer")
+	noisyPrefixes.Add("брейк exact sync")
+	noisyPrefixes.Add("fade начало")
+	noisyPrefixes.Add("история confirm")
+	noisyPrefixes.Add("история stage")
+	noisyPrefixes.Add("история буфер add")
+	noisyPrefixes.Add("история отправка начало")
+	noisyPrefixes.Add("история отправка payload")
+	noisyPrefixes.Add("история отправка ack")
+	noisyPrefixes.Add("stop запрос")
+	noisyPrefixes.Add("резерв очереди save")
+	noisyPrefixes.Add("снимок очереди clear")
+	noisyPrefixes.Add("состояние воспроизведения clear")
+	noisyPrefixes.Add("аудио ready")
+	noisyPrefixes.Add("аудио complete")
+	noisyPrefixes.Add("переход overlap начало")
+	noisyPrefixes.Add("переход tail начало")
+	noisyPrefixes.Add("переход prefetch начало")
+	noisyPrefixes.Add("trusted time update")
+	noisyPrefixes.Add("player end parse fail")
+	noisyPrefixes.Add("[AudioPrimary]")
+	noisyPrefixes.Add("[AudioSecondary]")
+	noisyPrefixes.Add("machine guid")
+	noisyPrefixes.Add("legacy migrate итог")
+	noisyPrefixes.Add("метаданные плейлистов sync skip")
+	noisyPrefixes.Add("метаданные плейлиста fetch начало")
+	noisyPrefixes.Add("окно save")
+	noisyPrefixes.Add("окно restore")
+	noisyPrefixes.Add("trace отправка")
+	noisyPrefixes.Add("скачивание рекламы в кэш")
+	noisyPrefixes.Add("скачивание трека в кэш")
+	noisyPrefixes.Add("удален cached track при очистке кэша")
+	noisyPrefixes.Add("очистка кэша треков пропущена")
+	noisyPrefixes.Add("очередь playlist skip")
+	noisyPrefixes.Add("очередь next итог")
+	noisyPrefixes.Add("очередь signature mismatch")
+	noisyPrefixes.Add("переход очередь drop")
+	noisyPrefixes.Add("переход preload ошибка")
+	noisyPrefixes.Add("переход prepared reject")
+	For Each prefix As String In noisyPrefixes
+		If message.ToLowerCase.StartsWith(prefix.ToLowerCase) Then Return True
+	Next
+	Return False
+End Sub
+
+Private Sub NormalizeLegacyDetails(text As String) As String
+	Dim value As String = text.Trim
+	If value.StartsWith(".") Or value.StartsWith(":") Then value = value.SubString(1).Trim
+	value = value.Replace(",", "")
+	Return value
+End Sub
+
+Private Sub TailAfter(text As String, prefix As String) As String
+	If text.StartsWith(prefix) = False Then Return text
+	Return text.SubString(prefix.Length).Trim
+End Sub
+
+Private Sub TailAfterFirstSpace(text As String) As String
+	Dim firstSpace As Int = text.IndexOf(" ")
+	If firstSpace < 0 Then Return ""
+	Return text.SubString(firstSpace + 1).Trim
+End Sub
+
+Private Sub TracePlayerNumber(audioKey As String) As String
+	If audioKey = "secondary" Then Return "2"
+	Return "1"
+End Sub
+
+Private Sub TraceItemType(item As Map) As String
+	If item.IsInitialized = False Then Return ""
+	Return item.GetDefault("type", "")
+End Sub
+
+Private Sub TraceTrackValue(item As Map) As String
+	If item.IsInitialized = False Then Return ""
+	Dim codeValue As String = item.GetDefault("code", "")
+	If codeValue <> "" Then Return codeValue
+	Return item.GetDefault("id", "")
+End Sub
+
+Private Sub WriteHealthSnapshot(trigger As String)
+	TraceState("health", "снимок", "stage=" & playbackFlowState & _
+		" playing=" & IsPlaybackRunningForTrace & _
+		" currentTrackId=" & ResolveCurrentTrackTraceValue & _
+		" queue=" & playQueue.Size & _
+		" trackCache=" & storage.GetDefault("cached_track_count", 0) & _
+		" adCache=" & storage.GetDefault("cached_ad_count", 0) & _
+		" ramFreeMb=" & ResolveFreeRamMbText & _
+		" diskFreeMb=" & ResolveFreeDiskMbText & _
+		" netErrors=" & consecutiveNetworkErrors & _
+		" lastDataOkAgoSec=" & SecondsAgoText(lastDataOkAt) & _
+		" lastHistoryOkAgoSec=" & SecondsAgoText(lastHistoryOkAt) & _
+		" trigger=" & trigger)
+End Sub
+
+Private Sub IsPlaybackRunningForTrace As String
+	If orchestrationState.IsStarted = False Then Return "false"
+	If runtimeState.ActiveAudioKey = "" Then Return "false"
+	Return "true"
+End Sub
+
+Private Sub ResolveCurrentTrackTraceValue As String
+	If runtimeState.ActiveItem.IsInitialized = False Then Return ""
+	Return TraceTrackValue(runtimeState.ActiveItem)
+End Sub
+
+Private Sub ResolveFreeRamMbText As String
+	Try
+		Dim runtime As JavaObject
+		runtime.InitializeStatic("java.lang.Runtime")
+		Dim currentRuntime As JavaObject = runtime.RunMethod("getRuntime", Null)
+		Dim freeBytes As Long = currentRuntime.RunMethod("freeMemory", Null)
+		Dim totalBytes As Long = currentRuntime.RunMethod("totalMemory", Null)
+		Dim maxBytes As Long = currentRuntime.RunMethod("maxMemory", Null)
+		Dim availableBytes As Long = freeBytes + Max(0, maxBytes - totalBytes)
+		Return "" & Floor(availableBytes / 1024 / 1024)
+	Catch
+		Return "unknown"
+	End Try
+End Sub
+
+Private Sub ResolveFreeDiskMbText As String
+	Try
+		Dim fileObject As JavaObject
+		fileObject.InitializeNewInstance("java.io.File", Array As Object(storageDir))
+		Return "" & Floor(fileObject.RunMethod("getUsableSpace", Null) / 1024 / 1024)
+	Catch
+		Return "unknown"
+	End Try
+End Sub
+
+Private Sub SecondsAgoText(ticksValue As Long) As String
+	If ticksValue <= 0 Then Return "unknown"
+	Return "" & Max(0, Floor((DateTime.Now - ticksValue) / 1000))
 End Sub
 
 Public Sub GetTraceLogText As String
@@ -3179,9 +3920,9 @@ End Sub
 Private Sub UpdateMediaConnectivityStateFromCacheSync(downloaded As Boolean)
 	Dim transition As String = retryFallbackState.UpdateMediaPathDegradedFromCacheSync(downloaded, mediaCacheService.ConsumeRecentMediaNetworkFailure)
 	If transition = "entered" Then
-		TraceLog("PlaybackRetryFallback degraded path entered. source=cache_sync")
+		TraceLog("degraded path вход source=cache_sync")
 	Else If transition = "recovered" Then
-		TraceLog("PlaybackRetryFallback degraded path recovered. source=cache_sync")
+		TraceLog("degraded path восстановлен source=cache_sync")
 	End If
 	RefreshConnectionIndicatorState
 End Sub
@@ -3208,7 +3949,12 @@ Private Sub ResolvePlaybackMediaUrl(audioKey As String, item As Map) As String
 End Sub
 
 Public Sub CleanupPlaybackTempFiles
+	mediaCacheService.FlushPendingIndexSaves
 	mediaCacheService.CleanupPlaybackTempFiles
+End Sub
+
+Public Sub FlushPendingCacheIndexes
+	mediaCacheService.FlushPendingIndexSaves
 End Sub
 
 Private Sub CurrentVolume(item As Map) As Double
@@ -3256,7 +4002,7 @@ Private Sub CreateNextParams As Map
 	params.Put("player", playerCode)
 	params.Put("device", deviceId)
 	params.Put("tz", TimezoneOffsetMinutes)
-	params.Put("version", APP_VERSION)
+	params.Put("version", ResolveAppVersion)
 	If nextStartMode = "manual" Or nextStartMode = "auto" Then params.Put("start", nextStartMode)
 	If playlistIndex >= 0 Then params.Put("playlist", playlistIndex)
 	Return params
@@ -3277,8 +4023,12 @@ Private Sub CreateDataParams As Map
 	params.Put("player", playerCode)
 	params.Put("device", deviceId)
 	params.Put("tz", TimezoneOffsetMinutes)
-	params.Put("version", APP_VERSION)
+	params.Put("os", ResolveClientOsName)
 	Return params
+End Sub
+
+Private Sub ResolveClientOsName As String
+	Return "windows"
 End Sub
 
 Private Sub BuildParams(params As Map) As String
@@ -3332,9 +4082,9 @@ Private Sub ResolveMachineGuidAsync
 	Try
 		machineGuidShell.Initialize("MachineGuidShell", "reg", Array As String("query", "HKLM\SOFTWARE\Microsoft\Cryptography", "/v", "MachineGuid"))
 		machineGuidShell.Run(-1)
-		TraceLog("Запущено чтение MachineGuid из реестра.")
+		TraceLog("machine guid чтение начало")
 	Catch
-		TraceLog("Не удалось запустить чтение MachineGuid. " & LastException.Message)
+		TraceLog("machine guid чтение ошибка message=" & LastException.Message)
 	End Try
 End Sub
 
@@ -3344,21 +4094,21 @@ Private Sub MachineGuidShell_ProcessCompleted (success As Boolean, exitCode As I
 		If matcher.Find Then
 			Dim machineGuid As String = matcher.Group(1).Trim.ToLowerCase
 			If machineGuid = "" Then
-				TraceLog("MachineGuid получен пустым.")
+				TraceLog("machine guid пустой")
 				Return
 			End If
 			If deviceId <> machineGuid Then
 				deviceId = machineGuid
 				SaveValue("device_id", deviceId)
-				TraceLog("deviceId обновлен из MachineGuid: " & deviceId)
+				TraceLog("deviceId обновлен из machine guid value=" & deviceId)
 			Else
-				TraceLog("MachineGuid совпадает с текущим deviceId.")
+				TraceLog("machine guid совпадение device=true")
 			End If
 		Else
-			TraceLog("MachineGuid не найден в выводе reg.")
+			TraceLog("machine guid чтение ошибка reason=not_found")
 		End If
 	Else
-		TraceLog("Ошибка чтения MachineGuid. success=" & success & ", exitCode=" & exitCode & ", stderr=" & stdErr)
+		TraceLog("machine guid чтение ошибка success=" & success & " exitCode=" & exitCode & " stderr=" & stdErr)
 	End If
 End Sub
 
@@ -3376,11 +4126,11 @@ Private Sub MigrateLegacyStorageIfNeeded
 			For Each key As String In legacy.Keys
 				storage.Put(key, legacy.Get(key))
 			Next
-			TraceLog("Данные перенесены из legacy JSON в KVS.")
+			TraceLog("legacy migrate итог target=kvs")
 			File.Delete(storageDir, storageFile)
 		End If
 	Catch
-		TraceLog("Не удалось перенести legacy JSON в KVS. " & LastException.Message)
+		TraceLog("legacy migrate ошибка message=" & LastException.Message)
 	End Try
 End Sub
 
@@ -3425,7 +4175,7 @@ End Sub
 Private Sub SyncOfflinePlaylistMetadata As ResumableSub
 	Dim playlistDescriptors As List = offlineStoreService.GetStoredPlaylistDescriptors
 	If playlistDescriptors.IsInitialized = False Or playlistDescriptors.Size = 0 Then
-		TraceLog("Для синхронизации playlist metadata ничего не найдено.")
+		TraceLog("метаданные плейлистов sync skip reason=nothing_to_sync")
 		Return False
 	End If
 	EnsureDirectory(offlineStoreService.GetOfflinePlaylistsDir)
@@ -3452,8 +4202,9 @@ Private Sub SyncOfflinePlaylistMetadata As ResumableSub
 	Next
 	offlineStoreService.SaveCachedPlaylistIndex(cachedPlaylistIndex)
 	offlineStoreService.RefreshPlaylistCacheStatus(playlistDescriptors)
+	InvalidateRelevantTrackIdsCache
 	Dim actualCount As Int = storage.GetDefault("playlist_actual_count", 0)
-	TraceLog("Синхронизация playlist metadata завершена. downloaded=" & downloadedCount & ", updated=" & updatedCount & ", failed=" & failedCount & ", actual=" & actualCount)
+	TraceLog("метаданные плейлистов sync итог downloaded=" & downloadedCount & " updated=" & updatedCount & " failed=" & failedCount & " actual=" & actualCount)
 	Return failedCount = 0
 End Sub
 
@@ -3461,16 +4212,16 @@ Private Sub DownloadOfflinePlaylistMetadata(descriptor As Map, cachedPlaylistInd
 	Dim playlistId As String = descriptor.GetDefault("id", "")
 	If playlistId = "" Then Return False
 	Dim playlistUrl As String = offlineStoreService.PlaylistMetadataUrl(playlistId)
-	TraceLog("Загрузка playlist metadata. id=" & playlistId & ", url=" & playlistUrl)
+	TraceLog("метаданные плейлиста fetch начало id=" & playlistId & " url=" & playlistUrl)
 	Wait For (FetchJsonWithTimeout(playlistUrl, FETCH_TIMEOUT_MS)) Complete (result As Map)
 	If result.GetDefault("Success", False) = False Then
-		TraceLog("Не удалось загрузить playlist metadata. id=" & playlistId & ", message=" & result.GetDefault("ErrorMessage", ""))
+		TraceLog("метаданные плейлиста fetch ошибка id=" & playlistId & " message=" & result.GetDefault("ErrorMessage", ""))
 		Return False
 	End If
 	Dim resultData As Object = result.Get("Data")
 	If resultData Is Map Then
 	Else
-		TraceLog("Playlist metadata не является Map. id=" & playlistId)
+		TraceLog("метаданные плейлиста fetch ошибка id=" & playlistId & " reason=not_map")
 		Return False
 	End If
 	Dim playlistData As Map = resultData
@@ -3495,10 +4246,10 @@ Public Sub SaveWindowState
 			storage.Put("WindowLeft", form.WindowLeft)
 			storage.Put("WindowWidth", form.WindowWidth)
 			storage.Put("WindowHeight", form.WindowHeight)
-			TraceLog("Положение окна сохранено. left=" & form.WindowLeft & ", top=" & form.WindowTop & ", width=" & form.WindowWidth & ", height=" & form.WindowHeight)
+			TraceLog("окно save left=" & form.WindowLeft & " top=" & form.WindowTop & " width=" & form.WindowWidth & " height=" & form.WindowHeight)
 		End If
 	Catch
-		TraceLog("Не удалось сохранить положение окна. " & LastException.Message)
+		TraceLog("окно save ошибка message=" & LastException.Message)
 	End Try
 	#End If
 End Sub
@@ -3523,9 +4274,9 @@ Private Sub RestoreWindowState
 		Else If maxHeight < 640 Then
 			form.WindowHeight = maxHeight
 		End If
-		TraceLog("Положение окна восстановлено. left=" & form.WindowLeft & ", top=" & form.WindowTop & ", width=" & form.WindowWidth & ", height=" & form.WindowHeight)
+		TraceLog("окно restore left=" & form.WindowLeft & " top=" & form.WindowTop & " width=" & form.WindowWidth & " height=" & form.WindowHeight)
 	Catch
-		TraceLog("Не удалось восстановить положение окна. " & LastException.Message)
+		TraceLog("окно restore ошибка message=" & LastException.Message)
 	End Try
 	#End If
 End Sub

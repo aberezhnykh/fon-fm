@@ -54,6 +54,9 @@ public boolean isSingleton() {
 		return pcBA;
 	}
 public static RemoteObject __c = RemoteObject.declareNull("anywheresoftware.b4a.keywords.Common");
+public static RemoteObject _labelname = RemoteObject.createImmutable("");
+public static RemoteObject _versionname = RemoteObject.createImmutable("");
+public static RemoteObject _versioncode = RemoteObject.createImmutable(0);
 public static RemoteObject _fx = RemoteObject.declareNull("anywheresoftware.b4j.objects.JFX");
 public static RemoteObject _mainform = RemoteObject.declareNull("anywheresoftware.b4j.objects.Form");
 public static b4j.example.uistyle _uistyle = null;
@@ -61,6 +64,6 @@ public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
   public Object[] GetGlobals() {
-		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"fx",main._fx,"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"mainForm",main._mainform,"UiStyle",Debug.moduleToString(b4j.example.uistyle.class)};
+		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"fx",main._fx,"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"LabelName",main._labelname,"mainForm",main._mainform,"UiStyle",Debug.moduleToString(b4j.example.uistyle.class),"VersionCode",main._versioncode,"VersionName",main._versionname};
 }
 }

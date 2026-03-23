@@ -8,7 +8,7 @@ public class playbackdatapolicystate_subs_0 {
 
 public static RemoteObject  _applytemporarymode(RemoteObject __ref,RemoteObject _mode) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyTemporaryMode (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,66);
+		Debug.PushSubsStack("ApplyTemporaryMode (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,66);
 if (RapidSub.canDelegate("applytemporarymode")) { return __ref.runUserSub(false, "playbackdatapolicystate","applytemporarymode", __ref, _mode);}
 Debug.locals.put("mode", _mode);
  BA.debugLineNum = 66;BA.debugLine="Public Sub ApplyTemporaryMode(mode As String)";
@@ -34,7 +34,7 @@ finally {
 		}}
 public static RemoteObject  _beginofflinedatarefresh(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("BeginOfflineDataRefresh (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,24);
+		Debug.PushSubsStack("BeginOfflineDataRefresh (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,24);
 if (RapidSub.canDelegate("beginofflinedatarefresh")) { return __ref.runUserSub(false, "playbackdatapolicystate","beginofflinedatarefresh", __ref);}
  BA.debugLineNum = 24;BA.debugLine="Public Sub BeginOfflineDataRefresh As Boolean";
 Debug.ShouldStop(8388608);
@@ -63,7 +63,7 @@ finally {
 		}}
 public static RemoteObject  _begintrackcacherefresh(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("BeginTrackCacheRefresh (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,36);
+		Debug.PushSubsStack("BeginTrackCacheRefresh (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,36);
 if (RapidSub.canDelegate("begintrackcacherefresh")) { return __ref.runUserSub(false, "playbackdatapolicystate","begintrackcacherefresh", __ref);}
  BA.debugLineNum = 36;BA.debugLine="Public Sub BeginTrackCacheRefresh As Boolean";
 Debug.ShouldStop(8);
@@ -106,7 +106,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clearpolicypause(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearPolicyPause (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,52);
+		Debug.PushSubsStack("ClearPolicyPause (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,52);
 if (RapidSub.canDelegate("clearpolicypause")) { return __ref.runUserSub(false, "playbackdatapolicystate","clearpolicypause", __ref);}
  BA.debugLineNum = 52;BA.debugLine="Public Sub ClearPolicyPause";
 Debug.ShouldStop(524288);
@@ -125,7 +125,7 @@ finally {
 		}}
 public static RemoteObject  _clearpolicypauseandresumerequest(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearPolicyPauseAndResumeRequest (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,56);
+		Debug.PushSubsStack("ClearPolicyPauseAndResumeRequest (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,56);
 if (RapidSub.canDelegate("clearpolicypauseandresumerequest")) { return __ref.runUserSub(false, "playbackdatapolicystate","clearpolicypauseandresumerequest", __ref);}
  BA.debugLineNum = 56;BA.debugLine="Public Sub ClearPolicyPauseAndResumeRequest";
 Debug.ShouldStop(8388608);
@@ -147,7 +147,7 @@ finally {
 		}}
 public static RemoteObject  _endofflinedatarefresh(RemoteObject __ref,RemoteObject _refreshstate) throws Exception{
 try {
-		Debug.PushSubsStack("EndOfflineDataRefresh (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,31);
+		Debug.PushSubsStack("EndOfflineDataRefresh (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,31);
 if (RapidSub.canDelegate("endofflinedatarefresh")) { return __ref.runUserSub(false, "playbackdatapolicystate","endofflinedatarefresh", __ref, _refreshstate);}
 Debug.locals.put("refreshState", _refreshstate);
  BA.debugLineNum = 31;BA.debugLine="Public Sub EndOfflineDataRefresh(refreshState As S";
@@ -170,7 +170,7 @@ finally {
 		}}
 public static RemoteObject  _endtrackcacherefresh(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EndTrackCacheRefresh (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,42);
+		Debug.PushSubsStack("EndTrackCacheRefresh (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,42);
 if (RapidSub.canDelegate("endtrackcacherefresh")) { return __ref.runUserSub(false, "playbackdatapolicystate","endtrackcacherefresh", __ref);}
  BA.debugLineNum = 42;BA.debugLine="Public Sub EndTrackCacheRefresh";
 Debug.ShouldStop(512);
@@ -189,7 +189,7 @@ finally {
 		}}
 public static RemoteObject  _enterlocalplayback(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EnterLocalPlayback (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,61);
+		Debug.PushSubsStack("EnterLocalPlayback (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,61);
 if (RapidSub.canDelegate("enterlocalplayback")) { return __ref.runUserSub(false, "playbackdatapolicystate","enterlocalplayback", __ref);}
  BA.debugLineNum = 61;BA.debugLine="Public Sub EnterLocalPlayback";
 Debug.ShouldStop(268435456);
@@ -211,7 +211,7 @@ finally {
 		}}
 public static RemoteObject  _enterpolicypause(RemoteObject __ref,RemoteObject _connectionmode) throws Exception{
 try {
-		Debug.PushSubsStack("EnterPolicyPause (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,46);
+		Debug.PushSubsStack("EnterPolicyPause (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,46);
 if (RapidSub.canDelegate("enterpolicypause")) { return __ref.runUserSub(false, "playbackdatapolicystate","enterpolicypause", __ref, _connectionmode);}
 Debug.locals.put("connectionMode", _connectionmode);
  BA.debugLineNum = 46;BA.debugLine="Public Sub EnterPolicyPause(connectionMode As Stri";
@@ -237,7 +237,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,11);
+		Debug.PushSubsStack("Initialize (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,11);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackdatapolicystate","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -258,7 +258,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,15);
+		Debug.PushSubsStack("Reset (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,15);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "playbackdatapolicystate","reset", __ref);}
  BA.debugLineNum = 15;BA.debugLine="Public Sub Reset";
 Debug.ShouldStop(16384);
@@ -292,7 +292,7 @@ finally {
 		}}
 public static RemoteObject  _setlocalfallbackready(RemoteObject __ref,RemoteObject _fallbackready) throws Exception{
 try {
-		Debug.PushSubsStack("SetLocalFallbackReady (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,72);
+		Debug.PushSubsStack("SetLocalFallbackReady (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,72);
 if (RapidSub.canDelegate("setlocalfallbackready")) { return __ref.runUserSub(false, "playbackdatapolicystate","setlocalfallbackready", __ref, _fallbackready);}
 Debug.locals.put("fallbackReady", _fallbackready);
  BA.debugLineNum = 72;BA.debugLine="Public Sub SetLocalFallbackReady(fallbackReady As";
@@ -315,7 +315,7 @@ finally {
 		}}
 public static RemoteObject  _setremotedataready(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("SetRemoteDataReady (playbackdatapolicystate) ","playbackdatapolicystate",9,__ref.getField(false, "ba"),__ref,77);
+		Debug.PushSubsStack("SetRemoteDataReady (playbackdatapolicystate) ","playbackdatapolicystate",10,__ref.getField(false, "ba"),__ref,77);
 if (RapidSub.canDelegate("setremotedataready")) { return __ref.runUserSub(false, "playbackdatapolicystate","setremotedataready", __ref);}
  BA.debugLineNum = 77;BA.debugLine="Public Sub SetRemoteDataReady";
 Debug.ShouldStop(4096);

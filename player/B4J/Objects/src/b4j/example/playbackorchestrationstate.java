@@ -38,6 +38,7 @@ public boolean _prefetchdone = false;
 public boolean _iscrossfadetriggered = false;
 public boolean _isqueuebackfillinprogress = false;
 public boolean _isplaybackdispatchinprogress = false;
+public String _activedispatchinitiator = "";
 public b4j.example.main _main = null;
 public b4j.example.uistyle _uistyle = null;
 public b4j.example.b4xpages _b4xpages = null;
@@ -126,7 +127,10 @@ RDebugUtils.currentLine=46989313;
  //BA.debugLineNum = 46989313;BA.debugLine="IsPlaybackDispatchInProgress = False";
 __ref._isplaybackdispatchinprogress /*boolean*/  = __c.False;
 RDebugUtils.currentLine=46989314;
- //BA.debugLineNum = 46989314;BA.debugLine="End Sub";
+ //BA.debugLineNum = 46989314;BA.debugLine="ActiveDispatchInitiator = \"\"";
+__ref._activedispatchinitiator /*String*/  = "";
+RDebugUtils.currentLine=46989315;
+ //BA.debugLineNum = 46989315;BA.debugLine="End Sub";
 return "";
 }
 public String  _enterpolicypausedstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -201,13 +205,13 @@ RDebugUtils.currentLine=46137346;
  //BA.debugLineNum = 46137346;BA.debugLine="End Sub";
 return "";
 }
-public boolean  _begindispatch(b4j.example.playbackorchestrationstate __ref) throws Exception{
+public boolean  _begindispatch(b4j.example.playbackorchestrationstate __ref,String _initiator) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "begindispatch", false))
-	 {return ((Boolean) Debug.delegate(ba, "begindispatch", null));}
+	 {return ((Boolean) Debug.delegate(ba, "begindispatch", new Object[] {_initiator}));}
 RDebugUtils.currentLine=46923776;
- //BA.debugLineNum = 46923776;BA.debugLine="Public Sub BeginDispatch As Boolean";
+ //BA.debugLineNum = 46923776;BA.debugLine="Public Sub BeginDispatch(initiator As String) As B";
 RDebugUtils.currentLine=46923777;
  //BA.debugLineNum = 46923777;BA.debugLine="If IsPlaybackDispatchInProgress Then Return False";
 if (__ref._isplaybackdispatchinprogress /*boolean*/ ) { 
@@ -216,10 +220,13 @@ RDebugUtils.currentLine=46923778;
  //BA.debugLineNum = 46923778;BA.debugLine="IsPlaybackDispatchInProgress = True";
 __ref._isplaybackdispatchinprogress /*boolean*/  = __c.True;
 RDebugUtils.currentLine=46923779;
- //BA.debugLineNum = 46923779;BA.debugLine="Return True";
-if (true) return __c.True;
+ //BA.debugLineNum = 46923779;BA.debugLine="ActiveDispatchInitiator = initiator";
+__ref._activedispatchinitiator /*String*/  = _initiator;
 RDebugUtils.currentLine=46923780;
- //BA.debugLineNum = 46923780;BA.debugLine="End Sub";
+ //BA.debugLineNum = 46923780;BA.debugLine="Return True";
+if (true) return __c.True;
+RDebugUtils.currentLine=46923781;
+ //BA.debugLineNum = 46923781;BA.debugLine="End Sub";
 return false;
 }
 public String  _class_globals(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -249,7 +256,10 @@ RDebugUtils.currentLine=46071815;
  //BA.debugLineNum = 46071815;BA.debugLine="Public IsPlaybackDispatchInProgress As Boolean";
 _isplaybackdispatchinprogress = false;
 RDebugUtils.currentLine=46071816;
- //BA.debugLineNum = 46071816;BA.debugLine="End Sub";
+ //BA.debugLineNum = 46071816;BA.debugLine="Public ActiveDispatchInitiator As String";
+_activedispatchinitiator = "";
+RDebugUtils.currentLine=46071817;
+ //BA.debugLineNum = 46071817;BA.debugLine="End Sub";
 return "";
 }
 public String  _exitstoppingstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -295,7 +305,10 @@ RDebugUtils.currentLine=46202887;
  //BA.debugLineNum = 46202887;BA.debugLine="IsPlaybackDispatchInProgress = False";
 __ref._isplaybackdispatchinprogress /*boolean*/  = __c.False;
 RDebugUtils.currentLine=46202888;
- //BA.debugLineNum = 46202888;BA.debugLine="End Sub";
+ //BA.debugLineNum = 46202888;BA.debugLine="ActiveDispatchInitiator = \"\"";
+__ref._activedispatchinitiator /*String*/  = "";
+RDebugUtils.currentLine=46202889;
+ //BA.debugLineNum = 46202889;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _isplaybackactive(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -332,7 +345,10 @@ RDebugUtils.currentLine=46268420;
  //BA.debugLineNum = 46268420;BA.debugLine="IsPlaybackDispatchInProgress = False";
 __ref._isplaybackdispatchinprogress /*boolean*/  = __c.False;
 RDebugUtils.currentLine=46268421;
- //BA.debugLineNum = 46268421;BA.debugLine="End Sub";
+ //BA.debugLineNum = 46268421;BA.debugLine="ActiveDispatchInitiator = \"\"";
+__ref._activedispatchinitiator /*String*/  = "";
+RDebugUtils.currentLine=46268422;
+ //BA.debugLineNum = 46268422;BA.debugLine="End Sub";
 return "";
 }
 }
