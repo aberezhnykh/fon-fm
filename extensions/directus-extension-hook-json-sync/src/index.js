@@ -387,6 +387,77 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 		return map;
 	};
 
+	const loadExtraForCollection = async (collection, ids) => {
+		if (collection === 'tracks') {
+			const rows = await readRowsByQuery('tracks', {
+				fields: ['id', 'set'],
+				filter: { id: { _in: ids } },
+			});
+			return { set_ids: uniq(rows.map((row) => valueToId(row?.set)).filter(Boolean)) };
+		}
+
+		if (collection === 'sets') {
+			const rows = await readRowsByQuery('sets', {
+				fields: ['id', 'playlist'],
+				filter: { id: { _in: ids } },
+			});
+			return { playlists: uniq(rows.map((row) => valueToId(row?.playlist)).filter(Boolean)) };
+		}
+
+		if (collection === 'streams_playlists') {
+			const rows = await readRowsByQuery('streams_playlists', {
+				fields: ['id', 'streams_id'],
+				filter: { id: { _in: ids } },
+			});
+			return { streams: uniq(rows.map((row) => valueToId(row?.streams_id)).filter(Boolean)) };
+		}
+
+		if (collection === 'players') {
+			const rows = await readRowsByQuery('players', {
+				fields: ['id', 'client', 'code'],
+				filter: { id: { _in: ids } },
+			});
+			return {
+				clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)),
+				delete_player_routes: uniq(rows.map((row) => String(row?.code || '').trim().toLowerCase()).filter(Boolean)),
+			};
+		}
+
+		if (collection === 'ads') {
+			const rows = await readRowsByQuery('ads', {
+				fields: ['id', 'client'],
+				filter: { id: { _in: ids } },
+			});
+			return { clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)) };
+		}
+
+		if (collection === 'schedules_players') {
+			const rows = await readRowsByQuery('schedules_players', {
+				fields: ['id', 'players_id'],
+				filter: { id: { _in: ids } },
+			});
+			return { player_ids: uniq(rows.map((row) => valueToId(row?.players_id)).filter(Boolean)) };
+		}
+
+		if (collection === 'slots') {
+			const rows = await readRowsByQuery('slots', {
+				fields: ['id', 'schedule'],
+				filter: { id: { _in: ids } },
+			});
+			return { schedule_ids: uniq(rows.map((row) => valueToId(row?.schedule)).filter(Boolean)) };
+		}
+
+		if (collection === 'playlists') {
+			const rows = await readRowsByQuery('streams_playlists', {
+				fields: ['streams_id'],
+				filter: { playlists_id: { _in: ids } },
+			});
+			return { streams: uniq(rows.map((row) => valueToId(row?.streams_id)).filter(Boolean)) };
+		}
+
+		return {};
+	};
+
 	const rememberMap = new Map();
 	const preDeleteSnapshots = new Map();
 
@@ -399,10 +470,16 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 		const direct = uniq([
 			...(Array.isArray(meta?.keys) ? meta.keys : []),
 			...(meta?.key != null ? [meta.key] : []),
+			...(meta?.item != null ? [meta.item] : []),
+			...(meta?.to != null ? [meta.to] : []),
 			...(Array.isArray(payload?.keys) ? payload.keys : []),
 			...(payload?.key != null ? [payload.key] : []),
+			...(payload?.item != null ? [payload.item] : []),
+			...(payload?.to != null ? [payload.to] : []),
 			...(Array.isArray(meta?.payload?.keys) ? meta.payload.keys : []),
 			...(meta?.payload?.key != null ? [meta.payload.key] : []),
+			...(meta?.payload?.item != null ? [meta.payload.item] : []),
+			...(meta?.payload?.to != null ? [meta.payload.to] : []),
 			...(Array.isArray(payload) ? payload.map((item) => valueToId(item?.id)).filter(Boolean) : []),
 			...(payload?.id != null ? [payload.id] : []),
 		]);
@@ -453,60 +530,7 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 				return payload;
 			}
 
-			let extra = {};
-
-			if (collection === 'tracks') {
-				const rows = await readRowsByQuery('tracks', {
-					fields: ['id', 'set'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { set_ids: uniq(rows.map((row) => valueToId(row?.set)).filter(Boolean)) };
-			} else if (collection === 'sets') {
-				const rows = await readRowsByQuery('sets', {
-					fields: ['id', 'playlist'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { playlists: uniq(rows.map((row) => valueToId(row?.playlist)).filter(Boolean)) };
-			} else if (collection === 'streams_playlists') {
-				const rows = await readRowsByQuery('streams_playlists', {
-					fields: ['id', 'streams_id'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { streams: uniq(rows.map((row) => valueToId(row?.streams_id)).filter(Boolean)) };
-			} else if (collection === 'players') {
-				const rows = await readRowsByQuery('players', {
-					fields: ['id', 'client', 'code'],
-					filter: { id: { _in: ids } },
-				});
-				extra = {
-					clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)),
-					delete_player_routes: uniq(rows.map((row) => String(row?.code || '').trim().toLowerCase()).filter(Boolean)),
-				};
-			} else if (collection === 'ads') {
-				const rows = await readRowsByQuery('ads', {
-					fields: ['id', 'client'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)) };
-			} else if (collection === 'schedules_players') {
-				const rows = await readRowsByQuery('schedules_players', {
-					fields: ['id', 'players_id'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { player_ids: uniq(rows.map((row) => valueToId(row?.players_id)).filter(Boolean)) };
-			} else if (collection === 'slots') {
-				const rows = await readRowsByQuery('slots', {
-					fields: ['id', 'schedule'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { schedule_ids: uniq(rows.map((row) => valueToId(row?.schedule)).filter(Boolean)) };
-			} else if (collection === 'playlists') {
-				const rows = await readRowsByQuery('streams_playlists', {
-					fields: ['streams_id'],
-					filter: { playlists_id: { _in: ids } },
-				});
-				extra = { streams: uniq(rows.map((row) => valueToId(row?.streams_id)).filter(Boolean)) };
-			}
+			const extra = await loadExtraForCollection(collection, ids);
 
 			rememberSet(`${collection}:${ids.join(',')}`, { ids, extra });
 		} catch (error) {
@@ -523,60 +547,7 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 		const ids = uniq(Array.isArray(keys) ? keys : [keys]);
 
 		try {
-			let extra = {};
-
-			if (collection === 'tracks') {
-				const rows = await readRowsByQuery('tracks', {
-					fields: ['id', 'set'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { set_ids: uniq(rows.map((row) => valueToId(row?.set)).filter(Boolean)) };
-			} else if (collection === 'sets') {
-				const rows = await readRowsByQuery('sets', {
-					fields: ['id', 'playlist'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { playlists: uniq(rows.map((row) => valueToId(row?.playlist)).filter(Boolean)) };
-			} else if (collection === 'streams_playlists') {
-				const rows = await readRowsByQuery('streams_playlists', {
-					fields: ['id', 'streams_id'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { streams: uniq(rows.map((row) => valueToId(row?.streams_id)).filter(Boolean)) };
-			} else if (collection === 'players') {
-				const rows = await readRowsByQuery('players', {
-					fields: ['id', 'client', 'code'],
-					filter: { id: { _in: ids } },
-				});
-				extra = {
-					clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)),
-					delete_player_routes: uniq(rows.map((row) => String(row?.code || '').trim().toLowerCase()).filter(Boolean)),
-				};
-			} else if (collection === 'ads') {
-				const rows = await readRowsByQuery('ads', {
-					fields: ['id', 'client'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { clients: uniq(rows.map((row) => valueToId(row?.client)).filter(Boolean)) };
-			} else if (collection === 'schedules_players') {
-				const rows = await readRowsByQuery('schedules_players', {
-					fields: ['id', 'players_id'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { player_ids: uniq(rows.map((row) => valueToId(row?.players_id)).filter(Boolean)) };
-			} else if (collection === 'slots') {
-				const rows = await readRowsByQuery('slots', {
-					fields: ['id', 'schedule'],
-					filter: { id: { _in: ids } },
-				});
-				extra = { schedule_ids: uniq(rows.map((row) => valueToId(row?.schedule)).filter(Boolean)) };
-			} else if (collection === 'playlists') {
-				const rows = await readRowsByQuery('streams_playlists', {
-					fields: ['streams_id'],
-					filter: { playlists_id: { _in: ids } },
-				});
-				extra = { streams: uniq(rows.map((row) => valueToId(row?.streams_id)).filter(Boolean)) };
-			}
+			const extra = await loadExtraForCollection(collection, ids);
 
 			rememberSet(`delete:${collection}:${ids.join(',')}`, { ids, extra });
 
@@ -742,6 +713,18 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 		const payload = await buildPayloadForCollection(collection, ids, extra);
 		logger.info({ collection, ids }, 'json sync from update');
 		await processPayload(payload, `${collection}.update`);
+	});
+
+	action('items.sort', async (meta) => {
+		const collection = meta.collection;
+		if (!WATCHED.includes(collection)) return;
+
+		const ids = await resolveActionIds(collection, meta);
+		const extra = await loadExtraForCollection(collection, ids);
+
+		const payload = await buildPayloadForCollection(collection, ids, extra);
+		logger.info({ collection, ids }, 'json sync from sort');
+		await processPayload(payload, `${collection}.sort`);
 	});
 
 	action('items.delete', async (meta) => {

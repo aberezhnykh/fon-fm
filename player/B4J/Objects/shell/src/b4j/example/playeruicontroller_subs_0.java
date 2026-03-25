@@ -8,35 +8,35 @@ public class playeruicontroller_subs_0 {
 
 public static RemoteObject  _advanceorbitframe(RemoteObject __ref,RemoteObject _stepindex,RemoteObject _fadestep) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceOrbitFrame (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,274);
+		Debug.PushSubsStack("AdvanceOrbitFrame (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,277);
 if (RapidSub.canDelegate("advanceorbitframe")) { return __ref.runUserSub(false, "playeruicontroller","advanceorbitframe", __ref, _stepindex, _fadestep);}
 Debug.locals.put("stepIndex", _stepindex);
 Debug.locals.put("fadeStep", _fadestep);
- BA.debugLineNum = 274;BA.debugLine="Public Sub AdvanceOrbitFrame(stepIndex As Int, fad";
-Debug.ShouldStop(131072);
- BA.debugLineNum = 275;BA.debugLine="If orbitFadeValue < orbitFadeTarget Then";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 277;BA.debugLine="Public Sub AdvanceOrbitFrame(stepIndex As Int, fad";
+Debug.ShouldStop(1048576);
+ BA.debugLineNum = 278;BA.debugLine="If orbitFadeValue < orbitFadeTarget Then";
+Debug.ShouldStop(2097152);
 if (RemoteObject.solveBoolean("<",__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),__ref.getField(true,"_orbitfadetarget" /*RemoteObject*/ ))) { 
- BA.debugLineNum = 276;BA.debugLine="orbitFadeValue = Min(orbitFadeTarget, orbitFadeV";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 279;BA.debugLine="orbitFadeValue = Min(orbitFadeTarget, orbitFadeV";
+Debug.ShouldStop(4194304);
 __ref.setField ("_orbitfadevalue" /*RemoteObject*/ ,playeruicontroller.__c.runMethod(true,"Min",(Object)(__ref.getField(true,"_orbitfadetarget" /*RemoteObject*/ )),(Object)(RemoteObject.solve(new RemoteObject[] {__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),_fadestep}, "+",1, 0))));
  }else 
-{ BA.debugLineNum = 277;BA.debugLine="Else If orbitFadeValue > orbitFadeTarget Then";
-Debug.ShouldStop(1048576);
+{ BA.debugLineNum = 280;BA.debugLine="Else If orbitFadeValue > orbitFadeTarget Then";
+Debug.ShouldStop(8388608);
 if (RemoteObject.solveBoolean(">",__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),__ref.getField(true,"_orbitfadetarget" /*RemoteObject*/ ))) { 
- BA.debugLineNum = 278;BA.debugLine="orbitFadeValue = Max(orbitFadeTarget, orbitFadeV";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 281;BA.debugLine="orbitFadeValue = Max(orbitFadeTarget, orbitFadeV";
+Debug.ShouldStop(16777216);
 __ref.setField ("_orbitfadevalue" /*RemoteObject*/ ,playeruicontroller.__c.runMethod(true,"Max",(Object)(__ref.getField(true,"_orbitfadetarget" /*RemoteObject*/ )),(Object)(RemoteObject.solve(new RemoteObject[] {__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),_fadestep}, "-",1, 0))));
  }}
 ;
- BA.debugLineNum = 280;BA.debugLine="ApplyOrbitFrame(stepIndex)";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 283;BA.debugLine="ApplyOrbitFrame(stepIndex)";
+Debug.ShouldStop(67108864);
 __ref.runClassMethod (b4j.example.playeruicontroller.class, "_applyorbitframe" /*RemoteObject*/ ,(Object)(_stepindex));
- BA.debugLineNum = 281;BA.debugLine="Return orbitFadeValue = 0 And orbitFadeTarget = 0";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 284;BA.debugLine="Return orbitFadeValue = 0 And orbitFadeTarget = 0";
+Debug.ShouldStop(134217728);
 if (true) return BA.ObjectToBoolean(RemoteObject.solveBoolean("=",__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),BA.numberCast(double.class, 0)) && RemoteObject.solveBoolean("=",__ref.getField(true,"_orbitfadetarget" /*RemoteObject*/ ),BA.numberCast(double.class, 0)));
- BA.debugLineNum = 282;BA.debugLine="End Sub";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 285;BA.debugLine="End Sub";
+Debug.ShouldStop(268435456);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -47,39 +47,39 @@ finally {
 		}}
 public static RemoteObject  _applyorbitframe(RemoteObject __ref,RemoteObject _stepindex) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyOrbitFrame (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,352);
+		Debug.PushSubsStack("ApplyOrbitFrame (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,355);
 if (RapidSub.canDelegate("applyorbitframe")) { return __ref.runUserSub(false, "playeruicontroller","applyorbitframe", __ref, _stepindex);}
 RemoteObject _opacity = RemoteObject.createImmutable(0);
 RemoteObject _basephase = RemoteObject.createImmutable(0);
 RemoteObject _wave = RemoteObject.createImmutable(0);
 Debug.locals.put("stepIndex", _stepindex);
- BA.debugLineNum = 352;BA.debugLine="Private Sub ApplyOrbitFrame(stepIndex As Int)";
-Debug.ShouldStop(-2147483648);
- BA.debugLineNum = 353;BA.debugLine="Dim opacity As Double";
-Debug.ShouldStop(1);
-_opacity = RemoteObject.createImmutable(0);Debug.locals.put("opacity", _opacity);
- BA.debugLineNum = 354;BA.debugLine="If orbitFadeValue <= 0 Then";
-Debug.ShouldStop(2);
-if (RemoteObject.solveBoolean("k",__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),BA.numberCast(double.class, 0))) { 
- BA.debugLineNum = 355;BA.debugLine="opacity = 0";
+ BA.debugLineNum = 355;BA.debugLine="Private Sub ApplyOrbitFrame(stepIndex As Int)";
 Debug.ShouldStop(4);
+ BA.debugLineNum = 356;BA.debugLine="Dim opacity As Double";
+Debug.ShouldStop(8);
+_opacity = RemoteObject.createImmutable(0);Debug.locals.put("opacity", _opacity);
+ BA.debugLineNum = 357;BA.debugLine="If orbitFadeValue <= 0 Then";
+Debug.ShouldStop(16);
+if (RemoteObject.solveBoolean("k",__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),BA.numberCast(double.class, 0))) { 
+ BA.debugLineNum = 358;BA.debugLine="opacity = 0";
+Debug.ShouldStop(32);
 _opacity = BA.numberCast(double.class, 0);Debug.locals.put("opacity", _opacity);
  }else {
- BA.debugLineNum = 357;BA.debugLine="Dim basePhase As Double = stepIndex / 24";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 360;BA.debugLine="Dim basePhase As Double = stepIndex / 24";
+Debug.ShouldStop(128);
 _basephase = RemoteObject.solve(new RemoteObject[] {_stepindex,RemoteObject.createImmutable(24)}, "/",0, 0);Debug.locals.put("basePhase", _basephase);Debug.locals.put("basePhase", _basephase);
- BA.debugLineNum = 358;BA.debugLine="Dim wave As Double = (Sin(basePhase * cPI * 2) +";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 361;BA.debugLine="Dim wave As Double = (Sin(basePhase * cPI * 2) +";
+Debug.ShouldStop(256);
 _wave = RemoteObject.solve(new RemoteObject[] {(RemoteObject.solve(new RemoteObject[] {playeruicontroller.__c.runMethod(true,"Sin",(Object)(RemoteObject.solve(new RemoteObject[] {_basephase,playeruicontroller.__c.getField(true,"cPI"),RemoteObject.createImmutable(2)}, "**",0, 0))),RemoteObject.createImmutable(1)}, "+",1, 0)),RemoteObject.createImmutable(2)}, "/",0, 0);Debug.locals.put("wave", _wave);Debug.locals.put("wave", _wave);
- BA.debugLineNum = 359;BA.debugLine="opacity = (0.38 + wave * 0.28) * orbitFadeValue";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 362;BA.debugLine="opacity = (0.38 + wave * 0.28) * orbitFadeValue";
+Debug.ShouldStop(512);
 _opacity = RemoteObject.solve(new RemoteObject[] {(RemoteObject.solve(new RemoteObject[] {RemoteObject.createImmutable(0.38),_wave,RemoteObject.createImmutable(0.28)}, "+*",1, 0)),__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ )}, "*",0, 0);Debug.locals.put("opacity", _opacity);
  };
- BA.debugLineNum = 361;BA.debugLine="ApplyOrbitState(opacity)";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 364;BA.debugLine="ApplyOrbitState(opacity)";
+Debug.ShouldStop(2048);
 __ref.runClassMethod (b4j.example.playeruicontroller.class, "_applyorbitstate" /*RemoteObject*/ ,(Object)(_opacity));
- BA.debugLineNum = 362;BA.debugLine="End Sub";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 365;BA.debugLine="End Sub";
+Debug.ShouldStop(4096);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -90,21 +90,21 @@ finally {
 		}}
 public static RemoteObject  _applyorbitstate(RemoteObject __ref,RemoteObject _opacity) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyOrbitState (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,364);
+		Debug.PushSubsStack("ApplyOrbitState (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,367);
 if (RapidSub.canDelegate("applyorbitstate")) { return __ref.runUserSub(false, "playeruicontroller","applyorbitstate", __ref, _opacity);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("opacity", _opacity);
- BA.debugLineNum = 364;BA.debugLine="Private Sub ApplyOrbitState(opacity As Double)";
-Debug.ShouldStop(2048);
- BA.debugLineNum = 365;BA.debugLine="Dim jo As JavaObject = orbitPane";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 367;BA.debugLine="Private Sub ApplyOrbitState(opacity As Double)";
+Debug.ShouldStop(16384);
+ BA.debugLineNum = 368;BA.debugLine="Dim jo As JavaObject = orbitPane";
+Debug.ShouldStop(32768);
 _jo = RemoteObject.createNew ("anywheresoftware.b4j.object.JavaObject");
 _jo = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4j.object.JavaObject"), __ref.getField(false,"_orbitpane" /*RemoteObject*/ ).getObject());Debug.locals.put("jo", _jo);Debug.locals.put("jo", _jo);
- BA.debugLineNum = 366;BA.debugLine="jo.RunMethod(\"setOpacity\", Array As Object(opacit";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 369;BA.debugLine="jo.RunMethod(\"setOpacity\", Array As Object(opacit";
+Debug.ShouldStop(65536);
 _jo.runVoidMethod ("RunMethod",(Object)(BA.ObjectToString("setOpacity")),(Object)(RemoteObject.createNewArray("Object",new int[] {1},new Object[] {(_opacity)})));
- BA.debugLineNum = 367;BA.debugLine="End Sub";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 370;BA.debugLine="End Sub";
+Debug.ShouldStop(131072);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -115,7 +115,7 @@ finally {
 		}}
 public static RemoteObject  _applystoppedstate(RemoteObject __ref,RemoteObject _idletext) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyStoppedState (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,76);
+		Debug.PushSubsStack("ApplyStoppedState (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,76);
 if (RapidSub.canDelegate("applystoppedstate")) { return __ref.runUserSub(false, "playeruicontroller","applystoppedstate", __ref, _idletext);}
 Debug.locals.put("idleText", _idletext);
  BA.debugLineNum = 76;BA.debugLine="Public Sub ApplyStoppedState(idleText As String)";
@@ -138,21 +138,21 @@ finally {
 		}}
 public static RemoteObject  _bringtofront(RemoteObject __ref,RemoteObject _view) throws Exception{
 try {
-		Debug.PushSubsStack("BringToFront (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,347);
+		Debug.PushSubsStack("BringToFront (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,350);
 if (RapidSub.canDelegate("bringtofront")) { return __ref.runUserSub(false, "playeruicontroller","bringtofront", __ref, _view);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("view", _view);
- BA.debugLineNum = 347;BA.debugLine="Public Sub BringToFront(view As B4XView)";
-Debug.ShouldStop(67108864);
- BA.debugLineNum = 348;BA.debugLine="Dim jo As JavaObject = view";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 350;BA.debugLine="Public Sub BringToFront(view As B4XView)";
+Debug.ShouldStop(536870912);
+ BA.debugLineNum = 351;BA.debugLine="Dim jo As JavaObject = view";
+Debug.ShouldStop(1073741824);
 _jo = RemoteObject.createNew ("anywheresoftware.b4j.object.JavaObject");
 _jo = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4j.object.JavaObject"), _view.getObject());Debug.locals.put("jo", _jo);Debug.locals.put("jo", _jo);
- BA.debugLineNum = 349;BA.debugLine="jo.RunMethod(\"toFront\", Null)";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 352;BA.debugLine="jo.RunMethod(\"toFront\", Null)";
+Debug.ShouldStop(-2147483648);
 _jo.runVoidMethod ("RunMethod",(Object)(BA.ObjectToString("toFront")),(Object)((playeruicontroller.__c.getField(false,"Null"))));
- BA.debugLineNum = 350;BA.debugLine="End Sub";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 353;BA.debugLine="End Sub";
+Debug.ShouldStop(1);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -238,18 +238,18 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _configureplayerheader(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ConfigurePlayerHeader (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,188);
+		Debug.PushSubsStack("ConfigurePlayerHeader (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,191);
 if (RapidSub.canDelegate("configureplayerheader")) { return __ref.runUserSub(false, "playeruicontroller","configureplayerheader", __ref);}
- BA.debugLineNum = 188;BA.debugLine="Public Sub ConfigurePlayerHeader";
-Debug.ShouldStop(134217728);
- BA.debugLineNum = 189;BA.debugLine="headerActionPane.Visible = True";
-Debug.ShouldStop(268435456);
-__ref.getField(false,"_headeractionpane" /*RemoteObject*/ ).runMethod(true,"setVisible",playeruicontroller.__c.getField(true,"True"));
- BA.debugLineNum = 190;BA.debugLine="lblHeaderAction.Text = iconMore";
-Debug.ShouldStop(536870912);
-__ref.getField(false,"_lblheaderaction" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconmore" /*RemoteObject*/ ));
- BA.debugLineNum = 191;BA.debugLine="End Sub";
+ BA.debugLineNum = 191;BA.debugLine="Public Sub ConfigurePlayerHeader";
 Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 192;BA.debugLine="headerActionPane.Visible = True";
+Debug.ShouldStop(-2147483648);
+__ref.getField(false,"_headeractionpane" /*RemoteObject*/ ).runMethod(true,"setVisible",playeruicontroller.__c.getField(true,"True"));
+ BA.debugLineNum = 193;BA.debugLine="lblHeaderAction.Text = iconMore";
+Debug.ShouldStop(1);
+__ref.getField(false,"_lblheaderaction" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconmore" /*RemoteObject*/ ));
+ BA.debugLineNum = 194;BA.debugLine="End Sub";
+Debug.ShouldStop(2);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -260,7 +260,7 @@ finally {
 		}}
 public static RemoteObject  _configuresetupscreen(RemoteObject __ref,RemoteObject _mode,RemoteObject _formattedplayercode,RemoteObject _messagetext,RemoteObject _setuptitle,RemoteObject _settingsthanks,RemoteObject _submittext,RemoteObject _logouttext) throws Exception{
 try {
-		Debug.PushSubsStack("ConfigureSetupScreen (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,165);
+		Debug.PushSubsStack("ConfigureSetupScreen (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,168);
 if (RapidSub.canDelegate("configuresetupscreen")) { return __ref.runUserSub(false, "playeruicontroller","configuresetupscreen", __ref, _mode, _formattedplayercode, _messagetext, _setuptitle, _settingsthanks, _submittext, _logouttext);}
 RemoteObject _issettingsmode = RemoteObject.createImmutable(false);
 Debug.locals.put("mode", _mode);
@@ -270,65 +270,65 @@ Debug.locals.put("setupTitle", _setuptitle);
 Debug.locals.put("settingsThanks", _settingsthanks);
 Debug.locals.put("submitText", _submittext);
 Debug.locals.put("logoutText", _logouttext);
- BA.debugLineNum = 165;BA.debugLine="Public Sub ConfigureSetupScreen(mode As String, fo";
-Debug.ShouldStop(16);
- BA.debugLineNum = 166;BA.debugLine="Dim isSettingsMode As Boolean = mode = \"settings\"";
-Debug.ShouldStop(32);
-_issettingsmode = BA.ObjectToBoolean(RemoteObject.solveBoolean("=",_mode,BA.ObjectToString("settings")));Debug.locals.put("isSettingsMode", _issettingsmode);Debug.locals.put("isSettingsMode", _issettingsmode);
- BA.debugLineNum = 167;BA.debugLine="headerActionPane.Visible = mode <> \"setup\"";
-Debug.ShouldStop(64);
-__ref.getField(false,"_headeractionpane" /*RemoteObject*/ ).runMethod(true,"setVisible",BA.ObjectToBoolean(RemoteObject.solveBoolean("!",_mode,BA.ObjectToString("setup"))));
- BA.debugLineNum = 168;BA.debugLine="If isSettingsMode Then";
+ BA.debugLineNum = 168;BA.debugLine="Public Sub ConfigureSetupScreen(mode As String, fo";
 Debug.ShouldStop(128);
-if (_issettingsmode.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 169;BA.debugLine="lblHeaderAction.Text = iconClose";
+ BA.debugLineNum = 169;BA.debugLine="Dim isSettingsMode As Boolean = mode = \"settings\"";
 Debug.ShouldStop(256);
-__ref.getField(false,"_lblheaderaction" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconclose" /*RemoteObject*/ ));
- BA.debugLineNum = 170;BA.debugLine="txtPlayerCode.Editable = False";
+_issettingsmode = BA.ObjectToBoolean(RemoteObject.solveBoolean("=",_mode,BA.ObjectToString("settings")));Debug.locals.put("isSettingsMode", _issettingsmode);Debug.locals.put("isSettingsMode", _issettingsmode);
+ BA.debugLineNum = 170;BA.debugLine="headerActionPane.Visible = mode <> \"setup\"";
 Debug.ShouldStop(512);
-__ref.getField(false,"_txtplayercode" /*RemoteObject*/ ).runMethod(true,"setEditable",playeruicontroller.__c.getField(true,"False"));
- BA.debugLineNum = 171;BA.debugLine="btnSetupSubmit.Text = logoutText.ToUpperCase";
+__ref.getField(false,"_headeractionpane" /*RemoteObject*/ ).runMethod(true,"setVisible",BA.ObjectToBoolean(RemoteObject.solveBoolean("!",_mode,BA.ObjectToString("setup"))));
+ BA.debugLineNum = 171;BA.debugLine="If isSettingsMode Then";
 Debug.ShouldStop(1024);
+if (_issettingsmode.<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 172;BA.debugLine="lblHeaderAction.Text = iconClose";
+Debug.ShouldStop(2048);
+__ref.getField(false,"_lblheaderaction" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconclose" /*RemoteObject*/ ));
+ BA.debugLineNum = 173;BA.debugLine="txtPlayerCode.Editable = False";
+Debug.ShouldStop(4096);
+__ref.getField(false,"_txtplayercode" /*RemoteObject*/ ).runMethod(true,"setEditable",playeruicontroller.__c.getField(true,"False"));
+ BA.debugLineNum = 174;BA.debugLine="btnSetupSubmit.Text = logoutText.ToUpperCase";
+Debug.ShouldStop(8192);
 __ref.getField(false,"_btnsetupsubmit" /*RemoteObject*/ ).runMethod(true,"setText",_logouttext.runMethod(true,"toUpperCase"));
  }else {
- BA.debugLineNum = 173;BA.debugLine="lblHeaderAction.Text = iconMore";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 176;BA.debugLine="lblHeaderAction.Text = iconMore";
+Debug.ShouldStop(32768);
 __ref.getField(false,"_lblheaderaction" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconmore" /*RemoteObject*/ ));
- BA.debugLineNum = 174;BA.debugLine="txtPlayerCode.Editable = True";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 177;BA.debugLine="txtPlayerCode.Editable = True";
+Debug.ShouldStop(65536);
 __ref.getField(false,"_txtplayercode" /*RemoteObject*/ ).runMethod(true,"setEditable",playeruicontroller.__c.getField(true,"True"));
- BA.debugLineNum = 175;BA.debugLine="btnSetupSubmit.Text = submitText.ToUpperCase";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 178;BA.debugLine="btnSetupSubmit.Text = submitText.ToUpperCase";
+Debug.ShouldStop(131072);
 __ref.getField(false,"_btnsetupsubmit" /*RemoteObject*/ ).runMethod(true,"setText",_submittext.runMethod(true,"toUpperCase"));
  };
- BA.debugLineNum = 177;BA.debugLine="txtPlayerCode.Text = formattedPlayerCode";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 180;BA.debugLine="txtPlayerCode.Text = formattedPlayerCode";
+Debug.ShouldStop(524288);
 __ref.getField(false,"_txtplayercode" /*RemoteObject*/ ).runMethod(true,"setText",_formattedplayercode);
- BA.debugLineNum = 178;BA.debugLine="If messageText <> \"\" Then";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 181;BA.debugLine="If messageText <> \"\" Then";
+Debug.ShouldStop(1048576);
 if (RemoteObject.solveBoolean("!",_messagetext,BA.ObjectToString(""))) { 
- BA.debugLineNum = 179;BA.debugLine="lblSetupMessage.Text = messageText";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 182;BA.debugLine="lblSetupMessage.Text = messageText";
+Debug.ShouldStop(2097152);
 __ref.getField(false,"_lblsetupmessage" /*RemoteObject*/ ).runMethod(true,"setText",_messagetext);
  }else 
-{ BA.debugLineNum = 180;BA.debugLine="Else If isSettingsMode Then";
-Debug.ShouldStop(524288);
+{ BA.debugLineNum = 183;BA.debugLine="Else If isSettingsMode Then";
+Debug.ShouldStop(4194304);
 if (_issettingsmode.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 181;BA.debugLine="lblSetupMessage.Text = settingsThanks";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 184;BA.debugLine="lblSetupMessage.Text = settingsThanks";
+Debug.ShouldStop(8388608);
 __ref.getField(false,"_lblsetupmessage" /*RemoteObject*/ ).runMethod(true,"setText",_settingsthanks);
  }else {
- BA.debugLineNum = 183;BA.debugLine="lblSetupMessage.Text = setupTitle";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 186;BA.debugLine="lblSetupMessage.Text = setupTitle";
+Debug.ShouldStop(33554432);
 __ref.getField(false,"_lblsetupmessage" /*RemoteObject*/ ).runMethod(true,"setText",_setuptitle);
  }}
 ;
- BA.debugLineNum = 185;BA.debugLine="If formattedPlayerCode = \"\" Then lblHeader.Text =";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 188;BA.debugLine="If formattedPlayerCode = \"\" Then lblHeader.Text =";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("=",_formattedplayercode,BA.ObjectToString(""))) { 
 __ref.getField(false,"_lblheader" /*RemoteObject*/ ).runMethod(true,"setText",BA.ObjectToString(""));};
- BA.debugLineNum = 186;BA.debugLine="End Sub";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 189;BA.debugLine="End Sub";
+Debug.ShouldStop(268435456);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -339,7 +339,7 @@ finally {
 		}}
 public static RemoteObject  _hidecontentblocks(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HideContentBlocks (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,82);
+		Debug.PushSubsStack("HideContentBlocks (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,82);
 if (RapidSub.canDelegate("hidecontentblocks")) { return __ref.runUserSub(false, "playeruicontroller","hidecontentblocks", __ref);}
  BA.debugLineNum = 82;BA.debugLine="Public Sub HideContentBlocks";
 Debug.ShouldStop(131072);
@@ -370,7 +370,7 @@ finally {
 		}}
 public static RemoteObject  _hidepin(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HidePin (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,106);
+		Debug.PushSubsStack("HidePin (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,106);
 if (RapidSub.canDelegate("hidepin")) { return __ref.runUserSub(false, "playeruicontroller","hidepin", __ref);}
  BA.debugLineNum = 106;BA.debugLine="Public Sub HidePin";
 Debug.ShouldStop(512);
@@ -395,7 +395,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _xuivalue,RemoteObject _streamlabel,RemoteObject _infolabel,RemoteObject _headerlabel,RemoteObject _connectioniconlabel,RemoteObject _headeractionlabel,RemoteObject _setupmessagelabel,RemoteObject _playiconlabel,RemoteObject _confirmpanevalue,RemoteObject _confirmyesbutton,RemoteObject _confirmnobutton,RemoteObject _setuppanevalue,RemoteObject _playerpanevalue,RemoteObject _headeractionpanevalue,RemoteObject _playbuttonpanevalue,RemoteObject _orbitpanevalue,RemoteObject _accesscirclepanevalue,RemoteObject _accesscorepanevalue,RemoteObject _accessinputpanevalue,RemoteObject _setupsubmitbutton,RemoteObject _playercodeinput,RemoteObject _playercodeinputview,RemoteObject _iconcloudokvalue,RemoteObject _iconcloudoffvalue,RemoteObject _iconclouddegradedvalue,RemoteObject _iconmorevalue,RemoteObject _iconclosevalue,RemoteObject _iconplayvalue,RemoteObject _iconstopvalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,43);
+		Debug.PushSubsStack("Initialize (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,43);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playeruicontroller","initialize", __ref, _ba, _xuivalue, _streamlabel, _infolabel, _headerlabel, _connectioniconlabel, _headeractionlabel, _setupmessagelabel, _playiconlabel, _confirmpanevalue, _confirmyesbutton, _confirmnobutton, _setuppanevalue, _playerpanevalue, _headeractionpanevalue, _playbuttonpanevalue, _orbitpanevalue, _accesscirclepanevalue, _accesscorepanevalue, _accessinputpanevalue, _setupsubmitbutton, _playercodeinput, _playercodeinputview, _iconcloudokvalue, _iconcloudoffvalue, _iconclouddegradedvalue, _iconmorevalue, _iconclosevalue, _iconplayvalue, _iconstopvalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -529,15 +529,15 @@ finally {
 		}}
 public static RemoteObject  _isorbitidle(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsOrbitIdle (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,284);
+		Debug.PushSubsStack("IsOrbitIdle (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,287);
 if (RapidSub.canDelegate("isorbitidle")) { return __ref.runUserSub(false, "playeruicontroller","isorbitidle", __ref);}
- BA.debugLineNum = 284;BA.debugLine="Public Sub IsOrbitIdle As Boolean";
-Debug.ShouldStop(134217728);
- BA.debugLineNum = 285;BA.debugLine="Return orbitFadeValue = 0 And orbitFadeTarget = 0";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 287;BA.debugLine="Public Sub IsOrbitIdle As Boolean";
+Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 288;BA.debugLine="Return orbitFadeValue = 0 And orbitFadeTarget = 0";
+Debug.ShouldStop(-2147483648);
 if (true) return BA.ObjectToBoolean(RemoteObject.solveBoolean("=",__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),BA.numberCast(double.class, 0)) && RemoteObject.solveBoolean("=",__ref.getField(true,"_orbitfadetarget" /*RemoteObject*/ ),BA.numberCast(double.class, 0)));
- BA.debugLineNum = 286;BA.debugLine="End Sub";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 289;BA.debugLine="End Sub";
+Debug.ShouldStop(1);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -548,47 +548,47 @@ finally {
 		}}
 public static RemoteObject  _joinlist(RemoteObject __ref,RemoteObject _items,RemoteObject _separator) throws Exception{
 try {
-		Debug.PushSubsStack("JoinList (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,369);
+		Debug.PushSubsStack("JoinList (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,372);
 if (RapidSub.canDelegate("joinlist")) { return __ref.runUserSub(false, "playeruicontroller","joinlist", __ref, _items, _separator);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 int _i = 0;
 Debug.locals.put("items", _items);
 Debug.locals.put("separator", _separator);
- BA.debugLineNum = 369;BA.debugLine="Private Sub JoinList(items As List, separator As S";
-Debug.ShouldStop(65536);
- BA.debugLineNum = 370;BA.debugLine="If items.IsInitialized = False Or items.Size = 0";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 372;BA.debugLine="Private Sub JoinList(items As List, separator As S";
+Debug.ShouldStop(524288);
+ BA.debugLineNum = 373;BA.debugLine="If items.IsInitialized = False Or items.Size = 0";
+Debug.ShouldStop(1048576);
 if (RemoteObject.solveBoolean("=",_items.runMethod(true,"IsInitialized"),playeruicontroller.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_items.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return BA.ObjectToString("");};
- BA.debugLineNum = 371;BA.debugLine="Dim sb As StringBuilder";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 374;BA.debugLine="Dim sb As StringBuilder";
+Debug.ShouldStop(2097152);
 _sb = RemoteObject.createNew ("anywheresoftware.b4a.keywords.StringBuilderWrapper");Debug.locals.put("sb", _sb);
- BA.debugLineNum = 372;BA.debugLine="sb.Initialize";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 375;BA.debugLine="sb.Initialize";
+Debug.ShouldStop(4194304);
 _sb.runVoidMethod ("Initialize");
- BA.debugLineNum = 373;BA.debugLine="For i = 0 To items.Size - 1";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 376;BA.debugLine="For i = 0 To items.Size - 1";
+Debug.ShouldStop(8388608);
 {
 final int step4 = 1;
 final int limit4 = RemoteObject.solve(new RemoteObject[] {_items.runMethod(true,"getSize"),RemoteObject.createImmutable(1)}, "-",1, 1).<Integer>get().intValue();
 _i = 0 ;
 for (;(step4 > 0 && _i <= limit4) || (step4 < 0 && _i >= limit4) ;_i = ((int)(0 + _i + step4))  ) {
 Debug.locals.put("i", _i);
- BA.debugLineNum = 374;BA.debugLine="If i > 0 Then sb.Append(separator)";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 377;BA.debugLine="If i > 0 Then sb.Append(separator)";
+Debug.ShouldStop(16777216);
 if (RemoteObject.solveBoolean(">",RemoteObject.createImmutable(_i),BA.numberCast(double.class, 0))) { 
 _sb.runVoidMethod ("Append",(Object)(_separator));};
- BA.debugLineNum = 375;BA.debugLine="sb.Append(items.Get(i))";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 378;BA.debugLine="sb.Append(items.Get(i))";
+Debug.ShouldStop(33554432);
 _sb.runVoidMethod ("Append",(Object)(BA.ObjectToString(_items.runMethod(false,"Get",(Object)(BA.numberCast(int.class, _i))))));
  }
 }Debug.locals.put("i", _i);
 ;
- BA.debugLineNum = 377;BA.debugLine="Return sb.ToString";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 380;BA.debugLine="Return sb.ToString";
+Debug.ShouldStop(134217728);
 if (true) return _sb.runMethod(true,"ToString");
- BA.debugLineNum = 378;BA.debugLine="End Sub";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 381;BA.debugLine="End Sub";
+Debug.ShouldStop(268435456);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -599,25 +599,25 @@ finally {
 		}}
 public static RemoteObject  _renderplayerhead(RemoteObject __ref,RemoteObject _formattedcode,RemoteObject _title) throws Exception{
 try {
-		Debug.PushSubsStack("RenderPlayerHead (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,156);
+		Debug.PushSubsStack("RenderPlayerHead (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,159);
 if (RapidSub.canDelegate("renderplayerhead")) { return __ref.runUserSub(false, "playeruicontroller","renderplayerhead", __ref, _formattedcode, _title);}
 Debug.locals.put("formattedCode", _formattedcode);
 Debug.locals.put("title", _title);
- BA.debugLineNum = 156;BA.debugLine="Public Sub RenderPlayerHead(formattedCode As Strin";
-Debug.ShouldStop(134217728);
- BA.debugLineNum = 157;BA.debugLine="If title <> \"\" Then";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 159;BA.debugLine="Public Sub RenderPlayerHead(formattedCode As Strin";
+Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 160;BA.debugLine="If title <> \"\" Then";
+Debug.ShouldStop(-2147483648);
 if (RemoteObject.solveBoolean("!",_title,BA.ObjectToString(""))) { 
- BA.debugLineNum = 158;BA.debugLine="lblHeader.Text = formattedCode & \" • \" & title.T";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 161;BA.debugLine="lblHeader.Text = formattedCode & \" • \" & title.T";
+Debug.ShouldStop(1);
 __ref.getField(false,"_lblheader" /*RemoteObject*/ ).runMethod(true,"setText",RemoteObject.concat(_formattedcode,RemoteObject.createImmutable(" • "),_title.runMethod(true,"toUpperCase")));
  }else {
- BA.debugLineNum = 160;BA.debugLine="lblHeader.Text = formattedCode";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 163;BA.debugLine="lblHeader.Text = formattedCode";
+Debug.ShouldStop(4);
 __ref.getField(false,"_lblheader" /*RemoteObject*/ ).runMethod(true,"setText",_formattedcode);
  };
- BA.debugLineNum = 162;BA.debugLine="End Sub";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 165;BA.debugLine="End Sub";
+Debug.ShouldStop(16);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -628,30 +628,30 @@ finally {
 		}}
 public static RemoteObject  _setplayicon(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("SetPlayIcon (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,217);
+		Debug.PushSubsStack("SetPlayIcon (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,220);
 if (RapidSub.canDelegate("setplayicon")) { return __ref.runUserSub(false, "playeruicontroller","setplayicon", __ref);}
- BA.debugLineNum = 217;BA.debugLine="Public Sub SetPlayIcon";
-Debug.ShouldStop(16777216);
- BA.debugLineNum = 218;BA.debugLine="UiStyle.SetLabelStyle(lblPlayIcon, \"-fx-alignment";
-Debug.ShouldStop(33554432);
-playeruicontroller._uistyle.runVoidMethod ("_setlabelstyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_lblplayicon" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-alignment: center; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0xffd0ff71)))),RemoteObject.createImmutable("; -fx-padding: 0;"))));
- BA.debugLineNum = 219;BA.debugLine="lblPlayIcon.Text = iconPlay";
-Debug.ShouldStop(67108864);
-__ref.getField(false,"_lblplayicon" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconplay" /*RemoteObject*/ ));
- BA.debugLineNum = 220;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblPlayIcon, p";
+ BA.debugLineNum = 220;BA.debugLine="Public Sub SetPlayIcon";
 Debug.ShouldStop(134217728);
-playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblplayicon" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_playiconbasesize" /*RemoteObject*/ )));
- BA.debugLineNum = 221;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
+ BA.debugLineNum = 221;BA.debugLine="UiStyle.SetLabelStyle(lblPlayIcon, \"-fx-alignment";
 Debug.ShouldStop(268435456);
-__ref.getField(false,"_orbitpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 2))))),(Object)(BA.numberCast(int.class, ((int)0x00d0ff71))),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
- BA.debugLineNum = 222;BA.debugLine="StopOrbitAnimation";
+playeruicontroller._uistyle.runVoidMethod ("_setlabelstyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_lblplayicon" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-alignment: center; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0xffd0ff71)))),RemoteObject.createImmutable("; -fx-padding: 0;"))));
+ BA.debugLineNum = 222;BA.debugLine="lblPlayIcon.Text = iconPlay";
 Debug.ShouldStop(536870912);
-__ref.runClassMethod (b4j.example.playeruicontroller.class, "_stoporbitanimation" /*RemoteObject*/ );
- BA.debugLineNum = 223;BA.debugLine="UpdatePlayButtonAppearance(False, False)";
+__ref.getField(false,"_lblplayicon" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconplay" /*RemoteObject*/ ));
+ BA.debugLineNum = 223;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblPlayIcon, p";
 Debug.ShouldStop(1073741824);
-__ref.runClassMethod (b4j.example.playeruicontroller.class, "_updateplaybuttonappearance" /*RemoteObject*/ ,(Object)(playeruicontroller.__c.getField(true,"False")),(Object)(playeruicontroller.__c.getField(true,"False")));
- BA.debugLineNum = 224;BA.debugLine="End Sub";
+playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblplayicon" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_playiconbasesize" /*RemoteObject*/ )));
+ BA.debugLineNum = 224;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
 Debug.ShouldStop(-2147483648);
+__ref.getField(false,"_orbitpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 2))))),(Object)(BA.numberCast(int.class, ((int)0x00d0ff71))),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
+ BA.debugLineNum = 225;BA.debugLine="StopOrbitAnimation";
+Debug.ShouldStop(1);
+__ref.runClassMethod (b4j.example.playeruicontroller.class, "_stoporbitanimation" /*RemoteObject*/ );
+ BA.debugLineNum = 226;BA.debugLine="UpdatePlayButtonAppearance(False, False)";
+Debug.ShouldStop(2);
+__ref.runClassMethod (b4j.example.playeruicontroller.class, "_updateplaybuttonappearance" /*RemoteObject*/ ,(Object)(playeruicontroller.__c.getField(true,"False")),(Object)(playeruicontroller.__c.getField(true,"False")));
+ BA.debugLineNum = 227;BA.debugLine="End Sub";
+Debug.ShouldStop(4);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -662,7 +662,7 @@ finally {
 		}}
 public static RemoteObject  _setstatustext(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("SetStatusText (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,128);
+		Debug.PushSubsStack("SetStatusText (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,128);
 if (RapidSub.canDelegate("setstatustext")) { return __ref.runUserSub(false, "playeruicontroller","setstatustext", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 128;BA.debugLine="Public Sub SetStatusText(text As String)";
@@ -682,30 +682,30 @@ finally {
 		}}
 public static RemoteObject  _setstopicon(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("SetStopIcon (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,226);
+		Debug.PushSubsStack("SetStopIcon (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,229);
 if (RapidSub.canDelegate("setstopicon")) { return __ref.runUserSub(false, "playeruicontroller","setstopicon", __ref);}
- BA.debugLineNum = 226;BA.debugLine="Public Sub SetStopIcon";
-Debug.ShouldStop(2);
- BA.debugLineNum = 227;BA.debugLine="UiStyle.SetLabelStyle(lblPlayIcon, \"-fx-alignment";
-Debug.ShouldStop(4);
-playeruicontroller._uistyle.runVoidMethod ("_setlabelstyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_lblplayicon" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-alignment: center; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0xffd0ff71)))),RemoteObject.createImmutable("; -fx-padding: 0;"))));
- BA.debugLineNum = 228;BA.debugLine="lblPlayIcon.Text = iconStop";
-Debug.ShouldStop(8);
-__ref.getField(false,"_lblplayicon" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconstop" /*RemoteObject*/ ));
- BA.debugLineNum = 229;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblPlayIcon, s";
+ BA.debugLineNum = 229;BA.debugLine="Public Sub SetStopIcon";
 Debug.ShouldStop(16);
-playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblplayicon" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_stopiconbasesize" /*RemoteObject*/ )));
- BA.debugLineNum = 230;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
+ BA.debugLineNum = 230;BA.debugLine="UiStyle.SetLabelStyle(lblPlayIcon, \"-fx-alignment";
 Debug.ShouldStop(32);
-__ref.getField(false,"_orbitpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 2))))),(Object)(BA.numberCast(int.class, ((int)0x66d0ff71))),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
- BA.debugLineNum = 231;BA.debugLine="StartOrbitAnimation";
+playeruicontroller._uistyle.runVoidMethod ("_setlabelstyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_lblplayicon" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-alignment: center; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0xffd0ff71)))),RemoteObject.createImmutable("; -fx-padding: 0;"))));
+ BA.debugLineNum = 231;BA.debugLine="lblPlayIcon.Text = iconStop";
 Debug.ShouldStop(64);
-__ref.runClassMethod (b4j.example.playeruicontroller.class, "_startorbitanimation" /*RemoteObject*/ );
- BA.debugLineNum = 232;BA.debugLine="UpdatePlayButtonAppearance(False, True)";
+__ref.getField(false,"_lblplayicon" /*RemoteObject*/ ).runMethod(true,"setText",__ref.getField(true,"_iconstop" /*RemoteObject*/ ));
+ BA.debugLineNum = 232;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblPlayIcon, s";
 Debug.ShouldStop(128);
-__ref.runClassMethod (b4j.example.playeruicontroller.class, "_updateplaybuttonappearance" /*RemoteObject*/ ,(Object)(playeruicontroller.__c.getField(true,"False")),(Object)(playeruicontroller.__c.getField(true,"True")));
- BA.debugLineNum = 233;BA.debugLine="End Sub";
+playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblplayicon" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_stopiconbasesize" /*RemoteObject*/ )));
+ BA.debugLineNum = 233;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
 Debug.ShouldStop(256);
+__ref.getField(false,"_orbitpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 2))))),(Object)(BA.numberCast(int.class, ((int)0x66d0ff71))),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
+ BA.debugLineNum = 234;BA.debugLine="StartOrbitAnimation";
+Debug.ShouldStop(512);
+__ref.runClassMethod (b4j.example.playeruicontroller.class, "_startorbitanimation" /*RemoteObject*/ );
+ BA.debugLineNum = 235;BA.debugLine="UpdatePlayButtonAppearance(False, True)";
+Debug.ShouldStop(1024);
+__ref.runClassMethod (b4j.example.playeruicontroller.class, "_updateplaybuttonappearance" /*RemoteObject*/ ,(Object)(playeruicontroller.__c.getField(true,"False")),(Object)(playeruicontroller.__c.getField(true,"True")));
+ BA.debugLineNum = 236;BA.debugLine="End Sub";
+Debug.ShouldStop(2048);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -716,7 +716,7 @@ finally {
 		}}
 public static RemoteObject  _setstreamtext(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("SetStreamText (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,124);
+		Debug.PushSubsStack("SetStreamText (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,124);
 if (RapidSub.canDelegate("setstreamtext")) { return __ref.runUserSub(false, "playeruicontroller","setstreamtext", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 124;BA.debugLine="Public Sub SetStreamText(text As String)";
@@ -736,7 +736,7 @@ finally {
 		}}
 public static RemoteObject  _showadmeta(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ShowAdMeta (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,120);
+		Debug.PushSubsStack("ShowAdMeta (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,120);
 if (RapidSub.canDelegate("showadmeta")) { return __ref.runUserSub(false, "playeruicontroller","showadmeta", __ref, _item);}
 Debug.locals.put("item", _item);
  BA.debugLineNum = 120;BA.debugLine="Public Sub ShowAdMeta(item As Map)";
@@ -756,7 +756,7 @@ finally {
 		}}
 public static RemoteObject  _showclaimprompt(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("ShowClaimPrompt (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,100);
+		Debug.PushSubsStack("ShowClaimPrompt (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,100);
 if (RapidSub.canDelegate("showclaimprompt")) { return __ref.runUserSub(false, "playeruicontroller","showclaimprompt", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 100;BA.debugLine="Public Sub ShowClaimPrompt(text As String)";
@@ -782,7 +782,7 @@ finally {
 		}}
 public static RemoteObject  _showmessage(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("ShowMessage (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,94);
+		Debug.PushSubsStack("ShowMessage (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,94);
 if (RapidSub.canDelegate("showmessage")) { return __ref.runUserSub(false, "playeruicontroller","showmessage", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 94;BA.debugLine="Public Sub ShowMessage(text As String)";
@@ -805,7 +805,7 @@ finally {
 		}}
 public static RemoteObject  _showstream(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("ShowStream (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,90);
+		Debug.PushSubsStack("ShowStream (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,90);
 if (RapidSub.canDelegate("showstream")) { return __ref.runUserSub(false, "playeruicontroller","showstream", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 90;BA.debugLine="Public Sub ShowStream(text As String)";
@@ -825,7 +825,7 @@ finally {
 		}}
 public static RemoteObject  _showtrackmeta(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ShowTrackMeta (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,112);
+		Debug.PushSubsStack("ShowTrackMeta (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,112);
 if (RapidSub.canDelegate("showtrackmeta")) { return __ref.runUserSub(false, "playeruicontroller","showtrackmeta", __ref, _item);}
 RemoteObject _parts = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 Debug.locals.put("item", _item);
@@ -860,15 +860,15 @@ finally {
 		}}
 public static RemoteObject  _startorbitanimation(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StartOrbitAnimation (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,265);
+		Debug.PushSubsStack("StartOrbitAnimation (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,268);
 if (RapidSub.canDelegate("startorbitanimation")) { return __ref.runUserSub(false, "playeruicontroller","startorbitanimation", __ref);}
- BA.debugLineNum = 265;BA.debugLine="Public Sub StartOrbitAnimation";
-Debug.ShouldStop(256);
- BA.debugLineNum = 266;BA.debugLine="orbitFadeTarget = 1";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 268;BA.debugLine="Public Sub StartOrbitAnimation";
+Debug.ShouldStop(2048);
+ BA.debugLineNum = 269;BA.debugLine="orbitFadeTarget = 1";
+Debug.ShouldStop(4096);
 __ref.setField ("_orbitfadetarget" /*RemoteObject*/ ,BA.numberCast(double.class, 1));
- BA.debugLineNum = 267;BA.debugLine="End Sub";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 270;BA.debugLine="End Sub";
+Debug.ShouldStop(8192);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -879,19 +879,19 @@ finally {
 		}}
 public static RemoteObject  _stoporbitanimation(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StopOrbitAnimation (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,269);
+		Debug.PushSubsStack("StopOrbitAnimation (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,272);
 if (RapidSub.canDelegate("stoporbitanimation")) { return __ref.runUserSub(false, "playeruicontroller","stoporbitanimation", __ref);}
- BA.debugLineNum = 269;BA.debugLine="Public Sub StopOrbitAnimation";
-Debug.ShouldStop(4096);
- BA.debugLineNum = 270;BA.debugLine="orbitFadeTarget = 0";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 272;BA.debugLine="Public Sub StopOrbitAnimation";
+Debug.ShouldStop(32768);
+ BA.debugLineNum = 273;BA.debugLine="orbitFadeTarget = 0";
+Debug.ShouldStop(65536);
 __ref.setField ("_orbitfadetarget" /*RemoteObject*/ ,BA.numberCast(double.class, 0));
- BA.debugLineNum = 271;BA.debugLine="If orbitFadeValue = 0 Then ApplyOrbitState(0)";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 274;BA.debugLine="If orbitFadeValue = 0 Then ApplyOrbitState(0)";
+Debug.ShouldStop(131072);
 if (RemoteObject.solveBoolean("=",__ref.getField(true,"_orbitfadevalue" /*RemoteObject*/ ),BA.numberCast(double.class, 0))) { 
 __ref.runClassMethod (b4j.example.playeruicontroller.class, "_applyorbitstate" /*RemoteObject*/ ,(Object)(BA.numberCast(double.class, 0)));};
- BA.debugLineNum = 272;BA.debugLine="End Sub";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 275;BA.debugLine="End Sub";
+Debug.ShouldStop(262144);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -902,69 +902,69 @@ finally {
 		}}
 public static RemoteObject  _updatecodeinputappearance(RemoteObject __ref,RemoteObject _isfocused) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateCodeInputAppearance (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,325);
+		Debug.PushSubsStack("UpdateCodeInputAppearance (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,328);
 if (RapidSub.canDelegate("updatecodeinputappearance")) { return __ref.runUserSub(false, "playeruicontroller","updatecodeinputappearance", __ref, _isfocused);}
 RemoteObject _fillcolor = RemoteObject.createImmutable(0);
 RemoteObject _bordercolor = RemoteObject.createImmutable(0);
 RemoteObject _orbitbordercolor = RemoteObject.createImmutable(0);
 Debug.locals.put("isFocused", _isfocused);
- BA.debugLineNum = 325;BA.debugLine="Public Sub UpdateCodeInputAppearance(isFocused As";
-Debug.ShouldStop(16);
- BA.debugLineNum = 326;BA.debugLine="Dim fillColor As Int";
-Debug.ShouldStop(32);
-_fillcolor = RemoteObject.createImmutable(0);Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 327;BA.debugLine="Dim borderColor As Int";
-Debug.ShouldStop(64);
-_bordercolor = RemoteObject.createImmutable(0);Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 328;BA.debugLine="Dim orbitBorderColor As Int";
+ BA.debugLineNum = 328;BA.debugLine="Public Sub UpdateCodeInputAppearance(isFocused As";
 Debug.ShouldStop(128);
-_orbitbordercolor = RemoteObject.createImmutable(0);Debug.locals.put("orbitBorderColor", _orbitbordercolor);
- BA.debugLineNum = 329;BA.debugLine="If isFocused Then";
+ BA.debugLineNum = 329;BA.debugLine="Dim fillColor As Int";
 Debug.ShouldStop(256);
-if (_isfocused.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 330;BA.debugLine="fillColor = 0x10FFFFFF";
+_fillcolor = RemoteObject.createImmutable(0);Debug.locals.put("fillColor", _fillcolor);
+ BA.debugLineNum = 330;BA.debugLine="Dim borderColor As Int";
 Debug.ShouldStop(512);
-_fillcolor = BA.numberCast(int.class, ((int)0x10ffffff));Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 331;BA.debugLine="borderColor = 0x77FFFFFF";
+_bordercolor = RemoteObject.createImmutable(0);Debug.locals.put("borderColor", _bordercolor);
+ BA.debugLineNum = 331;BA.debugLine="Dim orbitBorderColor As Int";
 Debug.ShouldStop(1024);
-_bordercolor = BA.numberCast(int.class, ((int)0x77ffffff));Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 332;BA.debugLine="orbitBorderColor = 0x88FFFFFF";
+_orbitbordercolor = RemoteObject.createImmutable(0);Debug.locals.put("orbitBorderColor", _orbitbordercolor);
+ BA.debugLineNum = 332;BA.debugLine="If isFocused Then";
 Debug.ShouldStop(2048);
+if (_isfocused.<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 333;BA.debugLine="fillColor = 0x10FFFFFF";
+Debug.ShouldStop(4096);
+_fillcolor = BA.numberCast(int.class, ((int)0x10ffffff));Debug.locals.put("fillColor", _fillcolor);
+ BA.debugLineNum = 334;BA.debugLine="borderColor = 0x77FFFFFF";
+Debug.ShouldStop(8192);
+_bordercolor = BA.numberCast(int.class, ((int)0x77ffffff));Debug.locals.put("borderColor", _bordercolor);
+ BA.debugLineNum = 335;BA.debugLine="orbitBorderColor = 0x88FFFFFF";
+Debug.ShouldStop(16384);
 _orbitbordercolor = BA.numberCast(int.class, ((int)0x88ffffff));Debug.locals.put("orbitBorderColor", _orbitbordercolor);
  }else {
- BA.debugLineNum = 334;BA.debugLine="fillColor = 0x07FFFFFF";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 337;BA.debugLine="fillColor = 0x07FFFFFF";
+Debug.ShouldStop(65536);
 _fillcolor = BA.numberCast(int.class, ((int)0x07ffffff));Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 335;BA.debugLine="borderColor = 0x55FFFFFF";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 338;BA.debugLine="borderColor = 0x55FFFFFF";
+Debug.ShouldStop(131072);
 _bordercolor = BA.numberCast(int.class, ((int)0x55ffffff));Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 336;BA.debugLine="orbitBorderColor = 0x66FFFFFF";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 339;BA.debugLine="orbitBorderColor = 0x66FFFFFF";
+Debug.ShouldStop(262144);
 _orbitbordercolor = BA.numberCast(int.class, ((int)0x66ffffff));Debug.locals.put("orbitBorderColor", _orbitbordercolor);
  };
- BA.debugLineNum = 338;BA.debugLine="accessCirclePane.SetColorAndBorder(fillColor, 4di";
-Debug.ShouldStop(131072);
-__ref.getField(false,"_accesscirclepane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(_fillcolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 4))))),(Object)(_bordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
- BA.debugLineNum = 339;BA.debugLine="accessCorePane.SetColorAndBorder(xui.Color_Transp";
-Debug.ShouldStop(262144);
-__ref.getField(false,"_accesscorepane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 2))))),(Object)(_orbitbordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
- BA.debugLineNum = 340;BA.debugLine="accessInputPane.SetColorAndBorder(xui.Color_Trans";
-Debug.ShouldStop(524288);
-__ref.getField(false,"_accessinputpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, 0)),(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, 0)));
- BA.debugLineNum = 341;BA.debugLine="UiStyle.SetPaneStyle(accessCirclePane, \"-fx-backg";
+ BA.debugLineNum = 341;BA.debugLine="accessCirclePane.SetColorAndBorder(fillColor, 4di";
 Debug.ShouldStop(1048576);
-playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_accesscirclepane" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("-fx-background-radius: 999; -fx-border-radius: 999;")));
- BA.debugLineNum = 342;BA.debugLine="UiStyle.SetPaneStyle(accessCorePane, \"-fx-backgro";
+__ref.getField(false,"_accesscirclepane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(_fillcolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 4))))),(Object)(_bordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
+ BA.debugLineNum = 342;BA.debugLine="accessCorePane.SetColorAndBorder(xui.Color_Transp";
 Debug.ShouldStop(2097152);
-playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_accesscorepane" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("-fx-background-radius: 999; -fx-border-radius: 999;")));
- BA.debugLineNum = 343;BA.debugLine="UiStyle.SetPaneStyle(accessInputPane, \"-fx-backgr";
+__ref.getField(false,"_accesscorepane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 2))))),(Object)(_orbitbordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
+ BA.debugLineNum = 343;BA.debugLine="accessInputPane.SetColorAndBorder(xui.Color_Trans";
 Debug.ShouldStop(4194304);
-playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_accessinputpane" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("-fx-background-color: transparent; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0;")));
- BA.debugLineNum = 344;BA.debugLine="UiStyle.SetPaneStyle(txtPlayerCodeView, \"-fx-back";
+__ref.getField(false,"_accessinputpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, 0)),(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, 0)));
+ BA.debugLineNum = 344;BA.debugLine="UiStyle.SetPaneStyle(accessCirclePane, \"-fx-backg";
 Debug.ShouldStop(8388608);
-playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_txtplayercodeview" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-background-color: transparent; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0xfff2f7fb)))),RemoteObject.createImmutable("; -fx-prompt-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0x66ffffff)))),RemoteObject.createImmutable("; -fx-highlight-fill: transparent; -fx-highlight-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0xfff2f7fb)))),RemoteObject.createImmutable("; -fx-display-caret: true; -fx-alignment: center; -fx-background-insets: 0; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0; -fx-font-size: "),__ref.getField(true,"_codefontsize" /*RemoteObject*/ ),RemoteObject.createImmutable("px; -fx-font-weight: bold; -fx-padding: 0 0 2 0;"))));
- BA.debugLineNum = 345;BA.debugLine="End Sub";
+playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_accesscirclepane" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("-fx-background-radius: 999; -fx-border-radius: 999;")));
+ BA.debugLineNum = 345;BA.debugLine="UiStyle.SetPaneStyle(accessCorePane, \"-fx-backgro";
 Debug.ShouldStop(16777216);
+playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_accesscorepane" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("-fx-background-radius: 999; -fx-border-radius: 999;")));
+ BA.debugLineNum = 346;BA.debugLine="UiStyle.SetPaneStyle(accessInputPane, \"-fx-backgr";
+Debug.ShouldStop(33554432);
+playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_accessinputpane" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("-fx-background-color: transparent; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0;")));
+ BA.debugLineNum = 347;BA.debugLine="UiStyle.SetPaneStyle(txtPlayerCodeView, \"-fx-back";
+Debug.ShouldStop(67108864);
+playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_txtplayercodeview" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-background-color: transparent; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0xfff2f7fb)))),RemoteObject.createImmutable("; -fx-prompt-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0x66ffffff)))),RemoteObject.createImmutable("; -fx-highlight-fill: transparent; -fx-highlight-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(BA.numberCast(int.class, ((int)0xfff2f7fb)))),RemoteObject.createImmutable("; -fx-display-caret: true; -fx-alignment: center; -fx-background-insets: 0; -fx-background-radius: 0; -fx-border-width: 0; -fx-border-radius: 0; -fx-font-size: "),__ref.getField(true,"_codefontsize" /*RemoteObject*/ ),RemoteObject.createImmutable("px; -fx-font-weight: bold; -fx-padding: 0 0 2 0;"))));
+ BA.debugLineNum = 348;BA.debugLine="End Sub";
+Debug.ShouldStop(134217728);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -975,7 +975,7 @@ finally {
 		}}
 public static RemoteObject  _updateconnectionindicator(RemoteObject __ref,RemoteObject _mode) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateConnectionIndicator (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,133);
+		Debug.PushSubsStack("UpdateConnectionIndicator (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,133);
 if (RapidSub.canDelegate("updateconnectionindicator")) { return __ref.runUserSub(false, "playeruicontroller","updateconnectionindicator", __ref, _mode);}
 RemoteObject _icontext = RemoteObject.createImmutable("");
 RemoteObject _iconcolor = RemoteObject.createImmutable(0);
@@ -994,7 +994,7 @@ Debug.ShouldStop(128);
 _iconcolor = BA.numberCast(int.class, ((int)0xff747b86));Debug.locals.put("iconColor", _iconcolor);Debug.locals.put("iconColor", _iconcolor);
  BA.debugLineNum = 137;BA.debugLine="Select mode";
 Debug.ShouldStop(256);
-switch (BA.switchObjectToInt(_mode,BA.ObjectToString("online"),BA.ObjectToString("offline"),BA.ObjectToString("server"),BA.ObjectToString("degraded"),BA.ObjectToString("connecting"))) {
+switch (BA.switchObjectToInt(_mode,BA.ObjectToString("online"),BA.ObjectToString("offline"),BA.ObjectToString("server"),BA.ObjectToString("local"),BA.ObjectToString("degraded"),BA.ObjectToString("connecting"))) {
 case 0: {
  BA.debugLineNum = 139;BA.debugLine="iconText = iconCloudOk";
 Debug.ShouldStop(1024);
@@ -1021,26 +1021,34 @@ Debug.ShouldStop(131072);
 _iconcolor = BA.numberCast(int.class, ((int)0xffffd166));Debug.locals.put("iconColor", _iconcolor);
  break; }
 case 4: {
- BA.debugLineNum = 148;BA.debugLine="iconText = iconCloudOk";
+ BA.debugLineNum = 148;BA.debugLine="iconText = iconCloudDegraded";
 Debug.ShouldStop(524288);
-_icontext = __ref.getField(true,"_iconcloudok" /*RemoteObject*/ );Debug.locals.put("iconText", _icontext);
- BA.debugLineNum = 149;BA.debugLine="iconColor = 0xFF8E97A3";
+_icontext = __ref.getField(true,"_iconclouddegraded" /*RemoteObject*/ );Debug.locals.put("iconText", _icontext);
+ BA.debugLineNum = 149;BA.debugLine="iconColor = 0xFFFFD166";
 Debug.ShouldStop(1048576);
+_iconcolor = BA.numberCast(int.class, ((int)0xffffd166));Debug.locals.put("iconColor", _iconcolor);
+ break; }
+case 5: {
+ BA.debugLineNum = 151;BA.debugLine="iconText = iconCloudOk";
+Debug.ShouldStop(4194304);
+_icontext = __ref.getField(true,"_iconcloudok" /*RemoteObject*/ );Debug.locals.put("iconText", _icontext);
+ BA.debugLineNum = 152;BA.debugLine="iconColor = 0xFF8E97A3";
+Debug.ShouldStop(8388608);
 _iconcolor = BA.numberCast(int.class, ((int)0xff8e97a3));Debug.locals.put("iconColor", _iconcolor);
  break; }
 }
 ;
- BA.debugLineNum = 151;BA.debugLine="lblConnectionIcon.Text = iconText";
-Debug.ShouldStop(4194304);
-__ref.getField(false,"_lblconnectionicon" /*RemoteObject*/ ).runMethod(true,"setText",_icontext);
- BA.debugLineNum = 152;BA.debugLine="UiStyle.SetLabelStyle(lblConnectionIcon, \"-fx-ali";
-Debug.ShouldStop(8388608);
-playeruicontroller._uistyle.runVoidMethod ("_setlabelstyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_lblconnectionicon" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-alignment: center; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(_iconcolor)),RemoteObject.createImmutable(";"))));
- BA.debugLineNum = 153;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblConnectionI";
-Debug.ShouldStop(16777216);
-playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblconnectionicon" /*RemoteObject*/ )),(Object)(BA.numberCast(float.class, 16)));
- BA.debugLineNum = 154;BA.debugLine="End Sub";
+ BA.debugLineNum = 154;BA.debugLine="lblConnectionIcon.Text = iconText";
 Debug.ShouldStop(33554432);
+__ref.getField(false,"_lblconnectionicon" /*RemoteObject*/ ).runMethod(true,"setText",_icontext);
+ BA.debugLineNum = 155;BA.debugLine="UiStyle.SetLabelStyle(lblConnectionIcon, \"-fx-ali";
+Debug.ShouldStop(67108864);
+playeruicontroller._uistyle.runVoidMethod ("_setlabelstyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_lblconnectionicon" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-alignment: center; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(_iconcolor)),RemoteObject.createImmutable(";"))));
+ BA.debugLineNum = 156;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblConnectionI";
+Debug.ShouldStop(134217728);
+playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblconnectionicon" /*RemoteObject*/ )),(Object)(BA.numberCast(float.class, 16)));
+ BA.debugLineNum = 157;BA.debugLine="End Sub";
+Debug.ShouldStop(268435456);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1051,60 +1059,60 @@ finally {
 		}}
 public static RemoteObject  _updateheaderactionappearance(RemoteObject __ref,RemoteObject _ishovered) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateHeaderActionAppearance (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,288);
+		Debug.PushSubsStack("UpdateHeaderActionAppearance (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,291);
 if (RapidSub.canDelegate("updateheaderactionappearance")) { return __ref.runUserSub(false, "playeruicontroller","updateheaderactionappearance", __ref, _ishovered);}
 RemoteObject _fillcolor = RemoteObject.createImmutable(0);
 RemoteObject _bordercolor = RemoteObject.createImmutable(0);
 RemoteObject _textcolor = RemoteObject.createImmutable(0);
 Debug.locals.put("isHovered", _ishovered);
- BA.debugLineNum = 288;BA.debugLine="Public Sub UpdateHeaderActionAppearance(isHovered";
-Debug.ShouldStop(-2147483648);
- BA.debugLineNum = 289;BA.debugLine="Dim fillColor As Int";
-Debug.ShouldStop(1);
-_fillcolor = RemoteObject.createImmutable(0);Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 290;BA.debugLine="Dim borderColor As Int";
-Debug.ShouldStop(2);
-_bordercolor = RemoteObject.createImmutable(0);Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 291;BA.debugLine="Dim textColor As Int";
+ BA.debugLineNum = 291;BA.debugLine="Public Sub UpdateHeaderActionAppearance(isHovered";
 Debug.ShouldStop(4);
-_textcolor = RemoteObject.createImmutable(0);Debug.locals.put("textColor", _textcolor);
- BA.debugLineNum = 292;BA.debugLine="If isHovered Then";
+ BA.debugLineNum = 292;BA.debugLine="Dim fillColor As Int";
 Debug.ShouldStop(8);
-if (_ishovered.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 293;BA.debugLine="fillColor = 0x14FFFFFF";
+_fillcolor = RemoteObject.createImmutable(0);Debug.locals.put("fillColor", _fillcolor);
+ BA.debugLineNum = 293;BA.debugLine="Dim borderColor As Int";
 Debug.ShouldStop(16);
-_fillcolor = BA.numberCast(int.class, ((int)0x14ffffff));Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 294;BA.debugLine="borderColor = 0x30FFFFFF";
+_bordercolor = RemoteObject.createImmutable(0);Debug.locals.put("borderColor", _bordercolor);
+ BA.debugLineNum = 294;BA.debugLine="Dim textColor As Int";
 Debug.ShouldStop(32);
-_bordercolor = BA.numberCast(int.class, ((int)0x30ffffff));Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 295;BA.debugLine="textColor = 0xFFDDE6EF";
+_textcolor = RemoteObject.createImmutable(0);Debug.locals.put("textColor", _textcolor);
+ BA.debugLineNum = 295;BA.debugLine="If isHovered Then";
 Debug.ShouldStop(64);
+if (_ishovered.<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 296;BA.debugLine="fillColor = 0x14FFFFFF";
+Debug.ShouldStop(128);
+_fillcolor = BA.numberCast(int.class, ((int)0x14ffffff));Debug.locals.put("fillColor", _fillcolor);
+ BA.debugLineNum = 297;BA.debugLine="borderColor = 0x30FFFFFF";
+Debug.ShouldStop(256);
+_bordercolor = BA.numberCast(int.class, ((int)0x30ffffff));Debug.locals.put("borderColor", _bordercolor);
+ BA.debugLineNum = 298;BA.debugLine="textColor = 0xFFDDE6EF";
+Debug.ShouldStop(512);
 _textcolor = BA.numberCast(int.class, ((int)0xffdde6ef));Debug.locals.put("textColor", _textcolor);
  }else {
- BA.debugLineNum = 297;BA.debugLine="fillColor = 0x08FFFFFF";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 300;BA.debugLine="fillColor = 0x08FFFFFF";
+Debug.ShouldStop(2048);
 _fillcolor = BA.numberCast(int.class, ((int)0x08ffffff));Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 298;BA.debugLine="borderColor = 0x18FFFFFF";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 301;BA.debugLine="borderColor = 0x18FFFFFF";
+Debug.ShouldStop(4096);
 _bordercolor = BA.numberCast(int.class, ((int)0x18ffffff));Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 299;BA.debugLine="textColor = 0xFFB9C0C9";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 302;BA.debugLine="textColor = 0xFFB9C0C9";
+Debug.ShouldStop(8192);
 _textcolor = BA.numberCast(int.class, ((int)0xffb9c0c9));Debug.locals.put("textColor", _textcolor);
  };
- BA.debugLineNum = 301;BA.debugLine="headerActionPane.SetColorAndBorder(fillColor, 1di";
-Debug.ShouldStop(4096);
-__ref.getField(false,"_headeractionpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(_fillcolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 1))))),(Object)(_bordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
- BA.debugLineNum = 302;BA.debugLine="UiStyle.SetPaneStyle(headerActionPane, \"-fx-curso";
-Debug.ShouldStop(8192);
-playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_headeractionpane" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("-fx-cursor: hand; -fx-background-radius: 999; -fx-border-radius: 999;")));
- BA.debugLineNum = 303;BA.debugLine="UiStyle.SetLabelStyle(lblHeaderAction, \"-fx-align";
-Debug.ShouldStop(16384);
-playeruicontroller._uistyle.runVoidMethod ("_setlabelstyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_lblheaderaction" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-alignment: center; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(_textcolor)),RemoteObject.createImmutable(";"))));
- BA.debugLineNum = 304;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblHeaderActio";
+ BA.debugLineNum = 304;BA.debugLine="headerActionPane.SetColorAndBorder(fillColor, 1di";
 Debug.ShouldStop(32768);
-playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblheaderaction" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_headeractionfontsize" /*RemoteObject*/ )));
- BA.debugLineNum = 305;BA.debugLine="End Sub";
+__ref.getField(false,"_headeractionpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(_fillcolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 1))))),(Object)(_bordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
+ BA.debugLineNum = 305;BA.debugLine="UiStyle.SetPaneStyle(headerActionPane, \"-fx-curso";
 Debug.ShouldStop(65536);
+playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_headeractionpane" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("-fx-cursor: hand; -fx-background-radius: 999; -fx-border-radius: 999;")));
+ BA.debugLineNum = 306;BA.debugLine="UiStyle.SetLabelStyle(lblHeaderAction, \"-fx-align";
+Debug.ShouldStop(131072);
+playeruicontroller._uistyle.runVoidMethod ("_setlabelstyle" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_lblheaderaction" /*RemoteObject*/ )),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-alignment: center; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(_textcolor)),RemoteObject.createImmutable(";"))));
+ BA.debugLineNum = 307;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblHeaderActio";
+Debug.ShouldStop(262144);
+playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblheaderaction" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_headeractionfontsize" /*RemoteObject*/ )));
+ BA.debugLineNum = 308;BA.debugLine="End Sub";
+Debug.ShouldStop(524288);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1115,82 +1123,82 @@ finally {
 		}}
 public static RemoteObject  _updateplaybuttonappearance(RemoteObject __ref,RemoteObject _ishovered,RemoteObject _isstarted) throws Exception{
 try {
-		Debug.PushSubsStack("UpdatePlayButtonAppearance (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,235);
+		Debug.PushSubsStack("UpdatePlayButtonAppearance (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,238);
 if (RapidSub.canDelegate("updateplaybuttonappearance")) { return __ref.runUserSub(false, "playeruicontroller","updateplaybuttonappearance", __ref, _ishovered, _isstarted);}
 RemoteObject _backgroundcolor = RemoteObject.createImmutable(0);
 RemoteObject _bordercolor = RemoteObject.createImmutable(0);
 RemoteObject _orbitbordercolor = RemoteObject.createImmutable(0);
 Debug.locals.put("isHovered", _ishovered);
 Debug.locals.put("isStarted", _isstarted);
- BA.debugLineNum = 235;BA.debugLine="Public Sub UpdatePlayButtonAppearance(isHovered As";
-Debug.ShouldStop(1024);
- BA.debugLineNum = 236;BA.debugLine="Dim backgroundColor As Int";
-Debug.ShouldStop(2048);
-_backgroundcolor = RemoteObject.createImmutable(0);Debug.locals.put("backgroundColor", _backgroundcolor);
- BA.debugLineNum = 237;BA.debugLine="Dim borderColor As Int";
-Debug.ShouldStop(4096);
-_bordercolor = RemoteObject.createImmutable(0);Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 238;BA.debugLine="Dim orbitBorderColor As Int";
+ BA.debugLineNum = 238;BA.debugLine="Public Sub UpdatePlayButtonAppearance(isHovered As";
 Debug.ShouldStop(8192);
-_orbitbordercolor = RemoteObject.createImmutable(0);Debug.locals.put("orbitBorderColor", _orbitbordercolor);
- BA.debugLineNum = 239;BA.debugLine="If isStarted Then";
+ BA.debugLineNum = 239;BA.debugLine="Dim backgroundColor As Int";
 Debug.ShouldStop(16384);
-if (_isstarted.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 240;BA.debugLine="If isHovered Then";
+_backgroundcolor = RemoteObject.createImmutable(0);Debug.locals.put("backgroundColor", _backgroundcolor);
+ BA.debugLineNum = 240;BA.debugLine="Dim borderColor As Int";
 Debug.ShouldStop(32768);
-if (_ishovered.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 241;BA.debugLine="backgroundColor = 0x12FFFFFF";
+_bordercolor = RemoteObject.createImmutable(0);Debug.locals.put("borderColor", _bordercolor);
+ BA.debugLineNum = 241;BA.debugLine="Dim orbitBorderColor As Int";
 Debug.ShouldStop(65536);
-_backgroundcolor = BA.numberCast(int.class, ((int)0x12ffffff));Debug.locals.put("backgroundColor", _backgroundcolor);
- BA.debugLineNum = 242;BA.debugLine="borderColor = 0x77FFFFFF";
+_orbitbordercolor = RemoteObject.createImmutable(0);Debug.locals.put("orbitBorderColor", _orbitbordercolor);
+ BA.debugLineNum = 242;BA.debugLine="If isStarted Then";
 Debug.ShouldStop(131072);
+if (_isstarted.<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 243;BA.debugLine="If isHovered Then";
+Debug.ShouldStop(262144);
+if (_ishovered.<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 244;BA.debugLine="backgroundColor = 0x12FFFFFF";
+Debug.ShouldStop(524288);
+_backgroundcolor = BA.numberCast(int.class, ((int)0x12ffffff));Debug.locals.put("backgroundColor", _backgroundcolor);
+ BA.debugLineNum = 245;BA.debugLine="borderColor = 0x77FFFFFF";
+Debug.ShouldStop(1048576);
 _bordercolor = BA.numberCast(int.class, ((int)0x77ffffff));Debug.locals.put("borderColor", _bordercolor);
  }else {
- BA.debugLineNum = 244;BA.debugLine="backgroundColor = 0x08FFFFFF";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 247;BA.debugLine="backgroundColor = 0x08FFFFFF";
+Debug.ShouldStop(4194304);
 _backgroundcolor = BA.numberCast(int.class, ((int)0x08ffffff));Debug.locals.put("backgroundColor", _backgroundcolor);
- BA.debugLineNum = 245;BA.debugLine="borderColor = 0x55FFFFFF";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 248;BA.debugLine="borderColor = 0x55FFFFFF";
+Debug.ShouldStop(8388608);
 _bordercolor = BA.numberCast(int.class, ((int)0x55ffffff));Debug.locals.put("borderColor", _bordercolor);
  };
  }else {
- BA.debugLineNum = 248;BA.debugLine="If isHovered Then";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 251;BA.debugLine="If isHovered Then";
+Debug.ShouldStop(67108864);
 if (_ishovered.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 249;BA.debugLine="backgroundColor = 0x12FFFFFF";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 252;BA.debugLine="backgroundColor = 0x12FFFFFF";
+Debug.ShouldStop(134217728);
 _backgroundcolor = BA.numberCast(int.class, ((int)0x12ffffff));Debug.locals.put("backgroundColor", _backgroundcolor);
- BA.debugLineNum = 250;BA.debugLine="borderColor = 0x55D0FF71";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 253;BA.debugLine="borderColor = 0x55D0FF71";
+Debug.ShouldStop(268435456);
 _bordercolor = BA.numberCast(int.class, ((int)0x55d0ff71));Debug.locals.put("borderColor", _bordercolor);
  }else {
- BA.debugLineNum = 252;BA.debugLine="backgroundColor = 0x07FFFFFF";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 255;BA.debugLine="backgroundColor = 0x07FFFFFF";
+Debug.ShouldStop(1073741824);
 _backgroundcolor = BA.numberCast(int.class, ((int)0x07ffffff));Debug.locals.put("backgroundColor", _backgroundcolor);
- BA.debugLineNum = 253;BA.debugLine="borderColor = 0x40FFFFFF";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 256;BA.debugLine="borderColor = 0x40FFFFFF";
+Debug.ShouldStop(-2147483648);
 _bordercolor = BA.numberCast(int.class, ((int)0x40ffffff));Debug.locals.put("borderColor", _bordercolor);
  };
  };
- BA.debugLineNum = 256;BA.debugLine="If isStarted Or isHovered Then";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 259;BA.debugLine="If isStarted Or isHovered Then";
+Debug.ShouldStop(4);
 if (RemoteObject.solveBoolean(".",_isstarted) || RemoteObject.solveBoolean(".",_ishovered)) { 
- BA.debugLineNum = 257;BA.debugLine="orbitBorderColor = 0x66D0FF71";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 260;BA.debugLine="orbitBorderColor = 0x66D0FF71";
+Debug.ShouldStop(8);
 _orbitbordercolor = BA.numberCast(int.class, ((int)0x66d0ff71));Debug.locals.put("orbitBorderColor", _orbitbordercolor);
  }else {
- BA.debugLineNum = 259;BA.debugLine="orbitBorderColor = 0x22D0FF71";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 262;BA.debugLine="orbitBorderColor = 0x22D0FF71";
+Debug.ShouldStop(32);
 _orbitbordercolor = BA.numberCast(int.class, ((int)0x22d0ff71));Debug.locals.put("orbitBorderColor", _orbitbordercolor);
  };
- BA.debugLineNum = 261;BA.debugLine="playButtonPane.SetColorAndBorder(backgroundColor,";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 264;BA.debugLine="playButtonPane.SetColorAndBorder(backgroundColor,";
+Debug.ShouldStop(128);
 __ref.getField(false,"_playbuttonpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(_backgroundcolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 4))))),(Object)(_bordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
- BA.debugLineNum = 262;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 265;BA.debugLine="orbitPane.SetColorAndBorder(xui.Color_Transparent";
+Debug.ShouldStop(256);
 __ref.getField(false,"_orbitpane" /*RemoteObject*/ ).runVoidMethod ("SetColorAndBorder",(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ ).getField(true,"Color_Transparent")),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 2))))),(Object)(_orbitbordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 999))))));
- BA.debugLineNum = 263;BA.debugLine="End Sub";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 266;BA.debugLine="End Sub";
+Debug.ShouldStop(512);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1201,7 +1209,7 @@ finally {
 		}}
 public static RemoteObject  _updateresponsivestyles(RemoteObject __ref,RemoteObject _streamfontsize,RemoteObject _infofontsize,RemoteObject _playfontsize,RemoteObject _stopfontsize,RemoteObject _headeractionsizevalue,RemoteObject _codesize,RemoteObject _iscodeinputfocused,RemoteObject _showstopicon) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateResponsiveStyles (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,200);
+		Debug.PushSubsStack("UpdateResponsiveStyles (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,203);
 if (RapidSub.canDelegate("updateresponsivestyles")) { return __ref.runUserSub(false, "playeruicontroller","updateresponsivestyles", __ref, _streamfontsize, _infofontsize, _playfontsize, _stopfontsize, _headeractionsizevalue, _codesize, _iscodeinputfocused, _showstopicon);}
 Debug.locals.put("streamFontSize", _streamfontsize);
 Debug.locals.put("infoFontSize", _infofontsize);
@@ -1211,48 +1219,48 @@ Debug.locals.put("headerActionSizeValue", _headeractionsizevalue);
 Debug.locals.put("codeSize", _codesize);
 Debug.locals.put("isCodeInputFocused", _iscodeinputfocused);
 Debug.locals.put("showStopIcon", _showstopicon);
- BA.debugLineNum = 200;BA.debugLine="Public Sub UpdateResponsiveStyles(streamFontSize A";
-Debug.ShouldStop(128);
- BA.debugLineNum = 201;BA.debugLine="playIconBaseSize = playFontSize";
-Debug.ShouldStop(256);
-__ref.setField ("_playiconbasesize" /*RemoteObject*/ ,_playfontsize);
- BA.debugLineNum = 202;BA.debugLine="stopIconBaseSize = stopFontSize";
-Debug.ShouldStop(512);
-__ref.setField ("_stopiconbasesize" /*RemoteObject*/ ,_stopfontsize);
- BA.debugLineNum = 203;BA.debugLine="headerActionFontSize = headerActionSizeValue";
+ BA.debugLineNum = 203;BA.debugLine="Public Sub UpdateResponsiveStyles(streamFontSize A";
 Debug.ShouldStop(1024);
-__ref.setField ("_headeractionfontsize" /*RemoteObject*/ ,_headeractionsizevalue);
- BA.debugLineNum = 204;BA.debugLine="codeFontSize = codeSize";
+ BA.debugLineNum = 204;BA.debugLine="playIconBaseSize = playFontSize";
 Debug.ShouldStop(2048);
-__ref.setField ("_codefontsize" /*RemoteObject*/ ,_codesize);
- BA.debugLineNum = 205;BA.debugLine="lblStream.Font = xui.CreateDefaultBoldFont(stream";
+__ref.setField ("_playiconbasesize" /*RemoteObject*/ ,_playfontsize);
+ BA.debugLineNum = 205;BA.debugLine="stopIconBaseSize = stopFontSize";
 Debug.ShouldStop(4096);
-__ref.getField(false,"_lblstream" /*RemoteObject*/ ).runMethod(false,"setFont",__ref.getField(false,"_xui" /*RemoteObject*/ ).runMethod(false,"CreateDefaultBoldFont",(Object)(_streamfontsize)));
- BA.debugLineNum = 206;BA.debugLine="lblInfo.Font = xui.CreateDefaultFont(infoFontSize";
+__ref.setField ("_stopiconbasesize" /*RemoteObject*/ ,_stopfontsize);
+ BA.debugLineNum = 206;BA.debugLine="headerActionFontSize = headerActionSizeValue";
 Debug.ShouldStop(8192);
-__ref.getField(false,"_lblinfo" /*RemoteObject*/ ).runMethod(false,"setFont",__ref.getField(false,"_xui" /*RemoteObject*/ ).runMethod(false,"CreateDefaultFont",(Object)(_infofontsize)));
- BA.debugLineNum = 207;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblConnectionI";
+__ref.setField ("_headeractionfontsize" /*RemoteObject*/ ,_headeractionsizevalue);
+ BA.debugLineNum = 207;BA.debugLine="codeFontSize = codeSize";
 Debug.ShouldStop(16384);
-playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblconnectionicon" /*RemoteObject*/ )),(Object)(BA.numberCast(float.class, 16)));
- BA.debugLineNum = 208;BA.debugLine="UpdateHeaderActionAppearance(False)";
+__ref.setField ("_codefontsize" /*RemoteObject*/ ,_codesize);
+ BA.debugLineNum = 208;BA.debugLine="lblStream.Font = xui.CreateDefaultBoldFont(stream";
 Debug.ShouldStop(32768);
-__ref.runClassMethod (b4j.example.playeruicontroller.class, "_updateheaderactionappearance" /*RemoteObject*/ ,(Object)(playeruicontroller.__c.getField(true,"False")));
- BA.debugLineNum = 209;BA.debugLine="UpdateCodeInputAppearance(isCodeInputFocused)";
+__ref.getField(false,"_lblstream" /*RemoteObject*/ ).runMethod(false,"setFont",__ref.getField(false,"_xui" /*RemoteObject*/ ).runMethod(false,"CreateDefaultBoldFont",(Object)(_streamfontsize)));
+ BA.debugLineNum = 209;BA.debugLine="lblInfo.Font = xui.CreateDefaultFont(infoFontSize";
 Debug.ShouldStop(65536);
-__ref.runClassMethod (b4j.example.playeruicontroller.class, "_updatecodeinputappearance" /*RemoteObject*/ ,(Object)(_iscodeinputfocused));
- BA.debugLineNum = 210;BA.debugLine="If showStopIcon Then";
+__ref.getField(false,"_lblinfo" /*RemoteObject*/ ).runMethod(false,"setFont",__ref.getField(false,"_xui" /*RemoteObject*/ ).runMethod(false,"CreateDefaultFont",(Object)(_infofontsize)));
+ BA.debugLineNum = 210;BA.debugLine="UiStyle.ApplyMaterialIconFont(xui, lblConnectionI";
 Debug.ShouldStop(131072);
-if (_showstopicon.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 211;BA.debugLine="SetStopIcon";
+playeruicontroller._uistyle.runVoidMethod ("_applymaterialiconfont" /*RemoteObject*/ ,(Object)(__ref.getField(false,"_xui" /*RemoteObject*/ )),(Object)(__ref.getField(false,"_lblconnectionicon" /*RemoteObject*/ )),(Object)(BA.numberCast(float.class, 16)));
+ BA.debugLineNum = 211;BA.debugLine="UpdateHeaderActionAppearance(False)";
 Debug.ShouldStop(262144);
+__ref.runClassMethod (b4j.example.playeruicontroller.class, "_updateheaderactionappearance" /*RemoteObject*/ ,(Object)(playeruicontroller.__c.getField(true,"False")));
+ BA.debugLineNum = 212;BA.debugLine="UpdateCodeInputAppearance(isCodeInputFocused)";
+Debug.ShouldStop(524288);
+__ref.runClassMethod (b4j.example.playeruicontroller.class, "_updatecodeinputappearance" /*RemoteObject*/ ,(Object)(_iscodeinputfocused));
+ BA.debugLineNum = 213;BA.debugLine="If showStopIcon Then";
+Debug.ShouldStop(1048576);
+if (_showstopicon.<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 214;BA.debugLine="SetStopIcon";
+Debug.ShouldStop(2097152);
 __ref.runClassMethod (b4j.example.playeruicontroller.class, "_setstopicon" /*RemoteObject*/ );
  }else {
- BA.debugLineNum = 213;BA.debugLine="SetPlayIcon";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 216;BA.debugLine="SetPlayIcon";
+Debug.ShouldStop(8388608);
 __ref.runClassMethod (b4j.example.playeruicontroller.class, "_setplayicon" /*RemoteObject*/ );
  };
- BA.debugLineNum = 215;BA.debugLine="End Sub";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 218;BA.debugLine="End Sub";
+Debug.ShouldStop(33554432);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1263,58 +1271,58 @@ finally {
 		}}
 public static RemoteObject  _updatetextbuttonappearance(RemoteObject __ref,RemoteObject _buttonview,RemoteObject _ishovered) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateTextButtonAppearance (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,307);
+		Debug.PushSubsStack("UpdateTextButtonAppearance (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,310);
 if (RapidSub.canDelegate("updatetextbuttonappearance")) { return __ref.runUserSub(false, "playeruicontroller","updatetextbuttonappearance", __ref, _buttonview, _ishovered);}
 RemoteObject _fillcolor = RemoteObject.createImmutable(0);
 RemoteObject _bordercolor = RemoteObject.createImmutable(0);
 RemoteObject _textcolor = RemoteObject.createImmutable(0);
 Debug.locals.put("buttonView", _buttonview);
 Debug.locals.put("isHovered", _ishovered);
- BA.debugLineNum = 307;BA.debugLine="Public Sub UpdateTextButtonAppearance(buttonView A";
-Debug.ShouldStop(262144);
- BA.debugLineNum = 308;BA.debugLine="Dim fillColor As Int";
-Debug.ShouldStop(524288);
-_fillcolor = RemoteObject.createImmutable(0);Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 309;BA.debugLine="Dim borderColor As Int";
-Debug.ShouldStop(1048576);
-_bordercolor = RemoteObject.createImmutable(0);Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 310;BA.debugLine="Dim textColor As Int";
+ BA.debugLineNum = 310;BA.debugLine="Public Sub UpdateTextButtonAppearance(buttonView A";
 Debug.ShouldStop(2097152);
-_textcolor = RemoteObject.createImmutable(0);Debug.locals.put("textColor", _textcolor);
- BA.debugLineNum = 311;BA.debugLine="If isHovered Then";
+ BA.debugLineNum = 311;BA.debugLine="Dim fillColor As Int";
 Debug.ShouldStop(4194304);
-if (_ishovered.<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 312;BA.debugLine="fillColor = 0x12FFFFFF";
+_fillcolor = RemoteObject.createImmutable(0);Debug.locals.put("fillColor", _fillcolor);
+ BA.debugLineNum = 312;BA.debugLine="Dim borderColor As Int";
 Debug.ShouldStop(8388608);
-_fillcolor = BA.numberCast(int.class, ((int)0x12ffffff));Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 313;BA.debugLine="borderColor = 0x34FFFFFF";
+_bordercolor = RemoteObject.createImmutable(0);Debug.locals.put("borderColor", _bordercolor);
+ BA.debugLineNum = 313;BA.debugLine="Dim textColor As Int";
 Debug.ShouldStop(16777216);
-_bordercolor = BA.numberCast(int.class, ((int)0x34ffffff));Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 314;BA.debugLine="textColor = 0xFFF2F7FB";
+_textcolor = RemoteObject.createImmutable(0);Debug.locals.put("textColor", _textcolor);
+ BA.debugLineNum = 314;BA.debugLine="If isHovered Then";
 Debug.ShouldStop(33554432);
+if (_ishovered.<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 315;BA.debugLine="fillColor = 0x12FFFFFF";
+Debug.ShouldStop(67108864);
+_fillcolor = BA.numberCast(int.class, ((int)0x12ffffff));Debug.locals.put("fillColor", _fillcolor);
+ BA.debugLineNum = 316;BA.debugLine="borderColor = 0x34FFFFFF";
+Debug.ShouldStop(134217728);
+_bordercolor = BA.numberCast(int.class, ((int)0x34ffffff));Debug.locals.put("borderColor", _bordercolor);
+ BA.debugLineNum = 317;BA.debugLine="textColor = 0xFFF2F7FB";
+Debug.ShouldStop(268435456);
 _textcolor = BA.numberCast(int.class, ((int)0xfff2f7fb));Debug.locals.put("textColor", _textcolor);
  }else {
- BA.debugLineNum = 316;BA.debugLine="fillColor = 0x06FFFFFF";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 319;BA.debugLine="fillColor = 0x06FFFFFF";
+Debug.ShouldStop(1073741824);
 _fillcolor = BA.numberCast(int.class, ((int)0x06ffffff));Debug.locals.put("fillColor", _fillcolor);
- BA.debugLineNum = 317;BA.debugLine="borderColor = 0x1EFFFFFF";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 320;BA.debugLine="borderColor = 0x1EFFFFFF";
+Debug.ShouldStop(-2147483648);
 _bordercolor = BA.numberCast(int.class, ((int)0x1effffff));Debug.locals.put("borderColor", _bordercolor);
- BA.debugLineNum = 318;BA.debugLine="textColor = 0xFFE0E4EA";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 321;BA.debugLine="textColor = 0xFFE0E4EA";
+Debug.ShouldStop(1);
 _textcolor = BA.numberCast(int.class, ((int)0xffe0e4ea));Debug.locals.put("textColor", _textcolor);
  };
- BA.debugLineNum = 320;BA.debugLine="buttonView.SetColorAndBorder(fillColor, 1dip, bor";
-Debug.ShouldStop(-2147483648);
-_buttonview.runVoidMethod ("SetColorAndBorder",(Object)(_fillcolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 1))))),(Object)(_bordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 12))))));
- BA.debugLineNum = 321;BA.debugLine="UiStyle.SetPaneStyle(buttonView, \"-fx-cursor: han";
-Debug.ShouldStop(1);
-playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(_buttonview),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-cursor: hand; -fx-border-radius: 12; -fx-background-radius: 12; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(_textcolor)),RemoteObject.createImmutable(";"))));
- BA.debugLineNum = 322;BA.debugLine="buttonView.Font = xui.CreateDefaultBoldFont(13)";
-Debug.ShouldStop(2);
-_buttonview.runMethod(false,"setFont",__ref.getField(false,"_xui" /*RemoteObject*/ ).runMethod(false,"CreateDefaultBoldFont",(Object)(BA.numberCast(float.class, 13))));
- BA.debugLineNum = 323;BA.debugLine="End Sub";
+ BA.debugLineNum = 323;BA.debugLine="buttonView.SetColorAndBorder(fillColor, 1dip, bor";
 Debug.ShouldStop(4);
+_buttonview.runVoidMethod ("SetColorAndBorder",(Object)(_fillcolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 1))))),(Object)(_bordercolor),(Object)(BA.numberCast(double.class, playeruicontroller.__c.runMethod(true,"DipToCurrent",(Object)(BA.numberCast(int.class, 12))))));
+ BA.debugLineNum = 324;BA.debugLine="UiStyle.SetPaneStyle(buttonView, \"-fx-cursor: han";
+Debug.ShouldStop(8);
+playeruicontroller._uistyle.runVoidMethod ("_setpanestyle" /*RemoteObject*/ ,(Object)(_buttonview),(Object)(RemoteObject.concat(RemoteObject.createImmutable("-fx-cursor: hand; -fx-border-radius: 12; -fx-background-radius: 12; -fx-text-fill: "),playeruicontroller._uistyle.runMethod(true,"_colortocss" /*RemoteObject*/ ,(Object)(_textcolor)),RemoteObject.createImmutable(";"))));
+ BA.debugLineNum = 325;BA.debugLine="buttonView.Font = xui.CreateDefaultBoldFont(13)";
+Debug.ShouldStop(16);
+_buttonview.runMethod(false,"setFont",__ref.getField(false,"_xui" /*RemoteObject*/ ).runMethod(false,"CreateDefaultBoldFont",(Object)(BA.numberCast(float.class, 13))));
+ BA.debugLineNum = 326;BA.debugLine="End Sub";
+Debug.ShouldStop(32);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1325,23 +1333,23 @@ finally {
 		}}
 public static RemoteObject  _updatevisiblemode(RemoteObject __ref,RemoteObject _mode) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateVisibleMode (playeruicontroller) ","playeruicontroller",8,__ref.getField(false, "ba"),__ref,194);
+		Debug.PushSubsStack("UpdateVisibleMode (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,197);
 if (RapidSub.canDelegate("updatevisiblemode")) { return __ref.runUserSub(false, "playeruicontroller","updatevisiblemode", __ref, _mode);}
 Debug.locals.put("mode", _mode);
- BA.debugLineNum = 194;BA.debugLine="Public Sub UpdateVisibleMode(mode As String)";
-Debug.ShouldStop(2);
- BA.debugLineNum = 195;BA.debugLine="setupPane.Visible = mode <> \"player\"";
-Debug.ShouldStop(4);
-__ref.getField(false,"_setuppane" /*RemoteObject*/ ).runMethod(true,"setVisible",BA.ObjectToBoolean(RemoteObject.solveBoolean("!",_mode,BA.ObjectToString("player"))));
- BA.debugLineNum = 196;BA.debugLine="playerPane.Visible = mode = \"player\"";
-Debug.ShouldStop(8);
-__ref.getField(false,"_playerpane" /*RemoteObject*/ ).runMethod(true,"setVisible",BA.ObjectToBoolean(RemoteObject.solveBoolean("=",_mode,BA.ObjectToString("player"))));
- BA.debugLineNum = 197;BA.debugLine="If mode = \"setup\" Then headerActionPane.Visible =";
+ BA.debugLineNum = 197;BA.debugLine="Public Sub UpdateVisibleMode(mode As String)";
 Debug.ShouldStop(16);
+ BA.debugLineNum = 198;BA.debugLine="setupPane.Visible = mode <> \"player\"";
+Debug.ShouldStop(32);
+__ref.getField(false,"_setuppane" /*RemoteObject*/ ).runMethod(true,"setVisible",BA.ObjectToBoolean(RemoteObject.solveBoolean("!",_mode,BA.ObjectToString("player"))));
+ BA.debugLineNum = 199;BA.debugLine="playerPane.Visible = mode = \"player\"";
+Debug.ShouldStop(64);
+__ref.getField(false,"_playerpane" /*RemoteObject*/ ).runMethod(true,"setVisible",BA.ObjectToBoolean(RemoteObject.solveBoolean("=",_mode,BA.ObjectToString("player"))));
+ BA.debugLineNum = 200;BA.debugLine="If mode = \"setup\" Then headerActionPane.Visible =";
+Debug.ShouldStop(128);
 if (RemoteObject.solveBoolean("=",_mode,BA.ObjectToString("setup"))) { 
 __ref.getField(false,"_headeractionpane" /*RemoteObject*/ ).runMethod(true,"setVisible",playeruicontroller.__c.getField(true,"False"));};
- BA.debugLineNum = 198;BA.debugLine="End Sub";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 201;BA.debugLine="End Sub";
+Debug.ShouldStop(256);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {

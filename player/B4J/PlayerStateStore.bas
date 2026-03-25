@@ -12,9 +12,6 @@ Sub Class_Globals
 	Private owner As B4XMainPage
 	Private policyState As PlaybackDataPolicyState
 	Private orchestrationStateRef As PlaybackOrchestrationState
-	Private retryFallbackStateRef As PlaybackRetryFallbackState
-	Private queueStateRef As PlaybackQueueState
-	Private queueBuilderRef As PlaybackQueueBuilder
 	Private offlineStoreRef As OfflineStore
 	Private dataResolverRef As DataPlaybackResolver
 	Private mediaCacheRef As MediaCache
@@ -28,15 +25,16 @@ Sub Class_Globals
 	Private historySuccessAtTicks As Long
 	Private startupSequenceInProgress As Boolean
 	Private adWarmupDeferredAfterStartup As Boolean
+	Private localRetryDelay As Int
+	Private serverRetryDelay As Int
+	Private dispatchRetryAfter As Int
+	Private mediaPathDegradedFlag As Boolean
 End Sub
 
-Public Sub Initialize(mainPage As B4XMainPage, retryTimerValue As Timer, dataPolicyValue As PlaybackDataPolicyState, orchestrationStateValue As PlaybackOrchestrationState, retryFallbackStateValue As PlaybackRetryFallbackState, queueStateValue As PlaybackQueueState, queueBuilderValue As PlaybackQueueBuilder, storageValue As KeyValueStore, trustedSyncKeyValue As String, offlineStoreValue As OfflineStore, dataResolverValue As DataPlaybackResolver, mediaCacheValue As MediaCache)
+Public Sub Initialize(mainPage As B4XMainPage, retryTimerValue As Timer, dataPolicyValue As PlaybackDataPolicyState, orchestrationStateValue As PlaybackOrchestrationState, storageValue As KeyValueStore, trustedSyncKeyValue As String, offlineStoreValue As OfflineStore, dataResolverValue As DataPlaybackResolver, mediaCacheValue As MediaCache, localRetryInitial As Int, serverRetryInitial As Int)
 	owner = mainPage
 	policyState = dataPolicyValue
 	orchestrationStateRef = orchestrationStateValue
-	retryFallbackStateRef = retryFallbackStateValue
-	queueStateRef = queueStateValue
-	queueBuilderRef = queueBuilderValue
 	offlineStoreRef = offlineStoreValue
 	dataResolverRef = dataResolverValue
 	mediaCacheRef = mediaCacheValue
@@ -44,6 +42,7 @@ Public Sub Initialize(mainPage As B4XMainPage, retryTimerValue As Timer, dataPol
 	trustedSyncTimeKeyValue = trustedSyncKeyValue
 	retryTimerRef = retryTimerValue
 	offlineDataRef.Initialize
+	ResetRetryDelayState(localRetryInitial, serverRetryInitial)
 End Sub
 
 Public Sub IncrementNetworkErrorCount
@@ -108,6 +107,10 @@ End Sub
 
 Public Sub DataUrlValue As String
 	Return owner.DataUrlValue
+End Sub
+
+Public Sub CheckForAppUpdate(data As Map)
+	owner.Data_CheckForAppUpdate(data)
 End Sub
 
 Public Sub NextUrlValue As String
@@ -357,17 +360,25 @@ Public Sub EnterLocalPlayback
 	owner.Data_EnterLocalPlayback
 End Sub
 
-Public Sub RequestSkipQueueSnapshotRestore(reason As String)
-	queueStateRef.RequestSkipQueueSnapshotRestore
-	TraceLog("снимок очереди восстановление skip reason=" & reason)
-End Sub
-
 Public Sub HasLocalPlaybackFallback As Boolean
 	Return owner.Data_HasLocalPlaybackFallback
 End Sub
 
-Public Sub SetLocalFallbackReady(fallbackReady As Boolean)
-	owner.Data_SetLocalFallbackReady(fallbackReady)
+Public Sub GetCurrentSlotLocalReserveCount As Int
+	Return owner.Data_GetCurrentSlotLocalReserveCount
+End Sub
+
+Public Sub GetLocalPlayableQueueCount(playQueue As List) As Int
+	If playQueue.IsInitialized = False Then Return 0
+	Dim totalCount As Int = 0
+	For Each itemObject As Object In playQueue
+		If (itemObject Is Map) = False Then Continue
+		Dim item As Map = itemObject
+		If item.GetDefault("type", "") <> "track" Then Continue
+		If mediaCacheRef.HasValidatedLocalMedia(item) = False Then Continue
+		totalCount = totalCount + 1
+	Next
+	Return totalCount
 End Sub
 
 Public Sub ResolveIdleUntilMessage(data As Map, targetTicks As Long) As String
@@ -378,193 +389,137 @@ Public Sub DisableBackgroundRefreshTimers
 	owner.Data_DisableBackgroundRefreshTimers
 End Sub
 
-Public Sub CanUseDataPlaybackResolver As Boolean
-	Return queueBuilderRef.CanUseDataPlaybackResolver(OfflineData)
-End Sub
-
-Public Sub EnsureDataPlaybackReady As ResumableSub
-	Wait For (queueBuilderRef.EnsureDataPlaybackReady(OfflineData)) Complete (resolverReady As Boolean)
-	If resolverReady = False Then
-		TraceLog("подготовка data playback ошибка")
-	End If
-	Return resolverReady
-End Sub
-
-Public Sub EnsureDataPlaybackQueue(playQueue As List, minItems As Int) As ResumableSub
-	Wait For (queueBuilderRef.EnsureDataPlaybackQueue(playQueue, minItems, OfflineData, EffectiveNowTicks, storageRef, queueStateRef, dataResolverRef, mediaCacheRef)) Complete (queuePrepared As Boolean)
-	Return queuePrepared
-End Sub
-
-' Пытается локально расширить queue plan до нужного lookahead, если data resolver уже доступен.
-' Это удобный helper для backfill/warmup paths, где page не должна повторять одинаковую механику.
-Public Sub TryEnsureQueueLookahead(playQueue As List, minItems As Int) As ResumableSub
-	If CanUseDataPlaybackResolver = False Then Return False
-	Wait For (EnsureDataPlaybackQueue(playQueue, minItems)) Complete (queuePrepared As Boolean)
-	Return queuePrepared
-End Sub
-
-' Пытается локально подготовить queue plan без сетевого запроса.
-' Возвращает status:
-' - success: локальная очередь готова
-' - resolver_unavailable: resolver не смог подготовиться
-' - queue_empty: локальный plan не дал playable items
-Public Sub TryPopulateQueueFromLocalPlan(playQueue As List, minItems As Int) As ResumableSub
-	Dim result As Map
-	result.Initialize
-	result.Put("success", False)
-	result.Put("status", "")
-	result.Put("idle_text", "")
-	ClearDispatchRetryAfter
-	If CanUseDataPlaybackResolver = False Then
-		Wait For (EnsureDataPlaybackReady) Complete (resolverReady As Boolean)
-		If resolverReady = False Then
-			result.Put("status", "resolver_unavailable")
-			Return result
-		End If
-	End If
-	Wait For (EnsureDataPlaybackQueue(playQueue, minItems)) Complete (queuePrepared As Boolean)
-	If queuePrepared = False Then
-		result.Put("status", "queue_empty")
-		result.Put("idle_text", ResolveIdleUntilMessage(OfflineData, EffectiveNowTicks))
-		Return result
-	End If
-	result.Put("success", True)
-	result.Put("status", "success")
-	Return result
-End Sub
-
 ' Пытается стартовать player из уже локально доступного кэша, не дожидаясь сети.
 ' Это одна из главных частей автономного local plan: стартовать по текущему data slot и cached media.
-Public Sub TrySeedFirstTrackFromCache(playQueue As List) As ResumableSub
-	Dim emptyResult As Boolean = False
-	If CanUseDataPlaybackResolver = False Then Return emptyResult
+Public Sub ResolveNextLocalTrackItem As Map
+	Dim emptyItem As Map
+	emptyItem.Initialize
+	If HasUsableDataPlaybackInstructions = False Then Return ResolveAnyCachedLocalTrackItem(emptyItem)
 	Dim currentSlot As Map = dataResolverRef.ResolveDataSlotAtTicks(OfflineData, EffectiveNowTicks)
-	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return emptyResult
+	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then
+		Return ResolveAnyCachedLocalTrackItem(emptyItem)
+	End If
 	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
-	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return emptyResult
+	If playlists.IsInitialized = False Or playlists.Size = 0 Then
+		Return ResolveAnyCachedLocalTrackItem(currentSlot)
+	End If
+	Dim resolvedItem As Map = ResolveSequentialSlotTrackItem(currentSlot, playlists)
+	If resolvedItem.IsInitialized And resolvedItem.Size > 0 Then Return resolvedItem
+	resolvedItem = ResolveAnyCachedLocalTrackItem(currentSlot)
+	Return resolvedItem
+End Sub
+
+Private Sub ResolveSequentialSlotTrackItem(currentSlot As Map, playlists As List) As Map
+	Dim emptyItem As Map
+	emptyItem.Initialize
+	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return emptyItem
+	Dim slotKey As String = BuildDataSlotKey(currentSlot)
 	Dim workingCursors As Map = dataResolverRef.ClonePlaylistCursors
-	Dim seeded As Boolean = False
-	For attempt = 0 To playlists.Size - 1
-		Dim playlistDescriptor As Map = dataResolverRef.ChooseNextPlaylistDescriptor(currentSlot, workingCursors)
-		If playlistDescriptor.IsInitialized = False Or playlistDescriptor.Size = 0 Then Exit
+	Dim cursorValue As Int = workingCursors.GetDefault(slotKey, 0)
+	If cursorValue < 0 Then cursorValue = 0
+	Dim startIndex As Int = cursorValue Mod playlists.Size
+	Dim selectedItem As Map
+	selectedItem.Initialize
+	For offset = 0 To playlists.Size - 1
+		Dim playlistIndex As Int = (startIndex + offset) Mod playlists.Size
+		Dim playlistObject As Object = playlists.Get(playlistIndex)
+		If (playlistObject Is Map) = False Then Continue
+		Dim playlistDescriptor As Map = playlistObject
 		Dim playlistId As String = playlistDescriptor.GetDefault("id", "")
 		If playlistId = "" Then Continue
-		Dim playlistData As Map = dataResolverRef.LoadCachedPlaylistMetadata(playlistId)
-		If playlistData.IsInitialized = False Or playlistData.Size = 0 Then Continue
-		Dim cachedTrack As Map = dataResolverRef.ChooseRandomTrackFromPlaylist(playlistData, mediaCacheRef, True)
+		Dim cachedTrack As Map = dataResolverRef.ResolveOrderedCachedTrackFromPlaylistById(playlistId, mediaCacheRef)
 		If cachedTrack.IsInitialized = False Or cachedTrack.Size = 0 Then Continue
-		Dim queueItem As Map = dataResolverRef.CreateQueueTrackFromPlaylist(currentSlot, playlistDescriptor, cachedTrack, OfflineData)
-		playQueue.Add(queueItem)
+		Dim normalizedDescriptor As Map = CloneMap(playlistDescriptor)
+		normalizedDescriptor.Put("_slot_key", slotKey)
+		normalizedDescriptor.Put("_playlist_index", playlistIndex)
+		workingCursors.Put(slotKey, playlistIndex + 1)
 		dataResolverRef.SavePreviewPlaylistCursors(storageRef, workingCursors)
-		dataResolverRef.RememberResolvedTrack(queueItem.GetDefault("id", ""))
-		dataResolverRef.RememberResolvedTrackForPlaylist(queueItem.GetDefault("playlist_id", ""), queueItem.GetDefault("id", ""))
-		SaveQueueSnapshotState(playQueue)
-		TraceLog("первый старт cache hit playlistId=" & playlistId & " trackId=" & queueItem.GetDefault("id", ""))
-		seeded = True
+		Dim queueItem As Map = dataResolverRef.CreateQueueTrackFromPlaylist(currentSlot, normalizedDescriptor, cachedTrack, OfflineData)
+		selectedItem = queueItem
 		Exit
 	Next
-	Return seeded
+	If selectedItem.IsInitialized And selectedItem.Size > 0 Then Return selectedItem
+	Return emptyItem
 End Sub
 
-' Локальный plan signature описывает текущий data slot и набор playlist revisions.
-' Playback может использовать его, чтобы понять, совместим ли сохраненный queue plan с текущим snapshot.
-Public Sub BuildQueueSignature As String
-	If OfflineData.IsInitialized = False Then Return ""
-	Dim currentSlot As Map = dataResolverRef.ResolveDataSlotAtTicks(OfflineData, EffectiveNowTicks)
-	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return ""
-	Dim signatureParts As List
-	signatureParts.Initialize
-	signatureParts.Add("v=4")
-	signatureParts.Add("slot=" & BuildDataSlotKey(currentSlot))
-	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
-	If playlists.IsInitialized Then
-		For Each playlistObject As Object In playlists
-			If playlistObject Is Map Then
-				Dim playlist As Map = playlistObject
-				signatureParts.Add("playlist=" & playlist.GetDefault("id", "") & ":" & playlist.GetDefault("updated", ""))
-			End If
+Private Sub HasUsableDataPlaybackInstructions As Boolean
+	Dim data As Map = OfflineData
+	If data.IsInitialized = False Then Return False
+	If data.GetDefault("ok", False) <> True Then Return False
+	Dim schedules As List = data.GetDefault("schedules", Null)
+	If schedules.IsInitialized = False Or schedules.Size = 0 Then Return False
+	Return True
+End Sub
+
+Private Sub ResolveAnyCachedLocalTrackItem(currentSlot As Map) As Map
+	Dim emptyItem As Map
+	emptyItem.Initialize
+	mediaCacheRef.EnsureTrackCacheReady
+	Dim playlistStats As Map = mediaCacheRef.GetCachedTrackPlaylistStats
+	Dim fallbackSlot As Map = currentSlot
+	If fallbackSlot.IsInitialized = False Or fallbackSlot.Size = 0 Then
+		fallbackSlot = dataResolverRef.ResolveDataSlotAtTicks(OfflineData, EffectiveNowTicks)
+	End If
+	If fallbackSlot.IsInitialized = False Then fallbackSlot.Initialize
+	Dim playlistIds As List
+	playlistIds.Initialize
+	If playlistStats.IsInitialized And playlistStats.Size > 0 Then
+		For Each playlistId As String In playlistStats.Keys
+			If playlistId = "" Or playlistId = "_unknown" Then Continue
+			playlistIds.Add(playlistId)
 		Next
 	End If
-	signatureParts.Sort(True)
-	Return JoinList(signatureParts, "|")
-End Sub
-
-' Сохраняет краткий локальный plan вперед: только воспроизводимые track items из очереди и их signature.
-Public Sub SaveQueueSnapshotState(playQueue As List)
-	If playQueue.IsInitialized = False Then Return
-	Dim signature As String = BuildQueueSignature
-	If signature = "" Then Return
-	Dim snapshotTracks As List
-	snapshotTracks.Initialize
-	For Each itemObject As Object In playQueue
-		If itemObject Is Map Then
-			Dim item As Map = itemObject
-			If IsValidDataTrackItem(item) = False Then Continue
-			snapshotTracks.Add(CloneMap(item))
-			If snapshotTracks.Size >= 20 Then Exit
-		End If
-	Next
-	queueStateRef.SaveQueueSnapshot(storageRef, signature, snapshotTracks, 20)
-End Sub
-
-' Сохраняет reserve queue только из реально кэшированных треков, чтобы player мог автономно пережить stop/offline state.
-Public Sub CaptureStoppedReserveQueue(playQueue As List)
-	If playQueue.IsInitialized = False Or playQueue.Size = 0 Then Return
-	Dim currentSignature As String = BuildQueueSignature
-	If currentSignature = "" Then Return
-	Dim reserveQueue As List
-	reserveQueue.Initialize
-	For Each itemObject As Object In playQueue
-		If itemObject Is Map Then
-			Dim item As Map = itemObject
-			If IsValidDataTrackItem(item) = False Then Continue
-			If mediaCacheRef.IsTrackCached(item.GetDefault("id", "")) = False Then Continue
-			reserveQueue.Add(CloneMap(item))
-		End If
-	Next
-	queueStateRef.CaptureStoppedReserve(reserveQueue, currentSignature)
-	If queueStateRef.StoppedReserveQueue.Size = 0 Then Return
-	TraceLog("резерв очереди save tracks=" & queueStateRef.StoppedReserveQueue.Size)
-End Sub
-
-' Восстанавливает reserve queue только если текущий data plan совпадает по signature
-' и у элементов все еще есть локальные медиафайлы.
-Public Sub RestoreStoppedReserveQueue(playQueue As List) As Boolean
-	If queueStateRef.StoppedReserveQueue.IsInitialized = False Or queueStateRef.StoppedReserveQueue.Size = 0 Then Return False
-	Dim currentSignature As String = BuildQueueSignature
-	If currentSignature = "" Then Return False
-	If queueStateRef.CanRestoreStoppedReserve(currentSignature) = False Then
-		queueStateRef.ClearStoppedReserve
-		Return False
+	If playlistIds.Size = 0 Then
+		playlistIds = mediaCacheRef.GetCachedTrackPlaylistIdsOnDisk
 	End If
-	Dim restoredQueue As List
-	restoredQueue.Initialize
-	For Each itemObject As Object In queueStateRef.StoppedReserveQueue
-		If itemObject Is Map Then
-			Dim item As Map = itemObject
-			If IsValidDataTrackItem(item) = False Then Continue
-			If mediaCacheRef.IsTrackCached(item.GetDefault("id", "")) = False Then Continue
-			restoredQueue.Add(CloneMap(item))
+	Dim startIndex As Int = 0
+	If playlistIds.Size > 1 Then startIndex = Rnd(0, playlistIds.Size)
+	Dim selectedItem As Map
+	selectedItem.Initialize
+	If playlistIds.Size > 0 Then
+		For offset = 0 To playlistIds.Size - 1
+			Dim playlistId As String = playlistIds.Get((startIndex + offset) Mod playlistIds.Size)
+			Dim cachedTrack As Map = dataResolverRef.ResolveOrderedCachedTrackFromPlaylistById(playlistId, mediaCacheRef)
+			If cachedTrack.IsInitialized = False Or cachedTrack.Size = 0 Then Continue
+			Dim descriptor As Map
+			descriptor.Initialize
+			descriptor.Put("id", playlistId)
+			descriptor.Put("title", cachedTrack.GetDefault("playlist_title", ""))
+			descriptor.Put("_slot_key", BuildDataSlotKey(fallbackSlot))
+			descriptor.Put("_playlist_index", 0)
+			Dim queueItem As Map = dataResolverRef.CreateQueueTrackFromPlaylist(fallbackSlot, descriptor, cachedTrack, OfflineData)
+			selectedItem = queueItem
+			Exit
+		Next
+	End If
+	If selectedItem.IsInitialized = False Or selectedItem.Size = 0 Then
+		Dim indexedTrack As Map = mediaCacheRef.ResolveAnyCachedTrackFromIndex("", "")
+		If indexedTrack.IsInitialized And indexedTrack.Size > 0 Then
+			Dim indexedDescriptor As Map
+			indexedDescriptor.Initialize
+			indexedDescriptor.Put("id", indexedTrack.GetDefault("playlist_id", ""))
+			indexedDescriptor.Put("title", indexedTrack.GetDefault("playlist_title", ""))
+			indexedDescriptor.Put("_slot_key", BuildDataSlotKey(fallbackSlot))
+			indexedDescriptor.Put("_playlist_index", 0)
+			Dim indexedQueueItem As Map = dataResolverRef.CreateQueueTrackFromPlaylist(fallbackSlot, indexedDescriptor, indexedTrack, OfflineData)
+			selectedItem = indexedQueueItem
 		End If
-	Next
-	queueStateRef.ClearStoppedReserve
-	If playQueue.IsInitialized = False Then playQueue.Initialize
-	playQueue.Clear
-	Dim restoredCount As Int = 0
-	For Each restoredObject As Object In restoredQueue
-		playQueue.Add(restoredObject)
-		restoredCount = restoredCount + 1
-	Next
-	Return restoredCount > 0
-End Sub
-
-Public Sub ClearQueueSnapshotState
-	queueStateRef.ClearQueueSnapshot(storageRef)
-	TraceLog("снимок очереди clear")
+	End If
+	If selectedItem.IsInitialized And selectedItem.Size > 0 Then Return selectedItem
+	Return emptyItem
 End Sub
 
 Public Sub ResolveRetryDelay(mode As String, delayMs As Int, localRetryMax As Int, serverRetryMax As Int, blockedRetryDelay As Int) As Int
-	Return retryFallbackStateRef.ResolveRetryDelay(mode, delayMs, localRetryMax, serverRetryMax, blockedRetryDelay)
+	If delayMs > 0 Then Return delayMs
+	If mode = "network" Then
+		Dim delay As Int = localRetryDelay
+		localRetryDelay = Min(localRetryDelay * 2, localRetryMax)
+		Return delay
+	End If
+	If mode = "blocked" Then Return blockedRetryDelay
+	Dim delayServer As Int = serverRetryDelay
+	serverRetryDelay = Min(serverRetryDelay * 2, serverRetryMax)
+	Return delayServer
 End Sub
 
 Public Sub ClearRetryTimer
@@ -589,29 +544,46 @@ Public Sub EnableRetryTimer
 End Sub
 
 Public Sub ResetRetryDelayState(localRetryInitial As Int, serverRetryInitial As Int)
-	retryFallbackStateRef.ResetRetryDelays(localRetryInitial, serverRetryInitial)
+	localRetryDelay = localRetryInitial
+	serverRetryDelay = serverRetryInitial
+	dispatchRetryAfter = 0
+	mediaPathDegradedFlag = False
 	If GetConsecutiveNetworkErrors > 0 Then TraceInfo("network", "retry сброшен", "errors=" & GetConsecutiveNetworkErrors)
 	ResetConsecutiveNetworkErrors
 End Sub
 
 Public Sub ClearDispatchRetryAfter
-	retryFallbackStateRef.ClearDispatchRetryAfter
+	dispatchRetryAfter = 0
 End Sub
 
 Public Sub SetDispatchRetryAfter(value As Int)
-	retryFallbackStateRef.SetDispatchRetryAfter(value)
+	dispatchRetryAfter = Max(0, value)
 End Sub
 
 Public Sub ConsumeDispatchRetryAfter As Int
-	Return retryFallbackStateRef.ConsumeDispatchRetryAfter
+	Dim value As Int = dispatchRetryAfter
+	dispatchRetryAfter = 0
+	Return value
 End Sub
 
 Public Sub SetMediaPathDegraded(value As Boolean)
-	retryFallbackStateRef.SetMediaPathDegraded(value)
+	mediaPathDegradedFlag = value
 End Sub
 
 Public Sub IsMediaPathDegraded As Boolean
-	Return retryFallbackStateRef.IsMediaPathDegraded
+	Return mediaPathDegradedFlag
+End Sub
+
+Public Sub UpdateMediaPathDegradedFromCacheSync(downloaded As Boolean, networkFailure As Boolean) As String
+	Dim previous As Boolean = mediaPathDegradedFlag
+	If downloaded Then
+		mediaPathDegradedFlag = False
+	Else If networkFailure Then
+		mediaPathDegradedFlag = True
+	End If
+	If previous = False And mediaPathDegradedFlag Then Return "entered"
+	If previous = True And mediaPathDegradedFlag = False Then Return "recovered"
+	Return ""
 End Sub
 
 Public Sub ResolveDataSlotAtTicks(data As Map, targetTicks As Long) As Map
@@ -634,11 +606,12 @@ Public Sub IsTrackCached(trackId As String) As Boolean
 	Return mediaCacheRef.IsTrackCached(trackId)
 End Sub
 
-Private Sub IsValidDataTrackItem(item As Map) As Boolean
-	If item.IsInitialized = False Or item.Size = 0 Then Return False
-	If item.GetDefault("type", "") <> "track" Then Return False
-	If item.GetDefault("id", "") = "" Then Return False
-	Return True
+Public Sub HasAnyCachedTrack As Boolean
+	mediaCacheRef.EnsureTrackCacheReady
+	If mediaCacheRef.GetCachedTrackCount > 0 Then Return True
+	Dim playlistStats As Map = mediaCacheRef.GetCachedTrackPlaylistStats
+	If playlistStats.IsInitialized And playlistStats.Size > 0 Then Return True
+	Return mediaCacheRef.HasAnyTrackFilesOnDisk
 End Sub
 
 Private Sub BuildDataSlotKey(currentSlot As Map) As String
@@ -653,14 +626,4 @@ Private Sub CloneMap(sourceMap As Map) As Map
 		clonedMap.Put(key, sourceMap.Get(key))
 	Next
 	Return clonedMap
-End Sub
-
-Private Sub JoinList(items As List, separator As String) As String
-	Dim sb As StringBuilder
-	sb.Initialize
-	For i = 0 To items.Size - 1
-		If i > 0 Then sb.Append(separator)
-		sb.Append(items.Get(i))
-	Next
-	Return sb.ToString
 End Sub

@@ -37,9 +37,9 @@ Public Sub SubmitClaim(timeoutMs As Int) As ResumableSub
 	Return result
 End Sub
 
-' Классифицирует HTTP failures в offline/server для retry и temporary state.
+' Классифицирует HTTP failures в network/server для retry и temporary state.
 Public Sub ClassifyHttpFailure(errorMessage As String) As String
-	If IsOfflineHttpError(errorMessage) Then Return "offline"
+	If IsNetworkHttpError(errorMessage) Then Return "network"
 	Return "server"
 End Sub
 
@@ -159,7 +159,7 @@ Public Sub BuildParams(params As Map) As String
 	Return sb.ToString
 End Sub
 
-Private Sub IsOfflineHttpError(errorMessage As String) As Boolean
+Private Sub IsNetworkHttpError(errorMessage As String) As Boolean
 	Dim messageLower As String = errorMessage.ToLowerCase
 	Return messageLower.Contains("timed out") Or messageLower.Contains("timeout") Or messageLower.Contains("unknownhost") Or messageLower.Contains("unreachable") Or messageLower.Contains("refused") Or messageLower.Contains("reset") Or messageLower.Contains("failed to connect") Or messageLower.Contains("no route")
 End Sub

@@ -87,17 +87,13 @@ Public Sub PrepareNextPlayable(playQueue As List, runtimeState As PlaybackRuntim
 			Continue
 		End If
 		If candidateType = "track" And mediaCacheService.IsTrackCached(candidateItem.GetDefault("id", "")) = False Then
-			Trace("переход очередь drop reason=no_local_track item=" & DescribeItem(candidateItem))
-			playQueue.RemoveAt(scanIndex)
-			targetPage.Transition_SaveQueueSnapshotState
-			candidateIndex = -1
+			Trace("prefetch skip reason=no_local_track item=" & DescribeItem(candidateItem))
+			candidateIndex = scanIndex
 			Continue
 		End If
 		If candidateType = "ad" And mediaCacheService.IsAdCached(candidateItem.GetDefault("id", "")) = False Then
-			Trace("переход очередь drop reason=no_local_ad item=" & DescribeItem(candidateItem))
-			playQueue.RemoveAt(scanIndex)
-			targetPage.Transition_SaveQueueSnapshotState
-			candidateIndex = -1
+			Trace("prefetch skip reason=no_local_ad item=" & DescribeItem(candidateItem))
+			candidateIndex = scanIndex
 			Continue
 		End If
 		candidateIndex = scanIndex
@@ -171,6 +167,74 @@ Public Sub PrepareNextPlayable(playQueue As List, runtimeState As PlaybackRuntim
 	Return result.GetDefault("Success", False)
 End Sub
 
+Public Sub PrepareSpecificPlayable(nextItem As Map, runtimeState As PlaybackRuntimeState, metaState As PlaybackMetaState, orchestrationState As PlaybackOrchestrationState, playbackFlowState As String, flowPlaying As String, flowIdle As String, flowPreparing As String) As ResumableSub
+	If nextItem.IsInitialized = False Or nextItem.Size = 0 Then Return False
+	Dim existingPreparedItem As Map = targetPage.Transition_GetDirectorPreparedItem
+	Dim existingPreparedAudioKey As String = targetPage.Transition_GetDirectorPreparedAudioKey
+	If existingPreparedItem.IsInitialized And existingPreparedAudioKey <> "" Then
+		Dim matchArgs As Map
+		matchArgs.Initialize
+		matchArgs.Put("first", existingPreparedItem)
+		matchArgs.Put("second", nextItem)
+		If targetPage.Transition_ItemsMatch(matchArgs) Then
+			Trace("prefetch reuse prepared item=" & DescribeItem(nextItem))
+			Return True
+		End If
+	End If
+	Dim targetAudioKey As String = GetInactiveAudioKey(runtimeState)
+	targetPage.Transition_ClearPreparedState(False)
+	Dim pendingPrepareArgs As Map
+	pendingPrepareArgs.Initialize
+	pendingPrepareArgs.Put("audioKey", targetAudioKey)
+	pendingPrepareArgs.Put("item", nextItem)
+	targetPage.Transition_SetDirectorPendingPrepare(pendingPrepareArgs)
+	Dim previousFlowState As String = playbackFlowState
+	If playbackFlowState = flowPlaying Or playbackFlowState = flowIdle Then
+		Dim flowArgs As Map
+		flowArgs.Initialize
+		flowArgs.Put("state", flowPreparing)
+		flowArgs.Put("reason", "prepare_direct:" & nextItem.GetDefault("type", ""))
+		targetPage.Transition_SetPlaybackFlowState(flowArgs)
+	End If
+	Dim mediaArgs As Map
+	mediaArgs.Initialize
+	mediaArgs.Put("audioKey", targetAudioKey)
+	mediaArgs.Put("item", nextItem)
+	Dim nextItemUrl As String = targetPage.Transition_ResolvePlaybackMediaUrl(mediaArgs)
+	If nextItemUrl = "" Then
+		Trace("переход preload ошибка audio=" & targetAudioKey & " message=empty_media_url")
+		Return False
+	End If
+	Trace("prefetch load audio=" & targetAudioKey & " item=" & DescribeItem(nextItem))
+	Dim volume As Double = targetPage.Transition_CurrentVolume(nextItem)
+	Dim targetAudio As AudioPlayer = targetPage.Transition_GetAudioByKey(targetAudioKey)
+	targetAudio.LoadUrl(nextItemUrl, volume)
+	Dim waitArgs As Map
+	waitArgs.Initialize
+	waitArgs.Put("audioKey", targetAudioKey)
+	waitArgs.Put("item", nextItem)
+	waitArgs.Put("timeoutMs", 5000)
+	Wait For (targetPage.Transition_WaitForPreparedAudio(waitArgs)) Complete (result As Map)
+	If targetPage.Transition_GetPlaybackFlowState = flowPreparing Then
+		If result.GetDefault("Success", False) Then
+			Dim readyArgs As Map
+			readyArgs.Initialize
+			readyArgs.Put("state", previousFlowState)
+			readyArgs.Put("reason", "prepare_ready")
+			targetPage.Transition_SetPlaybackFlowState(readyArgs)
+			Trace("prefetch prepared audio=" & targetAudioKey & " item=" & DescribeItem(nextItem))
+		Else
+			Dim failedArgs As Map
+			failedArgs.Initialize
+			failedArgs.Put("state", "error")
+			failedArgs.Put("reason", "prepare_failed")
+			targetPage.Transition_SetPlaybackFlowState(failedArgs)
+			Trace("переход preload ошибка audio=" & targetAudioKey)
+		End If
+	End If
+	Return result.GetDefault("Success", False)
+End Sub
+
 ' Поднимает prepared slot в active playback и выполняет сопутствующую очистку/фиксацию курсора.
 Public Sub PromotePreparedPlayer(runtimeState As PlaybackRuntimeState, dataResolver As DataPlaybackResolver, storage As KeyValueStore, fadeInMs As Int, fadeOutMs As Int, flowTransitioning As String) As Boolean
 	Dim preparedAudioKey As String = targetPage.Transition_GetDirectorPreparedAudioKey
@@ -193,7 +257,6 @@ Public Sub PromotePreparedPlayer(runtimeState As PlaybackRuntimeState, dataResol
 		previousAudio.Stop(fadeOutMs)
 	End If
 	dataResolver.CommitPlaylistCursor(storage, promotedItem)
-	targetPage.Transition_SaveQueueSnapshotState
 	Dim activateArgs As Map
 	activateArgs.Initialize
 	activateArgs.Put("audioKey", nextAudioKey)

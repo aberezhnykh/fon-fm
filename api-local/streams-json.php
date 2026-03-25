@@ -19,7 +19,8 @@ $joinFields = ['playlists_id.id', 'playlists_id.status'];
 
 // Проверяем не служебное поле, а факт: есть ли у playlist хотя бы один active track
 // внутри active set. Тогда поток не зависит от заполненности size/count в Directus.
-function stream_playlist_has_runtime_tracks(array $ENV, string $playlistId): bool {
+// null = не удалось проверить, и удалять/портить runtime JSON в таком случае нельзя.
+function stream_playlist_has_runtime_tracks(array $ENV, string $playlistId): ?bool {
     $query = [
         'filter[set][playlist][_eq]' => $playlistId,
         'filter[set][status][_eq]' => 'active',
@@ -41,7 +42,7 @@ function stream_playlist_has_runtime_tracks(array $ENV, string $playlistId): boo
         $res = directus_get($ENV, '/items/tracks', $query);
     }
 
-    if (!$res['ok']) return false;
+    if (!$res['ok']) return null;
 
     $rows = $res['data']['data'] ?? [];
     return is_array($rows) && $rows !== [];
@@ -102,6 +103,7 @@ foreach ($ids as $id) {
     $playlists = [];
     $rows = $resJ['data']['data'] ?? [];
 
+    $playlistCheckFailed = false;
     if (is_array($rows)) {
         foreach ($rows as $row) {
             $pl = $row['playlists_id'] ?? null;
@@ -110,10 +112,20 @@ foreach ($ids as $id) {
             if ($plId === '') continue;
 
             // В поток включаем только те плейлисты, у которых реально есть runtime-содержимое.
-            if (!stream_playlist_has_runtime_tracks($ENV, $plId)) continue;
+            $hasTracks = stream_playlist_has_runtime_tracks($ENV, $plId);
+            if ($hasTracks === null) {
+                $playlistCheckFailed = true;
+                break;
+            }
+            if ($hasTracks !== true) continue;
 
             $playlists[] = $plId;
         }
+    }
+
+    if ($playlistCheckFailed) {
+        $errs[] = ['id' => $id, 'error' => 'playlist_runtime_check_failed'];
+        continue;
     }
 
     // Если у потока не осталось валидных плейлистов, его JSON удаляем.

@@ -13,9 +13,7 @@ Sub Class_Globals
 	Private targetModule As Object
 	Private traceSubName As String
 	Private playlistCursors As Map
-	Private recentTrackIds As List
 	Private storageRef As KeyValueStore
-	Private lastTrackByPlaylist As Map
 End Sub
 
 Public Sub Initialize(storageDirValue As String, targetModuleValue As Object, traceSubNameValue As String)
@@ -23,8 +21,6 @@ Public Sub Initialize(storageDirValue As String, targetModuleValue As Object, tr
 	targetModule = targetModuleValue
 	traceSubName = traceSubNameValue
 	playlistCursors.Initialize
-	recentTrackIds.Initialize
-	lastTrackByPlaylist.Initialize
 End Sub
 
 ' Загружает persisted cursors и историю недавних треков для более устойчивого выбора следующего контента.
@@ -32,10 +28,6 @@ Public Sub LoadState(storage As KeyValueStore)
 	storageRef = storage
 	playlistCursors = storage.GetDefault("data_slot_playlist_cursors", CreateInitializedMap)
 	If playlistCursors.IsInitialized = False Then playlistCursors.Initialize
-	recentTrackIds = storage.GetDefault("data_recent_track_ids", CreateInitializedList)
-	If recentTrackIds.IsInitialized = False Then recentTrackIds.Initialize
-	lastTrackByPlaylist = storage.GetDefault("data_last_track_by_playlist", CreateInitializedMap)
-	If lastTrackByPlaylist.IsInitialized = False Then lastTrackByPlaylist.Initialize
 End Sub
 
 Public Sub CursorCount As Int
@@ -207,57 +199,215 @@ Public Sub LoadCachedPlaylistMetadata(playlistId As String) As Map
 	Return playlistData
 End Sub
 
-' Выбирает track из playlist metadata, стараясь избегать недавних и только что сыгранных треков.
-Public Sub ChooseRandomTrackFromPlaylist(playlistData As Map, mediaCacheService As MediaCache, cachedOnly As Boolean) As Map
+' Возвращает следующий локально доступный track из cached playback order плейлиста.
+' Порядок собирается один раз, сохраняется в storage и дальше обходится сверху вниз с wrap-around.
+Public Sub ResolveOrderedCachedTrackFromPlaylistById(playlistId As String, mediaCacheService As MediaCache) As Map
 	Dim emptyTrack As Map
 	emptyTrack.Initialize
-	If playlistData.IsInitialized = False Then Return emptyTrack
-	Dim playlistId As String = playlistData.GetDefault("id", "")
-	Dim lastTrackId As String = ""
-	If playlistId <> "" Then lastTrackId = lastTrackByPlaylist.GetDefault(playlistId, "")
-	Dim tracks As List = playlistData.GetDefault("tracks", Null)
-	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return emptyTrack
-	Dim cachedTracks As List
-	cachedTracks.Initialize
-	Dim filteredCachedTracks As List
-	filteredCachedTracks.Initialize
-	Dim nonRepeatedCachedTracks As List
-	nonRepeatedCachedTracks.Initialize
-	Dim filteredTracks As List
-	filteredTracks.Initialize
-	Dim nonRepeatedTracks As List
-	nonRepeatedTracks.Initialize
-	For Each trackObject As Object In tracks
-		If trackObject Is Map Then
-			Dim track As Map = trackObject
-			Dim trackId As String = track.GetDefault("id", "")
-			If trackId = "" Then Continue
-			Dim trackIsCached As Boolean = mediaCacheService.IsTrackCached(trackId)
-			If cachedOnly And trackIsCached = False Then Continue
-			If trackIsCached Then
-				cachedTracks.Add(track)
-				If recentTrackIds.IndexOf(trackId) = -1 Then filteredCachedTracks.Add(track)
-				If trackId <> lastTrackId Then nonRepeatedCachedTracks.Add(track)
-			End If
-			If recentTrackIds.IndexOf(trackId) = -1 Then filteredTracks.Add(track)
-			If trackId <> lastTrackId Then nonRepeatedTracks.Add(track)
+	If storageRef.IsInitialized = False Then Return emptyTrack
+	If playlistId = "" Then Return emptyTrack
+	Dim manifest As Map = LoadOrBuildPlaylistPlaybackManifestById(playlistId)
+	If manifest.IsInitialized = False Or manifest.Size = 0 Then Return emptyTrack
+	Dim playlistTitle As String = manifest.GetDefault("title", "")
+	Dim order As List = manifest.GetDefault("order", Null)
+	If order.IsInitialized = False Or order.Size = 0 Then Return emptyTrack
+	Dim trackMap As Map = manifest.GetDefault("tracks", Null)
+	If trackMap.IsInitialized = False Or trackMap.Size = 0 Then Return emptyTrack
+	Dim cursorKey As String = PlaylistPlaybackCursorKey(playlistId)
+	Dim storedCursor As Int = storageRef.GetDefault(cursorKey, -1)
+	Dim trackIndexKey As String = PlaylistTrackIndexKey(playlistId)
+	Dim storedTrackIndexValue As Int = storageRef.GetDefault(trackIndexKey, -1)
+	If storedCursor < 0 Then
+		If storedTrackIndexValue >= 0 Then storedCursor = storedTrackIndexValue + 1
+	End If
+	Dim storedTrackIndex As Int = storedCursor - 1
+	If storedTrackIndex >= order.Size Then storedTrackIndex = storedTrackIndex Mod order.Size
+	Trace("playlist resolve start playlistId=" & playlistId & " orderSize=" & order.Size & " storedCursor=" & storedCursor & " storedTrackIndexKey=" & storedTrackIndexValue & " effectiveStoredTrackIndex=" & storedTrackIndex)
+	Dim selectedTrack As Map
+	selectedTrack.Initialize
+	Dim startIndex As Int = storedTrackIndex + 1
+	If startIndex < 0 Then startIndex = 0
+	If startIndex >= order.Size Then startIndex = startIndex Mod order.Size
+	For offset = 0 To order.Size - 1
+		Dim orderIndex As Int = (startIndex + offset) Mod order.Size
+		Dim trackId As String = order.Get(orderIndex)
+		If trackId = "" Then Continue
+		If storedTrackIndex >= 0 And order.Size > 1 And orderIndex = storedTrackIndex Then
+			Trace("playlist resolve skip_current playlistId=" & playlistId & " orderIndex=" & orderIndex & " trackId=" & trackId)
+			Continue
+		End If
+		Dim trackObject As Object = trackMap.GetDefault(trackId, Null)
+		If (trackObject Is Map) = False Then Continue
+		Dim track As Map = trackObject
+		If mediaCacheService.HasValidatedLocalMedia(track) Then
+			storageRef.Put(trackIndexKey, orderIndex)
+			storageRef.Put(cursorKey, orderIndex + 1)
+			selectedTrack = CloneMap(track)
+			selectedTrack.Put("playlist_track_index", orderIndex)
+			selectedTrack.Put("playlist_cursor", orderIndex + 1)
+			selectedTrack.Put("playlist_title", playlistTitle)
+			Trace("playlist resolve selected playlistId=" & playlistId & " orderIndex=" & orderIndex & " nextCursor=" & (orderIndex + 1) & " trackId=" & trackId)
+			Exit
+		Else
+'			Trace("playlist resolve skip_uncached playlistId=" & playlistId & " orderIndex=" & orderIndex & " trackId=" & trackId)
 		End If
 	Next
-	Dim sourceTracks As List
-	If cachedOnly Then
-		sourceTracks = cachedTracks
-		If filteredCachedTracks.Size > 0 Then sourceTracks = filteredCachedTracks
-		If sourceTracks.Size > 1 And nonRepeatedCachedTracks.Size > 0 Then sourceTracks = nonRepeatedCachedTracks
-	Else
-		sourceTracks = tracks
-		If filteredTracks.Size > 0 Then sourceTracks = filteredTracks
-		If sourceTracks.Size > 1 And nonRepeatedTracks.Size > 0 Then sourceTracks = nonRepeatedTracks
+	If selectedTrack.IsInitialized = False Or selectedTrack.Size = 0 Then
+		Trace("playlist resolve empty playlistId=" & playlistId & " orderSize=" & order.Size)
 	End If
-	If sourceTracks.IsInitialized = False Or sourceTracks.Size = 0 Then Return emptyTrack
-	Dim randomIndex As Int = Rnd(0, sourceTracks.Size)
-	Dim trackObject As Object = sourceTracks.Get(randomIndex)
-	If trackObject Is Map Then Return trackObject
+	If selectedTrack.IsInitialized And selectedTrack.Size > 0 Then Return selectedTrack
 	Return emptyTrack
+End Sub
+
+Private Sub LoadOrBuildPlaylistPlaybackManifestById(playlistId As String) As Map
+	Dim manifest As Map
+	manifest.Initialize
+	If playlistId = "" Then Return manifest
+	Dim storedManifest As Map = storageRef.GetDefault(PlaylistPlaybackManifestKey(playlistId), Null)
+	If storedManifest.IsInitialized Then
+		Dim storedOrder As List = storedManifest.GetDefault("order", Null)
+		Dim storedTracks As Map = storedManifest.GetDefault("tracks", Null)
+		If storedOrder.IsInitialized And storedOrder.Size > 0 And storedTracks.IsInitialized And storedTracks.Size > 0 Then
+			Return storedManifest
+		End If
+	End If
+	Dim sourcePlaylistData As Map = LoadCachedPlaylistMetadata(playlistId)
+	If sourcePlaylistData.IsInitialized = False Or sourcePlaylistData.Size = 0 Then Return manifest
+	manifest = BuildPlaylistPlaybackManifest(sourcePlaylistData)
+	If manifest.IsInitialized And manifest.Size > 0 Then
+		storageRef.Put(PlaylistPlaybackManifestKey(playlistId), manifest)
+	End If
+	Return manifest
+End Sub
+
+Private Sub BuildPlaylistPlaybackManifest(playlistData As Map) As Map
+	Dim manifest As Map
+	manifest.Initialize
+	If playlistData.IsInitialized = False Then Return manifest
+	Dim playlistId As String = playlistData.GetDefault("id", "")
+	If playlistId = "" Then Return manifest
+	Dim tracks As List = playlistData.GetDefault("tracks", Null)
+	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return manifest
+	Dim trackEntries As Map
+	trackEntries.Initialize
+	Dim order As List
+	order.Initialize
+	For Each trackObject As Object In tracks
+		If (trackObject Is Map) = False Then Continue
+		Dim track As Map = trackObject
+		Dim trackId As String = track.GetDefault("id", "")
+		If trackId = "" Then Continue
+		If trackEntries.ContainsKey(trackId) Then Continue
+		Dim entry As Map
+		entry.Initialize
+		entry.Put("type", "track")
+		entry.Put("id", trackId)
+		entry.Put("code", track.GetDefault("code", ""))
+		entry.Put("set", track.GetDefault("set", ""))
+		entry.Put("duration", track.GetDefault("duration", 0))
+		entry.Put("gain", track.GetDefault("gain", -3))
+		entry.Put("title", track.GetDefault("title", ""))
+		entry.Put("playlist_id", playlistId)
+		trackEntries.Put(trackId, entry)
+		order.Add(trackId)
+	Next
+	If order.Size = 0 Then Return manifest
+	ShuffleListInPlace(order)
+	manifest.Put("version", PlaylistPlaybackManifestVersion(playlistData))
+	manifest.Put("playlist_id", playlistId)
+	manifest.Put("title", playlistData.GetDefault("title", ""))
+	manifest.Put("updated", playlistData.GetDefault("updated", ""))
+	manifest.Put("track_count", order.Size)
+	manifest.Put("order", order)
+	manifest.Put("tracks", trackEntries)
+	Return manifest
+End Sub
+
+Private Sub PlaylistPlaybackManifestVersion(playlistData As Map) As String
+	Dim updatedValue As String = playlistData.GetDefault("updated", "")
+	Dim tracks As List = playlistData.GetDefault("tracks", Null)
+	Dim trackCount As Int = 0
+	If tracks.IsInitialized Then trackCount = tracks.Size
+	Return updatedValue & "|" & trackCount
+End Sub
+
+Private Sub PlaylistPlaybackManifestKey(playlistId As String) As String
+	Return "playlist_playback_manifest_" & playlistId
+End Sub
+
+Private Sub PlaylistPlaybackCursorKey(playlistId As String) As String
+	Return "playlist_playback_cursor_" & playlistId
+End Sub
+
+Private Sub PlaylistTrackIndexKey(playlistId As String) As String
+	Return "playlist_track_index_" & playlistId
+End Sub
+
+Private Sub ShuffleListInPlace(items As List)
+	If items.IsInitialized = False Or items.Size < 2 Then Return
+	For i = items.Size - 1 To 1 Step -1
+		Dim j As Int = Rnd(0, i + 1)
+		If j = i Then Continue
+		Dim temp As Object = items.Get(i)
+		items.Set(i, items.Get(j))
+		items.Set(j, temp)
+	Next
+End Sub
+
+Public Sub ChooseCachedTrackFromSlot(currentSlot As Map, preferredPlaylistId As String, mediaCacheService As MediaCache) As Map
+	Dim emptyResult As Map
+	emptyResult.Initialize
+	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return emptyResult
+	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
+	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return emptyResult
+	Dim preferredDescriptor As Map
+	preferredDescriptor.Initialize
+	Dim fallbackDescriptors As List
+	fallbackDescriptors.Initialize
+	For Each playlistObject As Object In playlists
+		If (playlistObject Is Map) = False Then Continue
+		Dim playlistDescriptor As Map = playlistObject
+		Dim playlistId As String = playlistDescriptor.GetDefault("id", "")
+		If playlistId = "" Then Continue
+		If playlistId = preferredPlaylistId Then
+			preferredDescriptor = CloneMap(playlistDescriptor)
+		Else
+			fallbackDescriptors.Add(CloneMap(playlistDescriptor))
+		End If
+	Next
+	Dim orderedDescriptors As List
+	orderedDescriptors.Initialize
+	If preferredDescriptor.IsInitialized And preferredDescriptor.Size > 0 Then orderedDescriptors.Add(preferredDescriptor)
+	For Each descriptorObject As Object In fallbackDescriptors
+		orderedDescriptors.Add(descriptorObject)
+	Next
+	Dim selectedResult As Map
+	selectedResult.Initialize
+	For Each descriptorObject As Object In orderedDescriptors
+		If (descriptorObject Is Map) = False Then Continue
+		Dim descriptor As Map = descriptorObject
+		Dim playlistId As String = descriptor.GetDefault("id", "")
+		If playlistId = "" Then Continue
+		Dim cachedTrack As Map = ResolveOrderedCachedTrackFromPlaylistById(playlistId, mediaCacheService)
+		If cachedTrack.IsInitialized = False Or cachedTrack.Size = 0 Then Continue
+		selectedResult = BuildSlotFallbackResult(descriptor, cachedTrack, playlistId = preferredPlaylistId)
+		Exit
+	Next
+	If selectedResult.IsInitialized And selectedResult.Size > 0 Then Return selectedResult
+	Return emptyResult
+End Sub
+
+Private Sub BuildSlotFallbackResult(descriptor As Map, cachedTrack As Map, isPreferredPlaylist As Boolean) As Map
+	Dim result As Map
+	result.Initialize
+	result.Put("playlist", descriptor)
+	result.Put("track", cachedTrack)
+	If isPreferredPlaylist Then
+		result.Put("source", "fallback_same_playlist")
+	Else
+		result.Put("source", "fallback_other_playlist")
+	End If
+	Return result
 End Sub
 
 ' Собирает queue item из slot/playlist/track так, чтобы дальше orchestration уже работал с нормализованной playback queue.
@@ -275,6 +425,8 @@ Public Sub CreateQueueTrackFromPlaylist(currentSlot As Map, playlistDescriptor A
 	item.Put("playlist_title", playlistDescriptor.GetDefault("title", ""))
 	item.Put("slot_key", playlistDescriptor.GetDefault("_slot_key", BuildDataSlotKey(currentSlot)))
 	item.Put("playlist_index", playlistDescriptor.GetDefault("_playlist_index", 0))
+	item.Put("playlist_track_index", track.GetDefault("playlist_track_index", -1))
+	item.Put("playlist_cursor", track.GetDefault("playlist_cursor", -1))
 	item.Put("schedule_title", currentSlot.GetDefault("schedule_title", ""))
 	item.Put("slot_time", currentSlot.GetDefault("slot_time", ""))
 	Return item
@@ -284,31 +436,26 @@ Public Sub CommitPlaylistCursor(storage As KeyValueStore, item As Map)
 	If item.IsInitialized = False Then Return
 	If item.GetDefault("type", "") <> "track" Then Return
 	Dim slotKey As String = item.GetDefault("slot_key", "")
+	Dim playlistId As String = item.GetDefault("playlist_id", "")
+	Dim playlistTrackIndex As Int = item.GetDefault("playlist_track_index", -1)
+	If playlistId <> "" And playlistTrackIndex >= 0 Then
+		Dim storedCursor As Int = item.GetDefault("playlist_cursor", playlistTrackIndex + 1)
+		storage.Put(PlaylistTrackIndexKey(playlistId), playlistTrackIndex)
+		storage.Put(PlaylistPlaybackCursorKey(playlistId), storedCursor)
+		Trace("playlist commit track playlistId=" & playlistId & " trackIndex=" & playlistTrackIndex & " cursor=" & storedCursor & " trackId=" & item.GetDefault("id", ""))
+	End If
 	If slotKey = "" Then Return
-	Dim nextStored As Int = item.GetDefault("playlist_index", 0) + 1
-	playlistCursors.Put(slotKey, nextStored)
+	Dim playlistIndex As Int = item.GetDefault("playlist_index", -1)
+	If playlistIndex < 0 Then Return
+	playlistCursors.Put(slotKey, playlistIndex + 1)
 	storage.Put("data_slot_playlist_cursors", playlistCursors)
+	Trace("playlist commit slot slotKey=" & slotKey & " playlistIndex=" & playlistIndex & " nextPlaylistCursor=" & (playlistIndex + 1))
 End Sub
 
 Public Sub SavePreviewPlaylistCursors(storage As KeyValueStore, workingCursors As Map)
 	If workingCursors.IsInitialized = False Or workingCursors.Size = 0 Then Return
 	playlistCursors = CloneMap(workingCursors)
 	storage.Put("data_slot_playlist_cursors", playlistCursors)
-End Sub
-
-Public Sub RememberResolvedTrack(trackId As String)
-	If trackId = "" Then Return
-	recentTrackIds.Add(trackId)
-	Do While recentTrackIds.Size > 20
-		recentTrackIds.RemoveAt(0)
-	Loop
-	If storageRef.IsInitialized Then storageRef.Put("data_recent_track_ids", recentTrackIds)
-End Sub
-
-Public Sub RememberResolvedTrackForPlaylist(playlistId As String, trackId As String)
-	If playlistId = "" Or trackId = "" Then Return
-	lastTrackByPlaylist.Put(playlistId, trackId)
-	If storageRef.IsInitialized Then storageRef.Put("data_last_track_by_playlist", lastTrackByPlaylist)
 End Sub
 
 Private Sub ResolvePlaybackStreamTitle(currentSlot As Map, playlistDescriptor As Map, offlineData As Map) As String
@@ -473,4 +620,8 @@ Private Sub Trace(message As String)
 	If SubExists(targetModule, traceSubName) Then
 		CallSub2(targetModule, traceSubName, message)
 	End If
+End Sub
+
+Public Sub GetPlaylistPlaybackManifestById(playlistId As String) As Map
+	Return LoadOrBuildPlaylistPlaybackManifestById(playlistId)
 End Sub

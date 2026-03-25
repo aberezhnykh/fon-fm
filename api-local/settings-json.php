@@ -28,8 +28,10 @@ if (!$res['ok']) {
 
 $item = $res['data']['data'] ?? null;
 if (!is_array($item)) {
-    delete_file($outDir, $fileName);
-    json_out(['ok' => true, 'deleted' => true]);
+    json_out([
+        'ok' => false,
+        'error' => 'bad_settings_data',
+    ], 500);
 }
 
 $json = clean_array($item);

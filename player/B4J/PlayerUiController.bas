@@ -147,6 +147,9 @@ Public Sub UpdateConnectionIndicator(mode As String)
 		Case "offline", "server"
 			iconText = iconCloudOff
 			iconColor = 0xFFFF6B6B
+		Case "local"
+			iconText = iconCloudDegraded
+			iconColor = 0xFFFFD166
 		Case "degraded"
 			iconText = iconCloudDegraded
 			iconColor = 0xFFFFD166

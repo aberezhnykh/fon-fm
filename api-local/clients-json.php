@@ -74,6 +74,7 @@ $map = [
 ];
 $fields = array_keys($map);
 $adsFields = [
+    'sort',
     'id',
     'title',
     'start',
@@ -89,6 +90,7 @@ $adsFields = [
 ];
 
 $adsMap = [
+    'sort' => 'sort',
     'id' => 'id',
     'title' => 'title',
     'start' => 'start',
@@ -177,7 +179,7 @@ foreach ($ids as $id) {
     $resAds = directus_get($ENV, '/items/ads', [
         'filter[client][_eq]' => $id,
         'filter[status][_eq]' => 'active',
-        'sort' => 'sort,id',
+        'sort' => 'sort,time,id',
         'fields' => implode(',', $adsFields),
         'limit' => '1000',
     ]);

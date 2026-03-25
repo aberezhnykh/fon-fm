@@ -6,7 +6,11 @@ Version=10.5
 @EndOfDesignText@
 
 ' Локальный планировщик рекламных break-элементов.
-' Сканирует offline ads на целевую минуту и при необходимости вставляет exact break в начало очереди.
+' Сканирует offline ads на целевую минуту и вставляет break в очередь.
+' Важно:
+' - exactly=true означает жёсткий дедлайн по минуте и право playback-core прервать текущий трек.
+' - exactly=false означает обычный break "после трека": его можно подготовить заранее,
+'   но он не должен превращаться в exact timer trigger.
 
 Sub Class_Globals
 	Private targetModule As Object
@@ -29,6 +33,7 @@ Public Sub Reset
 End Sub
 
 ' Проверяет target minute и, если для неё положен local break, вставляет break в начало очереди ровно один раз.
+' Для regular ads break может быть добавлен заранее, но без exact-режима.
 Public Sub ScanTargetMinute(offlineData As Map, playQueue As List, targetMinuteTimestamp As Long, force As Boolean, allowRegularAds As Boolean) As Boolean
 	If offlineData.IsInitialized = False Then Return False
 	If offlineData.GetDefault("ok", False) <> True Then Return False
@@ -47,11 +52,12 @@ Public Sub ScanTargetMinute(offlineData As Map, playQueue As List, targetMinuteT
 	If lastInjectedMinuteKey = minuteKey Then Return False
 	playQueue.InsertAt(0, breakItem)
 	lastInjectedMinuteKey = minuteKey
-	Trace("Локальный break добавлен в начало очереди. minute=" & minuteKey & ", items=" & breakItem.GetDefault("items_count", 0) & ", queueSize=" & playQueue.Size)
+	Trace("Локальный break добавлен в начало очереди. minute=" & minuteKey & ", exact=" & breakItem.GetDefault("exactly", False) & ", items=" & breakItem.GetDefault("items_count", 0) & ", queueSize=" & playQueue.Size)
 	Return True
 End Sub
 
 ' Собирает break item со списком ad queue items, которые должны стартовать в указанную минуту.
+' Break становится exact только если в нём есть хотя бы один exact ad.
 Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Long, allowRegularAds As Boolean) As Map
 	Dim emptyBreak As Map
 	emptyBreak.Initialize
@@ -63,10 +69,12 @@ Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Lon
 	Dim currentMinuteOfDay As Int = MinutesOfDayFromTimestamp(targetTicks)
 	Dim dueItems As List
 	dueItems.Initialize
+	Dim hasExactAds As Boolean = False
 	For Each adObject As Object In ads
 		If adObject Is Map Then
 			Dim ad As Map = adObject
 			If AdMatchesCurrentMinute(ad, todayKey, todayWeekday, currentMinuteOfDay, allowRegularAds) Then
+				If ad.GetDefault("exactly", False) = True Then hasExactAds = True
 				dueItems.Add(CreateAdQueueItem(ad))
 			End If
 		End If
@@ -75,7 +83,7 @@ Private Sub BuildBreakForMinute(offlineData As Map, targetMinuteTimestamp As Lon
 	Dim breakItem As Map
 	breakItem.Initialize
 	breakItem.Put("type", "break")
-	breakItem.Put("exactly", True)
+	breakItem.Put("exactly", hasExactAds)
 	breakItem.Put("at", targetMinuteTimestamp)
 	breakItem.Put("items", dueItems)
 	breakItem.Put("items_count", dueItems.Size)

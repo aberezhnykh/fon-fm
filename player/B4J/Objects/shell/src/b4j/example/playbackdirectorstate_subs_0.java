@@ -8,7 +8,7 @@ public class playbackdirectorstate_subs_0 {
 
 public static RemoteObject  _applylegacyruntime(RemoteObject __ref,RemoteObject _runtimestate) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyLegacyRuntime (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,35);
+		Debug.PushSubsStack("ApplyLegacyRuntime (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,35);
 if (RapidSub.canDelegate("applylegacyruntime")) { return __ref.runUserSub(false, "playbackdirectorstate","applylegacyruntime", __ref, _runtimestate);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 RemoteObject _activeslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
@@ -117,7 +117,7 @@ finally {
 		}}
 public static RemoteObject  _begindecision(RemoteObject __ref,RemoteObject _decisionname) throws Exception{
 try {
-		Debug.PushSubsStack("BeginDecision (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,193);
+		Debug.PushSubsStack("BeginDecision (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,193);
 if (RapidSub.canDelegate("begindecision")) { return __ref.runUserSub(false, "playbackdirectorstate","begindecision", __ref, _decisionname);}
 Debug.locals.put("decisionName", _decisionname);
  BA.debugLineNum = 193;BA.debugLine="Public Sub BeginDecision(decisionName As String)";
@@ -155,7 +155,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _cleardecision(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearDecision (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,205);
+		Debug.PushSubsStack("ClearDecision (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,205);
 if (RapidSub.canDelegate("cleardecision")) { return __ref.runUserSub(false, "playbackdirectorstate","cleardecision", __ref);}
  BA.debugLineNum = 205;BA.debugLine="Public Sub ClearDecision";
 Debug.ShouldStop(4096);
@@ -174,7 +174,7 @@ finally {
 		}}
 public static RemoteObject  _clearrole(RemoteObject __ref,RemoteObject _rolevalue) throws Exception{
 try {
-		Debug.PushSubsStack("ClearRole (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,128);
+		Debug.PushSubsStack("ClearRole (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,128);
 if (RapidSub.canDelegate("clearrole")) { return __ref.runUserSub(false, "playbackdirectorstate","clearrole", __ref, _rolevalue);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 Debug.locals.put("roleValue", _rolevalue);
@@ -199,7 +199,7 @@ finally {
 		}}
 public static RemoteObject  _clearslotbyaudiokey(RemoteObject __ref,RemoteObject _audiokey) throws Exception{
 try {
-		Debug.PushSubsStack("ClearSlotByAudioKey (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,123);
+		Debug.PushSubsStack("ClearSlotByAudioKey (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,123);
 if (RapidSub.canDelegate("clearslotbyaudiokey")) { return __ref.runUserSub(false, "playbackdirectorstate","clearslotbyaudiokey", __ref, _audiokey);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 Debug.locals.put("audioKey", _audiokey);
@@ -224,7 +224,7 @@ finally {
 		}}
 public static RemoteObject  _configuredefaultslots(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ConfigureDefaultSlots (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,26);
+		Debug.PushSubsStack("ConfigureDefaultSlots (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,26);
 if (RapidSub.canDelegate("configuredefaultslots")) { return __ref.runUserSub(false, "playbackdirectorstate","configuredefaultslots", __ref);}
  BA.debugLineNum = 26;BA.debugLine="Public Sub ConfigureDefaultSlots";
 Debug.ShouldStop(33554432);
@@ -257,7 +257,7 @@ finally {
 		}}
 public static RemoteObject  _createslot(RemoteObject __ref,RemoteObject _slotidvalue,RemoteObject _audiokeyvalue) throws Exception{
 try {
-		Debug.PushSubsStack("CreateSlot (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,235);
+		Debug.PushSubsStack("CreateSlot (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,235);
 if (RapidSub.canDelegate("createslot")) { return __ref.runUserSub(false, "playbackdirectorstate","createslot", __ref, _slotidvalue, _audiokeyvalue);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 Debug.locals.put("slotIdValue", _slotidvalue);
@@ -285,7 +285,7 @@ finally {
 		}}
 public static RemoteObject  _describeslots(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("DescribeSlots (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,182);
+		Debug.PushSubsStack("DescribeSlots (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,182);
 if (RapidSub.canDelegate("describeslots")) { return __ref.runUserSub(false, "playbackdirectorstate","describeslots", __ref);}
 RemoteObject _parts = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
@@ -336,7 +336,7 @@ finally {
 		}}
 public static RemoteObject  _getactiveslot(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetActiveSlot (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,86);
+		Debug.PushSubsStack("GetActiveSlot (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,86);
 if (RapidSub.canDelegate("getactiveslot")) { return __ref.runUserSub(false, "playbackdirectorstate","getactiveslot", __ref);}
  BA.debugLineNum = 86;BA.debugLine="Public Sub GetActiveSlot As PlaybackPlayerSlot";
 Debug.ShouldStop(2097152);
@@ -355,7 +355,7 @@ finally {
 		}}
 public static RemoteObject  _getpendingplayslot(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetPendingPlaySlot (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,102);
+		Debug.PushSubsStack("GetPendingPlaySlot (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,102);
 if (RapidSub.canDelegate("getpendingplayslot")) { return __ref.runUserSub(false, "playbackdirectorstate","getpendingplayslot", __ref);}
  BA.debugLineNum = 102;BA.debugLine="Public Sub GetPendingPlaySlot As PlaybackPlayerSlo";
 Debug.ShouldStop(32);
@@ -374,7 +374,7 @@ finally {
 		}}
 public static RemoteObject  _getpendingprepareslot(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetPendingPrepareSlot (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,107);
+		Debug.PushSubsStack("GetPendingPrepareSlot (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,107);
 if (RapidSub.canDelegate("getpendingprepareslot")) { return __ref.runUserSub(false, "playbackdirectorstate","getpendingprepareslot", __ref);}
 RemoteObject _pendingpreparemusicslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 RemoteObject _pendinginterruptslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
@@ -421,7 +421,7 @@ finally {
 		}}
 public static RemoteObject  _getpreparedslot(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetPreparedSlot (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,91);
+		Debug.PushSubsStack("GetPreparedSlot (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,91);
 if (RapidSub.canDelegate("getpreparedslot")) { return __ref.runUserSub(false, "playbackdirectorstate","getpreparedslot", __ref);}
 RemoteObject _preparedmusicslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 RemoteObject _preparedinterruptslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
@@ -468,7 +468,7 @@ finally {
 		}}
 public static RemoteObject  _getslotbyaudiokey(RemoteObject __ref,RemoteObject _audiokey) throws Exception{
 try {
-		Debug.PushSubsStack("GetSlotByAudioKey (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,70);
+		Debug.PushSubsStack("GetSlotByAudioKey (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,70);
 if (RapidSub.canDelegate("getslotbyaudiokey")) { return __ref.runUserSub(false, "playbackdirectorstate","getslotbyaudiokey", __ref, _audiokey);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 RemoteObject _emptyslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
@@ -510,7 +510,7 @@ finally {
 		}}
 public static RemoteObject  _getslotbyrole(RemoteObject __ref,RemoteObject _rolevalue) throws Exception{
 try {
-		Debug.PushSubsStack("GetSlotByRole (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,78);
+		Debug.PushSubsStack("GetSlotByRole (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,78);
 if (RapidSub.canDelegate("getslotbyrole")) { return __ref.runUserSub(false, "playbackdirectorstate","getslotbyrole", __ref, _rolevalue);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 RemoteObject _emptyslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
@@ -552,7 +552,7 @@ finally {
 		}}
 public static RemoteObject  _haspreparedslot(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HasPreparedSlot (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,118);
+		Debug.PushSubsStack("HasPreparedSlot (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,118);
 if (RapidSub.canDelegate("haspreparedslot")) { return __ref.runUserSub(false, "playbackdirectorstate","haspreparedslot", __ref);}
 RemoteObject _preparedslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
  BA.debugLineNum = 118;BA.debugLine="Public Sub HasPreparedSlot As Boolean";
@@ -575,7 +575,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,13);
+		Debug.PushSubsStack("Initialize (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,13);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackdirectorstate","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -596,7 +596,7 @@ finally {
 		}}
 public static RemoteObject  _isflowactive(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsFlowActive (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,218);
+		Debug.PushSubsStack("IsFlowActive (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,218);
 if (RapidSub.canDelegate("isflowactive")) { return __ref.runUserSub(false, "playbackdirectorstate","isflowactive", __ref);}
  BA.debugLineNum = 218;BA.debugLine="Public Sub IsFlowActive As Boolean";
 Debug.ShouldStop(33554432);
@@ -615,7 +615,7 @@ finally {
 		}}
 public static RemoteObject  _istransitioninprogress(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsTransitionInProgress (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,214);
+		Debug.PushSubsStack("IsTransitionInProgress (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,214);
 if (RapidSub.canDelegate("istransitioninprogress")) { return __ref.runUserSub(false, "playbackdirectorstate","istransitioninprogress", __ref);}
  BA.debugLineNum = 214;BA.debugLine="Public Sub IsTransitionInProgress As Boolean";
 Debug.ShouldStop(2097152);
@@ -634,7 +634,7 @@ finally {
 		}}
 public static RemoteObject  _joinparts(RemoteObject __ref,RemoteObject _parts) throws Exception{
 try {
-		Debug.PushSubsStack("JoinParts (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,241);
+		Debug.PushSubsStack("JoinParts (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,241);
 if (RapidSub.canDelegate("joinparts")) { return __ref.runUserSub(false, "playbackdirectorstate","joinparts", __ref, _parts);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 int _i = 0;
@@ -680,7 +680,7 @@ finally {
 		}}
 public static RemoteObject  _reset(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Reset (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,17);
+		Debug.PushSubsStack("Reset (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,17);
 if (RapidSub.canDelegate("reset")) { return __ref.runUserSub(false, "playbackdirectorstate","reset", __ref);}
  BA.debugLineNum = 17;BA.debugLine="Public Sub Reset";
 Debug.ShouldStop(65536);
@@ -711,7 +711,7 @@ finally {
 		}}
 public static RemoteObject  _resolvependingpreparerole(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ResolvePendingPrepareRole (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,229);
+		Debug.PushSubsStack("ResolvePendingPrepareRole (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,229);
 if (RapidSub.canDelegate("resolvependingpreparerole")) { return __ref.runUserSub(false, "playbackdirectorstate","resolvependingpreparerole", __ref, _item);}
 Debug.locals.put("item", _item);
  BA.debugLineNum = 229;BA.debugLine="Private Sub ResolvePendingPrepareRole(item As Map)";
@@ -739,7 +739,7 @@ finally {
 		}}
 public static RemoteObject  _resolvepreparedrole(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ResolvePreparedRole (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,223);
+		Debug.PushSubsStack("ResolvePreparedRole (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,223);
 if (RapidSub.canDelegate("resolvepreparedrole")) { return __ref.runUserSub(false, "playbackdirectorstate","resolvepreparedrole", __ref, _item);}
 Debug.locals.put("item", _item);
  BA.debugLineNum = 223;BA.debugLine="Private Sub ResolvePreparedRole(item As Map) As St";
@@ -767,7 +767,7 @@ finally {
 		}}
 public static RemoteObject  _setactive(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("SetActive (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,170);
+		Debug.PushSubsStack("SetActive (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,170);
 if (RapidSub.canDelegate("setactive")) { return __ref.runUserSub(false, "playbackdirectorstate","setactive", __ref, _audiokey, _item);}
 RemoteObject _currentactiveslot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
@@ -813,7 +813,7 @@ finally {
 		}}
 public static RemoteObject  _setflowstate(RemoteObject __ref,RemoteObject _statevalue) throws Exception{
 try {
-		Debug.PushSubsStack("SetFlowState (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,209);
+		Debug.PushSubsStack("SetFlowState (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,209);
 if (RapidSub.canDelegate("setflowstate")) { return __ref.runUserSub(false, "playbackdirectorstate","setflowstate", __ref, _statevalue);}
 Debug.locals.put("stateValue", _statevalue);
  BA.debugLineNum = 209;BA.debugLine="Public Sub SetFlowState(stateValue As String)";
@@ -837,7 +837,7 @@ finally {
 		}}
 public static RemoteObject  _setpendingplay(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("SetPendingPlay (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,134);
+		Debug.PushSubsStack("SetPendingPlay (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,134);
 if (RapidSub.canDelegate("setpendingplay")) { return __ref.runUserSub(false, "playbackdirectorstate","setpendingplay", __ref, _audiokey, _item);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 Debug.locals.put("audioKey", _audiokey);
@@ -872,7 +872,7 @@ finally {
 		}}
 public static RemoteObject  _setpendingprepare(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("SetPendingPrepare (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,144);
+		Debug.PushSubsStack("SetPendingPrepare (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,144);
 if (RapidSub.canDelegate("setpendingprepare")) { return __ref.runUserSub(false, "playbackdirectorstate","setpendingprepare", __ref, _audiokey, _item);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 Debug.locals.put("audioKey", _audiokey);
@@ -916,7 +916,7 @@ finally {
 		}}
 public static RemoteObject  _setprepared(RemoteObject __ref,RemoteObject _audiokey,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("SetPrepared (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,157);
+		Debug.PushSubsStack("SetPrepared (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,157);
 if (RapidSub.canDelegate("setprepared")) { return __ref.runUserSub(false, "playbackdirectorstate","setprepared", __ref, _audiokey, _item);}
 RemoteObject _slot = RemoteObject.declareNull("b4j.example.playbackplayerslot");
 Debug.locals.put("audioKey", _audiokey);
@@ -960,7 +960,7 @@ finally {
 		}}
 public static RemoteObject  _trybegindecision(RemoteObject __ref,RemoteObject _decisionname) throws Exception{
 try {
-		Debug.PushSubsStack("TryBeginDecision (playbackdirectorstate) ","playbackdirectorstate",10,__ref.getField(false, "ba"),__ref,199);
+		Debug.PushSubsStack("TryBeginDecision (playbackdirectorstate) ","playbackdirectorstate",16,__ref.getField(false, "ba"),__ref,199);
 if (RapidSub.canDelegate("trybegindecision")) { return __ref.runUserSub(false, "playbackdirectorstate","trybegindecision", __ref, _decisionname);}
 Debug.locals.put("decisionName", _decisionname);
  BA.debugLineNum = 199;BA.debugLine="Public Sub TryBeginDecision(decisionName As String";

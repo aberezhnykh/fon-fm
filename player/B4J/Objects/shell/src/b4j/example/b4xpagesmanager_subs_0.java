@@ -8,7 +8,7 @@ public class b4xpagesmanager_subs_0 {
 
 public static RemoteObject  _activity_pause(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Activity_Pause (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,635);
+		Debug.PushSubsStack("Activity_Pause (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,635);
 if (RapidSub.canDelegate("activity_pause")) { return __ref.runUserSub(false, "b4xpagesmanager","activity_pause", __ref);}
  BA.debugLineNum = 635;BA.debugLine="Public Sub Activity_Pause";
 Debug.JustUpdateDeviceLine();
@@ -30,7 +30,7 @@ finally {
 		}}
 public static RemoteObject  _activity_resume(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Activity_Resume (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,610);
+		Debug.PushSubsStack("Activity_Resume (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,610);
 if (RapidSub.canDelegate("activity_resume")) { return __ref.runUserSub(false, "b4xpagesmanager","activity_resume", __ref);}
 RemoteObject _shouldraise = RemoteObject.createImmutable(false);
  BA.debugLineNum = 610;BA.debugLine="Public Sub Activity_Resume";
@@ -60,7 +60,7 @@ finally {
 		}}
 public static RemoteObject  _addpage(RemoteObject __ref,RemoteObject _id,RemoteObject _b4xpage) throws Exception{
 try {
-		Debug.PushSubsStack("AddPage (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,141);
+		Debug.PushSubsStack("AddPage (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,141);
 if (RapidSub.canDelegate("addpage")) { return __ref.runUserSub(false, "b4xpagesmanager","addpage", __ref, _id, _b4xpage);}
 RemoteObject _idtolower = RemoteObject.createImmutable("");
 Debug.locals.put("Id", _id);
@@ -75,7 +75,7 @@ Debug.JustUpdateDeviceLine();
 if (__ref.getField(false,"_idtob4xpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xorderedmap.class, "_containskey" /*RemoteObject*/ ,(Object)((_idtolower))).<Boolean>get().booleanValue()) { 
  BA.debugLineNum = 144;BA.debugLine="Log($\"Page with this id already exists: ${IdToLo";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","940370179",(RemoteObject.concat(RemoteObject.createImmutable("Page with this id already exists: "),b4xpagesmanager.__c.runMethod(true,"SmartStringFormatter",(Object)(BA.ObjectToString("")),(Object)((_idtolower))),RemoteObject.createImmutable("!"))),0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","976677123",(RemoteObject.concat(RemoteObject.createImmutable("Page with this id already exists: "),b4xpagesmanager.__c.runMethod(true,"SmartStringFormatter",(Object)(BA.ObjectToString("")),(Object)((_idtolower))),RemoteObject.createImmutable("!"))),0);
  BA.debugLineNum = 145;BA.debugLine="Return";
 Debug.JustUpdateDeviceLine();
 if (true) return RemoteObject.createImmutable("");
@@ -99,7 +99,7 @@ finally {
 		}}
 public static RemoteObject  _addpageandcreate(RemoteObject __ref,RemoteObject _id,RemoteObject _b4xpage) throws Exception{
 try {
-		Debug.PushSubsStack("AddPageAndCreate (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,151);
+		Debug.PushSubsStack("AddPageAndCreate (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,151);
 if (RapidSub.canDelegate("addpageandcreate")) { return __ref.runUserSub(false, "b4xpagesmanager","addpageandcreate", __ref, _id, _b4xpage);}
 Debug.locals.put("Id", _id);
 Debug.locals.put("B4XPage", _b4xpage);
@@ -123,7 +123,7 @@ finally {
 		}}
 public static RemoteObject  _backgroundstatechanged(RemoteObject __ref,RemoteObject _newstate) throws Exception{
 try {
-		Debug.PushSubsStack("BackgroundStateChanged (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,618);
+		Debug.PushSubsStack("BackgroundStateChanged (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,618);
 if (RapidSub.canDelegate("backgroundstatechanged")) { return __ref.runUserSub(false, "b4xpagesmanager","backgroundstatechanged", __ref, _newstate);}
 RemoteObject _ev = RemoteObject.createImmutable("");
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
@@ -218,7 +218,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _closepage(RemoteObject __ref,RemoteObject _b4xpage) throws Exception{
 try {
-		Debug.PushSubsStack("ClosePage (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,209);
+		Debug.PushSubsStack("ClosePage (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,209);
 if (RapidSub.canDelegate("closepage")) { return __ref.runUserSub(false, "b4xpagesmanager","closepage", __ref, _b4xpage);}
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
 RemoteObject _isclosingtoppage = RemoteObject.createImmutable(false);
@@ -237,7 +237,7 @@ Debug.JustUpdateDeviceLine();
 if (RemoteObject.solveBoolean(".",__ref.getField(false,"_xui" /*RemoteObject*/ ).runMethod(true,"getIsB4i")) && RemoteObject.solveBoolean("!",__ref.runClassMethod (b4j.example.b4xpagesmanager.class, "_gettoppage" /*RemoteObject*/ ),_pi)) { 
  BA.debugLineNum = 213;BA.debugLine="Log(\"Only top page can be closed\")";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","940632324",RemoteObject.createImmutable("Only top page can be closed"),0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","976939268",RemoteObject.createImmutable("Only top page can be closed"),0);
  BA.debugLineNum = 214;BA.debugLine="Return";
 Debug.JustUpdateDeviceLine();
 if (true) return RemoteObject.createImmutable("");
@@ -247,7 +247,7 @@ Debug.JustUpdateDeviceLine();
 if (RemoteObject.solveBoolean(".",__ref.getField(false,"_xui" /*RemoteObject*/ ).runMethod(true,"getIsB4i")) && RemoteObject.solveBoolean("=",__ref.getField(false,"_mstackofpageids" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xset.class, "_getsize" /*RemoteObject*/ ),BA.numberCast(double.class, 1))) { 
  BA.debugLineNum = 216;BA.debugLine="Log(\"First page cannot be closed\")";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","940632327",RemoteObject.createImmutable("First page cannot be closed"),0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","976939271",RemoteObject.createImmutable("First page cannot be closed"),0);
  BA.debugLineNum = 217;BA.debugLine="Return";
 Debug.JustUpdateDeviceLine();
 if (true) return RemoteObject.createImmutable("");
@@ -296,7 +296,7 @@ finally {
 		}}
 public static RemoteObject  _closepageimpl(RemoteObject __ref,RemoteObject _pi) throws Exception{
 try {
-		Debug.PushSubsStack("ClosePageImpl (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,315);
+		Debug.PushSubsStack("ClosePageImpl (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,315);
 if (RapidSub.canDelegate("closepageimpl")) { return __ref.runUserSub(false, "b4xpagesmanager","closepageimpl", __ref, _pi);}
 Debug.locals.put("pi", _pi);
  BA.debugLineNum = 315;BA.debugLine="Private Sub ClosePageImpl (pi As B4XPageInfo) 'ign";
@@ -316,7 +316,7 @@ finally {
 		}}
 public static RemoteObject  _closerequestexists(RemoteObject __ref,RemoteObject _pi) throws Exception{
 try {
-		Debug.PushSubsStack("CloseRequestExists (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,534);
+		Debug.PushSubsStack("CloseRequestExists (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,534);
 if (RapidSub.canDelegate("closerequestexists")) { return __ref.runUserSub(false, "b4xpagesmanager","closerequestexists", __ref, _pi);}
 Debug.locals.put("pi", _pi);
  BA.debugLineNum = 534;BA.debugLine="Private Sub CloseRequestExists (pi As B4XPageInfo)";
@@ -336,7 +336,7 @@ finally {
 		}}
 public static RemoteObject  _createb4xpageinfo(RemoteObject __ref,RemoteObject _b4xpage,RemoteObject _id,RemoteObject _created,RemoteObject _title) throws Exception{
 try {
-		Debug.PushSubsStack("CreateB4XPageInfo (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,420);
+		Debug.PushSubsStack("CreateB4XPageInfo (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,420);
 if (RapidSub.canDelegate("createb4xpageinfo")) { return __ref.runUserSub(false, "b4xpagesmanager","createb4xpageinfo", __ref, _b4xpage, _id, _created, _title);}
 RemoteObject _t1 = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
 Debug.locals.put("B4XPage", _b4xpage);
@@ -378,7 +378,7 @@ finally {
 		}}
 public static RemoteObject  _createb4xpageparent(RemoteObject __ref,RemoteObject _nativetype) throws Exception{
 try {
-		Debug.PushSubsStack("CreateB4XPageParent (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,600);
+		Debug.PushSubsStack("CreateB4XPageParent (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,600);
 if (RapidSub.canDelegate("createb4xpageparent")) { return __ref.runUserSub(false, "b4xpagesmanager","createb4xpageparent", __ref, _nativetype);}
 RemoteObject _t1 = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageparent");
 Debug.locals.put("NativeType", _nativetype);
@@ -408,7 +408,7 @@ finally {
 		}}
 public static RemoteObject  _createpageifneeded(RemoteObject __ref,RemoteObject _pi) throws Exception{
 try {
-		Debug.PushSubsStack("CreatePageIfNeeded (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,352);
+		Debug.PushSubsStack("CreatePageIfNeeded (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,352);
 if (RapidSub.canDelegate("createpageifneeded")) { return __ref.runUserSub(false, "b4xpagesmanager","createpageifneeded", __ref, _pi);}
 Debug.locals.put("pi", _pi);
  BA.debugLineNum = 352;BA.debugLine="Private Sub CreatePageIfNeeded(pi As B4XPageInfo)";
@@ -447,7 +447,7 @@ finally {
 		}}
 public static RemoteObject  _createpageimpl(RemoteObject __ref,RemoteObject _pi) throws Exception{
 try {
-		Debug.PushSubsStack("CreatePageImpl (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,369);
+		Debug.PushSubsStack("CreatePageImpl (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,369);
 if (RapidSub.canDelegate("createpageimpl")) { return __ref.runUserSub(false, "b4xpagesmanager","createpageimpl", __ref, _pi);}
 RemoteObject _f = RemoteObject.declareNull("anywheresoftware.b4j.objects.Form");
 Debug.locals.put("pi", _pi);
@@ -488,7 +488,7 @@ finally {
 		}}
 public static RemoteObject  _findpifromb4xpage(RemoteObject __ref,RemoteObject _page) throws Exception{
 try {
-		Debug.PushSubsStack("FindPIFromB4XPage (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,306);
+		Debug.PushSubsStack("FindPIFromB4XPage (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,306);
 if (RapidSub.canDelegate("findpifromb4xpage")) { return __ref.runUserSub(false, "b4xpagesmanager","findpifromb4xpage", __ref, _page);}
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
 Debug.locals.put("Page", _page);
@@ -529,7 +529,7 @@ finally {
 		}}
 public static RemoteObject  _getpage(RemoteObject __ref,RemoteObject _id) throws Exception{
 try {
-		Debug.PushSubsStack("GetPage (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,394);
+		Debug.PushSubsStack("GetPage (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,394);
 if (RapidSub.canDelegate("getpage")) { return __ref.runUserSub(false, "b4xpagesmanager","getpage", __ref, _id);}
 Debug.locals.put("Id", _id);
  BA.debugLineNum = 394;BA.debugLine="Public Sub GetPage (Id As String) As Object";
@@ -549,7 +549,7 @@ finally {
 		}}
 public static RemoteObject  _getpagefromid(RemoteObject __ref,RemoteObject _id) throws Exception{
 try {
-		Debug.PushSubsStack("GetPageFromId (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,398);
+		Debug.PushSubsStack("GetPageFromId (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,398);
 if (RapidSub.canDelegate("getpagefromid")) { return __ref.runUserSub(false, "b4xpagesmanager","getpagefromid", __ref, _id);}
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
 Debug.locals.put("id", _id);
@@ -563,10 +563,10 @@ Debug.JustUpdateDeviceLine();
 if (RemoteObject.solveBoolean("n",_pi)) { 
  BA.debugLineNum = 401;BA.debugLine="Log(\"Error: page id not found: \" & id)";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","941287683",RemoteObject.concat(RemoteObject.createImmutable("Error: page id not found: "),_id),0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","977594627",RemoteObject.concat(RemoteObject.createImmutable("Error: page id not found: "),_id),0);
  BA.debugLineNum = 402;BA.debugLine="Log(\"Ids: \" & IdToB4XPage.Keys) 'ignore";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","941287684",RemoteObject.concat(RemoteObject.createImmutable("Ids: "),__ref.getField(false,"_idtob4xpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xorderedmap.class, "_getkeys" /*RemoteObject*/ )),0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","977594628",RemoteObject.concat(RemoteObject.createImmutable("Ids: "),__ref.getField(false,"_idtob4xpage" /*RemoteObject*/ ).runClassMethod (b4j.example.b4xorderedmap.class, "_getkeys" /*RemoteObject*/ )),0);
  };
  BA.debugLineNum = 404;BA.debugLine="Return pi";
 Debug.JustUpdateDeviceLine();
@@ -583,7 +583,7 @@ finally {
 		}}
 public static RemoteObject  _getpageinfofromroot(RemoteObject __ref,RemoteObject _root) throws Exception{
 try {
-		Debug.PushSubsStack("GetPageInfoFromRoot (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,407);
+		Debug.PushSubsStack("GetPageInfoFromRoot (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,407);
 if (RapidSub.canDelegate("getpageinfofromroot")) { return __ref.runUserSub(false, "b4xpagesmanager","getpageinfofromroot", __ref, _root);}
 Debug.locals.put("Root", _root);
  BA.debugLineNum = 407;BA.debugLine="Public Sub GetPageInfoFromRoot (Root As B4XView) A";
@@ -603,7 +603,7 @@ finally {
 		}}
 public static RemoteObject  _gettoppage(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetTopPage (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,592);
+		Debug.PushSubsStack("GetTopPage (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,592);
 if (RapidSub.canDelegate("gettoppage")) { return __ref.runUserSub(false, "b4xpagesmanager","gettoppage", __ref);}
  BA.debugLineNum = 592;BA.debugLine="Public Sub GetTopPage As B4XPageInfo";
 Debug.JustUpdateDeviceLine();
@@ -626,7 +626,7 @@ finally {
 		}}
 public static void  _handlecloserequest(RemoteObject __ref,RemoteObject _pi) throws Exception{
 try {
-		Debug.PushSubsStack("HandleCloseRequest (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,538);
+		Debug.PushSubsStack("HandleCloseRequest (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,538);
 if (RapidSub.canDelegate("handlecloserequest")) { __ref.runUserSub(false, "b4xpagesmanager","handlecloserequest", __ref, _pi); return;}
 ResumableSub_HandleCloseRequest rsub = new ResumableSub_HandleCloseRequest(null,__ref,_pi);
 rsub.resume(null, null);
@@ -653,7 +653,7 @@ RemoteObject _shouldclose = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("HandleCloseRequest (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,538);
+		Debug.PushSubsStack("HandleCloseRequest (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,538);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -724,7 +724,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _shouldclose) thro
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _mainform) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,57);
+		Debug.PushSubsStack("Initialize (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,57);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "b4xpagesmanager","initialize", __ref, _ba, _mainform);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 RemoteObject _nonmainpagewasadded = RemoteObject.createImmutable(false);
@@ -770,7 +770,7 @@ Debug.JustUpdateDeviceLine();
 if (RemoteObject.solveBoolean("=",__ref.getField(true,"_logevents" /*RemoteObject*/ ),b4xpagesmanager.__c.getField(true,"False"))) { 
  BA.debugLineNum = 86;BA.debugLine="Log(\"Call B4XPages.GetManager.LogEvents = True t";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","940304669",RemoteObject.createImmutable("Call B4XPages.GetManager.LogEvents = True to enable logging B4XPages events."),0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","976611613",RemoteObject.createImmutable("Call B4XPages.GetManager.LogEvents = True to enable logging B4XPages events."),0);
  };
  BA.debugLineNum = 88;BA.debugLine="If NonMainPageWasAdded Then";
 Debug.JustUpdateDeviceLine();
@@ -795,7 +795,7 @@ finally {
 		}}
 public static RemoteObject  _logevent(RemoteObject __ref,RemoteObject _pi,RemoteObject _ev) throws Exception{
 try {
-		Debug.PushSubsStack("LogEvent (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,640);
+		Debug.PushSubsStack("LogEvent (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,640);
 if (RapidSub.canDelegate("logevent")) { return __ref.runUserSub(false, "b4xpagesmanager","logevent", __ref, _pi, _ev);}
 RemoteObject _msg = RemoteObject.createImmutable("");
 Debug.locals.put("pi", _pi);
@@ -810,7 +810,7 @@ Debug.JustUpdateDeviceLine();
 _msg = (RemoteObject.concat(RemoteObject.createImmutable("*** "),b4xpagesmanager.__c.runMethod(true,"SmartStringFormatter",(Object)(BA.ObjectToString("")),(Object)((_pi.getField(true,"Id" /*RemoteObject*/ )))),RemoteObject.createImmutable(": "),b4xpagesmanager.__c.runMethod(true,"SmartStringFormatter",(Object)(BA.ObjectToString("")),(Object)((_ev))),RemoteObject.createImmutable(" "),b4xpagesmanager.__c.runMethod(true,"SmartStringFormatter",(Object)(BA.ObjectToString("")),(Object)((__ref.getField(true,"_stackstring" /*RemoteObject*/ )))),RemoteObject.createImmutable("")));Debug.locals.put("msg", _msg);Debug.locals.put("msg", _msg);
  BA.debugLineNum = 643;BA.debugLine="Log(msg)";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","942467331",_msg,0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","978774275",_msg,0);
  };
  BA.debugLineNum = 645;BA.debugLine="End Sub";
 Debug.JustUpdateDeviceLine();
@@ -824,7 +824,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_closed(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_Closed (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,440);
+		Debug.PushSubsStack("MainForm_Closed (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,440);
 if (RapidSub.canDelegate("mainform_closed")) { return __ref.runUserSub(false, "b4xpagesmanager","mainform_closed", __ref);}
 RemoteObject _frm = RemoteObject.declareNull("anywheresoftware.b4j.objects.Form");
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
@@ -864,7 +864,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_closerequest(RemoteObject __ref,RemoteObject _eventdata) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_CloseRequest (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,457);
+		Debug.PushSubsStack("MainForm_CloseRequest (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,457);
 if (RapidSub.canDelegate("mainform_closerequest")) { return __ref.runUserSub(false, "b4xpagesmanager","mainform_closerequest", __ref, _eventdata);}
 RemoteObject _frm = RemoteObject.declareNull("anywheresoftware.b4j.objects.Form");
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
@@ -899,7 +899,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_focuschanged(RemoteObject __ref,RemoteObject _hasfocus) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_FocusChanged (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,431);
+		Debug.PushSubsStack("MainForm_FocusChanged (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,431);
 if (RapidSub.canDelegate("mainform_focuschanged")) { return __ref.runUserSub(false, "b4xpagesmanager","mainform_focuschanged", __ref, _hasfocus);}
 RemoteObject _frm = RemoteObject.declareNull("anywheresoftware.b4j.objects.Form");
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
@@ -935,7 +935,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_iconifiedchanged(RemoteObject __ref,RemoteObject _iconified) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_IconifiedChanged (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,451);
+		Debug.PushSubsStack("MainForm_IconifiedChanged (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,451);
 if (RapidSub.canDelegate("mainform_iconifiedchanged")) { return __ref.runUserSub(false, "b4xpagesmanager","mainform_iconifiedchanged", __ref, _iconified);}
 RemoteObject _frm = RemoteObject.declareNull("anywheresoftware.b4j.objects.Form");
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
@@ -963,7 +963,7 @@ finally {
 		}}
 public static RemoteObject  _mainform_resize(RemoteObject __ref,RemoteObject _width,RemoteObject _height) throws Exception{
 try {
-		Debug.PushSubsStack("MainForm_Resize (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,585);
+		Debug.PushSubsStack("MainForm_Resize (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,585);
 if (RapidSub.canDelegate("mainform_resize")) { return __ref.runUserSub(false, "b4xpagesmanager","mainform_resize", __ref, _width, _height);}
 RemoteObject _w = RemoteObject.createImmutable(0);
 RemoteObject _h = RemoteObject.createImmutable(0);
@@ -992,7 +992,7 @@ finally {
 		}}
 public static RemoteObject  _movepagetotop(RemoteObject __ref,RemoteObject _pi) throws Exception{
 try {
-		Debug.PushSubsStack("MovePageToTop (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,413);
+		Debug.PushSubsStack("MovePageToTop (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,413);
 if (RapidSub.canDelegate("movepagetotop")) { return __ref.runUserSub(false, "b4xpagesmanager","movepagetotop", __ref, _pi);}
 Debug.locals.put("pi", _pi);
  BA.debugLineNum = 413;BA.debugLine="Private Sub MovePageToTop (pi As B4XPageInfo)";
@@ -1018,7 +1018,7 @@ finally {
 		}}
 public static RemoteObject  _raiseevent(RemoteObject __ref,RemoteObject _targetpage,RemoteObject _subname,RemoteObject _params) throws Exception{
 try {
-		Debug.PushSubsStack("RaiseEvent (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,548);
+		Debug.PushSubsStack("RaiseEvent (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,548);
 if (RapidSub.canDelegate("raiseevent")) { return __ref.runUserSub(false, "b4xpagesmanager","raiseevent", __ref, _targetpage, _subname, _params);}
 RemoteObject _length = RemoteObject.createImmutable(0);
 Debug.locals.put("TargetPage", _targetpage);
@@ -1067,7 +1067,7 @@ b4xpagesmanager.__c.runVoidMethod ("CallSubDelayed3",__ref.getField(false, "ba")
 default: {
  BA.debugLineNum = 562;BA.debugLine="Log(\"Too many parameters\")";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","941943054",RemoteObject.createImmutable("Too many parameters"),0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","978249998",RemoteObject.createImmutable("Too many parameters"),0);
  break; }
 }
 ;
@@ -1083,7 +1083,7 @@ finally {
 		}}
 public static RemoteObject  _raiseeventwithresult(RemoteObject __ref,RemoteObject _targetpage,RemoteObject _subname,RemoteObject _params) throws Exception{
 try {
-		Debug.PushSubsStack("RaiseEventWithResult (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,566);
+		Debug.PushSubsStack("RaiseEventWithResult (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,566);
 if (RapidSub.canDelegate("raiseeventwithresult")) { return __ref.runUserSub(false, "b4xpagesmanager","raiseeventwithresult", __ref, _targetpage, _subname, _params);}
 RemoteObject _length = RemoteObject.createImmutable(0);
 Debug.locals.put("TargetPage", _targetpage);
@@ -1132,7 +1132,7 @@ if (true) return b4xpagesmanager.__c.runMethodAndSync(false,"CallSubNew3",__ref.
 default: {
  BA.debugLineNum = 580;BA.debugLine="Log(\"Too many parameters\")";
 Debug.JustUpdateDeviceLine();
-b4xpagesmanager.__c.runVoidMethod ("LogImpl","942008590",RemoteObject.createImmutable("Too many parameters"),0);
+b4xpagesmanager.__c.runVoidMethod ("LogImpl","978315534",RemoteObject.createImmutable("Too many parameters"),0);
  break; }
 }
 ;
@@ -1151,7 +1151,7 @@ finally {
 		}}
 public static RemoteObject  _settitle(RemoteObject __ref,RemoteObject _b4xpage,RemoteObject _title) throws Exception{
 try {
-		Debug.PushSubsStack("SetTitle (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,363);
+		Debug.PushSubsStack("SetTitle (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,363);
 if (RapidSub.canDelegate("settitle")) { return __ref.runUserSub(false, "b4xpagesmanager","settitle", __ref, _b4xpage, _title);}
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
 Debug.locals.put("B4XPage", _b4xpage);
@@ -1179,7 +1179,7 @@ finally {
 		}}
 public static RemoteObject  _showpage(RemoteObject __ref,RemoteObject _id) throws Exception{
 try {
-		Debug.PushSubsStack("ShowPage (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,156);
+		Debug.PushSubsStack("ShowPage (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,156);
 if (RapidSub.canDelegate("showpage")) { return __ref.runUserSub(false, "b4xpagesmanager","showpage", __ref, _id);}
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
 Debug.locals.put("Id", _id);
@@ -1222,7 +1222,7 @@ finally {
 		}}
 public static RemoteObject  _showpageandremovepreviouspages(RemoteObject __ref,RemoteObject _id) throws Exception{
 try {
-		Debug.PushSubsStack("ShowPageAndRemovePreviousPages (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,180);
+		Debug.PushSubsStack("ShowPageAndRemovePreviousPages (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,180);
 if (RapidSub.canDelegate("showpageandremovepreviouspages")) { return __ref.runUserSub(false, "b4xpagesmanager","showpageandremovepreviouspages", __ref, _id);}
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
 RemoteObject _pagetoremove = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
@@ -1299,7 +1299,7 @@ finally {
 		}}
 public static RemoteObject  _showpageimpl(RemoteObject __ref,RemoteObject _pi) throws Exception{
 try {
-		Debug.PushSubsStack("ShowPageImpl (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,333);
+		Debug.PushSubsStack("ShowPageImpl (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,333);
 if (RapidSub.canDelegate("showpageimpl")) { return __ref.runUserSub(false, "b4xpagesmanager","showpageimpl", __ref, _pi);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("pi", _pi);
@@ -1327,7 +1327,7 @@ finally {
 		}}
 public static RemoteObject  _toppageappear(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("TopPageAppear (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,288);
+		Debug.PushSubsStack("TopPageAppear (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,288);
 if (RapidSub.canDelegate("toppageappear")) { return __ref.runUserSub(false, "b4xpagesmanager","toppageappear", __ref);}
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
  BA.debugLineNum = 288;BA.debugLine="Private Sub TopPageAppear";
@@ -1368,7 +1368,7 @@ finally {
 		}}
 public static RemoteObject  _toppagedisappear(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("TopPageDisappear (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,277);
+		Debug.PushSubsStack("TopPageDisappear (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,277);
 if (RapidSub.canDelegate("toppagedisappear")) { return __ref.runUserSub(false, "b4xpagesmanager","toppagedisappear", __ref);}
 RemoteObject _pi = RemoteObject.declareNull("b4j.example.b4xpagesmanager._b4xpageinfo");
  BA.debugLineNum = 277;BA.debugLine="Private Sub TopPageDisappear";
@@ -1407,7 +1407,7 @@ finally {
 		}}
 public static RemoteObject  _updatestackstring(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateStackString (b4xpagesmanager) ","b4xpagesmanager",39,__ref.getField(false, "ba"),__ref,647);
+		Debug.PushSubsStack("UpdateStackString (b4xpagesmanager) ","b4xpagesmanager",36,__ref.getField(false, "ba"),__ref,647);
 if (RapidSub.canDelegate("updatestackstring")) { return __ref.runUserSub(false, "b4xpagesmanager","updatestackstring", __ref);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 RemoteObject _id = RemoteObject.createImmutable("");

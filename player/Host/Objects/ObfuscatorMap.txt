@@ -1,0 +1,11 @@
+Этот файл сопоставляет переименованные переменные исходным.
+v5=tracelog
+v6=applypendingupdateifneeded
+v7=safefilesize
+v0=restorebackupifneeded
+vv1=startplayer
+vv2=handleplayerexitasync
+vv3=sanitizeforlog
+vv4=consecutiveunexpectedexitcount
+vv5=restartafterdelay
+vv6=playershell

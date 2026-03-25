@@ -86,19 +86,19 @@ Public Sub BuildHumanTraceMessage(category As String, message As String, details
 				Case "populate queue fail"
 					Return "Не удалось подготовить очередь. " & BuildReasonText(details)
 				Case "dispatch next"
-					Return "Следующий элемент очереди: " & TraceItemLabelFromDetails(details)
+					Return "Следующий элемент: " & TraceItemLabelFromDetails(details)
 				Case "dispatch break"
 					Return "Начата обработка break."
 				Case "dispatch prepared"
-					Return "Запущен заранее подготовленный элемент."
+					Return "Запущен следующий элемент."
 				Case "dispatch переход"
 					Return "Переход к следующему элементу."
 				Case "prefetch start"
-					Return "Начата подготовка следующего элемента."
+					Return "Подготовка следующего элемента."
 				Case "prefetch done"
-					Return "Следующий элемент подготовлен заранее."
+					Return "Следующий элемент подготовлен."
 				Case "prefetch fail"
-					Return "Не удалось заранее подготовить следующий элемент. " & BuildReasonText(details)
+					Return "Не удалось подготовить следующий элемент. " & BuildReasonText(details)
 				Case "prefetch skip"
 					Dim skipReason As String = ExtractDetailValue(details, "reason")
 					If skipReason = "break_ahead" Then Return "Предварительная подготовка отложена: впереди break."
@@ -154,13 +154,13 @@ Public Sub BuildHumanTraceMessage(category As String, message As String, details
 				Case "ошибка загрузки трека"
 					Return "Кэш: Не удалось загрузить трек. " & BuildReasonText(details)
 				Case "кэш треков обновлен"
-					Return "Кэш треков проверен. " & BuildCountsText(details)
+					Return "Кэш: Треки проверены. " & BuildCountsText(details)
 				Case "кэш рекламы обновлен"
-					Return "Кэш рекламы проверен. " & BuildCountsText(details)
+					Return "Кэш: Реклама проверена. " & BuildCountsText(details)
 				Case "аудит кэша"
-					Return "Кэш проверен. " & BuildCountsText(details)
+					Return "Кэш: Проверен. " & BuildCountsText(details)
 				Case "очистка кэша"
-					Return "Очистка кэша завершена. " & BuildCountsText(details)
+					Return "Кэш: Очистка завершена. " & BuildCountsText(details)
 				Case "реклама удалена из кэша"
 					Return "Кэш: Удалена устаревшая реклама " & ExtractDetailValue(details, "id")
 				Case "ошибка подготовки трека"
@@ -184,46 +184,44 @@ Public Sub BuildHumanTraceMessage(category As String, message As String, details
 		Case "health"
 			Select message
 				Case "воспроизведение"
-					Return "Состояние воспроизведения: этап=" & ExtractDetailValue(details, "stage") & _
+					Return "Воспроизведение: этап=" & ExtractDetailValue(details, "stage") & _
 						", играет=" & ExtractDetailValue(details, "playing") & _
 						", трек=" & ExtractDetailValue(details, "currentTrackId") & _
 						", очередь=" & ExtractDetailValue(details, "queue") & _
+						", запас=" & ExtractDetailValue(details, "reserve") & _
 						BuildHealthAudioSettingsText(details)
 				Case "кэш"
-					Return "Состояние кэша: треков=" & ExtractDetailValue(details, "trackCache") & _
-						", рекламы=" & ExtractDetailValue(details, "adCache") & _
-						", индекс треков=" & ExtractDetailValue(details, "trackIndex") & _
-						", индекс рекламы=" & ExtractDetailValue(details, "adIndex")
+					Return "Кэш: " & DefaultIfEmpty(ExtractDetailValue(details, "status"), "неизвестно")
 				Case "устройство"
-					Return "Состояние устройства: " & ExtractDetailValue(details, "device") & _
+					Return "Устройство: " & ExtractDetailValue(details, "device") & _
 						", id=" & ExtractDetailValue(details, "deviceId") & _
 						", ОС=" & ExtractDetailTail(details, "os")
 				Case "ресурсы"
-					Return "Состояние ресурсов: RAM=" & ExtractDetailValue(details, "ramFreeMb") & " МБ" & _
+					Return "Система: RAM=" & ExtractDetailValue(details, "ramFreeMb") & " МБ" & _
 						", диск=" & ExtractDetailValue(details, "diskFreeMb") & "/" & ExtractDetailValue(details, "diskTotalMb") & " МБ"
 				Case "сеть"
-					Return "Состояние сети: ошибок=" & ExtractDetailValue(details, "netErrors") & _
+					Return "Сеть: ошибок=" & ExtractDetailValue(details, "netErrors") & _
 						", данные ок " & ExtractDetailValue(details, "lastDataOkAgoSec") & " сек назад" & _
 						", история ок " & ExtractDetailValue(details, "lastHistoryOkAgoSec") & " сек назад"
 			End Select
 		Case "system"
 			Select message
 				Case "источник"
-					Return "Системный снимок. Источник: " & details
+					Return "Система: источник=" & details
 				Case "устройство"
 					Return "Устройство: " & ExtractDetailValue(details, "name") & ", id=" & ExtractDetailValue(details, "id")
 				Case "платформа"
-					Return "Платформа: " & ExtractDetailTail(details, "os")
+					Return "Система: " & ExtractDetailTail(details, "os")
 				Case "память"
-					Return "Память: свободно " & ExtractDetailValue(details, "ramFreeMb") & " МБ"
+					Return "RAM: свободно " & ExtractDetailValue(details, "ramFreeMb") & " МБ"
 				Case "память доступно"
-					Return "Память: доступно приложению " & ExtractDetailValue(details, "ramTotalMb") & " МБ"
+					Return "RAM: приложению " & ExtractDetailValue(details, "ramTotalMb") & " МБ"
 				Case "диск"
 					Return "Диск: свободно " & ExtractDetailValue(details, "diskFreeMb") & " МБ из " & ExtractDetailValue(details, "diskTotalMb") & " МБ"
 				Case "кэш треков"
-					Return "Кэш треков: " & ExtractDetailValue(details, "trackCount") & " файлов, " & ExtractDetailValue(details, "trackMb") & " МБ, в индексе " & ExtractDetailValue(details, "trackIndex")
+					Return "Кэш: треков=" & ExtractDetailValue(details, "trackCount") & ", " & ExtractDetailValue(details, "trackMb") & " МБ, индекс=" & ExtractDetailValue(details, "trackIndex")
 				Case "кэш рекламы"
-					Return "Кэш рекламы: " & ExtractDetailValue(details, "adCount") & " файлов, " & ExtractDetailValue(details, "adMb") & " МБ, в индексе " & ExtractDetailValue(details, "adIndex")
+					Return "Кэш: рекламы=" & ExtractDetailValue(details, "adCount") & ", " & ExtractDetailValue(details, "adMb") & " МБ, индекс=" & ExtractDetailValue(details, "adIndex")
 				Case "история"
 					Return "История: ожидает отправки " & ExtractDetailValue(details, "pendingHistory") & " записей"
 			End Select

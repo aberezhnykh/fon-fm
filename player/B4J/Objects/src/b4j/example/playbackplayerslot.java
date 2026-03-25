@@ -48,13 +48,13 @@ __ref = this;
 RDebugUtils.currentModule="playbackplayerslot";
 if (Debug.shouldDelegate(ba, "hasitem", false))
 	 {return ((Boolean) Debug.delegate(ba, "hasitem", null));}
-RDebugUtils.currentLine=65077248;
- //BA.debugLineNum = 65077248;BA.debugLine="Public Sub HasItem As Boolean";
-RDebugUtils.currentLine=65077249;
- //BA.debugLineNum = 65077249;BA.debugLine="Return Item.IsInitialized And Item.Size > 0";
+RDebugUtils.currentLine=49807360;
+ //BA.debugLineNum = 49807360;BA.debugLine="Public Sub HasItem As Boolean";
+RDebugUtils.currentLine=49807361;
+ //BA.debugLineNum = 49807361;BA.debugLine="Return Item.IsInitialized And Item.Size > 0";
 if (true) return __ref._item /*anywheresoftware.b4a.objects.collections.Map*/ .IsInitialized() && __ref._item /*anywheresoftware.b4a.objects.collections.Map*/ .getSize()>0;
-RDebugUtils.currentLine=65077250;
- //BA.debugLineNum = 65077250;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49807362;
+ //BA.debugLineNum = 49807362;BA.debugLine="End Sub";
 return false;
 }
 public String  _markprogress(b4j.example.playbackplayerslot __ref) throws Exception{
@@ -62,13 +62,13 @@ __ref = this;
 RDebugUtils.currentModule="playbackplayerslot";
 if (Debug.shouldDelegate(ba, "markprogress", false))
 	 {return ((String) Debug.delegate(ba, "markprogress", null));}
-RDebugUtils.currentLine=65011712;
- //BA.debugLineNum = 65011712;BA.debugLine="Public Sub MarkProgress";
-RDebugUtils.currentLine=65011713;
- //BA.debugLineNum = 65011713;BA.debugLine="LastProgressAt = DateTime.Now";
+RDebugUtils.currentLine=49741824;
+ //BA.debugLineNum = 49741824;BA.debugLine="Public Sub MarkProgress";
+RDebugUtils.currentLine=49741825;
+ //BA.debugLineNum = 49741825;BA.debugLine="LastProgressAt = DateTime.Now";
 __ref._lastprogressat /*long*/  = __c.DateTime.getNow();
-RDebugUtils.currentLine=65011714;
- //BA.debugLineNum = 65011714;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49741826;
+ //BA.debugLineNum = 49741826;BA.debugLine="End Sub";
 return "";
 }
 public String  _reset(b4j.example.playbackplayerslot __ref) throws Exception{
@@ -76,25 +76,25 @@ __ref = this;
 RDebugUtils.currentModule="playbackplayerslot";
 if (Debug.shouldDelegate(ba, "reset", false))
 	 {return ((String) Debug.delegate(ba, "reset", null));}
-RDebugUtils.currentLine=64749568;
- //BA.debugLineNum = 64749568;BA.debugLine="Public Sub Reset";
-RDebugUtils.currentLine=64749569;
- //BA.debugLineNum = 64749569;BA.debugLine="Role = \"free\"";
+RDebugUtils.currentLine=49479680;
+ //BA.debugLineNum = 49479680;BA.debugLine="Public Sub Reset";
+RDebugUtils.currentLine=49479681;
+ //BA.debugLineNum = 49479681;BA.debugLine="Role = \"free\"";
 __ref._role /*String*/  = "free";
-RDebugUtils.currentLine=64749570;
- //BA.debugLineNum = 64749570;BA.debugLine="State = \"empty\"";
+RDebugUtils.currentLine=49479682;
+ //BA.debugLineNum = 49479682;BA.debugLine="State = \"empty\"";
 __ref._state /*String*/  = "empty";
-RDebugUtils.currentLine=64749571;
- //BA.debugLineNum = 64749571;BA.debugLine="LastProgressAt = 0";
+RDebugUtils.currentLine=49479683;
+ //BA.debugLineNum = 49479683;BA.debugLine="LastProgressAt = 0";
 __ref._lastprogressat /*long*/  = (long) (0);
-RDebugUtils.currentLine=64749572;
- //BA.debugLineNum = 64749572;BA.debugLine="LastStateChangedAt = DateTime.Now";
+RDebugUtils.currentLine=49479684;
+ //BA.debugLineNum = 49479684;BA.debugLine="LastStateChangedAt = DateTime.Now";
 __ref._laststatechangedat /*long*/  = __c.DateTime.getNow();
-RDebugUtils.currentLine=64749573;
- //BA.debugLineNum = 64749573;BA.debugLine="Item.Initialize";
+RDebugUtils.currentLine=49479685;
+ //BA.debugLineNum = 49479685;BA.debugLine="Item.Initialize";
 __ref._item /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();
-RDebugUtils.currentLine=64749574;
- //BA.debugLineNum = 64749574;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49479686;
+ //BA.debugLineNum = 49479686;BA.debugLine="End Sub";
 return "";
 }
 public String  _setrolestate(b4j.example.playbackplayerslot __ref,String _rolevalue,String _statevalue) throws Exception{
@@ -102,19 +102,19 @@ __ref = this;
 RDebugUtils.currentModule="playbackplayerslot";
 if (Debug.shouldDelegate(ba, "setrolestate", false))
 	 {return ((String) Debug.delegate(ba, "setrolestate", new Object[] {_rolevalue,_statevalue}));}
-RDebugUtils.currentLine=64815104;
- //BA.debugLineNum = 64815104;BA.debugLine="Public Sub SetRoleState(roleValue As String, state";
-RDebugUtils.currentLine=64815105;
- //BA.debugLineNum = 64815105;BA.debugLine="Role = roleValue";
+RDebugUtils.currentLine=49545216;
+ //BA.debugLineNum = 49545216;BA.debugLine="Public Sub SetRoleState(roleValue As String, state";
+RDebugUtils.currentLine=49545217;
+ //BA.debugLineNum = 49545217;BA.debugLine="Role = roleValue";
 __ref._role /*String*/  = _rolevalue;
-RDebugUtils.currentLine=64815106;
- //BA.debugLineNum = 64815106;BA.debugLine="State = stateValue";
+RDebugUtils.currentLine=49545218;
+ //BA.debugLineNum = 49545218;BA.debugLine="State = stateValue";
 __ref._state /*String*/  = _statevalue;
-RDebugUtils.currentLine=64815107;
- //BA.debugLineNum = 64815107;BA.debugLine="LastStateChangedAt = DateTime.Now";
+RDebugUtils.currentLine=49545219;
+ //BA.debugLineNum = 49545219;BA.debugLine="LastStateChangedAt = DateTime.Now";
 __ref._laststatechangedat /*long*/  = __c.DateTime.getNow();
-RDebugUtils.currentLine=64815108;
- //BA.debugLineNum = 64815108;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49545220;
+ //BA.debugLineNum = 49545220;BA.debugLine="End Sub";
 return "";
 }
 public String  _setitem(b4j.example.playbackplayerslot __ref,anywheresoftware.b4a.objects.collections.Map _sourceitem) throws Exception{
@@ -122,16 +122,16 @@ __ref = this;
 RDebugUtils.currentModule="playbackplayerslot";
 if (Debug.shouldDelegate(ba, "setitem", false))
 	 {return ((String) Debug.delegate(ba, "setitem", new Object[] {_sourceitem}));}
-RDebugUtils.currentLine=64880640;
- //BA.debugLineNum = 64880640;BA.debugLine="Public Sub SetItem(sourceItem As Map)";
-RDebugUtils.currentLine=64880641;
- //BA.debugLineNum = 64880641;BA.debugLine="Item = CloneStateMap(sourceItem)";
+RDebugUtils.currentLine=49610752;
+ //BA.debugLineNum = 49610752;BA.debugLine="Public Sub SetItem(sourceItem As Map)";
+RDebugUtils.currentLine=49610753;
+ //BA.debugLineNum = 49610753;BA.debugLine="Item = CloneStateMap(sourceItem)";
 __ref._item /*anywheresoftware.b4a.objects.collections.Map*/  = __ref._clonestatemap /*anywheresoftware.b4a.objects.collections.Map*/ (null,_sourceitem);
-RDebugUtils.currentLine=64880642;
- //BA.debugLineNum = 64880642;BA.debugLine="LastStateChangedAt = DateTime.Now";
+RDebugUtils.currentLine=49610754;
+ //BA.debugLineNum = 49610754;BA.debugLine="LastStateChangedAt = DateTime.Now";
 __ref._laststatechangedat /*long*/  = __c.DateTime.getNow();
-RDebugUtils.currentLine=64880643;
- //BA.debugLineNum = 64880643;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49610755;
+ //BA.debugLineNum = 49610755;BA.debugLine="End Sub";
 return "";
 }
 public String  _initialize(b4j.example.playbackplayerslot __ref,anywheresoftware.b4a.BA _ba,String _slotidvalue,String _audiokeyvalue) throws Exception{
@@ -140,49 +140,49 @@ innerInitialize(_ba);
 RDebugUtils.currentModule="playbackplayerslot";
 if (Debug.shouldDelegate(ba, "initialize", false))
 	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba,_slotidvalue,_audiokeyvalue}));}
-RDebugUtils.currentLine=64684032;
- //BA.debugLineNum = 64684032;BA.debugLine="Public Sub Initialize(slotIdValue As String, audio";
-RDebugUtils.currentLine=64684033;
- //BA.debugLineNum = 64684033;BA.debugLine="SlotId = slotIdValue";
+RDebugUtils.currentLine=49414144;
+ //BA.debugLineNum = 49414144;BA.debugLine="Public Sub Initialize(slotIdValue As String, audio";
+RDebugUtils.currentLine=49414145;
+ //BA.debugLineNum = 49414145;BA.debugLine="SlotId = slotIdValue";
 __ref._slotid /*String*/  = _slotidvalue;
-RDebugUtils.currentLine=64684034;
- //BA.debugLineNum = 64684034;BA.debugLine="AudioKey = audioKeyValue";
+RDebugUtils.currentLine=49414146;
+ //BA.debugLineNum = 49414146;BA.debugLine="AudioKey = audioKeyValue";
 __ref._audiokey /*String*/  = _audiokeyvalue;
-RDebugUtils.currentLine=64684035;
- //BA.debugLineNum = 64684035;BA.debugLine="Reset";
+RDebugUtils.currentLine=49414147;
+ //BA.debugLineNum = 49414147;BA.debugLine="Reset";
 __ref._reset /*String*/ (null);
-RDebugUtils.currentLine=64684036;
- //BA.debugLineNum = 64684036;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49414148;
+ //BA.debugLineNum = 49414148;BA.debugLine="End Sub";
 return "";
 }
 public String  _class_globals(b4j.example.playbackplayerslot __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackplayerslot";
-RDebugUtils.currentLine=64618496;
- //BA.debugLineNum = 64618496;BA.debugLine="Sub Class_Globals";
-RDebugUtils.currentLine=64618497;
- //BA.debugLineNum = 64618497;BA.debugLine="Public SlotId As String";
+RDebugUtils.currentLine=49348608;
+ //BA.debugLineNum = 49348608;BA.debugLine="Sub Class_Globals";
+RDebugUtils.currentLine=49348609;
+ //BA.debugLineNum = 49348609;BA.debugLine="Public SlotId As String";
 _slotid = "";
-RDebugUtils.currentLine=64618498;
- //BA.debugLineNum = 64618498;BA.debugLine="Public AudioKey As String";
+RDebugUtils.currentLine=49348610;
+ //BA.debugLineNum = 49348610;BA.debugLine="Public AudioKey As String";
 _audiokey = "";
-RDebugUtils.currentLine=64618499;
- //BA.debugLineNum = 64618499;BA.debugLine="Public Role As String";
+RDebugUtils.currentLine=49348611;
+ //BA.debugLineNum = 49348611;BA.debugLine="Public Role As String";
 _role = "";
-RDebugUtils.currentLine=64618500;
- //BA.debugLineNum = 64618500;BA.debugLine="Public State As String";
+RDebugUtils.currentLine=49348612;
+ //BA.debugLineNum = 49348612;BA.debugLine="Public State As String";
 _state = "";
-RDebugUtils.currentLine=64618501;
- //BA.debugLineNum = 64618501;BA.debugLine="Public Item As Map";
+RDebugUtils.currentLine=49348613;
+ //BA.debugLineNum = 49348613;BA.debugLine="Public Item As Map";
 _item = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=64618502;
- //BA.debugLineNum = 64618502;BA.debugLine="Public LastProgressAt As Long";
+RDebugUtils.currentLine=49348614;
+ //BA.debugLineNum = 49348614;BA.debugLine="Public LastProgressAt As Long";
 _lastprogressat = 0L;
-RDebugUtils.currentLine=64618503;
- //BA.debugLineNum = 64618503;BA.debugLine="Public LastStateChangedAt As Long";
+RDebugUtils.currentLine=49348615;
+ //BA.debugLineNum = 49348615;BA.debugLine="Public LastStateChangedAt As Long";
 _laststatechangedat = 0L;
-RDebugUtils.currentLine=64618504;
- //BA.debugLineNum = 64618504;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49348616;
+ //BA.debugLineNum = 49348616;BA.debugLine="End Sub";
 return "";
 }
 public String  _clearitem(b4j.example.playbackplayerslot __ref) throws Exception{
@@ -190,16 +190,16 @@ __ref = this;
 RDebugUtils.currentModule="playbackplayerslot";
 if (Debug.shouldDelegate(ba, "clearitem", false))
 	 {return ((String) Debug.delegate(ba, "clearitem", null));}
-RDebugUtils.currentLine=64946176;
- //BA.debugLineNum = 64946176;BA.debugLine="Public Sub ClearItem";
-RDebugUtils.currentLine=64946177;
- //BA.debugLineNum = 64946177;BA.debugLine="Item.Initialize";
+RDebugUtils.currentLine=49676288;
+ //BA.debugLineNum = 49676288;BA.debugLine="Public Sub ClearItem";
+RDebugUtils.currentLine=49676289;
+ //BA.debugLineNum = 49676289;BA.debugLine="Item.Initialize";
 __ref._item /*anywheresoftware.b4a.objects.collections.Map*/ .Initialize();
-RDebugUtils.currentLine=64946178;
- //BA.debugLineNum = 64946178;BA.debugLine="LastStateChangedAt = DateTime.Now";
+RDebugUtils.currentLine=49676290;
+ //BA.debugLineNum = 49676290;BA.debugLine="LastStateChangedAt = DateTime.Now";
 __ref._laststatechangedat /*long*/  = __c.DateTime.getNow();
-RDebugUtils.currentLine=64946179;
- //BA.debugLineNum = 64946179;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49676291;
+ //BA.debugLineNum = 49676291;BA.debugLine="End Sub";
 return "";
 }
 public anywheresoftware.b4a.objects.collections.Map  _clonestatemap(b4j.example.playbackplayerslot __ref,anywheresoftware.b4a.objects.collections.Map _source) throws Exception{
@@ -209,20 +209,20 @@ if (Debug.shouldDelegate(ba, "clonestatemap", false))
 	 {return ((anywheresoftware.b4a.objects.collections.Map) Debug.delegate(ba, "clonestatemap", new Object[] {_source}));}
 anywheresoftware.b4a.objects.collections.Map _cloned = null;
 Object _key = null;
-RDebugUtils.currentLine=65142784;
- //BA.debugLineNum = 65142784;BA.debugLine="Private Sub CloneStateMap(source As Map) As Map";
-RDebugUtils.currentLine=65142785;
- //BA.debugLineNum = 65142785;BA.debugLine="Dim cloned As Map";
+RDebugUtils.currentLine=49872896;
+ //BA.debugLineNum = 49872896;BA.debugLine="Private Sub CloneStateMap(source As Map) As Map";
+RDebugUtils.currentLine=49872897;
+ //BA.debugLineNum = 49872897;BA.debugLine="Dim cloned As Map";
 _cloned = new anywheresoftware.b4a.objects.collections.Map();
-RDebugUtils.currentLine=65142786;
- //BA.debugLineNum = 65142786;BA.debugLine="cloned.Initialize";
+RDebugUtils.currentLine=49872898;
+ //BA.debugLineNum = 49872898;BA.debugLine="cloned.Initialize";
 _cloned.Initialize();
-RDebugUtils.currentLine=65142787;
- //BA.debugLineNum = 65142787;BA.debugLine="If source.IsInitialized = False Then Return clone";
+RDebugUtils.currentLine=49872899;
+ //BA.debugLineNum = 49872899;BA.debugLine="If source.IsInitialized = False Then Return clone";
 if (_source.IsInitialized()==__c.False) { 
 if (true) return _cloned;};
-RDebugUtils.currentLine=65142788;
- //BA.debugLineNum = 65142788;BA.debugLine="For Each key As Object In source.Keys";
+RDebugUtils.currentLine=49872900;
+ //BA.debugLineNum = 49872900;BA.debugLine="For Each key As Object In source.Keys";
 {
 final anywheresoftware.b4a.BA.IterableList group4 = _source.Keys();
 final int groupLen4 = group4.getSize()
@@ -230,16 +230,16 @@ final int groupLen4 = group4.getSize()
 ;
 for (; index4 < groupLen4;index4++){
 _key = group4.Get(index4);
-RDebugUtils.currentLine=65142789;
- //BA.debugLineNum = 65142789;BA.debugLine="cloned.Put(key, source.Get(key))";
+RDebugUtils.currentLine=49872901;
+ //BA.debugLineNum = 49872901;BA.debugLine="cloned.Put(key, source.Get(key))";
 _cloned.Put(_key,_source.Get(_key));
  }
 };
-RDebugUtils.currentLine=65142791;
- //BA.debugLineNum = 65142791;BA.debugLine="Return cloned";
+RDebugUtils.currentLine=49872903;
+ //BA.debugLineNum = 49872903;BA.debugLine="Return cloned";
 if (true) return _cloned;
-RDebugUtils.currentLine=65142792;
- //BA.debugLineNum = 65142792;BA.debugLine="End Sub";
+RDebugUtils.currentLine=49872904;
+ //BA.debugLineNum = 49872904;BA.debugLine="End Sub";
 return null;
 }
 }

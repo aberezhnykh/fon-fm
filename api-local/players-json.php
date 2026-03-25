@@ -59,18 +59,20 @@ foreach ($ids as $id) {
         continue;
     }
 
-    $code = player_json_code($item['code'] ?? '');
-    $routeFile = $code !== '' ? $code . '.json' : '';
-
     // Для players JSON удаляем при archived самого плеера.
-    if (($item['status'] ?? '') === 'archived' || $routeFile === '') {
+    if (($item['status'] ?? '') === 'archived') {
         delete_file($outDir, $legacyFile);
-        if ($routeFile !== '') {
-            delete_file($outDir, $routeFile);
-        }
         $done[] = ['id' => $id, 'deleted' => true];
         continue;
     }
+
+    $code = player_json_code($item['code'] ?? '');
+    if ($code === '') {
+        $errs[] = ['id' => $id, 'error' => 'bad_player_code'];
+        continue;
+    }
+
+    $routeFile = $code . '.json';
     $client = $item['client'] ?? null;
     $clientId = is_array($client)
         ? (string)($client['id'] ?? '')
@@ -82,6 +84,10 @@ foreach ($ids as $id) {
     // Если клиент удален/не найден или переведен в archived, плеерский JSON удаляем.
     // inactive сам по себе не является причиной удаления.
     if ($clientId === '' || $clientStatus === 'archived') {
+        if ($clientId === '') {
+            $errs[] = ['id' => $id, 'error' => 'bad_player_client'];
+            continue;
+        }
         delete_file($outDir, $legacyFile);
         delete_file($outDir, $routeFile);
         $done[] = ['id' => $id, 'deleted' => true];

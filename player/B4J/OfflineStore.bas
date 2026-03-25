@@ -66,6 +66,7 @@ Public Sub SaveOfflineData(sourceData As Map, playerCode As String, deviceId As 
 	storage.Put("playlist_actual_count", playlistCacheStatus.GetDefault("ActualCount", 0))
 	storage.Put("ad_count", GetOfflineAdsCount(normalizedData))
 	storage.Put("schedule_count", GetOfflineSchedulesCount(normalizedData))
+	CleanupObsoletePlaylistMetadata(playlistDescriptors)
 	Dim generator As JSONGenerator
 	generator.Initialize(normalizedData)
 	File.WriteString(storageDir, playerDataFileName, generator.ToString)
@@ -124,6 +125,7 @@ Public Sub SavePlaylistMetadata(descriptor As Map, playlistData As Map, cachedPl
 	cachedEntry.Put("title", descriptor.GetDefault("title", ""))
 	cachedEntry.Put("track_count", GetPlaylistTrackCount(normalizedPlaylistData))
 	cachedPlaylistIndex.Put(playlistId, cachedEntry)
+	InvalidatePlaylistPlaybackOrder(playlistId)
 End Sub
 
 Public Sub GetOfflinePlaylistsDir As String
@@ -293,6 +295,13 @@ Private Sub CompareOfflinePlaylistsWithCache(descriptors As List) As Map
 	Return result
 End Sub
 
+Private Sub InvalidatePlaylistPlaybackOrder(playlistId As String)
+	If playlistId = "" Then Return
+	storage.Remove("playlist_playback_manifest_" & playlistId)
+	storage.Remove("playlist_playback_cursor_" & playlistId)
+	storage.Remove("playlist_track_index_" & playlistId)
+End Sub
+
 Private Sub WriteOfflinePlaylistRequirementsFile(descriptors As List, playerCode As String)
 	Dim payload As Map
 	payload.Initialize
@@ -302,6 +311,40 @@ Private Sub WriteOfflinePlaylistRequirementsFile(descriptors As List, playerCode
 	Dim generator As JSONGenerator
 	generator.Initialize(payload)
 	File.WriteString(storageDir, playlistRequirementsFileName, generator.ToString)
+End Sub
+
+' Убирает playlist metadata, которые больше не входят в актуальный data snapshot.
+' Это помогает не копить мёртвый груз от старых потоков и старых расписаний.
+Private Sub CleanupObsoletePlaylistMetadata(descriptors As List)
+	Dim actualIds As Map
+	actualIds.Initialize
+	If descriptors.IsInitialized Then
+		For Each descriptorObject As Object In descriptors
+			If descriptorObject Is Map Then
+				Dim descriptor As Map = descriptorObject
+				Dim playlistId As String = descriptor.GetDefault("id", "")
+				If playlistId <> "" Then actualIds.Put(playlistId, True)
+			End If
+		Next
+	End If
+	Dim cachedPlaylistIndex As Map = storage.GetDefault("cached_playlist_index", CreateInitializedMap)
+	Dim removedCount As Int = 0
+	Dim obsoleteIds As List
+	obsoleteIds.Initialize
+	For Each playlistId As String In cachedPlaylistIndex.Keys
+		If actualIds.ContainsKey(playlistId) = False Then obsoleteIds.Add(playlistId)
+	Next
+	For Each playlistId As String In obsoleteIds
+		If File.Exists(GetOfflinePlaylistsDir, PlaylistMetadataFileName(playlistId)) Then
+			File.Delete(GetOfflinePlaylistsDir, PlaylistMetadataFileName(playlistId))
+		End If
+		cachedPlaylistIndex.Remove(playlistId)
+		removedCount = removedCount + 1
+	Next
+	If removedCount > 0 Then
+		storage.Put("cached_playlist_index", cachedPlaylistIndex)
+		Trace("playlist metadata cleanup done removed=" & removedCount)
+	End If
 End Sub
 
 Private Sub NormalizeOfflinePlaylistData(descriptor As Map, playlistData As Map) As Map

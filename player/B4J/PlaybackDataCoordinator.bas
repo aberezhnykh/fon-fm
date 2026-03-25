@@ -94,6 +94,7 @@ Public Sub RefreshOfflineDataNow(fetchTimeoutMs As Int) As ResumableSub
 			stateStore.SetLastOfflineDataRefreshState("data")
 			UpdateTrustedOnlineTimeFromData(data, stateStore.Storage, stateStore.TrustedSyncTimeKey)
 			stateStore.SaveOfflineData(data)
+			stateStore.CheckForAppUpdate(data)
 			If stateStore.IsTraceUploadEnabled Then stateStore.FlushTraceBufferAsync
 			stateStore.InvalidateRelevantTrackIdsCache
 			stateStore.SetRemoteDataReady
@@ -161,8 +162,8 @@ Public Sub HandleTemporaryState(mode As String, text As String)
 	stateStore.HidePin
 	If text <> "" Then
 		stateStore.ShowMessage(text)
-	Else If mode = "offline" Then
-		stateStore.ShowMessage(stateStore.MessageValue("offline"))
+	Else If mode = "network" Then
+		stateStore.ShowMessage("Проверьте интернет")
 	Else
 		stateStore.ShowMessage(stateStore.MessageValue("server_wait"))
 	End If
@@ -190,33 +191,35 @@ Public Sub StopForMissingData(text As String)
 End Sub
 
 ' Активация local fallback path без knowledge о playback queue internals.
-Public Sub SwitchToLocalPlayback(markDegraded As Boolean, reason As String)
+Public Sub ActivateLocalFallback(markDegraded As Boolean, reason As String)
 	stateStore.TraceLog("fallback activate mode=local reason=" & reason & " degraded=" & markDegraded)
 	stateStore.SetPlaybackFlowState("idle", "switch_local:" & reason)
 	stateStore.EnterLocalPlayback
 	stateStore.SetMediaPathDegraded(markDegraded)
-	stateStore.RequestSkipQueueSnapshotRestore("switch_local:" & reason)
 	stateStore.RefreshConnectionIndicatorState
 	stateStore.ClearPlaybackState
 	stateStore.HidePin
 End Sub
 
-' Offline temporary state: если playable local fallback есть, оставляем локальный режим и показываем понятное сообщение.
+' Состояние отсутствия локальной музыки: фиксируем факт и не запускаем скрытый retry-цикл.
 Public Sub HandleLocalTemporaryState(text As String)
 	Dim fallbackReady As Boolean = stateStore.HasLocalPlaybackFallback
-	stateStore.TraceLog("состояние temporary mode=offline playableFallback=" & fallbackReady & " text=" & text)
-	If fallbackReady Then stateStore.TraceLog("fallback выбор mode=temporary_local reason=playable_local_fallback")
-	stateStore.SetPlaybackFlowState("idle", "temporary_local_state")
-	stateStore.SetLocalFallbackReady(fallbackReady)
+	stateStore.TraceLog("состояние local_empty fallbackReady=" & fallbackReady & " text=" & text)
+	If fallbackReady Then stateStore.TraceLog("fallback выбор mode=local_ready reason=playable_local_fallback")
+	stateStore.SetPlaybackFlowState("idle", "local_media_unavailable")
+	If fallbackReady Then
+		stateStore.EnterLocalPlayback
+	Else
+		stateStore.ApplyTemporaryMode("local_empty")
+	End If
 	stateStore.RefreshConnectionIndicatorState
 	stateStore.ClearPlaybackState
 	stateStore.HidePin
 	If text <> "" Then
 		stateStore.ShowMessage(text)
 	Else
-		stateStore.ShowMessage(stateStore.MessageValue("offline"))
+		stateStore.ShowMessage("Нет локальных треков")
 	End If
-	stateStore.ScheduleRetry("offline", 0)
 End Sub
 
 ' Policy shutdown message останавливает background refresh и оставляет player в stopped state.
@@ -237,7 +240,7 @@ End Sub
 ' Обрабатывает ошибку data fetch и решает, переходить ли в local/server temporary mode.
 Public Sub HandleFetchFailure(result As Map) As ResumableSub
 	stateStore.TraceLog("очередь fetch ошибка kind=" & result.GetDefault("Kind", "") & " message=" & result.GetDefault("ErrorMessage", ""))
-	If result.GetDefault("Kind", "") = "offline" Then
+	If result.GetDefault("Kind", "") = "network" Then
 		HandleLocalTemporaryState("")
 		Return True
 	End If
@@ -246,12 +249,7 @@ Public Sub HandleFetchFailure(result As Map) As ResumableSub
 		HandleLocalTemporaryState("")
 		Return True
 	End If
-	Wait For (syncService.CheckServiceAvailability(2500)) Complete (serviceAvailable As Boolean)
-	If serviceAvailable Then
-		HandleTemporaryState("server", "")
-	Else
-		HandleTemporaryState("server", "")
-	End If
+	HandleTemporaryState("server", "")
 	Return True
 End Sub
 
@@ -281,14 +279,14 @@ Public Sub HandleMediaError As ResumableSub
 	stateStore.SetPlaybackFlowState("error", "media_error")
 	If stateStore.HasLocalPlaybackFallback Then
 		stateStore.TraceLog("fallback выбор mode=local reason=media_error")
-		SwitchToLocalPlayback(True, "media_failure")
+		ActivateLocalFallback(True, "media_failure")
 		Return True
 	End If
-	HandleLocalTemporaryState("Нужен интернет")
+	HandleLocalTemporaryState("Нет локальных треков")
 	Return True
 End Sub
 
-' Централизованный policy-pause вход для server/offline/blocked режимов.
+' Централизованный policy-pause вход для server/network/blocked режимов.
 Public Sub PausePlaybackByPolicy(reason As String, connectionMode As String)
 	Dim safeReason As String = reason
 	If safeReason = "" Then safeReason = stateStore.MessageValue("playback_paused")
@@ -298,20 +296,41 @@ End Sub
 
 ' Проверяет, есть ли в текущем data slot локально воспроизводимый track.
 Public Sub HasPlayableLocalTrackInCurrentSlot(offlineData As Map, effectiveNowTicks As Long) As Boolean
+	Return CountPlayableLocalTracksInCurrentSlot(offlineData, effectiveNowTicks) > 0
+End Sub
+
+Public Sub CountPlayableLocalTracksInCurrentSlot(offlineData As Map, effectiveNowTicks As Long) As Int
 	Dim currentSlot As Map = stateStore.ResolveDataSlotAtTicks(offlineData, effectiveNowTicks)
-	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return False
+	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return 0
 	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
-	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return False
+	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return 0
+	Dim totalCount As Int = 0
 	For Each playlistObject As Object In playlists
 		If playlistObject Is Map Then
 			Dim playlistDescriptor As Map = playlistObject
 			Dim playlistId As String = playlistDescriptor.GetDefault("id", "")
 			If playlistId = "" Then Continue
 			Dim playlistData As Map = stateStore.LoadCachedPlaylistMetadata(playlistId)
-			If PlaylistHasCachedTrack(playlistData) Then Return True
+			totalCount = totalCount + CountCachedTracksInPlaylist(playlistData)
 		End If
 	Next
-	Return False
+	Return totalCount
+End Sub
+
+Private Sub CountCachedTracksInPlaylist(playlistData As Map) As Int
+	If playlistData.IsInitialized = False Then Return 0
+	Dim tracks As List = playlistData.GetDefault("tracks", Null)
+	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return 0
+	Dim totalCount As Int = 0
+	For Each trackObject As Object In tracks
+		If (trackObject Is Map) = False Then Continue
+		Dim track As Map = trackObject
+		Dim trackId As String = track.GetDefault("id", "")
+		If trackId = "" Then Continue
+		If stateStore.IsTrackCached(trackId) = False Then Continue
+		totalCount = totalCount + 1
+	Next
+	Return totalCount
 End Sub
 
 ' Строит idle message на основе current/next data slots.
@@ -414,16 +433,3 @@ Private Sub IsIdleSlot(slotContext As Map) As Boolean
 	Return streamId = "" And streamTitle = ""
 End Sub
 
-Private Sub PlaylistHasCachedTrack(playlistData As Map) As Boolean
-	If playlistData.IsInitialized = False Or playlistData.Size = 0 Then Return False
-	Dim tracks As List = playlistData.GetDefault("tracks", Null)
-	If tracks.IsInitialized = False Or tracks.Size = 0 Then Return False
-	For Each trackObject As Object In tracks
-		If trackObject Is Map Then
-			Dim track As Map = trackObject
-			Dim trackId As String = track.GetDefault("id", "")
-			If trackId <> "" And stateStore.IsTrackCached(trackId) Then Return True
-		End If
-	Next
-	Return False
-End Sub

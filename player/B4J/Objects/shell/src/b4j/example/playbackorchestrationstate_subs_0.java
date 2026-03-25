@@ -8,7 +8,7 @@ public class playbackorchestrationstate_subs_0 {
 
 public static RemoteObject  _begindispatch(RemoteObject __ref,RemoteObject _initiator) throws Exception{
 try {
-		Debug.PushSubsStack("BeginDispatch (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,87);
+		Debug.PushSubsStack("BeginDispatch (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,87);
 if (RapidSub.canDelegate("begindispatch")) { return __ref.runUserSub(false, "playbackorchestrationstate","begindispatch", __ref, _initiator);}
 Debug.locals.put("initiator", _initiator);
  BA.debugLineNum = 87;BA.debugLine="Public Sub BeginDispatch(initiator As String) As B";
@@ -38,7 +38,7 @@ finally {
 		}}
 public static RemoteObject  _beginqueuebackfill(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("BeginQueueBackfill (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,76);
+		Debug.PushSubsStack("BeginQueueBackfill (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,76);
 if (RapidSub.canDelegate("beginqueuebackfill")) { return __ref.runUserSub(false, "playbackorchestrationstate","beginqueuebackfill", __ref);}
  BA.debugLineNum = 76;BA.debugLine="Public Sub BeginQueueBackfill As Boolean";
 Debug.ShouldStop(2048);
@@ -85,7 +85,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _cleartracktransitionflags(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ClearTrackTransitionFlags (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,40);
+		Debug.PushSubsStack("ClearTrackTransitionFlags (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,40);
 if (RapidSub.canDelegate("cleartracktransitionflags")) { return __ref.runUserSub(false, "playbackorchestrationstate","cleartracktransitionflags", __ref);}
  BA.debugLineNum = 40;BA.debugLine="Public Sub ClearTrackTransitionFlags";
 Debug.ShouldStop(128);
@@ -107,7 +107,7 @@ finally {
 		}}
 public static RemoteObject  _enddispatch(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EndDispatch (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,94);
+		Debug.PushSubsStack("EndDispatch (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,94);
 if (RapidSub.canDelegate("enddispatch")) { return __ref.runUserSub(false, "playbackorchestrationstate","enddispatch", __ref);}
  BA.debugLineNum = 94;BA.debugLine="Public Sub EndDispatch";
 Debug.ShouldStop(536870912);
@@ -129,7 +129,7 @@ finally {
 		}}
 public static RemoteObject  _endqueuebackfill(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EndQueueBackfill (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,82);
+		Debug.PushSubsStack("EndQueueBackfill (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,82);
 if (RapidSub.canDelegate("endqueuebackfill")) { return __ref.runUserSub(false, "playbackorchestrationstate","endqueuebackfill", __ref);}
  BA.debugLineNum = 82;BA.debugLine="Public Sub EndQueueBackfill";
 Debug.ShouldStop(131072);
@@ -148,7 +148,7 @@ finally {
 		}}
 public static RemoteObject  _enterinternalstoppingstate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EnterInternalStoppingState (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,57);
+		Debug.PushSubsStack("EnterInternalStoppingState (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,57);
 if (RapidSub.canDelegate("enterinternalstoppingstate")) { return __ref.runUserSub(false, "playbackorchestrationstate","enterinternalstoppingstate", __ref);}
  BA.debugLineNum = 57;BA.debugLine="Public Sub EnterInternalStoppingState";
 Debug.ShouldStop(16777216);
@@ -170,7 +170,7 @@ finally {
 		}}
 public static RemoteObject  _enterpolicypausedstate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EnterPolicyPausedState (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,62);
+		Debug.PushSubsStack("EnterPolicyPausedState (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,62);
 if (RapidSub.canDelegate("enterpolicypausedstate")) { return __ref.runUserSub(false, "playbackorchestrationstate","enterpolicypausedstate", __ref);}
  BA.debugLineNum = 62;BA.debugLine="Public Sub EnterPolicyPausedState";
 Debug.ShouldStop(536870912);
@@ -195,7 +195,7 @@ finally {
 		}}
 public static RemoteObject  _enterstartedstate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EnterStartedState (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,45);
+		Debug.PushSubsStack("EnterStartedState (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,45);
 if (RapidSub.canDelegate("enterstartedstate")) { return __ref.runUserSub(false, "playbackorchestrationstate","enterstartedstate", __ref);}
  BA.debugLineNum = 45;BA.debugLine="Public Sub EnterStartedState";
 Debug.ShouldStop(4096);
@@ -220,7 +220,7 @@ finally {
 		}}
 public static RemoteObject  _enteruserstoppedstate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("EnterUserStoppedState (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,51);
+		Debug.PushSubsStack("EnterUserStoppedState (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,51);
 if (RapidSub.canDelegate("enteruserstoppedstate")) { return __ref.runUserSub(false, "playbackorchestrationstate","enteruserstoppedstate", __ref);}
  BA.debugLineNum = 51;BA.debugLine="Public Sub EnterUserStoppedState";
 Debug.ShouldStop(262144);
@@ -245,7 +245,7 @@ finally {
 		}}
 public static RemoteObject  _exitstoppingstate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ExitStoppingState (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,68);
+		Debug.PushSubsStack("ExitStoppingState (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,68);
 if (RapidSub.canDelegate("exitstoppingstate")) { return __ref.runUserSub(false, "playbackorchestrationstate","exitstoppingstate", __ref);}
  BA.debugLineNum = 68;BA.debugLine="Public Sub ExitStoppingState";
 Debug.ShouldStop(8);
@@ -264,7 +264,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,16);
+		Debug.PushSubsStack("Initialize (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,16);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackorchestrationstate","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -285,7 +285,7 @@ finally {
 		}}
 public static RemoteObject  _isplaybackactive(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsPlaybackActive (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,72);
+		Debug.PushSubsStack("IsPlaybackActive (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,72);
 if (RapidSub.canDelegate("isplaybackactive")) { return __ref.runUserSub(false, "playbackorchestrationstate","isplaybackactive", __ref);}
  BA.debugLineNum = 72;BA.debugLine="Public Sub IsPlaybackActive As Boolean";
 Debug.ShouldStop(128);
@@ -304,7 +304,7 @@ finally {
 		}}
 public static RemoteObject  _resettostopped(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ResetToStopped (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,21);
+		Debug.PushSubsStack("ResetToStopped (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,21);
 if (RapidSub.canDelegate("resettostopped")) { return __ref.runUserSub(false, "playbackorchestrationstate","resettostopped", __ref);}
  BA.debugLineNum = 21;BA.debugLine="Public Sub ResetToStopped";
 Debug.ShouldStop(1048576);
@@ -344,7 +344,7 @@ finally {
 		}}
 public static RemoteObject  _resettransientflags(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ResetTransientFlags (playbackorchestrationstate) ","playbackorchestrationstate",13,__ref.getField(false, "ba"),__ref,32);
+		Debug.PushSubsStack("ResetTransientFlags (playbackorchestrationstate) ","playbackorchestrationstate",18,__ref.getField(false, "ba"),__ref,32);
 if (RapidSub.canDelegate("resettransientflags")) { return __ref.runUserSub(false, "playbackorchestrationstate","resettransientflags", __ref);}
  BA.debugLineNum = 32;BA.debugLine="Public Sub ResetTransientFlags";
 Debug.ShouldStop(-2147483648);

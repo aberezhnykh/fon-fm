@@ -1,0 +1,164 @@
+﻿AppType=StandardJava
+Build1=Default,b4j.example
+Group=Default Group
+Library1=jcore
+Library2=jshell
+NumberOfFiles=0
+NumberOfLibraries=2
+NumberOfModules=0
+Version=10.5
+@EndOfDesignText@
+'Non-UI application (console / server application)
+#Region Project Attributes 
+	#CommandLineArgs:
+	#MergeLibraries: True 
+#End Region
+
+Sub Process_Globals
+	Private Const PLAYER_JAR As String = "fonfm.jar"
+	Private Const STAGED_PLAYER_JAR As String = "_fonfm.jar"
+	Private Const PLAYER_BACKUP_JAR As String = "fonfm.jar.bak"
+	Private Const PLAYER_ARGUMENT As String = "host"
+	Private Const HOST_LOG_FILE As String = "host.log"
+	Private Const EXIT_STOP As Int = 100
+	Private Const EXIT_APPLY_UPDATE As Int = 200
+	Private Const EXIT_RESTART As Int = 201
+	Private Const FAST_RESTART_DELAY_MS As Int = 1000
+	Private Const SLOW_RESTART_DELAY_MS As Int = 60000
+	Private playerShell As Shell
+	Private consecutiveUnexpectedExitCount As Int
+End Sub
+
+Sub AppStart (Args() As String)
+	TraceLog("host start dir=" & File.DirApp)
+	ApplyPendingUpdateIfNeeded
+	StartPlayer
+	StartMessageLoop
+End Sub
+
+Private Sub StartPlayer
+	If File.Exists(File.DirApp, PLAYER_JAR) = False Then
+		TraceLog("player not found file=" & PLAYER_JAR)
+		ExitApplication
+		Return
+	End If
+	If playerShell.IsInitialized Then
+		Try
+			playerShell.KillProcess
+		Catch
+			TraceLog("kill previous player ignored error=" & LastException.Message)
+		End Try
+	End If
+	playerShell.Initialize("PlayerShell", "java", Array As String("-jar", PLAYER_JAR, PLAYER_ARGUMENT))
+	playerShell.WorkingDirectory = File.DirApp
+	playerShell.Run(-1)
+	TraceLog("player start file=" & PLAYER_JAR)
+End Sub
+
+Private Sub PlayerShell_ProcessCompleted (Success As Boolean, ExitCode As Int, StdOut As String, StdErr As String)
+	HandlePlayerExitAsync(Success, ExitCode, StdErr)
+End Sub
+
+Private Sub HandlePlayerExitAsync(success As Boolean, exitCode As Int, stdErr As String) As ResumableSub
+	TraceLog("player exit code=" & exitCode & " success=" & success & " stderr=" & SanitizeForLog(stdErr))
+	Select exitCode
+		Case EXIT_STOP
+			TraceLog("host stop requested")
+			ExitApplication
+		Case EXIT_APPLY_UPDATE
+			consecutiveUnexpectedExitCount = 0
+			ApplyPendingUpdateIfNeeded
+			Wait For (RestartAfterDelay(FAST_RESTART_DELAY_MS, "apply_update")) Complete (unused As Boolean)
+		Case EXIT_RESTART
+			consecutiveUnexpectedExitCount = 0
+			Wait For (RestartAfterDelay(FAST_RESTART_DELAY_MS, "restart")) Complete (unused As Boolean)
+		Case Else
+			consecutiveUnexpectedExitCount = consecutiveUnexpectedExitCount + 1
+			Dim restartDelayMs As Int = IIf(consecutiveUnexpectedExitCount < 5, FAST_RESTART_DELAY_MS, SLOW_RESTART_DELAY_MS)
+			Wait For (RestartAfterDelay(restartDelayMs, "unexpected_exit")) Complete (unused As Boolean)
+	End Select
+	Return True
+End Sub
+
+Private Sub RestartAfterDelay(delayMs As Int, reason As String) As ResumableSub
+	TraceLog("restart scheduled reason=" & reason & " delayMs=" & delayMs)
+	Sleep(delayMs)
+	ApplyPendingUpdateIfNeeded
+	StartPlayer
+	Return True
+End Sub
+
+' Применяет staged update только вне процесса player.
+' Host копирует _fonfm.jar в fonfm.jar, а при наличии старой версии сохраняет резервную копию.
+Private Sub ApplyPendingUpdateIfNeeded As Boolean
+	If File.Exists(File.DirApp, STAGED_PLAYER_JAR) = False Then Return False
+	Dim stagedSize As Long = File.Size(File.DirApp, STAGED_PLAYER_JAR)
+	If stagedSize <= 0 Then
+		TraceLog("ignoring empty staged update file=" & STAGED_PLAYER_JAR)
+		File.Delete(File.DirApp, STAGED_PLAYER_JAR)
+		Return False
+	End If
+	Try
+		If File.Exists(File.DirApp, PLAYER_BACKUP_JAR) Then
+			File.Delete(File.DirApp, PLAYER_BACKUP_JAR)
+		End If
+		If File.Exists(File.DirApp, PLAYER_JAR) Then
+			File.Copy(File.DirApp, PLAYER_JAR, File.DirApp, PLAYER_BACKUP_JAR)
+			File.Delete(File.DirApp, PLAYER_JAR)
+		End If
+		File.Copy(File.DirApp, STAGED_PLAYER_JAR, File.DirApp, PLAYER_JAR)
+		If File.Exists(File.DirApp, PLAYER_JAR) = False Or File.Size(File.DirApp, PLAYER_JAR) <> stagedSize Then
+			TraceLog("update apply failed size mismatch staged=" & stagedSize & " player=" & SafeFileSize(PLAYER_JAR))
+			RestoreBackupIfNeeded
+			Return False
+		End If
+		File.Delete(File.DirApp, STAGED_PLAYER_JAR)
+		TraceLog("update applied size=" & stagedSize)
+		Return True
+	Catch
+		TraceLog("update apply error=" & LastException.Message)
+		RestoreBackupIfNeeded
+		Return False
+	End Try
+End Sub
+
+Private Sub RestoreBackupIfNeeded
+	If File.Exists(File.DirApp, PLAYER_BACKUP_JAR) = False Then Return
+	Try
+		If File.Exists(File.DirApp, PLAYER_JAR) Then
+			File.Delete(File.DirApp, PLAYER_JAR)
+		End If
+		File.Copy(File.DirApp, PLAYER_BACKUP_JAR, File.DirApp, PLAYER_JAR)
+		TraceLog("backup restored")
+	Catch
+		TraceLog("backup restore error=" & LastException.Message)
+	End Try
+End Sub
+
+Private Sub SafeFileSize(fileName As String) As Long
+	If File.Exists(File.DirApp, fileName) = False Then Return -1
+	Return File.Size(File.DirApp, fileName)
+End Sub
+
+Private Sub SanitizeForLog(value As String) As String
+	Dim text As String = value
+	If text = Null Then text = ""
+	text = text.Replace(CRLF, " | ").Replace(Chr(10), " | ").Replace(Chr(13), " | ").Trim
+	If text.Length > 500 Then text = text.SubString2(0, 500)
+	Return text
+End Sub
+
+Private Sub TraceLog(text As String)
+	If text = "" Then Return
+	Dim tw As TextWriter
+	tw.Initialize(File.OpenOutput(File.DirApp, HOST_LOG_FILE, True))
+	tw.Write(DateTime.Date(DateTime.Now) & " " & DateTime.Time(DateTime.Now) & " " & text & CRLF)
+	tw.Close
+	Log(text)
+End Sub
+
+'Return true to allow the default exceptions handler to handle the uncaught exception.
+Sub Application_Error (Error As Exception, StackTrace As String) As Boolean
+	TraceLog("application error=" & Error.Message)
+	Return True
+End Sub

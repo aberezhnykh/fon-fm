@@ -85,6 +85,10 @@ function http_get_json(string $url, array $headers = []): array {
     ];
 }
 
+function directus_body_has_errors(?array $body): bool {
+    return is_array($body) && !empty($body['errors']) && is_array($body['errors']);
+}
+
 // Обертка над Directus GET с единым форматом ответа.
 function directus_get(array $ENV, string $path, array $query = []): array {
     $base = rtrim((string)($ENV['DIRECTUS_URL'] ?? ''), '/');
@@ -98,7 +102,7 @@ function directus_get(array $ENV, string $path, array $query = []): array {
 
     $res = http_get_json($url, ['Authorization: Bearer ' . $token]);
 
-    if ($res['status'] < 200 || $res['status'] >= 300 || !is_array($res['body'])) {
+    if ($res['status'] < 200 || $res['status'] >= 300 || !is_array($res['body']) || directus_body_has_errors($res['body'])) {
         return ['ok' => false, 'status' => $res['status'], 'error' => 'directus_http', 'raw' => $res['raw']];
     }
 
@@ -257,7 +261,7 @@ function directus_patch(array $ENV, string $path, array $data): array {
         'Authorization: Bearer ' . $token,
     ], $data);
 
-    if ($res['status'] < 200 || $res['status'] >= 300 || !is_array($res['body'])) {
+    if ($res['status'] < 200 || $res['status'] >= 300 || !is_array($res['body']) || directus_body_has_errors($res['body'])) {
         return ['ok' => false, 'status' => $res['status'], 'error' => 'directus_http', 'raw' => $res['raw']];
     }
 
@@ -277,7 +281,7 @@ function directus_post(array $ENV, string $path, array $data): array {
         'Authorization: Bearer ' . $token,
     ], $data);
 
-    if ($res['status'] < 200 || $res['status'] >= 300 || !is_array($res['body'])) {
+    if ($res['status'] < 200 || $res['status'] >= 300 || !is_array($res['body']) || directus_body_has_errors($res['body'])) {
         return ['ok' => false, 'status' => $res['status'], 'error' => 'directus_http', 'raw' => $res['raw']];
     }
 

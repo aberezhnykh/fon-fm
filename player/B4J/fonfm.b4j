@@ -14,52 +14,57 @@ Library6=jshell
 Library7=json
 Library8=keyvaluestore
 Module1=AdScheduler
-Module10=PlaybackDirectorState
-Module11=PlaybackFacade
-Module12=PlaybackMetaState
-Module13=PlaybackOrchestrationState
-Module14=PlaybackPlayerSlot
-Module15=PlaybackQueueBuilder
-Module16=PlaybackQueueState
-Module17=PlaybackResponseAdapter
-Module18=PlaybackRetryFallbackState
-Module19=PlaybackRuntimeState
+Module10=PlaybackDataCoordinator
+Module11=PlaybackDataPolicyState
+Module12=PlaybackDirectorState
+Module13=PlaybackMetaState
+Module14=PlaybackOrchestrationState
+Module15=PlaybackPlayerSlot
+Module16=PlaybackRuntimeState
+Module17=PlaybackTraceFormatter
+Module18=PlaybackTraceRouter
+Module19=PlaybackTraceUploader
 Module2=AudioPlayer
-Module20=PlaybackTraceFormatter
-Module21=PlaybackTraceRouter
-Module22=PlaybackTraceUploader
-Module23=PlaybackTransitionCoordinator
-Module24=PlayerStateStore
-Module25=PlayerUiController
-Module26=TraceService
-Module27=UiStyle
-Module3=|relative|..\B4XMainPage
-Module4=DataPlaybackResolver
-Module5=MediaCache
-Module6=NetworkSyncService
-Module7=OfflineStore
-Module8=PlaybackDataCoordinator
-Module9=PlaybackDataPolicyState
+Module20=PlaybackTransitionCoordinator
+Module21=PlayerStateStore
+Module22=PlayerUiController
+Module23=TraceService
+Module24=UiStyle
+Module3=AutonomousCacheManager
+Module4=|relative|..\B4XMainPage
+Module5=DataPlaybackResolver
+Module6=MediaCache
+Module7=NetworkSyncService
+Module8=OfflinePlaybackEngine
+Module9=OfflineStore
 NumberOfFiles=2
 NumberOfLibraries=8
-NumberOfModules=27
+NumberOfModules=24
 Version=10.5
 @EndOfDesignText@
 #Region Project Attributes 
 	#MainFormWidth: 520
 	#MainFormHeight: 640 
 	#PackagerProperty: IconFile = icon.ico
+'	#JavaCompilerPath: 8, C:\java\jdk-19.0.2\bin\javac.exe
+'	#JavaCompilerPath: 8, C:\java\jdk-17.0.18-full\bin\javac.exe
 #End Region
 
 Sub Process_Globals
 	Public Const LabelName = "FON.FM" As String
 	Public Const VersionName = "1.0.1" As String
 	Public Const VersionCode = 1 As Int
+	Public Const HostArgument = "host" As String
+	Public Const ExitCodeStop = 100 As Int
+	Public Const ExitCodeApplyUpdate = 200 As Int
+	Public Const ExitCodeRestart = 201 As Int
 	Private fx As JFX
 	Private mainForm As Form
+	Private startedByHost As Boolean
 End Sub
 
 Sub AppStart (form1 As Form, args() As String)
+	startedByHost = IsStartedByHost(args)
 	mainForm = form1
 	mainForm.SetWindowSizeLimits(520, 640, fx.PrimaryScreen.MaxX - fx.PrimaryScreen.MinX, fx.PrimaryScreen.MaxY - fx.PrimaryScreen.MinY)
 	mainForm.Title = LabelName
@@ -69,6 +74,42 @@ Sub AppStart (form1 As Form, args() As String)
 	mainForm.WindowHeight = Max(mainForm.WindowHeight, 640)
 	Dim pagesManager As B4XPagesManager
 	pagesManager.Initialize(mainForm)
+End Sub
+
+Private Sub IsStartedByHost(args() As String) As Boolean
+	If args = Null Or args.Length = 0 Then Return False
+	For Each argValue As String In args
+		If argValue = HostArgument Then Return True
+	Next
+	Return False
+End Sub
+
+Public Sub IsHosted As Boolean
+	Return startedByHost
+End Sub
+
+Public Sub RequestHostStop
+	If startedByHost Then
+		ExitApplication2(ExitCodeStop)
+	Else
+		ExitApplication
+	End If
+End Sub
+
+Public Sub RequestHostRestart
+	If startedByHost Then
+		ExitApplication2(ExitCodeRestart)
+	Else
+		ExitApplication
+	End If
+End Sub
+
+Public Sub RequestHostApplyUpdate
+	If startedByHost Then
+		ExitApplication2(ExitCodeApplyUpdate)
+	Else
+		ExitApplication
+	End If
 End Sub
 
 'Template version: B4J-1.0
@@ -90,6 +131,9 @@ End Sub
 
 Sub MainForm_CloseRequest (eventData As Event)
 	B4XPages.Delegate.MainForm_CloseRequest(eventData)
+	If startedByHost Then
+		ExitApplication2(ExitCodeStop)
+	End If
 End Sub
 
 Public Sub MainForm_IconifiedChanged (iconified As Boolean)

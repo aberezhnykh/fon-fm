@@ -11,6 +11,7 @@ Version=10.5
 Sub Class_Globals
 	Public CurrentMediaUrl As String
 	Public CurrentMediaType As String
+	Public CurrentTrackId As String
 	Public PendingHistoryItem As Map
 	Public HistoryStartedAtTicks As Long
 End Sub
@@ -23,6 +24,7 @@ End Sub
 Public Sub Reset
 	CurrentMediaUrl = ""
 	CurrentMediaType = ""
+	CurrentTrackId = ""
 	HistoryStartedAtTicks = 0
 	PendingHistoryItem.Initialize
 End Sub
@@ -30,6 +32,10 @@ End Sub
 Public Sub SetCurrentMedia(mediaUrl As String, mediaType As String)
 	CurrentMediaUrl = mediaUrl
 	CurrentMediaType = mediaType
+End Sub
+
+Public Sub SetCurrentTrack(trackId As String)
+	CurrentTrackId = trackId
 End Sub
 
 ' Готовит history item к подтверждению после реального старта playback.
