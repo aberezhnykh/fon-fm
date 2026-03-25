@@ -49,16 +49,16 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "cleartracktransitionflags", false))
 	 {return ((String) Debug.delegate(ba, "cleartracktransitionflags", null));}
-RDebugUtils.currentLine=48627712;
- //BA.debugLineNum = 48627712;BA.debugLine="Public Sub ClearTrackTransitionFlags";
-RDebugUtils.currentLine=48627713;
- //BA.debugLineNum = 48627713;BA.debugLine="PrefetchDone = False";
+RDebugUtils.currentLine=53084160;
+ //BA.debugLineNum = 53084160;BA.debugLine="Public Sub ClearTrackTransitionFlags";
+RDebugUtils.currentLine=53084161;
+ //BA.debugLineNum = 53084161;BA.debugLine="PrefetchDone = False";
 __ref._prefetchdone /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48627714;
- //BA.debugLineNum = 48627714;BA.debugLine="IsCrossfadeTriggered = False";
+RDebugUtils.currentLine=53084162;
+ //BA.debugLineNum = 53084162;BA.debugLine="IsCrossfadeTriggered = False";
 __ref._iscrossfadetriggered /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48627715;
- //BA.debugLineNum = 48627715;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53084163;
+ //BA.debugLineNum = 53084163;BA.debugLine="End Sub";
 return "";
 }
 public String  _enterstartedstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -66,19 +66,19 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "enterstartedstate", false))
 	 {return ((String) Debug.delegate(ba, "enterstartedstate", null));}
-RDebugUtils.currentLine=48693248;
- //BA.debugLineNum = 48693248;BA.debugLine="Public Sub EnterStartedState";
-RDebugUtils.currentLine=48693249;
- //BA.debugLineNum = 48693249;BA.debugLine="IsStarted = True";
+RDebugUtils.currentLine=53149696;
+ //BA.debugLineNum = 53149696;BA.debugLine="Public Sub EnterStartedState";
+RDebugUtils.currentLine=53149697;
+ //BA.debugLineNum = 53149697;BA.debugLine="IsStarted = True";
 __ref._isstarted /*boolean*/  = __c.True;
-RDebugUtils.currentLine=48693250;
- //BA.debugLineNum = 48693250;BA.debugLine="IsStoppedByUser = False";
+RDebugUtils.currentLine=53149698;
+ //BA.debugLineNum = 53149698;BA.debugLine="IsStoppedByUser = False";
 __ref._isstoppedbyuser /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48693251;
- //BA.debugLineNum = 48693251;BA.debugLine="IsStopping = False";
+RDebugUtils.currentLine=53149699;
+ //BA.debugLineNum = 53149699;BA.debugLine="IsStopping = False";
 __ref._isstopping /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48693252;
- //BA.debugLineNum = 48693252;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53149700;
+ //BA.debugLineNum = 53149700;BA.debugLine="End Sub";
 return "";
 }
 public String  _enddispatch(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -86,16 +86,16 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "enddispatch", false))
 	 {return ((String) Debug.delegate(ba, "enddispatch", null));}
-RDebugUtils.currentLine=49283072;
- //BA.debugLineNum = 49283072;BA.debugLine="Public Sub EndDispatch";
-RDebugUtils.currentLine=49283073;
- //BA.debugLineNum = 49283073;BA.debugLine="IsPlaybackDispatchInProgress = False";
+RDebugUtils.currentLine=53739520;
+ //BA.debugLineNum = 53739520;BA.debugLine="Public Sub EndDispatch";
+RDebugUtils.currentLine=53739521;
+ //BA.debugLineNum = 53739521;BA.debugLine="IsPlaybackDispatchInProgress = False";
 __ref._isplaybackdispatchinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=49283074;
- //BA.debugLineNum = 49283074;BA.debugLine="ActiveDispatchInitiator = \"\"";
+RDebugUtils.currentLine=53739522;
+ //BA.debugLineNum = 53739522;BA.debugLine="ActiveDispatchInitiator = \"\"";
 __ref._activedispatchinitiator /*String*/  = "";
-RDebugUtils.currentLine=49283075;
- //BA.debugLineNum = 49283075;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53739523;
+ //BA.debugLineNum = 53739523;BA.debugLine="End Sub";
 return "";
 }
 public String  _enteruserstoppedstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -103,19 +103,19 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "enteruserstoppedstate", false))
 	 {return ((String) Debug.delegate(ba, "enteruserstoppedstate", null));}
-RDebugUtils.currentLine=48758784;
- //BA.debugLineNum = 48758784;BA.debugLine="Public Sub EnterUserStoppedState";
-RDebugUtils.currentLine=48758785;
- //BA.debugLineNum = 48758785;BA.debugLine="IsStarted = False";
+RDebugUtils.currentLine=53215232;
+ //BA.debugLineNum = 53215232;BA.debugLine="Public Sub EnterUserStoppedState";
+RDebugUtils.currentLine=53215233;
+ //BA.debugLineNum = 53215233;BA.debugLine="IsStarted = False";
 __ref._isstarted /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48758786;
- //BA.debugLineNum = 48758786;BA.debugLine="IsStoppedByUser = True";
+RDebugUtils.currentLine=53215234;
+ //BA.debugLineNum = 53215234;BA.debugLine="IsStoppedByUser = True";
 __ref._isstoppedbyuser /*boolean*/  = __c.True;
-RDebugUtils.currentLine=48758787;
- //BA.debugLineNum = 48758787;BA.debugLine="IsStopping = False";
+RDebugUtils.currentLine=53215235;
+ //BA.debugLineNum = 53215235;BA.debugLine="IsStopping = False";
 __ref._isstopping /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48758788;
- //BA.debugLineNum = 48758788;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53215236;
+ //BA.debugLineNum = 53215236;BA.debugLine="End Sub";
 return "";
 }
 public String  _enterpolicypausedstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -123,19 +123,19 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "enterpolicypausedstate", false))
 	 {return ((String) Debug.delegate(ba, "enterpolicypausedstate", null));}
-RDebugUtils.currentLine=48889856;
- //BA.debugLineNum = 48889856;BA.debugLine="Public Sub EnterPolicyPausedState";
-RDebugUtils.currentLine=48889857;
- //BA.debugLineNum = 48889857;BA.debugLine="IsStarted = False";
+RDebugUtils.currentLine=53346304;
+ //BA.debugLineNum = 53346304;BA.debugLine="Public Sub EnterPolicyPausedState";
+RDebugUtils.currentLine=53346305;
+ //BA.debugLineNum = 53346305;BA.debugLine="IsStarted = False";
 __ref._isstarted /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48889858;
- //BA.debugLineNum = 48889858;BA.debugLine="IsStoppedByUser = False";
+RDebugUtils.currentLine=53346306;
+ //BA.debugLineNum = 53346306;BA.debugLine="IsStoppedByUser = False";
 __ref._isstoppedbyuser /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48889859;
- //BA.debugLineNum = 48889859;BA.debugLine="IsStopping = False";
+RDebugUtils.currentLine=53346307;
+ //BA.debugLineNum = 53346307;BA.debugLine="IsStopping = False";
 __ref._isstopping /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48889860;
- //BA.debugLineNum = 48889860;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53346308;
+ //BA.debugLineNum = 53346308;BA.debugLine="End Sub";
 return "";
 }
 public String  _enterinternalstoppingstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -143,16 +143,16 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "enterinternalstoppingstate", false))
 	 {return ((String) Debug.delegate(ba, "enterinternalstoppingstate", null));}
-RDebugUtils.currentLine=48824320;
- //BA.debugLineNum = 48824320;BA.debugLine="Public Sub EnterInternalStoppingState";
-RDebugUtils.currentLine=48824321;
- //BA.debugLineNum = 48824321;BA.debugLine="IsStopping = True";
+RDebugUtils.currentLine=53280768;
+ //BA.debugLineNum = 53280768;BA.debugLine="Public Sub EnterInternalStoppingState";
+RDebugUtils.currentLine=53280769;
+ //BA.debugLineNum = 53280769;BA.debugLine="IsStopping = True";
 __ref._isstopping /*boolean*/  = __c.True;
-RDebugUtils.currentLine=48824322;
- //BA.debugLineNum = 48824322;BA.debugLine="IsStarted = False";
+RDebugUtils.currentLine=53280770;
+ //BA.debugLineNum = 53280770;BA.debugLine="IsStarted = False";
 __ref._isstarted /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48824323;
- //BA.debugLineNum = 48824323;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53280771;
+ //BA.debugLineNum = 53280771;BA.debugLine="End Sub";
 return "";
 }
 public String  _initialize(b4j.example.playbackorchestrationstate __ref,anywheresoftware.b4a.BA _ba) throws Exception{
@@ -161,13 +161,13 @@ innerInitialize(_ba);
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "initialize", false))
 	 {return ((String) Debug.delegate(ba, "initialize", new Object[] {_ba}));}
-RDebugUtils.currentLine=48431104;
- //BA.debugLineNum = 48431104;BA.debugLine="Public Sub Initialize";
-RDebugUtils.currentLine=48431105;
- //BA.debugLineNum = 48431105;BA.debugLine="ResetToStopped";
+RDebugUtils.currentLine=52887552;
+ //BA.debugLineNum = 52887552;BA.debugLine="Public Sub Initialize";
+RDebugUtils.currentLine=52887553;
+ //BA.debugLineNum = 52887553;BA.debugLine="ResetToStopped";
 __ref._resettostopped /*String*/ (null);
-RDebugUtils.currentLine=48431106;
- //BA.debugLineNum = 48431106;BA.debugLine="End Sub";
+RDebugUtils.currentLine=52887554;
+ //BA.debugLineNum = 52887554;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _begindispatch(b4j.example.playbackorchestrationstate __ref,String _initiator) throws Exception{
@@ -175,23 +175,23 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "begindispatch", false))
 	 {return ((Boolean) Debug.delegate(ba, "begindispatch", new Object[] {_initiator}));}
-RDebugUtils.currentLine=49217536;
- //BA.debugLineNum = 49217536;BA.debugLine="Public Sub BeginDispatch(initiator As String) As B";
-RDebugUtils.currentLine=49217537;
- //BA.debugLineNum = 49217537;BA.debugLine="If IsPlaybackDispatchInProgress Then Return False";
+RDebugUtils.currentLine=53673984;
+ //BA.debugLineNum = 53673984;BA.debugLine="Public Sub BeginDispatch(initiator As String) As B";
+RDebugUtils.currentLine=53673985;
+ //BA.debugLineNum = 53673985;BA.debugLine="If IsPlaybackDispatchInProgress Then Return False";
 if (__ref._isplaybackdispatchinprogress /*boolean*/ ) { 
 if (true) return __c.False;};
-RDebugUtils.currentLine=49217538;
- //BA.debugLineNum = 49217538;BA.debugLine="IsPlaybackDispatchInProgress = True";
+RDebugUtils.currentLine=53673986;
+ //BA.debugLineNum = 53673986;BA.debugLine="IsPlaybackDispatchInProgress = True";
 __ref._isplaybackdispatchinprogress /*boolean*/  = __c.True;
-RDebugUtils.currentLine=49217539;
- //BA.debugLineNum = 49217539;BA.debugLine="ActiveDispatchInitiator = initiator";
+RDebugUtils.currentLine=53673987;
+ //BA.debugLineNum = 53673987;BA.debugLine="ActiveDispatchInitiator = initiator";
 __ref._activedispatchinitiator /*String*/  = _initiator;
-RDebugUtils.currentLine=49217540;
- //BA.debugLineNum = 49217540;BA.debugLine="Return True";
+RDebugUtils.currentLine=53673988;
+ //BA.debugLineNum = 53673988;BA.debugLine="Return True";
 if (true) return __c.True;
-RDebugUtils.currentLine=49217541;
- //BA.debugLineNum = 49217541;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53673989;
+ //BA.debugLineNum = 53673989;BA.debugLine="End Sub";
 return false;
 }
 public boolean  _beginqueuebackfill(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -199,53 +199,53 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "beginqueuebackfill", false))
 	 {return ((Boolean) Debug.delegate(ba, "beginqueuebackfill", null));}
-RDebugUtils.currentLine=49086464;
- //BA.debugLineNum = 49086464;BA.debugLine="Public Sub BeginQueueBackfill As Boolean";
-RDebugUtils.currentLine=49086465;
- //BA.debugLineNum = 49086465;BA.debugLine="If IsQueueBackfillInProgress Then Return False";
+RDebugUtils.currentLine=53542912;
+ //BA.debugLineNum = 53542912;BA.debugLine="Public Sub BeginQueueBackfill As Boolean";
+RDebugUtils.currentLine=53542913;
+ //BA.debugLineNum = 53542913;BA.debugLine="If IsQueueBackfillInProgress Then Return False";
 if (__ref._isqueuebackfillinprogress /*boolean*/ ) { 
 if (true) return __c.False;};
-RDebugUtils.currentLine=49086466;
- //BA.debugLineNum = 49086466;BA.debugLine="IsQueueBackfillInProgress = True";
+RDebugUtils.currentLine=53542914;
+ //BA.debugLineNum = 53542914;BA.debugLine="IsQueueBackfillInProgress = True";
 __ref._isqueuebackfillinprogress /*boolean*/  = __c.True;
-RDebugUtils.currentLine=49086467;
- //BA.debugLineNum = 49086467;BA.debugLine="Return True";
+RDebugUtils.currentLine=53542915;
+ //BA.debugLineNum = 53542915;BA.debugLine="Return True";
 if (true) return __c.True;
-RDebugUtils.currentLine=49086468;
- //BA.debugLineNum = 49086468;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53542916;
+ //BA.debugLineNum = 53542916;BA.debugLine="End Sub";
 return false;
 }
 public String  _class_globals(b4j.example.playbackorchestrationstate __ref) throws Exception{
 __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
-RDebugUtils.currentLine=48365568;
- //BA.debugLineNum = 48365568;BA.debugLine="Sub Class_Globals";
-RDebugUtils.currentLine=48365569;
- //BA.debugLineNum = 48365569;BA.debugLine="Public IsStarted As Boolean";
+RDebugUtils.currentLine=52822016;
+ //BA.debugLineNum = 52822016;BA.debugLine="Sub Class_Globals";
+RDebugUtils.currentLine=52822017;
+ //BA.debugLineNum = 52822017;BA.debugLine="Public IsStarted As Boolean";
 _isstarted = false;
-RDebugUtils.currentLine=48365570;
- //BA.debugLineNum = 48365570;BA.debugLine="Public IsStoppedByUser As Boolean";
+RDebugUtils.currentLine=52822018;
+ //BA.debugLineNum = 52822018;BA.debugLine="Public IsStoppedByUser As Boolean";
 _isstoppedbyuser = false;
-RDebugUtils.currentLine=48365571;
- //BA.debugLineNum = 48365571;BA.debugLine="Public IsStopping As Boolean";
+RDebugUtils.currentLine=52822019;
+ //BA.debugLineNum = 52822019;BA.debugLine="Public IsStopping As Boolean";
 _isstopping = false;
-RDebugUtils.currentLine=48365572;
- //BA.debugLineNum = 48365572;BA.debugLine="Public PrefetchDone As Boolean";
+RDebugUtils.currentLine=52822020;
+ //BA.debugLineNum = 52822020;BA.debugLine="Public PrefetchDone As Boolean";
 _prefetchdone = false;
-RDebugUtils.currentLine=48365573;
- //BA.debugLineNum = 48365573;BA.debugLine="Public IsCrossfadeTriggered As Boolean";
+RDebugUtils.currentLine=52822021;
+ //BA.debugLineNum = 52822021;BA.debugLine="Public IsCrossfadeTriggered As Boolean";
 _iscrossfadetriggered = false;
-RDebugUtils.currentLine=48365574;
- //BA.debugLineNum = 48365574;BA.debugLine="Public IsQueueBackfillInProgress As Boolean";
+RDebugUtils.currentLine=52822022;
+ //BA.debugLineNum = 52822022;BA.debugLine="Public IsQueueBackfillInProgress As Boolean";
 _isqueuebackfillinprogress = false;
-RDebugUtils.currentLine=48365575;
- //BA.debugLineNum = 48365575;BA.debugLine="Public IsPlaybackDispatchInProgress As Boolean";
+RDebugUtils.currentLine=52822023;
+ //BA.debugLineNum = 52822023;BA.debugLine="Public IsPlaybackDispatchInProgress As Boolean";
 _isplaybackdispatchinprogress = false;
-RDebugUtils.currentLine=48365576;
- //BA.debugLineNum = 48365576;BA.debugLine="Public ActiveDispatchInitiator As String";
+RDebugUtils.currentLine=52822024;
+ //BA.debugLineNum = 52822024;BA.debugLine="Public ActiveDispatchInitiator As String";
 _activedispatchinitiator = "";
-RDebugUtils.currentLine=48365577;
- //BA.debugLineNum = 48365577;BA.debugLine="End Sub";
+RDebugUtils.currentLine=52822025;
+ //BA.debugLineNum = 52822025;BA.debugLine="End Sub";
 return "";
 }
 public String  _endqueuebackfill(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -253,13 +253,13 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "endqueuebackfill", false))
 	 {return ((String) Debug.delegate(ba, "endqueuebackfill", null));}
-RDebugUtils.currentLine=49152000;
- //BA.debugLineNum = 49152000;BA.debugLine="Public Sub EndQueueBackfill";
-RDebugUtils.currentLine=49152001;
- //BA.debugLineNum = 49152001;BA.debugLine="IsQueueBackfillInProgress = False";
+RDebugUtils.currentLine=53608448;
+ //BA.debugLineNum = 53608448;BA.debugLine="Public Sub EndQueueBackfill";
+RDebugUtils.currentLine=53608449;
+ //BA.debugLineNum = 53608449;BA.debugLine="IsQueueBackfillInProgress = False";
 __ref._isqueuebackfillinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=49152002;
- //BA.debugLineNum = 49152002;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53608450;
+ //BA.debugLineNum = 53608450;BA.debugLine="End Sub";
 return "";
 }
 public String  _exitstoppingstate(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -267,13 +267,13 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "exitstoppingstate", false))
 	 {return ((String) Debug.delegate(ba, "exitstoppingstate", null));}
-RDebugUtils.currentLine=48955392;
- //BA.debugLineNum = 48955392;BA.debugLine="Public Sub ExitStoppingState";
-RDebugUtils.currentLine=48955393;
- //BA.debugLineNum = 48955393;BA.debugLine="IsStopping = False";
+RDebugUtils.currentLine=53411840;
+ //BA.debugLineNum = 53411840;BA.debugLine="Public Sub ExitStoppingState";
+RDebugUtils.currentLine=53411841;
+ //BA.debugLineNum = 53411841;BA.debugLine="IsStopping = False";
 __ref._isstopping /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48955394;
- //BA.debugLineNum = 48955394;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53411842;
+ //BA.debugLineNum = 53411842;BA.debugLine="End Sub";
 return "";
 }
 public String  _resettostopped(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -281,34 +281,34 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "resettostopped", false))
 	 {return ((String) Debug.delegate(ba, "resettostopped", null));}
-RDebugUtils.currentLine=48496640;
- //BA.debugLineNum = 48496640;BA.debugLine="Public Sub ResetToStopped";
-RDebugUtils.currentLine=48496641;
- //BA.debugLineNum = 48496641;BA.debugLine="IsStarted = False";
+RDebugUtils.currentLine=52953088;
+ //BA.debugLineNum = 52953088;BA.debugLine="Public Sub ResetToStopped";
+RDebugUtils.currentLine=52953089;
+ //BA.debugLineNum = 52953089;BA.debugLine="IsStarted = False";
 __ref._isstarted /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48496642;
- //BA.debugLineNum = 48496642;BA.debugLine="IsStoppedByUser = True";
+RDebugUtils.currentLine=52953090;
+ //BA.debugLineNum = 52953090;BA.debugLine="IsStoppedByUser = True";
 __ref._isstoppedbyuser /*boolean*/  = __c.True;
-RDebugUtils.currentLine=48496643;
- //BA.debugLineNum = 48496643;BA.debugLine="IsStopping = False";
+RDebugUtils.currentLine=52953091;
+ //BA.debugLineNum = 52953091;BA.debugLine="IsStopping = False";
 __ref._isstopping /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48496644;
- //BA.debugLineNum = 48496644;BA.debugLine="PrefetchDone = False";
+RDebugUtils.currentLine=52953092;
+ //BA.debugLineNum = 52953092;BA.debugLine="PrefetchDone = False";
 __ref._prefetchdone /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48496645;
- //BA.debugLineNum = 48496645;BA.debugLine="IsCrossfadeTriggered = False";
+RDebugUtils.currentLine=52953093;
+ //BA.debugLineNum = 52953093;BA.debugLine="IsCrossfadeTriggered = False";
 __ref._iscrossfadetriggered /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48496646;
- //BA.debugLineNum = 48496646;BA.debugLine="IsQueueBackfillInProgress = False";
+RDebugUtils.currentLine=52953094;
+ //BA.debugLineNum = 52953094;BA.debugLine="IsQueueBackfillInProgress = False";
 __ref._isqueuebackfillinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48496647;
- //BA.debugLineNum = 48496647;BA.debugLine="IsPlaybackDispatchInProgress = False";
+RDebugUtils.currentLine=52953095;
+ //BA.debugLineNum = 52953095;BA.debugLine="IsPlaybackDispatchInProgress = False";
 __ref._isplaybackdispatchinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48496648;
- //BA.debugLineNum = 48496648;BA.debugLine="ActiveDispatchInitiator = \"\"";
+RDebugUtils.currentLine=52953096;
+ //BA.debugLineNum = 52953096;BA.debugLine="ActiveDispatchInitiator = \"\"";
 __ref._activedispatchinitiator /*String*/  = "";
-RDebugUtils.currentLine=48496649;
- //BA.debugLineNum = 48496649;BA.debugLine="End Sub";
+RDebugUtils.currentLine=52953097;
+ //BA.debugLineNum = 52953097;BA.debugLine="End Sub";
 return "";
 }
 public boolean  _isplaybackactive(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -316,13 +316,13 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "isplaybackactive", false))
 	 {return ((Boolean) Debug.delegate(ba, "isplaybackactive", null));}
-RDebugUtils.currentLine=49020928;
- //BA.debugLineNum = 49020928;BA.debugLine="Public Sub IsPlaybackActive As Boolean";
-RDebugUtils.currentLine=49020929;
- //BA.debugLineNum = 49020929;BA.debugLine="Return IsStarted And IsStoppedByUser = False And";
+RDebugUtils.currentLine=53477376;
+ //BA.debugLineNum = 53477376;BA.debugLine="Public Sub IsPlaybackActive As Boolean";
+RDebugUtils.currentLine=53477377;
+ //BA.debugLineNum = 53477377;BA.debugLine="Return IsStarted And IsStoppedByUser = False And";
 if (true) return __ref._isstarted /*boolean*/  && __ref._isstoppedbyuser /*boolean*/ ==__c.False && __ref._isstopping /*boolean*/ ==__c.False;
-RDebugUtils.currentLine=49020930;
- //BA.debugLineNum = 49020930;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53477378;
+ //BA.debugLineNum = 53477378;BA.debugLine="End Sub";
 return false;
 }
 public String  _resettransientflags(b4j.example.playbackorchestrationstate __ref) throws Exception{
@@ -330,25 +330,25 @@ __ref = this;
 RDebugUtils.currentModule="playbackorchestrationstate";
 if (Debug.shouldDelegate(ba, "resettransientflags", false))
 	 {return ((String) Debug.delegate(ba, "resettransientflags", null));}
-RDebugUtils.currentLine=48562176;
- //BA.debugLineNum = 48562176;BA.debugLine="Public Sub ResetTransientFlags";
-RDebugUtils.currentLine=48562177;
- //BA.debugLineNum = 48562177;BA.debugLine="PrefetchDone = False";
+RDebugUtils.currentLine=53018624;
+ //BA.debugLineNum = 53018624;BA.debugLine="Public Sub ResetTransientFlags";
+RDebugUtils.currentLine=53018625;
+ //BA.debugLineNum = 53018625;BA.debugLine="PrefetchDone = False";
 __ref._prefetchdone /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48562178;
- //BA.debugLineNum = 48562178;BA.debugLine="IsCrossfadeTriggered = False";
+RDebugUtils.currentLine=53018626;
+ //BA.debugLineNum = 53018626;BA.debugLine="IsCrossfadeTriggered = False";
 __ref._iscrossfadetriggered /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48562179;
- //BA.debugLineNum = 48562179;BA.debugLine="IsQueueBackfillInProgress = False";
+RDebugUtils.currentLine=53018627;
+ //BA.debugLineNum = 53018627;BA.debugLine="IsQueueBackfillInProgress = False";
 __ref._isqueuebackfillinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48562180;
- //BA.debugLineNum = 48562180;BA.debugLine="IsPlaybackDispatchInProgress = False";
+RDebugUtils.currentLine=53018628;
+ //BA.debugLineNum = 53018628;BA.debugLine="IsPlaybackDispatchInProgress = False";
 __ref._isplaybackdispatchinprogress /*boolean*/  = __c.False;
-RDebugUtils.currentLine=48562181;
- //BA.debugLineNum = 48562181;BA.debugLine="ActiveDispatchInitiator = \"\"";
+RDebugUtils.currentLine=53018629;
+ //BA.debugLineNum = 53018629;BA.debugLine="ActiveDispatchInitiator = \"\"";
 __ref._activedispatchinitiator /*String*/  = "";
-RDebugUtils.currentLine=48562182;
- //BA.debugLineNum = 48562182;BA.debugLine="End Sub";
+RDebugUtils.currentLine=53018630;
+ //BA.debugLineNum = 53018630;BA.debugLine="End Sub";
 return "";
 }
 }

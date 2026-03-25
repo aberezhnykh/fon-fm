@@ -6,71 +6,262 @@ import anywheresoftware.b4a.pc.*;
 public class autonomouscachemanager_subs_0 {
 
 
-public static RemoteObject  _addslotplaylistdescriptors(RemoteObject __ref,RemoteObject _result,RemoteObject _seen,RemoteObject _slot) throws Exception{
+public static RemoteObject  _adddesiredtrackitemsforslot(RemoteObject __ref,RemoteObject _result,RemoteObject _seentrackids,RemoteObject _slot,RemoteObject _slotreserve,RemoteObject _slotneed,RemoteObject _slotlabel,RemoteObject _trackplayliststats) throws Exception{
 try {
-		Debug.PushSubsStack("AddSlotPlaylistDescriptors (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,253);
-if (RapidSub.canDelegate("addslotplaylistdescriptors")) { return __ref.runUserSub(false, "autonomouscachemanager","addslotplaylistdescriptors", __ref, _result, _seen, _slot);}
+		Debug.PushSubsStack("AddDesiredTrackItemsForSlot (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,257);
+if (RapidSub.canDelegate("adddesiredtrackitemsforslot")) { return __ref.runUserSub(false, "autonomouscachemanager","adddesiredtrackitemsforslot", __ref, _result, _seentrackids, _slot, _slotreserve, _slotneed, _slotlabel, _trackplayliststats);}
 RemoteObject _playlists = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
+RemoteObject _playlistids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
+RemoteObject _totalplayable = RemoteObject.createImmutable(0);
+RemoteObject _allplaylistsready = RemoteObject.createImmutable(false);
 RemoteObject _playlistobject = RemoteObject.declareNull("Object");
 RemoteObject _descriptor = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _playlistid = RemoteObject.createImmutable("");
+RemoteObject _playlistplayablecount = RemoteObject.createImmutable(0);
+RemoteObject _manifestsbyplaylist = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+RemoteObject _manifest = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+RemoteObject _remainingneed = RemoteObject.createImmutable(0);
+RemoteObject _playableinplaylist = RemoteObject.createImmutable(0);
+RemoteObject _missingforplaylist = RemoteObject.createImmutable(0);
+RemoteObject _addedcount = RemoteObject.createImmutable(0);
+RemoteObject _addedinround = RemoteObject.createImmutable(0);
 Debug.locals.put("result", _result);
-Debug.locals.put("seen", _seen);
+Debug.locals.put("seenTrackIds", _seentrackids);
 Debug.locals.put("slot", _slot);
- BA.debugLineNum = 253;BA.debugLine="Private Sub AddSlotPlaylistDescriptors(result As L";
-Debug.ShouldStop(268435456);
- BA.debugLineNum = 254;BA.debugLine="If slot.IsInitialized = False Or slot.Size = 0 Th";
-Debug.ShouldStop(536870912);
+Debug.locals.put("slotReserve", _slotreserve);
+Debug.locals.put("slotNeed", _slotneed);
+Debug.locals.put("slotLabel", _slotlabel);
+Debug.locals.put("trackPlaylistStats", _trackplayliststats);
+ BA.debugLineNum = 257;BA.debugLine="Private Sub AddDesiredTrackItemsForSlot(result As";
+Debug.ShouldStop(1);
+ BA.debugLineNum = 258;BA.debugLine="If slot.IsInitialized = False Or slot.Size = 0 Th";
+Debug.ShouldStop(2);
 if (RemoteObject.solveBoolean("=",_slot.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_slot.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 256;BA.debugLine="Dim playlists As List = GetSlotPlaylists(slot)";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 260;BA.debugLine="Dim playlists As List = GetSlotPlaylists(slot)";
+Debug.ShouldStop(8);
 _playlists = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlists = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getslotplaylists" /*RemoteObject*/ ,(Object)(_slot));Debug.locals.put("playlists", _playlists);Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 257;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 261;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
+Debug.ShouldStop(16);
 if (RemoteObject.solveBoolean("=",_playlists.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_playlists.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 259;BA.debugLine="For Each playlistObject As Object In playlists";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 263;BA.debugLine="Dim playlistIds As List";
+Debug.ShouldStop(64);
+_playlistids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("playlistIds", _playlistids);
+ BA.debugLineNum = 264;BA.debugLine="playlistIds.Initialize";
+Debug.ShouldStop(128);
+_playlistids.runVoidMethod ("Initialize");
+ BA.debugLineNum = 265;BA.debugLine="Dim totalPlayable As Int = 0";
+Debug.ShouldStop(256);
+_totalplayable = BA.numberCast(int.class, 0);Debug.locals.put("totalPlayable", _totalplayable);Debug.locals.put("totalPlayable", _totalplayable);
+ BA.debugLineNum = 266;BA.debugLine="Dim allPlaylistsReady As Boolean = True";
+Debug.ShouldStop(512);
+_allplaylistsready = autonomouscachemanager.__c.getField(true,"True");Debug.locals.put("allPlaylistsReady", _allplaylistsready);Debug.locals.put("allPlaylistsReady", _allplaylistsready);
+ BA.debugLineNum = 268;BA.debugLine="For Each playlistObject As Object In playlists";
+Debug.ShouldStop(2048);
 {
-final RemoteObject group4 = _playlists;
-final int groupLen4 = group4.runMethod(true,"getSize").<Integer>get()
-;int index4 = 0;
+final RemoteObject group8 = _playlists;
+final int groupLen8 = group8.runMethod(true,"getSize").<Integer>get()
+;int index8 = 0;
 ;
-for (; index4 < groupLen4;index4++){
-_playlistobject = group4.runMethod(false,"Get",index4);Debug.locals.put("playlistObject", _playlistobject);
+for (; index8 < groupLen8;index8++){
+_playlistobject = group8.runMethod(false,"Get",index8);Debug.locals.put("playlistObject", _playlistobject);
 Debug.locals.put("playlistObject", _playlistobject);
- BA.debugLineNum = 260;BA.debugLine="If (playlistObject Is Map) = False Then Continue";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 269;BA.debugLine="If (playlistObject Is Map) = False Then Continue";
+Debug.ShouldStop(4096);
 if (RemoteObject.solveBoolean("=",RemoteObject.createImmutable((RemoteObject.solveBoolean("i",_playlistobject, RemoteObject.createImmutable("java.util.Map")))),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 262;BA.debugLine="Dim descriptor As Map = playlistObject";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 270;BA.debugLine="Dim descriptor As Map = playlistObject";
+Debug.ShouldStop(8192);
 _descriptor = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _descriptor = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _playlistobject);Debug.locals.put("descriptor", _descriptor);Debug.locals.put("descriptor", _descriptor);
- BA.debugLineNum = 263;BA.debugLine="Dim playlistId As String = GetPlaylistIdFromDesc";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 271;BA.debugLine="Dim playlistId As String = GetPlaylistIdFromDesc";
+Debug.ShouldStop(16384);
 _playlistid = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getplaylistidfromdescriptor" /*RemoteObject*/ ,(Object)(_descriptor));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 264;BA.debugLine="If playlistId = \"\" Then Continue";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 272;BA.debugLine="If playlistId = \"\" Then Continue";
+Debug.ShouldStop(32768);
 if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
 if (true) continue;};
- BA.debugLineNum = 265;BA.debugLine="If seen.ContainsKey(playlistId) Then Continue";
-Debug.ShouldStop(256);
-if (_seen.runMethod(true,"ContainsKey",(Object)((_playlistid))).<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 273;BA.debugLine="If playlistIds.IndexOf(playlistId) >= 0 Then Con";
+Debug.ShouldStop(65536);
+if (RemoteObject.solveBoolean("g",_playlistids.runMethod(true,"IndexOf",(Object)((_playlistid))),BA.numberCast(double.class, 0))) { 
 if (true) continue;};
- BA.debugLineNum = 267;BA.debugLine="seen.Put(playlistId, True)";
-Debug.ShouldStop(1024);
-_seen.runVoidMethod ("Put",(Object)((_playlistid)),(Object)((autonomouscachemanager.__c.getField(true,"True"))));
- BA.debugLineNum = 268;BA.debugLine="result.Add(CloneMap(descriptor))";
-Debug.ShouldStop(2048);
-_result.runVoidMethod ("Add",(Object)((__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_clonemap" /*RemoteObject*/ ,(Object)(_descriptor)).getObject())));
+ BA.debugLineNum = 274;BA.debugLine="playlistIds.Add(playlistId)";
+Debug.ShouldStop(131072);
+_playlistids.runVoidMethod ("Add",(Object)((_playlistid)));
+ BA.debugLineNum = 275;BA.debugLine="Dim playlistPlayableCount As Int = GetCachedTrac";
+Debug.ShouldStop(262144);
+_playlistplayablecount = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getcachedtrackcountforplaylist" /*RemoteObject*/ ,(Object)(_trackplayliststats),(Object)(_playlistid));Debug.locals.put("playlistPlayableCount", _playlistplayablecount);Debug.locals.put("playlistPlayableCount", _playlistplayablecount);
+ BA.debugLineNum = 276;BA.debugLine="totalPlayable = totalPlayable + playlistPlayable";
+Debug.ShouldStop(524288);
+_totalplayable = RemoteObject.solve(new RemoteObject[] {_totalplayable,_playlistplayablecount}, "+",1, 1);Debug.locals.put("totalPlayable", _totalplayable);
+ BA.debugLineNum = 277;BA.debugLine="If playlistPlayableCount < perPlaylistMinReserve";
+Debug.ShouldStop(1048576);
+if (RemoteObject.solveBoolean("<",_playlistplayablecount,BA.numberCast(double.class, __ref.getField(true,"_perplaylistminreserve" /*RemoteObject*/ )))) { 
+_allplaylistsready = autonomouscachemanager.__c.getField(true,"False");Debug.locals.put("allPlaylistsReady", _allplaylistsready);};
  }
 }Debug.locals.put("playlistObject", _playlistobject);
 ;
- BA.debugLineNum = 270;BA.debugLine="End Sub";
+ BA.debugLineNum = 280;BA.debugLine="If playlistIds.Size = 0 Then Return";
+Debug.ShouldStop(8388608);
+if (RemoteObject.solveBoolean("=",_playlistids.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
+if (true) return RemoteObject.createImmutable("");};
+ BA.debugLineNum = 281;BA.debugLine="If slotNeed <= 0 And totalPlayable >= slotReserve";
+Debug.ShouldStop(16777216);
+if (RemoteObject.solveBoolean("k",_slotneed,BA.numberCast(double.class, 0)) && RemoteObject.solveBoolean("g",_totalplayable,BA.numberCast(double.class, _slotreserve)) && RemoteObject.solveBoolean(".",_allplaylistsready)) { 
+if (true) return RemoteObject.createImmutable("");};
+ BA.debugLineNum = 283;BA.debugLine="Dim manifestsByPlaylist As Map";
+Debug.ShouldStop(67108864);
+_manifestsbyplaylist = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("manifestsByPlaylist", _manifestsbyplaylist);
+ BA.debugLineNum = 284;BA.debugLine="manifestsByPlaylist.Initialize";
+Debug.ShouldStop(134217728);
+_manifestsbyplaylist.runVoidMethod ("Initialize");
+ BA.debugLineNum = 285;BA.debugLine="totalPlayable = 0";
+Debug.ShouldStop(268435456);
+_totalplayable = BA.numberCast(int.class, 0);Debug.locals.put("totalPlayable", _totalplayable);
+ BA.debugLineNum = 287;BA.debugLine="For Each playlistObject As Object In playlists";
+Debug.ShouldStop(1073741824);
+{
+final RemoteObject group24 = _playlists;
+final int groupLen24 = group24.runMethod(true,"getSize").<Integer>get()
+;int index24 = 0;
+;
+for (; index24 < groupLen24;index24++){
+_playlistobject = group24.runMethod(false,"Get",index24);Debug.locals.put("playlistObject", _playlistobject);
+Debug.locals.put("playlistObject", _playlistobject);
+ BA.debugLineNum = 288;BA.debugLine="If (playlistObject Is Map) = False Then Continue";
+Debug.ShouldStop(-2147483648);
+if (RemoteObject.solveBoolean("=",RemoteObject.createImmutable((RemoteObject.solveBoolean("i",_playlistobject, RemoteObject.createImmutable("java.util.Map")))),autonomouscachemanager.__c.getField(true,"False"))) { 
+if (true) continue;};
+ BA.debugLineNum = 290;BA.debugLine="Dim descriptor As Map = playlistObject";
+Debug.ShouldStop(2);
+_descriptor = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
+_descriptor = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _playlistobject);Debug.locals.put("descriptor", _descriptor);Debug.locals.put("descriptor", _descriptor);
+ BA.debugLineNum = 291;BA.debugLine="Dim playlistId As String = GetPlaylistIdFromDesc";
+Debug.ShouldStop(4);
+_playlistid = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getplaylistidfromdescriptor" /*RemoteObject*/ ,(Object)(_descriptor));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
+ BA.debugLineNum = 292;BA.debugLine="If playlistId = \"\" Then Continue";
+Debug.ShouldStop(8);
+if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
+if (true) continue;};
+ BA.debugLineNum = 294;BA.debugLine="Dim manifest As Map = LoadPlaylistManifestSafe(p";
+Debug.ShouldStop(32);
+_manifest = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
+_manifest = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_loadplaylistmanifestsafe" /*RemoteObject*/ ,(Object)(_playlistid));Debug.locals.put("manifest", _manifest);Debug.locals.put("manifest", _manifest);
+ BA.debugLineNum = 295;BA.debugLine="If manifest.IsInitialized = False Or manifest.Si";
+Debug.ShouldStop(64);
+if (RemoteObject.solveBoolean("=",_manifest.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_manifest.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
+if (true) continue;};
+ BA.debugLineNum = 296;BA.debugLine="If manifestsByPlaylist.ContainsKey(playlistId) T";
+Debug.ShouldStop(128);
+if (_manifestsbyplaylist.runMethod(true,"ContainsKey",(Object)((_playlistid))).<Boolean>get().booleanValue()) { 
+if (true) continue;};
+ BA.debugLineNum = 298;BA.debugLine="manifestsByPlaylist.Put(playlistId, manifest)";
+Debug.ShouldStop(512);
+_manifestsbyplaylist.runVoidMethod ("Put",(Object)((_playlistid)),(Object)((_manifest.getObject())));
+ BA.debugLineNum = 299;BA.debugLine="totalPlayable = totalPlayable + GetCachedTrackCo";
+Debug.ShouldStop(1024);
+_totalplayable = RemoteObject.solve(new RemoteObject[] {_totalplayable,__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getcachedtrackcountforplaylist" /*RemoteObject*/ ,(Object)(_trackplayliststats),(Object)(_playlistid))}, "+",1, 1);Debug.locals.put("totalPlayable", _totalplayable);
+ }
+}Debug.locals.put("playlistObject", _playlistobject);
+;
+ BA.debugLineNum = 302;BA.debugLine="If playlistIds.Size = 0 Then Return";
 Debug.ShouldStop(8192);
+if (RemoteObject.solveBoolean("=",_playlistids.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
+if (true) return RemoteObject.createImmutable("");};
+ BA.debugLineNum = 304;BA.debugLine="Dim remainingNeed As Int = Max(0, slotReserve - t";
+Debug.ShouldStop(32768);
+_remainingneed = BA.numberCast(int.class, autonomouscachemanager.__c.runMethod(true,"Max",(Object)(BA.numberCast(double.class, 0)),(Object)(BA.numberCast(double.class, RemoteObject.solve(new RemoteObject[] {_slotreserve,_totalplayable}, "-",1, 1)))));Debug.locals.put("remainingNeed", _remainingneed);Debug.locals.put("remainingNeed", _remainingneed);
+ BA.debugLineNum = 305;BA.debugLine="If slotNeed > remainingNeed Then remainingNeed =";
+Debug.ShouldStop(65536);
+if (RemoteObject.solveBoolean(">",_slotneed,BA.numberCast(double.class, _remainingneed))) { 
+_remainingneed = _slotneed;Debug.locals.put("remainingNeed", _remainingneed);};
+ BA.debugLineNum = 307;BA.debugLine="For Each playlistId As String In playlistIds";
+Debug.ShouldStop(262144);
+{
+final RemoteObject group38 = _playlistids;
+final int groupLen38 = group38.runMethod(true,"getSize").<Integer>get()
+;int index38 = 0;
+;
+for (; index38 < groupLen38;index38++){
+_playlistid = BA.ObjectToString(group38.runMethod(false,"Get",index38));Debug.locals.put("playlistId", _playlistid);
+Debug.locals.put("playlistId", _playlistid);
+ BA.debugLineNum = 308;BA.debugLine="Dim manifest As Map = manifestsByPlaylist.Get(pl";
+Debug.ShouldStop(524288);
+_manifest = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
+_manifest = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _manifestsbyplaylist.runMethod(false,"Get",(Object)((_playlistid))));Debug.locals.put("manifest", _manifest);Debug.locals.put("manifest", _manifest);
+ BA.debugLineNum = 309;BA.debugLine="Dim playableInPlaylist As Int = GetCachedTrackCo";
+Debug.ShouldStop(1048576);
+_playableinplaylist = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getcachedtrackcountforplaylist" /*RemoteObject*/ ,(Object)(_trackplayliststats),(Object)(_playlistid));Debug.locals.put("playableInPlaylist", _playableinplaylist);Debug.locals.put("playableInPlaylist", _playableinplaylist);
+ BA.debugLineNum = 310;BA.debugLine="Dim missingForPlaylist As Int = Max(0, perPlayli";
+Debug.ShouldStop(2097152);
+_missingforplaylist = BA.numberCast(int.class, autonomouscachemanager.__c.runMethod(true,"Max",(Object)(BA.numberCast(double.class, 0)),(Object)(BA.numberCast(double.class, RemoteObject.solve(new RemoteObject[] {__ref.getField(true,"_perplaylistminreserve" /*RemoteObject*/ ),_playableinplaylist}, "-",1, 1)))));Debug.locals.put("missingForPlaylist", _missingforplaylist);Debug.locals.put("missingForPlaylist", _missingforplaylist);
+ BA.debugLineNum = 311;BA.debugLine="If missingForPlaylist <= 0 Then Continue";
+Debug.ShouldStop(4194304);
+if (RemoteObject.solveBoolean("k",_missingforplaylist,BA.numberCast(double.class, 0))) { 
+if (true) continue;};
+ BA.debugLineNum = 312;BA.debugLine="Dim addedCount As Int = CollectUpcomingTracksFor";
+Debug.ShouldStop(8388608);
+_addedcount = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_collectupcomingtracksforplaylist" /*RemoteObject*/ ,(Object)(_result),(Object)(_seentrackids),(Object)(_playlistid),(Object)(_missingforplaylist));Debug.locals.put("addedCount", _addedcount);Debug.locals.put("addedCount", _addedcount);
+ BA.debugLineNum = 313;BA.debugLine="If addedCount > 0 Then";
+Debug.ShouldStop(16777216);
+if (RemoteObject.solveBoolean(">",_addedcount,BA.numberCast(double.class, 0))) { 
+ BA.debugLineNum = 314;BA.debugLine="Trace(\"autocache slot fill slot=\" & slotLabel &";
+Debug.ShouldStop(33554432);
+__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("autocache slot fill slot="),_slotlabel,RemoteObject.createImmutable(" playlistId="),_playlistid,RemoteObject.createImmutable(" added="),_addedcount,RemoteObject.createImmutable(" reason=per_playlist_min"))));
+ };
+ }
+}Debug.locals.put("playlistId", _playlistid);
+;
+ BA.debugLineNum = 318;BA.debugLine="If remainingNeed <= 0 Then Return";
+Debug.ShouldStop(536870912);
+if (RemoteObject.solveBoolean("k",_remainingneed,BA.numberCast(double.class, 0))) { 
+if (true) return RemoteObject.createImmutable("");};
+ BA.debugLineNum = 320;BA.debugLine="Do While remainingNeed > 0";
+Debug.ShouldStop(-2147483648);
+while (RemoteObject.solveBoolean(">",_remainingneed,BA.numberCast(double.class, 0))) {
+ BA.debugLineNum = 321;BA.debugLine="Dim addedInRound As Int = 0";
+Debug.ShouldStop(1);
+_addedinround = BA.numberCast(int.class, 0);Debug.locals.put("addedInRound", _addedinround);Debug.locals.put("addedInRound", _addedinround);
+ BA.debugLineNum = 322;BA.debugLine="For Each playlistId As String In playlistIds";
+Debug.ShouldStop(2);
+{
+final RemoteObject group51 = _playlistids;
+final int groupLen51 = group51.runMethod(true,"getSize").<Integer>get()
+;int index51 = 0;
+;
+for (; index51 < groupLen51;index51++){
+_playlistid = BA.ObjectToString(group51.runMethod(false,"Get",index51));Debug.locals.put("playlistId", _playlistid);
+Debug.locals.put("playlistId", _playlistid);
+ BA.debugLineNum = 323;BA.debugLine="If remainingNeed <= 0 Then Exit";
+Debug.ShouldStop(4);
+if (RemoteObject.solveBoolean("k",_remainingneed,BA.numberCast(double.class, 0))) { 
+if (true) break;};
+ BA.debugLineNum = 324;BA.debugLine="Dim addedCount As Int = CollectUpcomingTracksFo";
+Debug.ShouldStop(8);
+_addedcount = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_collectupcomingtracksforplaylist" /*RemoteObject*/ ,(Object)(_result),(Object)(_seentrackids),(Object)(_playlistid),(Object)(BA.numberCast(int.class, 1)));Debug.locals.put("addedCount", _addedcount);Debug.locals.put("addedCount", _addedcount);
+ BA.debugLineNum = 325;BA.debugLine="If addedCount <= 0 Then Continue";
+Debug.ShouldStop(16);
+if (RemoteObject.solveBoolean("k",_addedcount,BA.numberCast(double.class, 0))) { 
+if (true) continue;};
+ BA.debugLineNum = 326;BA.debugLine="addedInRound = addedInRound + addedCount";
+Debug.ShouldStop(32);
+_addedinround = RemoteObject.solve(new RemoteObject[] {_addedinround,_addedcount}, "+",1, 1);Debug.locals.put("addedInRound", _addedinround);
+ BA.debugLineNum = 327;BA.debugLine="remainingNeed = Max(0, remainingNeed - addedCou";
+Debug.ShouldStop(64);
+_remainingneed = BA.numberCast(int.class, autonomouscachemanager.__c.runMethod(true,"Max",(Object)(BA.numberCast(double.class, 0)),(Object)(BA.numberCast(double.class, RemoteObject.solve(new RemoteObject[] {_remainingneed,_addedcount}, "-",1, 1)))));Debug.locals.put("remainingNeed", _remainingneed);
+ }
+}Debug.locals.put("playlistId", _playlistid);
+;
+ BA.debugLineNum = 329;BA.debugLine="If addedInRound <= 0 Then Exit";
+Debug.ShouldStop(256);
+if (RemoteObject.solveBoolean("k",_addedinround,BA.numberCast(double.class, 0))) { 
+if (true) break;};
+ }
+;
+ BA.debugLineNum = 331;BA.debugLine="End Sub";
+Debug.ShouldStop(1024);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -79,105 +270,42 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
-public static RemoteObject  _builddesiredtrackitems(RemoteObject __ref,RemoteObject _targetdescriptors,RemoteObject _currentneed,RemoteObject _nextneed) throws Exception{
+public static RemoteObject  _builddesiredtrackitemsforslots(RemoteObject __ref,RemoteObject _currentslot,RemoteObject _nextslot,RemoteObject _currentneed,RemoteObject _nextneed,RemoteObject _trackplayliststats) throws Exception{
 try {
-		Debug.PushSubsStack("BuildDesiredTrackItems (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,272);
-if (RapidSub.canDelegate("builddesiredtrackitems")) { return __ref.runUserSub(false, "autonomouscachemanager","builddesiredtrackitems", __ref, _targetdescriptors, _currentneed, _nextneed);}
+		Debug.PushSubsStack("BuildDesiredTrackItemsForSlots (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,244);
+if (RapidSub.canDelegate("builddesiredtrackitemsforslots")) { return __ref.runUserSub(false, "autonomouscachemanager","builddesiredtrackitemsforslots", __ref, _currentslot, _nextslot, _currentneed, _nextneed, _trackplayliststats);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _seentrackids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
-RemoteObject _prioritybudget = RemoteObject.createImmutable(0);
-RemoteObject _descriptorobject = RemoteObject.declareNull("Object");
-RemoteObject _descriptor = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
-RemoteObject _playlistid = RemoteObject.createImmutable("");
-RemoteObject _manifest = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
-RemoteObject _missingforplaylist = RemoteObject.createImmutable(0);
-RemoteObject _desiredforplaylist = RemoteObject.createImmutable(0);
-Debug.locals.put("targetDescriptors", _targetdescriptors);
+Debug.locals.put("currentSlot", _currentslot);
+Debug.locals.put("nextSlot", _nextslot);
 Debug.locals.put("currentNeed", _currentneed);
 Debug.locals.put("nextNeed", _nextneed);
- BA.debugLineNum = 272;BA.debugLine="Private Sub BuildDesiredTrackItems(targetDescripto";
-Debug.ShouldStop(32768);
- BA.debugLineNum = 273;BA.debugLine="Dim result As List";
-Debug.ShouldStop(65536);
-_result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("result", _result);
- BA.debugLineNum = 274;BA.debugLine="result.Initialize";
-Debug.ShouldStop(131072);
-_result.runVoidMethod ("Initialize");
- BA.debugLineNum = 276;BA.debugLine="If targetDescriptors.IsInitialized = False Or tar";
+Debug.locals.put("trackPlaylistStats", _trackplayliststats);
+ BA.debugLineNum = 244;BA.debugLine="Private Sub BuildDesiredTrackItemsForSlots(current";
 Debug.ShouldStop(524288);
-if (RemoteObject.solveBoolean("=",_targetdescriptors.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_targetdescriptors.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
-if (true) return _result;};
- BA.debugLineNum = 278;BA.debugLine="Dim seenTrackIds As Map";
+ BA.debugLineNum = 245;BA.debugLine="Dim result As List";
+Debug.ShouldStop(1048576);
+_result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("result", _result);
+ BA.debugLineNum = 246;BA.debugLine="result.Initialize";
 Debug.ShouldStop(2097152);
+_result.runVoidMethod ("Initialize");
+ BA.debugLineNum = 248;BA.debugLine="Dim seenTrackIds As Map";
+Debug.ShouldStop(8388608);
 _seentrackids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("seenTrackIds", _seentrackids);
- BA.debugLineNum = 279;BA.debugLine="seenTrackIds.Initialize";
-Debug.ShouldStop(4194304);
-_seentrackids.runVoidMethod ("Initialize");
- BA.debugLineNum = 281;BA.debugLine="Dim priorityBudget As Int = currentNeed + nextNee";
+ BA.debugLineNum = 249;BA.debugLine="seenTrackIds.Initialize";
 Debug.ShouldStop(16777216);
-_prioritybudget = RemoteObject.solve(new RemoteObject[] {_currentneed,_nextneed}, "+",1, 1);Debug.locals.put("priorityBudget", _prioritybudget);Debug.locals.put("priorityBudget", _prioritybudget);
- BA.debugLineNum = 282;BA.debugLine="If priorityBudget <= 0 Then priorityBudget = perP";
-Debug.ShouldStop(33554432);
-if (RemoteObject.solveBoolean("k",_prioritybudget,BA.numberCast(double.class, 0))) { 
-_prioritybudget = __ref.getField(true,"_perplaylistminreserve" /*RemoteObject*/ );Debug.locals.put("priorityBudget", _prioritybudget);};
- BA.debugLineNum = 284;BA.debugLine="For Each descriptorObject As Object In targetDesc";
+_seentrackids.runVoidMethod ("Initialize");
+ BA.debugLineNum = 251;BA.debugLine="AddDesiredTrackItemsForSlot(result, seenTrackIds,";
+Debug.ShouldStop(67108864);
+__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_adddesiredtrackitemsforslot" /*RemoteObject*/ ,(Object)(_result),(Object)(_seentrackids),(Object)(_currentslot),(Object)(__ref.getField(true,"_currentslotminreserve" /*RemoteObject*/ )),(Object)(_currentneed),(Object)(BA.ObjectToString("current")),(Object)(_trackplayliststats));
+ BA.debugLineNum = 252;BA.debugLine="AddDesiredTrackItemsForSlot(result, seenTrackIds,";
 Debug.ShouldStop(134217728);
-{
-final RemoteObject group8 = _targetdescriptors;
-final int groupLen8 = group8.runMethod(true,"getSize").<Integer>get()
-;int index8 = 0;
-;
-for (; index8 < groupLen8;index8++){
-_descriptorobject = group8.runMethod(false,"Get",index8);Debug.locals.put("descriptorObject", _descriptorobject);
-Debug.locals.put("descriptorObject", _descriptorobject);
- BA.debugLineNum = 285;BA.debugLine="If (descriptorObject Is Map) = False Then Contin";
-Debug.ShouldStop(268435456);
-if (RemoteObject.solveBoolean("=",RemoteObject.createImmutable((RemoteObject.solveBoolean("i",_descriptorobject, RemoteObject.createImmutable("java.util.Map")))),autonomouscachemanager.__c.getField(true,"False"))) { 
-if (true) continue;};
- BA.debugLineNum = 287;BA.debugLine="Dim descriptor As Map = descriptorObject";
-Debug.ShouldStop(1073741824);
-_descriptor = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
-_descriptor = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _descriptorobject);Debug.locals.put("descriptor", _descriptor);Debug.locals.put("descriptor", _descriptor);
- BA.debugLineNum = 288;BA.debugLine="Dim playlistId As String = GetPlaylistIdFromDesc";
-Debug.ShouldStop(-2147483648);
-_playlistid = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getplaylistidfromdescriptor" /*RemoteObject*/ ,(Object)(_descriptor));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 289;BA.debugLine="If playlistId = \"\" Then Continue";
-Debug.ShouldStop(1);
-if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
-if (true) continue;};
- BA.debugLineNum = 291;BA.debugLine="Dim manifest As Map = LoadPlaylistManifestSafe(p";
-Debug.ShouldStop(4);
-_manifest = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
-_manifest = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_loadplaylistmanifestsafe" /*RemoteObject*/ ,(Object)(_playlistid));Debug.locals.put("manifest", _manifest);Debug.locals.put("manifest", _manifest);
- BA.debugLineNum = 292;BA.debugLine="If manifest.IsInitialized = False Or manifest.Si";
-Debug.ShouldStop(8);
-if (RemoteObject.solveBoolean("=",_manifest.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_manifest.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
-if (true) continue;};
- BA.debugLineNum = 294;BA.debugLine="Dim missingForPlaylist As Int = ResolveMissingFo";
-Debug.ShouldStop(32);
-_missingforplaylist = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_resolvemissingforplaylistfrommanifest" /*RemoteObject*/ ,(Object)(_manifest),(Object)(__ref.getField(true,"_perplaylistminreserve" /*RemoteObject*/ )));Debug.locals.put("missingForPlaylist", _missingforplaylist);Debug.locals.put("missingForPlaylist", _missingforplaylist);
- BA.debugLineNum = 295;BA.debugLine="If missingForPlaylist <= 0 And priorityBudget <=";
-Debug.ShouldStop(64);
-if (RemoteObject.solveBoolean("k",_missingforplaylist,BA.numberCast(double.class, 0)) && RemoteObject.solveBoolean("k",_prioritybudget,BA.numberCast(double.class, 0))) { 
-if (true) continue;};
- BA.debugLineNum = 297;BA.debugLine="Dim desiredForPlaylist As Int = Max(perPlaylistM";
-Debug.ShouldStop(256);
-_desiredforplaylist = BA.numberCast(int.class, autonomouscachemanager.__c.runMethod(true,"Max",(Object)(BA.numberCast(double.class, __ref.getField(true,"_perplaylistminreserve" /*RemoteObject*/ ))),(Object)(BA.numberCast(double.class, _missingforplaylist))));Debug.locals.put("desiredForPlaylist", _desiredforplaylist);Debug.locals.put("desiredForPlaylist", _desiredforplaylist);
- BA.debugLineNum = 298;BA.debugLine="If priorityBudget > 0 Then desiredForPlaylist =";
-Debug.ShouldStop(512);
-if (RemoteObject.solveBoolean(">",_prioritybudget,BA.numberCast(double.class, 0))) { 
-_desiredforplaylist = BA.numberCast(int.class, autonomouscachemanager.__c.runMethod(true,"Max",(Object)(BA.numberCast(double.class, _desiredforplaylist)),(Object)(BA.numberCast(double.class, 1))));Debug.locals.put("desiredForPlaylist", _desiredforplaylist);};
- BA.debugLineNum = 300;BA.debugLine="CollectUncachedTracksFromManifest(result, seenTr";
-Debug.ShouldStop(2048);
-__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_collectuncachedtracksfrommanifest" /*RemoteObject*/ ,(Object)(_result),(Object)(_seentrackids),(Object)(_manifest),(Object)(_playlistid),(Object)(_desiredforplaylist));
- }
-}Debug.locals.put("descriptorObject", _descriptorobject);
-;
- BA.debugLineNum = 303;BA.debugLine="Return result";
-Debug.ShouldStop(16384);
+__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_adddesiredtrackitemsforslot" /*RemoteObject*/ ,(Object)(_result),(Object)(_seentrackids),(Object)(_nextslot),(Object)(__ref.getField(true,"_nextslotminreserve" /*RemoteObject*/ )),(Object)(_nextneed),(Object)(BA.ObjectToString("next")),(Object)(_trackplayliststats));
+ BA.debugLineNum = 254;BA.debugLine="Return result";
+Debug.ShouldStop(536870912);
 if (true) return _result;
- BA.debugLineNum = 304;BA.debugLine="End Sub";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 255;BA.debugLine="End Sub";
+Debug.ShouldStop(1073741824);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -188,22 +316,22 @@ finally {
 		}}
 public static RemoteObject  _buildprotectedtrackids(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("BuildProtectedTrackIds (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,386);
+		Debug.PushSubsStack("BuildProtectedTrackIds (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,396);
 if (RapidSub.canDelegate("buildprotectedtrackids")) { return __ref.runUserSub(false, "autonomouscachemanager","buildprotectedtrackids", __ref);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
- BA.debugLineNum = 386;BA.debugLine="Private Sub BuildProtectedTrackIds As List";
-Debug.ShouldStop(2);
- BA.debugLineNum = 387;BA.debugLine="Dim result As List";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 396;BA.debugLine="Private Sub BuildProtectedTrackIds As List";
+Debug.ShouldStop(2048);
+ BA.debugLineNum = 397;BA.debugLine="Dim result As List";
+Debug.ShouldStop(4096);
 _result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("result", _result);
- BA.debugLineNum = 388;BA.debugLine="result.Initialize";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 398;BA.debugLine="result.Initialize";
+Debug.ShouldStop(8192);
 _result.runVoidMethod ("Initialize");
- BA.debugLineNum = 389;BA.debugLine="Return result";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 399;BA.debugLine="Return result";
+Debug.ShouldStop(16384);
 if (true) return _result;
- BA.debugLineNum = 390;BA.debugLine="End Sub";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 400;BA.debugLine="End Sub";
+Debug.ShouldStop(32768);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -214,7 +342,7 @@ finally {
 		}}
 public static RemoteObject  _buildrelevanttrackids(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("BuildRelevantTrackIds (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,392);
+		Debug.PushSubsStack("BuildRelevantTrackIds (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,402);
 if (RapidSub.canDelegate("buildrelevanttrackids")) { return __ref.runUserSub(false, "autonomouscachemanager","buildrelevanttrackids", __ref);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _relevantids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -225,30 +353,30 @@ RemoteObject _playlistid = RemoteObject.createImmutable("");
 RemoteObject _manifest = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _order = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _trackid = RemoteObject.createImmutable("");
- BA.debugLineNum = 392;BA.debugLine="Private Sub BuildRelevantTrackIds As List";
-Debug.ShouldStop(128);
- BA.debugLineNum = 393;BA.debugLine="Dim result As List";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 402;BA.debugLine="Private Sub BuildRelevantTrackIds As List";
+Debug.ShouldStop(131072);
+ BA.debugLineNum = 403;BA.debugLine="Dim result As List";
+Debug.ShouldStop(262144);
 _result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("result", _result);
- BA.debugLineNum = 394;BA.debugLine="result.Initialize";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 404;BA.debugLine="result.Initialize";
+Debug.ShouldStop(524288);
 _result.runVoidMethod ("Initialize");
- BA.debugLineNum = 396;BA.debugLine="Dim relevantIds As Map";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 406;BA.debugLine="Dim relevantIds As Map";
+Debug.ShouldStop(2097152);
 _relevantids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("relevantIds", _relevantids);
- BA.debugLineNum = 397;BA.debugLine="relevantIds.Initialize";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 407;BA.debugLine="relevantIds.Initialize";
+Debug.ShouldStop(4194304);
 _relevantids.runVoidMethod ("Initialize");
- BA.debugLineNum = 399;BA.debugLine="Dim descriptors As List = GetStoredPlaylistDescri";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 409;BA.debugLine="Dim descriptors As List = GetStoredPlaylistDescri";
+Debug.ShouldStop(16777216);
 _descriptors = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _descriptors = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getstoredplaylistdescriptorssafe" /*RemoteObject*/ );Debug.locals.put("descriptors", _descriptors);Debug.locals.put("descriptors", _descriptors);
- BA.debugLineNum = 400;BA.debugLine="If descriptors.IsInitialized = False Or descripto";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 410;BA.debugLine="If descriptors.IsInitialized = False Or descripto";
+Debug.ShouldStop(33554432);
 if (RemoteObject.solveBoolean("=",_descriptors.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_descriptors.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return _result;};
- BA.debugLineNum = 402;BA.debugLine="For Each descriptorObject As Object In descriptor";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 412;BA.debugLine="For Each descriptorObject As Object In descriptor";
+Debug.ShouldStop(134217728);
 {
 final RemoteObject group7 = _descriptors;
 final int groupLen7 = group7.runMethod(true,"getSize").<Integer>get()
@@ -257,39 +385,39 @@ final int groupLen7 = group7.runMethod(true,"getSize").<Integer>get()
 for (; index7 < groupLen7;index7++){
 _descriptorobject = group7.runMethod(false,"Get",index7);Debug.locals.put("descriptorObject", _descriptorobject);
 Debug.locals.put("descriptorObject", _descriptorobject);
- BA.debugLineNum = 403;BA.debugLine="If (descriptorObject Is Map) = False Then Contin";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 413;BA.debugLine="If (descriptorObject Is Map) = False Then Contin";
+Debug.ShouldStop(268435456);
 if (RemoteObject.solveBoolean("=",RemoteObject.createImmutable((RemoteObject.solveBoolean("i",_descriptorobject, RemoteObject.createImmutable("java.util.Map")))),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 405;BA.debugLine="Dim descriptor As Map = descriptorObject";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 415;BA.debugLine="Dim descriptor As Map = descriptorObject";
+Debug.ShouldStop(1073741824);
 _descriptor = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _descriptor = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _descriptorobject);Debug.locals.put("descriptor", _descriptor);Debug.locals.put("descriptor", _descriptor);
- BA.debugLineNum = 406;BA.debugLine="Dim playlistId As String = GetPlaylistIdFromDesc";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 416;BA.debugLine="Dim playlistId As String = GetPlaylistIdFromDesc";
+Debug.ShouldStop(-2147483648);
 _playlistid = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getplaylistidfromdescriptor" /*RemoteObject*/ ,(Object)(_descriptor));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 407;BA.debugLine="If playlistId = \"\" Then Continue";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 417;BA.debugLine="If playlistId = \"\" Then Continue";
+Debug.ShouldStop(1);
 if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
 if (true) continue;};
- BA.debugLineNum = 409;BA.debugLine="Dim manifest As Map = LoadPlaylistManifestSafe(p";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 419;BA.debugLine="Dim manifest As Map = LoadPlaylistManifestSafe(p";
+Debug.ShouldStop(4);
 _manifest = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _manifest = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_loadplaylistmanifestsafe" /*RemoteObject*/ ,(Object)(_playlistid));Debug.locals.put("manifest", _manifest);Debug.locals.put("manifest", _manifest);
- BA.debugLineNum = 410;BA.debugLine="If manifest.IsInitialized = False Or manifest.Si";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 420;BA.debugLine="If manifest.IsInitialized = False Or manifest.Si";
+Debug.ShouldStop(8);
 if (RemoteObject.solveBoolean("=",_manifest.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_manifest.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) continue;};
- BA.debugLineNum = 412;BA.debugLine="Dim order As List = manifest.GetDefault(\"order\",";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 422;BA.debugLine="Dim order As List = manifest.GetDefault(\"order\",";
+Debug.ShouldStop(32);
 _order = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _order = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _manifest.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("order"))),(Object)(autonomouscachemanager.__c.getField(false,"Null"))));Debug.locals.put("order", _order);Debug.locals.put("order", _order);
- BA.debugLineNum = 413;BA.debugLine="If order.IsInitialized = False Then Continue";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 423;BA.debugLine="If order.IsInitialized = False Then Continue";
+Debug.ShouldStop(64);
 if (RemoteObject.solveBoolean("=",_order.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 415;BA.debugLine="For Each trackId As String In order";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 425;BA.debugLine="For Each trackId As String In order";
+Debug.ShouldStop(256);
 {
 final RemoteObject group16 = _order;
 final int groupLen16 = group16.runMethod(true,"getSize").<Integer>get()
@@ -298,16 +426,16 @@ final int groupLen16 = group16.runMethod(true,"getSize").<Integer>get()
 for (; index16 < groupLen16;index16++){
 _trackid = BA.ObjectToString(group16.runMethod(false,"Get",index16));Debug.locals.put("trackId", _trackid);
 Debug.locals.put("trackId", _trackid);
- BA.debugLineNum = 416;BA.debugLine="If trackId = \"\" Then Continue";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 426;BA.debugLine="If trackId = \"\" Then Continue";
+Debug.ShouldStop(512);
 if (RemoteObject.solveBoolean("=",_trackid,BA.ObjectToString(""))) { 
 if (true) continue;};
- BA.debugLineNum = 417;BA.debugLine="If relevantIds.ContainsKey(trackId) Then Contin";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 427;BA.debugLine="If relevantIds.ContainsKey(trackId) Then Contin";
+Debug.ShouldStop(1024);
 if (_relevantids.runMethod(true,"ContainsKey",(Object)((_trackid))).<Boolean>get().booleanValue()) { 
 if (true) continue;};
- BA.debugLineNum = 418;BA.debugLine="relevantIds.Put(trackId, True)";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 428;BA.debugLine="relevantIds.Put(trackId, True)";
+Debug.ShouldStop(2048);
 _relevantids.runVoidMethod ("Put",(Object)((_trackid)),(Object)((autonomouscachemanager.__c.getField(true,"True"))));
  }
 }Debug.locals.put("trackId", _trackid);
@@ -315,8 +443,8 @@ _relevantids.runVoidMethod ("Put",(Object)((_trackid)),(Object)((autonomouscache
  }
 }Debug.locals.put("descriptorObject", _descriptorobject);
 ;
- BA.debugLineNum = 422;BA.debugLine="For Each trackId As String In relevantIds.Keys";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 432;BA.debugLine="For Each trackId As String In relevantIds.Keys";
+Debug.ShouldStop(32768);
 {
 final RemoteObject group22 = _relevantids.runMethod(false,"Keys");
 final int groupLen22 = group22.runMethod(true,"getSize").<Integer>get()
@@ -325,58 +453,17 @@ final int groupLen22 = group22.runMethod(true,"getSize").<Integer>get()
 for (; index22 < groupLen22;index22++){
 _trackid = BA.ObjectToString(group22.runMethod(false,"Get",index22));Debug.locals.put("trackId", _trackid);
 Debug.locals.put("trackId", _trackid);
- BA.debugLineNum = 423;BA.debugLine="result.Add(trackId)";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 433;BA.debugLine="result.Add(trackId)";
+Debug.ShouldStop(65536);
 _result.runVoidMethod ("Add",(Object)((_trackid)));
  }
 }Debug.locals.put("trackId", _trackid);
 ;
- BA.debugLineNum = 426;BA.debugLine="Return result";
-Debug.ShouldStop(512);
-if (true) return _result;
- BA.debugLineNum = 427;BA.debugLine="End Sub";
-Debug.ShouldStop(1024);
-return RemoteObject.createImmutable(null);
-}
-catch (Exception e) {
-			throw Debug.ErrorCaught(e);
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
-public static RemoteObject  _buildtargetplaylistdescriptors(RemoteObject __ref,RemoteObject _currentslot,RemoteObject _nextslot) throws Exception{
-try {
-		Debug.PushSubsStack("BuildTargetPlaylistDescriptors (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,240);
-if (RapidSub.canDelegate("buildtargetplaylistdescriptors")) { return __ref.runUserSub(false, "autonomouscachemanager","buildtargetplaylistdescriptors", __ref, _currentslot, _nextslot);}
-RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
-RemoteObject _seen = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
-Debug.locals.put("currentSlot", _currentslot);
-Debug.locals.put("nextSlot", _nextslot);
- BA.debugLineNum = 240;BA.debugLine="Private Sub BuildTargetPlaylistDescriptors(current";
-Debug.ShouldStop(32768);
- BA.debugLineNum = 241;BA.debugLine="Dim result As List";
-Debug.ShouldStop(65536);
-_result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("result", _result);
- BA.debugLineNum = 242;BA.debugLine="result.Initialize";
-Debug.ShouldStop(131072);
-_result.runVoidMethod ("Initialize");
- BA.debugLineNum = 244;BA.debugLine="Dim seen As Map";
+ BA.debugLineNum = 436;BA.debugLine="Return result";
 Debug.ShouldStop(524288);
-_seen = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("seen", _seen);
- BA.debugLineNum = 245;BA.debugLine="seen.Initialize";
-Debug.ShouldStop(1048576);
-_seen.runVoidMethod ("Initialize");
- BA.debugLineNum = 247;BA.debugLine="AddSlotPlaylistDescriptors(result, seen, currentS";
-Debug.ShouldStop(4194304);
-__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_addslotplaylistdescriptors" /*RemoteObject*/ ,(Object)(_result),(Object)(_seen),(Object)(_currentslot));
- BA.debugLineNum = 248;BA.debugLine="AddSlotPlaylistDescriptors(result, seen, nextSlot";
-Debug.ShouldStop(8388608);
-__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_addslotplaylistdescriptors" /*RemoteObject*/ ,(Object)(_result),(Object)(_seen),(Object)(_nextslot));
- BA.debugLineNum = 250;BA.debugLine="Return result";
-Debug.ShouldStop(33554432);
 if (true) return _result;
- BA.debugLineNum = 251;BA.debugLine="End Sub";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 437;BA.debugLine="End Sub";
+Debug.ShouldStop(1048576);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -448,25 +535,25 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clonemap(RemoteObject __ref,RemoteObject _sourcemap) throws Exception{
 try {
-		Debug.PushSubsStack("CloneMap (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,505);
+		Debug.PushSubsStack("CloneMap (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,526);
 if (RapidSub.canDelegate("clonemap")) { return __ref.runUserSub(false, "autonomouscachemanager","clonemap", __ref, _sourcemap);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
 Debug.locals.put("sourceMap", _sourcemap);
- BA.debugLineNum = 505;BA.debugLine="Private Sub CloneMap(sourceMap As Map) As Map";
-Debug.ShouldStop(16777216);
- BA.debugLineNum = 506;BA.debugLine="Dim result As Map";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 526;BA.debugLine="Private Sub CloneMap(sourceMap As Map) As Map";
+Debug.ShouldStop(8192);
+ BA.debugLineNum = 527;BA.debugLine="Dim result As Map";
+Debug.ShouldStop(16384);
 _result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("result", _result);
- BA.debugLineNum = 507;BA.debugLine="result.Initialize";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 528;BA.debugLine="result.Initialize";
+Debug.ShouldStop(32768);
 _result.runVoidMethod ("Initialize");
- BA.debugLineNum = 509;BA.debugLine="If sourceMap.IsInitialized = False Then Return re";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 530;BA.debugLine="If sourceMap.IsInitialized = False Then Return re";
+Debug.ShouldStop(131072);
 if (RemoteObject.solveBoolean("=",_sourcemap.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) return _result;};
- BA.debugLineNum = 511;BA.debugLine="For Each key As Object In sourceMap.Keys";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 532;BA.debugLine="For Each key As Object In sourceMap.Keys";
+Debug.ShouldStop(524288);
 {
 final RemoteObject group4 = _sourcemap.runMethod(false,"Keys");
 final int groupLen4 = group4.runMethod(true,"getSize").<Integer>get()
@@ -475,17 +562,17 @@ final int groupLen4 = group4.runMethod(true,"getSize").<Integer>get()
 for (; index4 < groupLen4;index4++){
 _key = group4.runMethod(false,"Get",index4);Debug.locals.put("key", _key);
 Debug.locals.put("key", _key);
- BA.debugLineNum = 512;BA.debugLine="result.Put(key, sourceMap.Get(key))";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 533;BA.debugLine="result.Put(key, sourceMap.Get(key))";
+Debug.ShouldStop(1048576);
 _result.runVoidMethod ("Put",(Object)(_key),(Object)(_sourcemap.runMethod(false,"Get",(Object)(_key))));
  }
 }Debug.locals.put("key", _key);
 ;
- BA.debugLineNum = 515;BA.debugLine="Return result";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 536;BA.debugLine="Return result";
+Debug.ShouldStop(8388608);
 if (true) return _result;
- BA.debugLineNum = 516;BA.debugLine="End Sub";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 537;BA.debugLine="End Sub";
+Debug.ShouldStop(16777216);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -494,138 +581,110 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
-public static RemoteObject  _collectuncachedtracksfrommanifest(RemoteObject __ref,RemoteObject _result,RemoteObject _seentrackids,RemoteObject _manifest,RemoteObject _playlistid,RemoteObject _limitcount) throws Exception{
+public static RemoteObject  _collectupcomingtracksforplaylist(RemoteObject __ref,RemoteObject _result,RemoteObject _seentrackids,RemoteObject _playlistid,RemoteObject _limitcount) throws Exception{
 try {
-		Debug.PushSubsStack("CollectUncachedTracksFromManifest (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,311);
-if (RapidSub.canDelegate("collectuncachedtracksfrommanifest")) { return __ref.runUserSub(false, "autonomouscachemanager","collectuncachedtracksfrommanifest", __ref, _result, _seentrackids, _manifest, _playlistid, _limitcount);}
-RemoteObject _order = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
-RemoteObject _trackmap = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+		Debug.PushSubsStack("CollectUpcomingTracksForPlaylist (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,342);
+if (RapidSub.canDelegate("collectupcomingtracksforplaylist")) { return __ref.runUserSub(false, "autonomouscachemanager","collectupcomingtracksforplaylist", __ref, _result, _seentrackids, _playlistid, _limitcount);}
+RemoteObject _requestcount = RemoteObject.createImmutable(0);
+RemoteObject _upcomingtracks = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _addedcount = RemoteObject.createImmutable(0);
-RemoteObject _startindex = RemoteObject.createImmutable(0);
-RemoteObject _trackindexkey = RemoteObject.createImmutable("");
-int _offset = 0;
-RemoteObject _orderindex = RemoteObject.createImmutable(0);
-RemoteObject _trackid = RemoteObject.createImmutable("");
 RemoteObject _trackobject = RemoteObject.declareNull("Object");
 RemoteObject _track = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+RemoteObject _trackid = RemoteObject.createImmutable("");
 RemoteObject _normalizedtrack = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("result", _result);
 Debug.locals.put("seenTrackIds", _seentrackids);
-Debug.locals.put("manifest", _manifest);
 Debug.locals.put("playlistId", _playlistid);
 Debug.locals.put("limitCount", _limitcount);
- BA.debugLineNum = 311;BA.debugLine="Private Sub CollectUncachedTracksFromManifest(resu";
+ BA.debugLineNum = 342;BA.debugLine="Private Sub CollectUpcomingTracksForPlaylist(resul";
+Debug.ShouldStop(2097152);
+ BA.debugLineNum = 343;BA.debugLine="If playlistId = \"\" Or limitCount <= 0 Then Return";
 Debug.ShouldStop(4194304);
- BA.debugLineNum = 312;BA.debugLine="If limitCount <= 0 Then Return";
+if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString("")) || RemoteObject.solveBoolean("k",_limitcount,BA.numberCast(double.class, 0))) { 
+if (true) return BA.numberCast(int.class, 0);};
+ BA.debugLineNum = 344;BA.debugLine="Dim requestCount As Int = Max(limitCount * 8, per";
 Debug.ShouldStop(8388608);
-if (RemoteObject.solveBoolean("k",_limitcount,BA.numberCast(double.class, 0))) { 
-if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 313;BA.debugLine="If manifest.IsInitialized = False Then Return";
+_requestcount = BA.numberCast(int.class, autonomouscachemanager.__c.runMethod(true,"Max",(Object)(BA.numberCast(double.class, RemoteObject.solve(new RemoteObject[] {_limitcount,RemoteObject.createImmutable(8)}, "*",0, 1))),(Object)(BA.numberCast(double.class, RemoteObject.solve(new RemoteObject[] {__ref.getField(true,"_perplaylistminreserve" /*RemoteObject*/ ),RemoteObject.createImmutable(8)}, "*",0, 1)))));Debug.locals.put("requestCount", _requestcount);Debug.locals.put("requestCount", _requestcount);
+ BA.debugLineNum = 345;BA.debugLine="Dim upcomingTracks As List = dataResolverService.";
 Debug.ShouldStop(16777216);
-if (RemoteObject.solveBoolean("=",_manifest.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
-if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 315;BA.debugLine="Dim order As List = manifest.GetDefault(\"order\",";
+_upcomingtracks = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
+_upcomingtracks = __ref.getField(false,"_dataresolverservice" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_getupcomingplaybacktracksbyid" /*RemoteObject*/ ,(Object)(_playlistid),(Object)(_requestcount),(Object)(__ref.getField(false,"_mediacacheservice" /*RemoteObject*/ )),(Object)(autonomouscachemanager.__c.getField(true,"False")));Debug.locals.put("upcomingTracks", _upcomingtracks);Debug.locals.put("upcomingTracks", _upcomingtracks);
+ BA.debugLineNum = 346;BA.debugLine="If upcomingTracks.IsInitialized = False Or upcomi";
+Debug.ShouldStop(33554432);
+if (RemoteObject.solveBoolean("=",_upcomingtracks.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_upcomingtracks.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
+if (true) return BA.numberCast(int.class, 0);};
+ BA.debugLineNum = 347;BA.debugLine="Dim addedCount As Int = 0";
 Debug.ShouldStop(67108864);
-_order = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
-_order = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _manifest.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("order"))),(Object)(autonomouscachemanager.__c.getField(false,"Null"))));Debug.locals.put("order", _order);Debug.locals.put("order", _order);
- BA.debugLineNum = 316;BA.debugLine="Dim trackMap As Map = manifest.GetDefault(\"tracks";
-Debug.ShouldStop(134217728);
-_trackmap = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
-_trackmap = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _manifest.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("tracks"))),(Object)(autonomouscachemanager.__c.getField(false,"Null"))));Debug.locals.put("trackMap", _trackmap);Debug.locals.put("trackMap", _trackmap);
- BA.debugLineNum = 317;BA.debugLine="If order.IsInitialized = False Or order.Size = 0";
-Debug.ShouldStop(268435456);
-if (RemoteObject.solveBoolean("=",_order.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_order.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
-if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 318;BA.debugLine="If trackMap.IsInitialized = False Or trackMap.Siz";
-Debug.ShouldStop(536870912);
-if (RemoteObject.solveBoolean("=",_trackmap.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_trackmap.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
-if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 320;BA.debugLine="Dim addedCount As Int = 0";
-Debug.ShouldStop(-2147483648);
 _addedcount = BA.numberCast(int.class, 0);Debug.locals.put("addedCount", _addedcount);Debug.locals.put("addedCount", _addedcount);
- BA.debugLineNum = 321;BA.debugLine="Dim startIndex As Int = ResolveManifestPrefetchSt";
-Debug.ShouldStop(1);
-_startindex = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_resolvemanifestprefetchstartindex" /*RemoteObject*/ ,(Object)(_playlistid),(Object)(_order.runMethod(true,"getSize")));Debug.locals.put("startIndex", _startindex);Debug.locals.put("startIndex", _startindex);
- BA.debugLineNum = 322;BA.debugLine="Dim trackIndexKey As String = \"playlist_track_ind";
-Debug.ShouldStop(2);
-_trackindexkey = RemoteObject.concat(RemoteObject.createImmutable("playlist_track_index_"),_playlistid);Debug.locals.put("trackIndexKey", _trackindexkey);Debug.locals.put("trackIndexKey", _trackindexkey);
- BA.debugLineNum = 324;BA.debugLine="For offset = 0 To order.Size - 1";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 348;BA.debugLine="For Each trackObject As Object In upcomingTracks";
+Debug.ShouldStop(134217728);
 {
-final int step10 = 1;
-final int limit10 = RemoteObject.solve(new RemoteObject[] {_order.runMethod(true,"getSize"),RemoteObject.createImmutable(1)}, "-",1, 1).<Integer>get().intValue();
-_offset = 0 ;
-for (;(step10 > 0 && _offset <= limit10) || (step10 < 0 && _offset >= limit10) ;_offset = ((int)(0 + _offset + step10))  ) {
-Debug.locals.put("offset", _offset);
- BA.debugLineNum = 325;BA.debugLine="If addedCount >= limitCount Then Exit";
-Debug.ShouldStop(16);
+final RemoteObject group6 = _upcomingtracks;
+final int groupLen6 = group6.runMethod(true,"getSize").<Integer>get()
+;int index6 = 0;
+;
+for (; index6 < groupLen6;index6++){
+_trackobject = group6.runMethod(false,"Get",index6);Debug.locals.put("trackObject", _trackobject);
+Debug.locals.put("trackObject", _trackobject);
+ BA.debugLineNum = 349;BA.debugLine="If addedCount >= limitCount Then Exit";
+Debug.ShouldStop(268435456);
 if (RemoteObject.solveBoolean("g",_addedcount,BA.numberCast(double.class, _limitcount))) { 
 if (true) break;};
- BA.debugLineNum = 327;BA.debugLine="Dim orderIndex As Int = (startIndex + offset) Mo";
-Debug.ShouldStop(64);
-_orderindex = RemoteObject.solve(new RemoteObject[] {(RemoteObject.solve(new RemoteObject[] {_startindex,RemoteObject.createImmutable(_offset)}, "+",1, 1)),_order.runMethod(true,"getSize")}, "%",0, 1);Debug.locals.put("orderIndex", _orderindex);Debug.locals.put("orderIndex", _orderindex);
- BA.debugLineNum = 328;BA.debugLine="Dim trackId As String = order.Get(orderIndex)";
-Debug.ShouldStop(128);
-_trackid = BA.ObjectToString(_order.runMethod(false,"Get",(Object)(_orderindex)));Debug.locals.put("trackId", _trackid);Debug.locals.put("trackId", _trackid);
- BA.debugLineNum = 329;BA.debugLine="If trackId = \"\" Then Continue";
-Debug.ShouldStop(256);
-if (RemoteObject.solveBoolean("=",_trackid,BA.ObjectToString(""))) { 
-if (true) continue;};
- BA.debugLineNum = 330;BA.debugLine="If seenTrackIds.ContainsKey(trackId) Then Contin";
-Debug.ShouldStop(512);
-if (_seentrackids.runMethod(true,"ContainsKey",(Object)((_trackid))).<Boolean>get().booleanValue()) { 
-if (true) continue;};
- BA.debugLineNum = 332;BA.debugLine="Dim trackObject As Object = trackMap.GetDefault(";
-Debug.ShouldStop(2048);
-_trackobject = _trackmap.runMethod(false,"GetDefault",(Object)((_trackid)),(Object)(autonomouscachemanager.__c.getField(false,"Null")));Debug.locals.put("trackObject", _trackobject);Debug.locals.put("trackObject", _trackobject);
- BA.debugLineNum = 333;BA.debugLine="If (trackObject Is Map) = False Then Continue";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 350;BA.debugLine="If (trackObject Is Map) = False Then Continue";
+Debug.ShouldStop(536870912);
 if (RemoteObject.solveBoolean("=",RemoteObject.createImmutable((RemoteObject.solveBoolean("i",_trackobject, RemoteObject.createImmutable("java.util.Map")))),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 335;BA.debugLine="Dim track As Map = trackObject";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 351;BA.debugLine="Dim track As Map = trackObject";
+Debug.ShouldStop(1073741824);
 _track = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _track = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _trackobject);Debug.locals.put("track", _track);Debug.locals.put("track", _track);
- BA.debugLineNum = 336;BA.debugLine="If mediaCacheService.HasValidatedLocalMedia(trac";
-Debug.ShouldStop(32768);
-if (__ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_hasvalidatedlocalmedia" /*RemoteObject*/ ,(Object)(_track)).<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 352;BA.debugLine="Dim trackId As String = track.GetDefault(\"id\", \"";
+Debug.ShouldStop(-2147483648);
+_trackid = BA.ObjectToString(_track.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("trackId", _trackid);Debug.locals.put("trackId", _trackid);
+ BA.debugLineNum = 353;BA.debugLine="If trackId = \"\" Then Continue";
+Debug.ShouldStop(1);
+if (RemoteObject.solveBoolean("=",_trackid,BA.ObjectToString(""))) { 
 if (true) continue;};
- BA.debugLineNum = 338;BA.debugLine="Dim normalizedTrack As Map = CloneMap(track)";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 354;BA.debugLine="If seenTrackIds.ContainsKey(trackId) Then Contin";
+Debug.ShouldStop(2);
+if (_seentrackids.runMethod(true,"ContainsKey",(Object)((_trackid))).<Boolean>get().booleanValue()) { 
+if (true) continue;};
+ BA.debugLineNum = 355;BA.debugLine="If IsTrackAlreadyAvailable(track, playlistId) Th";
+Debug.ShouldStop(4);
+if (__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_istrackalreadyavailable" /*RemoteObject*/ ,(Object)(_track),(Object)(_playlistid)).<Boolean>get().booleanValue()) { 
+if (true) continue;};
+ BA.debugLineNum = 356;BA.debugLine="Dim normalizedTrack As Map = CloneMap(track)";
+Debug.ShouldStop(8);
 _normalizedtrack = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _normalizedtrack = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_clonemap" /*RemoteObject*/ ,(Object)(_track));Debug.locals.put("normalizedTrack", _normalizedtrack);Debug.locals.put("normalizedTrack", _normalizedtrack);
- BA.debugLineNum = 339;BA.debugLine="If normalizedTrack.ContainsKey(\"type\") = False T";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 357;BA.debugLine="If normalizedTrack.ContainsKey(\"type\") = False T";
+Debug.ShouldStop(16);
 if (RemoteObject.solveBoolean("=",_normalizedtrack.runMethod(true,"ContainsKey",(Object)((RemoteObject.createImmutable("type")))),autonomouscachemanager.__c.getField(true,"False"))) { 
 _normalizedtrack.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("type"))),(Object)((RemoteObject.createImmutable("track"))));};
- BA.debugLineNum = 340;BA.debugLine="If normalizedTrack.ContainsKey(\"playlist_id\") =";
-Debug.ShouldStop(524288);
-if (RemoteObject.solveBoolean("=",_normalizedtrack.runMethod(true,"ContainsKey",(Object)((RemoteObject.createImmutable("playlist_id")))),autonomouscachemanager.__c.getField(true,"False"))) { 
-_normalizedtrack.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("playlist_id"))),(Object)((_playlistid)));};
- BA.debugLineNum = 341;BA.debugLine="normalizedTrack.Put(\"playlist_track_index\", orde";
-Debug.ShouldStop(1048576);
-_normalizedtrack.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("playlist_track_index"))),(Object)((_orderindex)));
- BA.debugLineNum = 342;BA.debugLine="normalizedTrack.Put(\"playlist_prefetch_source\",";
-Debug.ShouldStop(2097152);
-_normalizedtrack.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("playlist_prefetch_source"))),(Object)((RemoteObject.createImmutable("manifest_order"))));
- BA.debugLineNum = 344;BA.debugLine="result.Add(normalizedTrack)";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 358;BA.debugLine="normalizedTrack.Put(\"playlist_prefetch_source\",";
+Debug.ShouldStop(32);
+_normalizedtrack.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("playlist_prefetch_source"))),(Object)((RemoteObject.createImmutable("playback_upcoming"))));
+ BA.debugLineNum = 359;BA.debugLine="result.Add(normalizedTrack)";
+Debug.ShouldStop(64);
 _result.runVoidMethod ("Add",(Object)((_normalizedtrack.getObject())));
- BA.debugLineNum = 345;BA.debugLine="seenTrackIds.Put(trackId, True)";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 360;BA.debugLine="seenTrackIds.Put(trackId, True)";
+Debug.ShouldStop(128);
 _seentrackids.runVoidMethod ("Put",(Object)((_trackid)),(Object)((autonomouscachemanager.__c.getField(true,"True"))));
- BA.debugLineNum = 346;BA.debugLine="addedCount = addedCount + 1";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 361;BA.debugLine="addedCount = addedCount + 1";
+Debug.ShouldStop(256);
 _addedcount = RemoteObject.solve(new RemoteObject[] {_addedcount,RemoteObject.createImmutable(1)}, "+",1, 1);Debug.locals.put("addedCount", _addedcount);
- BA.debugLineNum = 348;BA.debugLine="Trace(\"autocache candidate playlistId=\" & playli";
-Debug.ShouldStop(134217728);
-__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("autocache candidate playlistId="),_playlistid,RemoteObject.createImmutable(" orderIndex="),_orderindex,RemoteObject.createImmutable(" trackId="),_trackid,RemoteObject.createImmutable(" basedOnKey="),_trackindexkey)));
+ BA.debugLineNum = 362;BA.debugLine="Trace(\"autocache candidate playlistId=\" & playli";
+Debug.ShouldStop(512);
+__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("autocache candidate playlistId="),_playlistid,RemoteObject.createImmutable(" orderIndex="),_normalizedtrack.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlist_track_index"))),(Object)(RemoteObject.createImmutable((-(double) (0 + 1))))),RemoteObject.createImmutable(" trackId="),_trackid,RemoteObject.createImmutable(" source=playback_manifest_cursor"))));
  }
-}Debug.locals.put("offset", _offset);
+}Debug.locals.put("trackObject", _trackobject);
 ;
- BA.debugLineNum = 350;BA.debugLine="End Sub";
-Debug.ShouldStop(536870912);
-return RemoteObject.createImmutable("");
+ BA.debugLineNum = 364;BA.debugLine="Return addedCount";
+Debug.ShouldStop(2048);
+if (true) return _addedcount;
+ BA.debugLineNum = 365;BA.debugLine="End Sub";
+Debug.ShouldStop(4096);
+return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
 			throw Debug.ErrorCaught(e);
@@ -635,7 +694,7 @@ finally {
 		}}
 public static RemoteObject  _configure(RemoteObject __ref,RemoteObject _tickms,RemoteObject _currentreserve,RemoteObject _nextreserve,RemoteObject _perplaylistreserve,RemoteObject _maxdownloads) throws Exception{
 try {
-		Debug.PushSubsStack("Configure (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,62);
+		Debug.PushSubsStack("Configure (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,62);
 if (RapidSub.canDelegate("configure")) { return __ref.runUserSub(false, "autonomouscachemanager","configure", __ref, _tickms, _currentreserve, _nextreserve, _perplaylistreserve, _maxdownloads);}
 Debug.locals.put("tickMs", _tickms);
 Debug.locals.put("currentReserve", _currentreserve);
@@ -679,7 +738,7 @@ finally {
 		}}
 public static RemoteObject  _countplayabletracksinmanifest(RemoteObject __ref,RemoteObject _manifest) throws Exception{
 try {
-		Debug.PushSubsStack("CountPlayableTracksInManifest (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,218);
+		Debug.PushSubsStack("CountPlayableTracksInManifest (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,222);
 if (RapidSub.canDelegate("countplayabletracksinmanifest")) { return __ref.runUserSub(false, "autonomouscachemanager","countplayabletracksinmanifest", __ref, _manifest);}
 RemoteObject _order = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _trackmap = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -688,33 +747,33 @@ RemoteObject _trackid = RemoteObject.createImmutable("");
 RemoteObject _trackobject = RemoteObject.declareNull("Object");
 RemoteObject _track = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("manifest", _manifest);
- BA.debugLineNum = 218;BA.debugLine="Private Sub CountPlayableTracksInManifest(manifest";
-Debug.ShouldStop(33554432);
- BA.debugLineNum = 219;BA.debugLine="If manifest.IsInitialized = False Then Return 0";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 222;BA.debugLine="Private Sub CountPlayableTracksInManifest(manifest";
+Debug.ShouldStop(536870912);
+ BA.debugLineNum = 223;BA.debugLine="If manifest.IsInitialized = False Then Return 0";
+Debug.ShouldStop(1073741824);
 if (RemoteObject.solveBoolean("=",_manifest.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 221;BA.debugLine="Dim order As List = manifest.GetDefault(\"order\",";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 225;BA.debugLine="Dim order As List = manifest.GetDefault(\"order\",";
+Debug.ShouldStop(1);
 _order = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _order = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _manifest.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("order"))),(Object)(autonomouscachemanager.__c.getField(false,"Null"))));Debug.locals.put("order", _order);Debug.locals.put("order", _order);
- BA.debugLineNum = 222;BA.debugLine="Dim trackMap As Map = manifest.GetDefault(\"tracks";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 226;BA.debugLine="Dim trackMap As Map = manifest.GetDefault(\"tracks";
+Debug.ShouldStop(2);
 _trackmap = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _trackmap = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _manifest.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("tracks"))),(Object)(autonomouscachemanager.__c.getField(false,"Null"))));Debug.locals.put("trackMap", _trackmap);Debug.locals.put("trackMap", _trackmap);
- BA.debugLineNum = 223;BA.debugLine="If order.IsInitialized = False Or order.Size = 0";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 227;BA.debugLine="If order.IsInitialized = False Or order.Size = 0";
+Debug.ShouldStop(4);
 if (RemoteObject.solveBoolean("=",_order.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_order.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 224;BA.debugLine="If trackMap.IsInitialized = False Or trackMap.Siz";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 228;BA.debugLine="If trackMap.IsInitialized = False Or trackMap.Siz";
+Debug.ShouldStop(8);
 if (RemoteObject.solveBoolean("=",_trackmap.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_trackmap.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 226;BA.debugLine="Dim totalCount As Int = 0";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 230;BA.debugLine="Dim totalCount As Int = 0";
+Debug.ShouldStop(32);
 _totalcount = BA.numberCast(int.class, 0);Debug.locals.put("totalCount", _totalcount);Debug.locals.put("totalCount", _totalcount);
- BA.debugLineNum = 227;BA.debugLine="For Each trackId As String In order";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 231;BA.debugLine="For Each trackId As String In order";
+Debug.ShouldStop(64);
 {
 final RemoteObject group7 = _order;
 final int groupLen7 = group7.runMethod(true,"getSize").<Integer>get()
@@ -723,36 +782,36 @@ final int groupLen7 = group7.runMethod(true,"getSize").<Integer>get()
 for (; index7 < groupLen7;index7++){
 _trackid = BA.ObjectToString(group7.runMethod(false,"Get",index7));Debug.locals.put("trackId", _trackid);
 Debug.locals.put("trackId", _trackid);
- BA.debugLineNum = 228;BA.debugLine="If trackId = \"\" Then Continue";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 232;BA.debugLine="If trackId = \"\" Then Continue";
+Debug.ShouldStop(128);
 if (RemoteObject.solveBoolean("=",_trackid,BA.ObjectToString(""))) { 
 if (true) continue;};
- BA.debugLineNum = 229;BA.debugLine="Dim trackObject As Object = trackMap.GetDefault(";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 233;BA.debugLine="Dim trackObject As Object = trackMap.GetDefault(";
+Debug.ShouldStop(256);
 _trackobject = _trackmap.runMethod(false,"GetDefault",(Object)((_trackid)),(Object)(autonomouscachemanager.__c.getField(false,"Null")));Debug.locals.put("trackObject", _trackobject);Debug.locals.put("trackObject", _trackobject);
- BA.debugLineNum = 230;BA.debugLine="If (trackObject Is Map) = False Then Continue";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 234;BA.debugLine="If (trackObject Is Map) = False Then Continue";
+Debug.ShouldStop(512);
 if (RemoteObject.solveBoolean("=",RemoteObject.createImmutable((RemoteObject.solveBoolean("i",_trackobject, RemoteObject.createImmutable("java.util.Map")))),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 231;BA.debugLine="Dim track As Map = trackObject";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 235;BA.debugLine="Dim track As Map = trackObject";
+Debug.ShouldStop(1024);
 _track = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _track = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _trackobject);Debug.locals.put("track", _track);Debug.locals.put("track", _track);
- BA.debugLineNum = 232;BA.debugLine="If mediaCacheService.HasValidatedLocalMedia(trac";
-Debug.ShouldStop(128);
-if (__ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_hasvalidatedlocalmedia" /*RemoteObject*/ ,(Object)(_track)).<Boolean>get().booleanValue()) { 
- BA.debugLineNum = 233;BA.debugLine="totalCount = totalCount + 1";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 236;BA.debugLine="If IsTrackAlreadyAvailable(track, manifest.GetDe";
+Debug.ShouldStop(2048);
+if (__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_istrackalreadyavailable" /*RemoteObject*/ ,(Object)(_track),(Object)(BA.ObjectToString(_manifest.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlist_id"))),(Object)((RemoteObject.createImmutable(""))))))).<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 237;BA.debugLine="totalCount = totalCount + 1";
+Debug.ShouldStop(4096);
 _totalcount = RemoteObject.solve(new RemoteObject[] {_totalcount,RemoteObject.createImmutable(1)}, "+",1, 1);Debug.locals.put("totalCount", _totalcount);
  };
  }
 }Debug.locals.put("trackId", _trackid);
 ;
- BA.debugLineNum = 237;BA.debugLine="Return totalCount";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 241;BA.debugLine="Return totalCount";
+Debug.ShouldStop(65536);
 if (true) return _totalcount;
- BA.debugLineNum = 238;BA.debugLine="End Sub";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 242;BA.debugLine="End Sub";
+Debug.ShouldStop(131072);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -761,36 +820,36 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
-public static RemoteObject  _countplayabletracksinslot(RemoteObject __ref,RemoteObject _slot) throws Exception{
+public static RemoteObject  _countplayabletracksinslot(RemoteObject __ref,RemoteObject _slot,RemoteObject _trackplayliststats) throws Exception{
 try {
-		Debug.PushSubsStack("CountPlayableTracksInSlot (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,197);
-if (RapidSub.canDelegate("countplayabletracksinslot")) { return __ref.runUserSub(false, "autonomouscachemanager","countplayabletracksinslot", __ref, _slot);}
+		Debug.PushSubsStack("CountPlayableTracksInSlot (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,203);
+if (RapidSub.canDelegate("countplayabletracksinslot")) { return __ref.runUserSub(false, "autonomouscachemanager","countplayabletracksinslot", __ref, _slot, _trackplayliststats);}
 RemoteObject _playlists = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _totalcount = RemoteObject.createImmutable(0);
 RemoteObject _playlistobject = RemoteObject.declareNull("Object");
 RemoteObject _playlistdescriptor = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _playlistid = RemoteObject.createImmutable("");
-RemoteObject _manifest = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("slot", _slot);
- BA.debugLineNum = 197;BA.debugLine="Private Sub CountPlayableTracksInSlot(slot As Map)";
-Debug.ShouldStop(16);
- BA.debugLineNum = 198;BA.debugLine="If slot.IsInitialized = False Then Return 0";
-Debug.ShouldStop(32);
+Debug.locals.put("trackPlaylistStats", _trackplayliststats);
+ BA.debugLineNum = 203;BA.debugLine="Private Sub CountPlayableTracksInSlot(slot As Map,";
+Debug.ShouldStop(1024);
+ BA.debugLineNum = 204;BA.debugLine="If slot.IsInitialized = False Then Return 0";
+Debug.ShouldStop(2048);
 if (RemoteObject.solveBoolean("=",_slot.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 200;BA.debugLine="Dim playlists As List = GetSlotPlaylists(slot)";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 206;BA.debugLine="Dim playlists As List = GetSlotPlaylists(slot)";
+Debug.ShouldStop(8192);
 _playlists = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlists = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getslotplaylists" /*RemoteObject*/ ,(Object)(_slot));Debug.locals.put("playlists", _playlists);Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 201;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 207;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
+Debug.ShouldStop(16384);
 if (RemoteObject.solveBoolean("=",_playlists.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_playlists.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 203;BA.debugLine="Dim totalCount As Int = 0";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 209;BA.debugLine="Dim totalCount As Int = 0";
+Debug.ShouldStop(65536);
 _totalcount = BA.numberCast(int.class, 0);Debug.locals.put("totalCount", _totalcount);Debug.locals.put("totalCount", _totalcount);
- BA.debugLineNum = 205;BA.debugLine="For Each playlistObject As Object In playlists";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 211;BA.debugLine="For Each playlistObject As Object In playlists";
+Debug.ShouldStop(262144);
 {
 final RemoteObject group5 = _playlists;
 final int groupLen5 = group5.runMethod(true,"getSize").<Integer>get()
@@ -799,36 +858,74 @@ final int groupLen5 = group5.runMethod(true,"getSize").<Integer>get()
 for (; index5 < groupLen5;index5++){
 _playlistobject = group5.runMethod(false,"Get",index5);Debug.locals.put("playlistObject", _playlistobject);
 Debug.locals.put("playlistObject", _playlistobject);
- BA.debugLineNum = 206;BA.debugLine="If (playlistObject Is Map) = False Then Continue";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 212;BA.debugLine="If (playlistObject Is Map) = False Then Continue";
+Debug.ShouldStop(524288);
 if (RemoteObject.solveBoolean("=",RemoteObject.createImmutable((RemoteObject.solveBoolean("i",_playlistobject, RemoteObject.createImmutable("java.util.Map")))),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) continue;};
- BA.debugLineNum = 207;BA.debugLine="Dim playlistDescriptor As Map = playlistObject";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 213;BA.debugLine="Dim playlistDescriptor As Map = playlistObject";
+Debug.ShouldStop(1048576);
 _playlistdescriptor = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _playlistdescriptor = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _playlistobject);Debug.locals.put("playlistDescriptor", _playlistdescriptor);Debug.locals.put("playlistDescriptor", _playlistdescriptor);
- BA.debugLineNum = 208;BA.debugLine="Dim playlistId As String = GetPlaylistIdFromDesc";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 214;BA.debugLine="Dim playlistId As String = GetPlaylistIdFromDesc";
+Debug.ShouldStop(2097152);
 _playlistid = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getplaylistidfromdescriptor" /*RemoteObject*/ ,(Object)(_playlistdescriptor));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 209;BA.debugLine="If playlistId = \"\" Then Continue";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 215;BA.debugLine="If playlistId = \"\" Then Continue";
+Debug.ShouldStop(4194304);
 if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
 if (true) continue;};
- BA.debugLineNum = 211;BA.debugLine="Dim manifest As Map = LoadPlaylistManifestSafe(p";
-Debug.ShouldStop(262144);
-_manifest = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
-_manifest = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_loadplaylistmanifestsafe" /*RemoteObject*/ ,(Object)(_playlistid));Debug.locals.put("manifest", _manifest);Debug.locals.put("manifest", _manifest);
- BA.debugLineNum = 212;BA.debugLine="totalCount = totalCount + CountPlayableTracksInM";
-Debug.ShouldStop(524288);
-_totalcount = RemoteObject.solve(new RemoteObject[] {_totalcount,__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_countplayabletracksinmanifest" /*RemoteObject*/ ,(Object)(_manifest))}, "+",1, 1);Debug.locals.put("totalCount", _totalcount);
+ BA.debugLineNum = 216;BA.debugLine="totalCount = totalCount + GetCachedTrackCountFor";
+Debug.ShouldStop(8388608);
+_totalcount = RemoteObject.solve(new RemoteObject[] {_totalcount,__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getcachedtrackcountforplaylist" /*RemoteObject*/ ,(Object)(_trackplayliststats),(Object)(_playlistid))}, "+",1, 1);Debug.locals.put("totalCount", _totalcount);
  }
 }Debug.locals.put("playlistObject", _playlistobject);
 ;
- BA.debugLineNum = 215;BA.debugLine="Return totalCount";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 219;BA.debugLine="Return totalCount";
+Debug.ShouldStop(67108864);
 if (true) return _totalcount;
- BA.debugLineNum = 216;BA.debugLine="End Sub";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 220;BA.debugLine="End Sub";
+Debug.ShouldStop(134217728);
+return RemoteObject.createImmutable(0);
+}
+catch (Exception e) {
+			throw Debug.ErrorCaught(e);
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
+public static RemoteObject  _getcachedtrackcountforplaylist(RemoteObject __ref,RemoteObject _trackplayliststats,RemoteObject _playlistid) throws Exception{
+try {
+		Debug.PushSubsStack("GetCachedTrackCountForPlaylist (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,333);
+if (RapidSub.canDelegate("getcachedtrackcountforplaylist")) { return __ref.runUserSub(false, "autonomouscachemanager","getcachedtrackcountforplaylist", __ref, _trackplayliststats, _playlistid);}
+RemoteObject _statskey = RemoteObject.createImmutable("");
+RemoteObject _playlistentry = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+Debug.locals.put("trackPlaylistStats", _trackplayliststats);
+Debug.locals.put("playlistId", _playlistid);
+ BA.debugLineNum = 333;BA.debugLine="Private Sub GetCachedTrackCountForPlaylist(trackPl";
+Debug.ShouldStop(4096);
+ BA.debugLineNum = 334;BA.debugLine="If trackPlaylistStats.IsInitialized = False Then";
+Debug.ShouldStop(8192);
+if (RemoteObject.solveBoolean("=",_trackplayliststats.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
+if (true) return BA.numberCast(int.class, 0);};
+ BA.debugLineNum = 335;BA.debugLine="Dim statsKey As String = playlistId";
+Debug.ShouldStop(16384);
+_statskey = _playlistid;Debug.locals.put("statsKey", _statskey);Debug.locals.put("statsKey", _statskey);
+ BA.debugLineNum = 336;BA.debugLine="If statsKey = \"\" Then statsKey = \"_unknown\"";
+Debug.ShouldStop(32768);
+if (RemoteObject.solveBoolean("=",_statskey,BA.ObjectToString(""))) { 
+_statskey = BA.ObjectToString("_unknown");Debug.locals.put("statsKey", _statskey);};
+ BA.debugLineNum = 337;BA.debugLine="Dim playlistEntry As Map = trackPlaylistStats.Get";
+Debug.ShouldStop(65536);
+_playlistentry = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
+_playlistentry = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.Map"), _trackplayliststats.runMethod(false,"GetDefault",(Object)((_statskey)),(Object)(autonomouscachemanager.__c.getField(false,"Null"))));Debug.locals.put("playlistEntry", _playlistentry);Debug.locals.put("playlistEntry", _playlistentry);
+ BA.debugLineNum = 338;BA.debugLine="If playlistEntry.IsInitialized = False Then Retur";
+Debug.ShouldStop(131072);
+if (RemoteObject.solveBoolean("=",_playlistentry.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
+if (true) return BA.numberCast(int.class, 0);};
+ BA.debugLineNum = 339;BA.debugLine="Return playlistEntry.GetDefault(\"count\", 0)";
+Debug.ShouldStop(262144);
+if (true) return BA.numberCast(int.class, _playlistentry.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("count"))),(Object)(RemoteObject.createImmutable((0)))));
+ BA.debugLineNum = 340;BA.debugLine="End Sub";
+Debug.ShouldStop(524288);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -839,38 +936,38 @@ finally {
 		}}
 public static RemoteObject  _getplaylistidfromdescriptor(RemoteObject __ref,RemoteObject _descriptor) throws Exception{
 try {
-		Debug.PushSubsStack("GetPlaylistIdFromDescriptor (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,447);
+		Debug.PushSubsStack("GetPlaylistIdFromDescriptor (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,457);
 if (RapidSub.canDelegate("getplaylistidfromdescriptor")) { return __ref.runUserSub(false, "autonomouscachemanager","getplaylistidfromdescriptor", __ref, _descriptor);}
 RemoteObject _playlistid = RemoteObject.createImmutable("");
 Debug.locals.put("descriptor", _descriptor);
- BA.debugLineNum = 447;BA.debugLine="Private Sub GetPlaylistIdFromDescriptor(descriptor";
-Debug.ShouldStop(1073741824);
- BA.debugLineNum = 448;BA.debugLine="If descriptor.IsInitialized = False Then Return \"";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 457;BA.debugLine="Private Sub GetPlaylistIdFromDescriptor(descriptor";
+Debug.ShouldStop(256);
+ BA.debugLineNum = 458;BA.debugLine="If descriptor.IsInitialized = False Then Return \"";
+Debug.ShouldStop(512);
 if (RemoteObject.solveBoolean("=",_descriptor.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
 if (true) return BA.ObjectToString("");};
- BA.debugLineNum = 450;BA.debugLine="Dim playlistId As String = descriptor.GetDefault(";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 460;BA.debugLine="Dim playlistId As String = descriptor.GetDefault(";
+Debug.ShouldStop(2048);
 _playlistid = BA.ObjectToString(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 451;BA.debugLine="If playlistId <> \"\" Then Return playlistId";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 461;BA.debugLine="If playlistId <> \"\" Then Return playlistId";
+Debug.ShouldStop(4096);
 if (RemoteObject.solveBoolean("!",_playlistid,BA.ObjectToString(""))) { 
 if (true) return _playlistid;};
- BA.debugLineNum = 453;BA.debugLine="playlistId = descriptor.GetDefault(\"playlist_id\",";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 463;BA.debugLine="playlistId = descriptor.GetDefault(\"playlist_id\",";
+Debug.ShouldStop(16384);
 _playlistid = BA.ObjectToString(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlist_id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 454;BA.debugLine="If playlistId <> \"\" Then Return playlistId";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 464;BA.debugLine="If playlistId <> \"\" Then Return playlistId";
+Debug.ShouldStop(32768);
 if (RemoteObject.solveBoolean("!",_playlistid,BA.ObjectToString(""))) { 
 if (true) return _playlistid;};
- BA.debugLineNum = 456;BA.debugLine="playlistId = descriptor.GetDefault(\"playlistId\",";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 466;BA.debugLine="playlistId = descriptor.GetDefault(\"playlistId\",";
+Debug.ShouldStop(131072);
 _playlistid = BA.ObjectToString(_descriptor.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlistId"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 457;BA.debugLine="Return playlistId";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 467;BA.debugLine="Return playlistId";
+Debug.ShouldStop(262144);
 if (true) return _playlistid;
- BA.debugLineNum = 458;BA.debugLine="End Sub";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 468;BA.debugLine="End Sub";
+Debug.ShouldStop(524288);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -881,53 +978,53 @@ finally {
 		}}
 public static RemoteObject  _getslotplaylists(RemoteObject __ref,RemoteObject _slot) throws Exception{
 try {
-		Debug.PushSubsStack("GetSlotPlaylists (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,429);
+		Debug.PushSubsStack("GetSlotPlaylists (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,439);
 if (RapidSub.canDelegate("getslotplaylists")) { return __ref.runUserSub(false, "autonomouscachemanager","getslotplaylists", __ref, _slot);}
 RemoteObject _emptylist = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _playlists = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _emptyresult = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 Debug.locals.put("slot", _slot);
- BA.debugLineNum = 429;BA.debugLine="Private Sub GetSlotPlaylists(slot As Map) As List";
-Debug.ShouldStop(4096);
- BA.debugLineNum = 430;BA.debugLine="If slot.IsInitialized = False Then";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 439;BA.debugLine="Private Sub GetSlotPlaylists(slot As Map) As List";
+Debug.ShouldStop(4194304);
+ BA.debugLineNum = 440;BA.debugLine="If slot.IsInitialized = False Then";
+Debug.ShouldStop(8388608);
 if (RemoteObject.solveBoolean("=",_slot.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
- BA.debugLineNum = 431;BA.debugLine="Dim emptyList As List";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 441;BA.debugLine="Dim emptyList As List";
+Debug.ShouldStop(16777216);
 _emptylist = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("emptyList", _emptylist);
- BA.debugLineNum = 432;BA.debugLine="emptyList.Initialize";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 442;BA.debugLine="emptyList.Initialize";
+Debug.ShouldStop(33554432);
 _emptylist.runVoidMethod ("Initialize");
- BA.debugLineNum = 433;BA.debugLine="Return emptyList";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 443;BA.debugLine="Return emptyList";
+Debug.ShouldStop(67108864);
 if (true) return _emptylist;
  };
- BA.debugLineNum = 436;BA.debugLine="Dim playlists As List = slot.GetDefault(\"playlist";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 446;BA.debugLine="Dim playlists As List = slot.GetDefault(\"playlist";
+Debug.ShouldStop(536870912);
 _playlists = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlists = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _slot.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlists"))),(Object)(autonomouscachemanager.__c.getField(false,"Null"))));Debug.locals.put("playlists", _playlists);Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 437;BA.debugLine="If playlists.IsInitialized Then Return playlists";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 447;BA.debugLine="If playlists.IsInitialized Then Return playlists";
+Debug.ShouldStop(1073741824);
 if (_playlists.runMethod(true,"IsInitialized").<Boolean>get().booleanValue()) { 
 if (true) return _playlists;};
- BA.debugLineNum = 439;BA.debugLine="playlists = slot.GetDefault(\"playlist_descriptors";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 449;BA.debugLine="playlists = slot.GetDefault(\"playlist_descriptors";
+Debug.ShouldStop(1);
 _playlists = RemoteObject.declareNull("anywheresoftware.b4a.AbsObjectWrapper").runMethod(false, "ConvertToWrapper", RemoteObject.createNew("anywheresoftware.b4a.objects.collections.List"), _slot.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlist_descriptors"))),(Object)(autonomouscachemanager.__c.getField(false,"Null"))));Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 440;BA.debugLine="If playlists.IsInitialized Then Return playlists";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 450;BA.debugLine="If playlists.IsInitialized Then Return playlists";
+Debug.ShouldStop(2);
 if (_playlists.runMethod(true,"IsInitialized").<Boolean>get().booleanValue()) { 
 if (true) return _playlists;};
- BA.debugLineNum = 442;BA.debugLine="Dim emptyResult As List";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 452;BA.debugLine="Dim emptyResult As List";
+Debug.ShouldStop(8);
 _emptyresult = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("emptyResult", _emptyresult);
- BA.debugLineNum = 443;BA.debugLine="emptyResult.Initialize";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 453;BA.debugLine="emptyResult.Initialize";
+Debug.ShouldStop(16);
 _emptyresult.runVoidMethod ("Initialize");
- BA.debugLineNum = 444;BA.debugLine="Return emptyResult";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 454;BA.debugLine="Return emptyResult";
+Debug.ShouldStop(32);
 if (true) return _emptyresult;
- BA.debugLineNum = 445;BA.debugLine="End Sub";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 455;BA.debugLine="End Sub";
+Debug.ShouldStop(64);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -938,34 +1035,34 @@ finally {
 		}}
 public static RemoteObject  _getstoredplaylistdescriptorssafe(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("GetStoredPlaylistDescriptorsSafe (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,474);
+		Debug.PushSubsStack("GetStoredPlaylistDescriptorsSafe (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,484);
 if (RapidSub.canDelegate("getstoredplaylistdescriptorssafe")) { return __ref.runUserSub(false, "autonomouscachemanager","getstoredplaylistdescriptorssafe", __ref);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
- BA.debugLineNum = 474;BA.debugLine="Private Sub GetStoredPlaylistDescriptorsSafe As Li";
-Debug.ShouldStop(33554432);
- BA.debugLineNum = 475;BA.debugLine="Dim result As List";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 484;BA.debugLine="Private Sub GetStoredPlaylistDescriptorsSafe As Li";
+Debug.ShouldStop(8);
+ BA.debugLineNum = 485;BA.debugLine="Dim result As List";
+Debug.ShouldStop(16);
 _result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");Debug.locals.put("result", _result);
- BA.debugLineNum = 476;BA.debugLine="result.Initialize";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 486;BA.debugLine="result.Initialize";
+Debug.ShouldStop(32);
 _result.runVoidMethod ("Initialize");
- BA.debugLineNum = 478;BA.debugLine="Try";
-Debug.ShouldStop(536870912);
-try { BA.debugLineNum = 479;BA.debugLine="result = offlineStoreService.GetStoredPlaylistDe";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 488;BA.debugLine="Try";
+Debug.ShouldStop(128);
+try { BA.debugLineNum = 489;BA.debugLine="result = offlineStoreService.GetStoredPlaylistDe";
+Debug.ShouldStop(256);
 _result = __ref.getField(false,"_offlinestoreservice" /*RemoteObject*/ ).runClassMethod (b4j.example.offlinestore.class, "_getstoredplaylistdescriptors" /*RemoteObject*/ );Debug.locals.put("result", _result);
  Debug.CheckDeviceExceptions();
 } 
        catch (Exception e6) {
-			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e6.toString()); BA.debugLineNum = 481;BA.debugLine="result.Initialize";
-Debug.ShouldStop(1);
+			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e6.toString()); BA.debugLineNum = 491;BA.debugLine="result.Initialize";
+Debug.ShouldStop(1024);
 _result.runVoidMethod ("Initialize");
  };
- BA.debugLineNum = 484;BA.debugLine="Return result";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 494;BA.debugLine="Return result";
+Debug.ShouldStop(8192);
 if (true) return _result;
- BA.debugLineNum = 485;BA.debugLine="End Sub";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 495;BA.debugLine="End Sub";
+Debug.ShouldStop(16384);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -976,24 +1073,24 @@ finally {
 		}}
 public static RemoteObject  _hasmediacacherecentfailure(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HasMediaCacheRecentFailure (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,487);
+		Debug.PushSubsStack("HasMediaCacheRecentFailure (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,497);
 if (RapidSub.canDelegate("hasmediacacherecentfailure")) { return __ref.runUserSub(false, "autonomouscachemanager","hasmediacacherecentfailure", __ref);}
- BA.debugLineNum = 487;BA.debugLine="Private Sub HasMediaCacheRecentFailure As Boolean";
-Debug.ShouldStop(64);
- BA.debugLineNum = 488;BA.debugLine="Try";
-Debug.ShouldStop(128);
-try { BA.debugLineNum = 489;BA.debugLine="Return mediaCacheService.ConsumeRecentMediaNetwo";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 497;BA.debugLine="Private Sub HasMediaCacheRecentFailure As Boolean";
+Debug.ShouldStop(65536);
+ BA.debugLineNum = 498;BA.debugLine="Try";
+Debug.ShouldStop(131072);
+try { BA.debugLineNum = 499;BA.debugLine="Return mediaCacheService.ConsumeRecentMediaNetwo";
+Debug.ShouldStop(262144);
 Debug.CheckDeviceExceptions();if (true) return __ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_consumerecentmedianetworkfailure" /*RemoteObject*/ );
  Debug.CheckDeviceExceptions();
 } 
        catch (Exception e4) {
-			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e4.toString()); BA.debugLineNum = 491;BA.debugLine="Return False";
-Debug.ShouldStop(1024);
+			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e4.toString()); BA.debugLineNum = 501;BA.debugLine="Return False";
+Debug.ShouldStop(1048576);
 if (true) return autonomouscachemanager.__c.getField(true,"False");
  };
- BA.debugLineNum = 493;BA.debugLine="End Sub";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 503;BA.debugLine="End Sub";
+Debug.ShouldStop(4194304);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -1004,7 +1101,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _storagevalue,RemoteObject _offlinestorevalue,RemoteObject _dataresolvervalue,RemoteObject _mediacachevalue,RemoteObject _tracetargetvalue,RemoteObject _tracesubnamevalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,44);
+		Debug.PushSubsStack("Initialize (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,44);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "autonomouscachemanager","initialize", __ref, _ba, _storagevalue, _offlinestorevalue, _dataresolvervalue, _mediacachevalue, _tracetargetvalue, _tracesubnamevalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -1049,19 +1146,19 @@ finally {
 		}}
 public static RemoteObject  _isdownloadcooldownactive(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsDownloadCooldownActive (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,495);
+		Debug.PushSubsStack("IsDownloadCooldownActive (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,505);
 if (RapidSub.canDelegate("isdownloadcooldownactive")) { return __ref.runUserSub(false, "autonomouscachemanager","isdownloadcooldownactive", __ref);}
- BA.debugLineNum = 495;BA.debugLine="Private Sub IsDownloadCooldownActive As Boolean";
-Debug.ShouldStop(16384);
- BA.debugLineNum = 496;BA.debugLine="If lastSuccessfulDownloadAt <= 0 Then Return Fals";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 505;BA.debugLine="Private Sub IsDownloadCooldownActive As Boolean";
+Debug.ShouldStop(16777216);
+ BA.debugLineNum = 506;BA.debugLine="If lastSuccessfulDownloadAt <= 0 Then Return Fals";
+Debug.ShouldStop(33554432);
 if (RemoteObject.solveBoolean("k",__ref.getField(true,"_lastsuccessfuldownloadat" /*RemoteObject*/ ),BA.numberCast(long.class, 0))) { 
 if (true) return autonomouscachemanager.__c.getField(true,"False");};
- BA.debugLineNum = 497;BA.debugLine="Return DateTime.Now - lastSuccessfulDownloadAt <";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 507;BA.debugLine="Return DateTime.Now - lastSuccessfulDownloadAt <";
+Debug.ShouldStop(67108864);
 if (true) return BA.ObjectToBoolean(RemoteObject.solveBoolean("<",RemoteObject.solve(new RemoteObject[] {autonomouscachemanager.__c.getField(false,"DateTime").runMethod(true,"getNow"),__ref.getField(true,"_lastsuccessfuldownloadat" /*RemoteObject*/ )}, "-",1, 2),__ref.getField(true,"_downloadcooldownms" /*RemoteObject*/ )));
- BA.debugLineNum = 498;BA.debugLine="End Sub";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 508;BA.debugLine="End Sub";
+Debug.ShouldStop(134217728);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -1072,19 +1169,19 @@ finally {
 		}}
 public static RemoteObject  _isfailurecooldownactive(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsFailureCooldownActive (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,500);
+		Debug.PushSubsStack("IsFailureCooldownActive (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,510);
 if (RapidSub.canDelegate("isfailurecooldownactive")) { return __ref.runUserSub(false, "autonomouscachemanager","isfailurecooldownactive", __ref);}
- BA.debugLineNum = 500;BA.debugLine="Private Sub IsFailureCooldownActive As Boolean";
-Debug.ShouldStop(524288);
- BA.debugLineNum = 501;BA.debugLine="If lastFailureAt <= 0 Then Return False";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 510;BA.debugLine="Private Sub IsFailureCooldownActive As Boolean";
+Debug.ShouldStop(536870912);
+ BA.debugLineNum = 511;BA.debugLine="If lastFailureAt <= 0 Then Return False";
+Debug.ShouldStop(1073741824);
 if (RemoteObject.solveBoolean("k",__ref.getField(true,"_lastfailureat" /*RemoteObject*/ ),BA.numberCast(long.class, 0))) { 
 if (true) return autonomouscachemanager.__c.getField(true,"False");};
- BA.debugLineNum = 502;BA.debugLine="Return DateTime.Now - lastFailureAt < failureCool";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 512;BA.debugLine="Return DateTime.Now - lastFailureAt < failureCool";
+Debug.ShouldStop(-2147483648);
 if (true) return BA.ObjectToBoolean(RemoteObject.solveBoolean("<",RemoteObject.solve(new RemoteObject[] {autonomouscachemanager.__c.getField(false,"DateTime").runMethod(true,"getNow"),__ref.getField(true,"_lastfailureat" /*RemoteObject*/ )}, "-",1, 2),__ref.getField(true,"_failurecooldownms" /*RemoteObject*/ )));
- BA.debugLineNum = 503;BA.debugLine="End Sub";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 513;BA.debugLine="End Sub";
+Debug.ShouldStop(1);
 return RemoteObject.createImmutable(false);
 }
 catch (Exception e) {
@@ -1095,7 +1192,7 @@ finally {
 		}}
 public static RemoteObject  _isstarted(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsStarted (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,97);
+		Debug.PushSubsStack("IsStarted (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,97);
 if (RapidSub.canDelegate("isstarted")) { return __ref.runUserSub(false, "autonomouscachemanager","isstarted", __ref);}
  BA.debugLineNum = 97;BA.debugLine="Public Sub IsStarted As Boolean";
 Debug.ShouldStop(1);
@@ -1112,41 +1209,99 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
+public static RemoteObject  _istrackalreadyavailable(RemoteObject __ref,RemoteObject _track,RemoteObject _playlistid) throws Exception{
+try {
+		Debug.PushSubsStack("IsTrackAlreadyAvailable (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,367);
+if (RapidSub.canDelegate("istrackalreadyavailable")) { return __ref.runUserSub(false, "autonomouscachemanager","istrackalreadyavailable", __ref, _track, _playlistid);}
+RemoteObject _trackid = RemoteObject.createImmutable("");
+RemoteObject _normalizedtrack = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+Debug.locals.put("track", _track);
+Debug.locals.put("playlistId", _playlistid);
+ BA.debugLineNum = 367;BA.debugLine="Private Sub IsTrackAlreadyAvailable(track As Map,";
+Debug.ShouldStop(16384);
+ BA.debugLineNum = 368;BA.debugLine="If track.IsInitialized = False Then Return False";
+Debug.ShouldStop(32768);
+if (RemoteObject.solveBoolean("=",_track.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False"))) { 
+if (true) return autonomouscachemanager.__c.getField(true,"False");};
+ BA.debugLineNum = 369;BA.debugLine="Dim trackId As String = track.GetDefault(\"id\", \"\"";
+Debug.ShouldStop(65536);
+_trackid = BA.ObjectToString(_track.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("trackId", _trackid);Debug.locals.put("trackId", _trackid);
+ BA.debugLineNum = 370;BA.debugLine="If trackId = \"\" Then Return False";
+Debug.ShouldStop(131072);
+if (RemoteObject.solveBoolean("=",_trackid,BA.ObjectToString(""))) { 
+if (true) return autonomouscachemanager.__c.getField(true,"False");};
+ BA.debugLineNum = 371;BA.debugLine="If playlistId = \"\" Then playlistId = track.GetDef";
+Debug.ShouldStop(262144);
+if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
+_playlistid = BA.ObjectToString(_track.runMethod(false,"GetDefault",(Object)(RemoteObject.createImmutable(("playlist_id"))),(Object)((RemoteObject.createImmutable("")))));Debug.locals.put("playlistId", _playlistid);};
+ BA.debugLineNum = 372;BA.debugLine="If playlistId <> \"\" And mediaCacheService.HasTrac";
+Debug.ShouldStop(524288);
+if (RemoteObject.solveBoolean("!",_playlistid,BA.ObjectToString("")) && RemoteObject.solveBoolean(".",__ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_hastrackfilebyplaylist" /*RemoteObject*/ ,(Object)(_trackid),(Object)(_playlistid)))) { 
+if (true) return autonomouscachemanager.__c.getField(true,"True");};
+ BA.debugLineNum = 373;BA.debugLine="If mediaCacheService.IsTrackCached(trackId) Then";
+Debug.ShouldStop(1048576);
+if (__ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_istrackcached" /*RemoteObject*/ ,(Object)(_trackid)).<Boolean>get().booleanValue()) { 
+if (true) return autonomouscachemanager.__c.getField(true,"True");};
+ BA.debugLineNum = 374;BA.debugLine="Dim normalizedTrack As Map = CloneMap(track)";
+Debug.ShouldStop(2097152);
+_normalizedtrack = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
+_normalizedtrack = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_clonemap" /*RemoteObject*/ ,(Object)(_track));Debug.locals.put("normalizedTrack", _normalizedtrack);Debug.locals.put("normalizedTrack", _normalizedtrack);
+ BA.debugLineNum = 375;BA.debugLine="If normalizedTrack.ContainsKey(\"type\") = False Th";
+Debug.ShouldStop(4194304);
+if (RemoteObject.solveBoolean("=",_normalizedtrack.runMethod(true,"ContainsKey",(Object)((RemoteObject.createImmutable("type")))),autonomouscachemanager.__c.getField(true,"False"))) { 
+_normalizedtrack.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("type"))),(Object)((RemoteObject.createImmutable("track"))));};
+ BA.debugLineNum = 376;BA.debugLine="If playlistId <> \"\" And normalizedTrack.ContainsK";
+Debug.ShouldStop(8388608);
+if (RemoteObject.solveBoolean("!",_playlistid,BA.ObjectToString("")) && RemoteObject.solveBoolean("=",_normalizedtrack.runMethod(true,"ContainsKey",(Object)((RemoteObject.createImmutable("playlist_id")))),autonomouscachemanager.__c.getField(true,"False"))) { 
+_normalizedtrack.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("playlist_id"))),(Object)((_playlistid)));};
+ BA.debugLineNum = 377;BA.debugLine="Return mediaCacheService.HasValidatedLocalMedia(n";
+Debug.ShouldStop(16777216);
+if (true) return __ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_hasvalidatedlocalmedia" /*RemoteObject*/ ,(Object)(_normalizedtrack));
+ BA.debugLineNum = 378;BA.debugLine="End Sub";
+Debug.ShouldStop(33554432);
+return RemoteObject.createImmutable(false);
+}
+catch (Exception e) {
+			throw Debug.ErrorCaught(e);
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static RemoteObject  _loadplaylistmanifestsafe(RemoteObject __ref,RemoteObject _playlistid) throws Exception{
 try {
-		Debug.PushSubsStack("LoadPlaylistManifestSafe (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,460);
+		Debug.PushSubsStack("LoadPlaylistManifestSafe (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,470);
 if (RapidSub.canDelegate("loadplaylistmanifestsafe")) { return __ref.runUserSub(false, "autonomouscachemanager","loadplaylistmanifestsafe", __ref, _playlistid);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("playlistId", _playlistid);
- BA.debugLineNum = 460;BA.debugLine="Private Sub LoadPlaylistManifestSafe(playlistId As";
-Debug.ShouldStop(2048);
- BA.debugLineNum = 461;BA.debugLine="Dim result As Map";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 470;BA.debugLine="Private Sub LoadPlaylistManifestSafe(playlistId As";
+Debug.ShouldStop(2097152);
+ BA.debugLineNum = 471;BA.debugLine="Dim result As Map";
+Debug.ShouldStop(4194304);
 _result = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("result", _result);
- BA.debugLineNum = 462;BA.debugLine="result.Initialize";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 472;BA.debugLine="result.Initialize";
+Debug.ShouldStop(8388608);
 _result.runVoidMethod ("Initialize");
- BA.debugLineNum = 463;BA.debugLine="If playlistId = \"\" Then Return result";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 473;BA.debugLine="If playlistId = \"\" Then Return result";
+Debug.ShouldStop(16777216);
 if (RemoteObject.solveBoolean("=",_playlistid,BA.ObjectToString(""))) { 
 if (true) return _result;};
- BA.debugLineNum = 465;BA.debugLine="Try";
-Debug.ShouldStop(65536);
-try { BA.debugLineNum = 466;BA.debugLine="result = dataResolverService.GetPlaylistPlayback";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 475;BA.debugLine="Try";
+Debug.ShouldStop(67108864);
+try { BA.debugLineNum = 476;BA.debugLine="result = dataResolverService.GetPlaylistPlayback";
+Debug.ShouldStop(134217728);
 _result = __ref.getField(false,"_dataresolverservice" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_getplaylistplaybackmanifestbyid" /*RemoteObject*/ ,(Object)(_playlistid));Debug.locals.put("result", _result);
  Debug.CheckDeviceExceptions();
 } 
        catch (Exception e7) {
-			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e7.toString()); BA.debugLineNum = 468;BA.debugLine="result.Initialize";
-Debug.ShouldStop(524288);
+			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e7.toString()); BA.debugLineNum = 478;BA.debugLine="result.Initialize";
+Debug.ShouldStop(536870912);
 _result.runVoidMethod ("Initialize");
  };
- BA.debugLineNum = 471;BA.debugLine="Return result";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 481;BA.debugLine="Return result";
+Debug.ShouldStop(1);
 if (true) return _result;
- BA.debugLineNum = 472;BA.debugLine="End Sub";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 482;BA.debugLine="End Sub";
+Debug.ShouldStop(2);
 return RemoteObject.createImmutable(null);
 }
 catch (Exception e) {
@@ -1155,52 +1310,35 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
-public static RemoteObject  _resolvemanifestprefetchstartindex(RemoteObject __ref,RemoteObject _playlistid,RemoteObject _ordersize) throws Exception{
+public static RemoteObject  _requestplaybackresumeifneeded(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveManifestPrefetchStartIndex (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,352);
-if (RapidSub.canDelegate("resolvemanifestprefetchstartindex")) { return __ref.runUserSub(false, "autonomouscachemanager","resolvemanifestprefetchstartindex", __ref, _playlistid, _ordersize);}
-RemoteObject _storedtrackindex = RemoteObject.createImmutable(0);
-RemoteObject _startindex = RemoteObject.createImmutable(0);
-Debug.locals.put("playlistId", _playlistid);
-Debug.locals.put("orderSize", _ordersize);
- BA.debugLineNum = 352;BA.debugLine="Private Sub ResolveManifestPrefetchStartIndex(play";
-Debug.ShouldStop(-2147483648);
- BA.debugLineNum = 353;BA.debugLine="If orderSize <= 0 Then Return 0";
-Debug.ShouldStop(1);
-if (RemoteObject.solveBoolean("k",_ordersize,BA.numberCast(double.class, 0))) { 
-if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 355;BA.debugLine="Dim storedTrackIndex As Int = -1";
+		Debug.PushSubsStack("RequestPlaybackResumeIfNeeded (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,515);
+if (RapidSub.canDelegate("requestplaybackresumeifneeded")) { return __ref.runUserSub(false, "autonomouscachemanager","requestplaybackresumeifneeded", __ref);}
+ BA.debugLineNum = 515;BA.debugLine="Private Sub RequestPlaybackResumeIfNeeded";
 Debug.ShouldStop(4);
-_storedtrackindex = BA.numberCast(int.class, -(double) (0 + 1));Debug.locals.put("storedTrackIndex", _storedtrackindex);Debug.locals.put("storedTrackIndex", _storedtrackindex);
- BA.debugLineNum = 357;BA.debugLine="Try";
+ BA.debugLineNum = 516;BA.debugLine="If traceTarget = Null Then Return";
+Debug.ShouldStop(8);
+if (RemoteObject.solveBoolean("n",__ref.getField(false,"_tracetarget" /*RemoteObject*/ ))) { 
+if (true) return RemoteObject.createImmutable("");};
+ BA.debugLineNum = 517;BA.debugLine="Try";
 Debug.ShouldStop(16);
-try { BA.debugLineNum = 358;BA.debugLine="storedTrackIndex = kvs.GetDefault(\"playlist_trac";
+try { BA.debugLineNum = 518;BA.debugLine="If SubExists(traceTarget, \"AutoResumeAfterCacheW";
 Debug.ShouldStop(32);
-_storedtrackindex = BA.numberCast(int.class, __ref.getField(false,"_kvs" /*RemoteObject*/ ).runClassMethod (b4j.example.keyvaluestore.class, "_getdefault" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("playlist_track_index_"),_playlistid)),(Object)(RemoteObject.createImmutable((-(double) (0 + 1))))));Debug.locals.put("storedTrackIndex", _storedtrackindex);
+if (autonomouscachemanager.__c.runMethod(true,"SubExists",__ref.getField(false, "ba"),(Object)(__ref.getField(false,"_tracetarget" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("AutoResumeAfterCacheWarmup"))).<Boolean>get().booleanValue()) { 
+ BA.debugLineNum = 519;BA.debugLine="CallSubDelayed(traceTarget, \"AutoResumeAfterCac";
+Debug.ShouldStop(64);
+autonomouscachemanager.__c.runVoidMethod ("CallSubDelayed",__ref.getField(false, "ba"),(Object)(__ref.getField(false,"_tracetarget" /*RemoteObject*/ )),(Object)(RemoteObject.createImmutable("AutoResumeAfterCacheWarmup")));
+ };
  Debug.CheckDeviceExceptions();
 } 
-       catch (Exception e6) {
-			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e6.toString()); BA.debugLineNum = 360;BA.debugLine="storedTrackIndex = -1";
-Debug.ShouldStop(128);
-_storedtrackindex = BA.numberCast(int.class, -(double) (0 + 1));Debug.locals.put("storedTrackIndex", _storedtrackindex);
+       catch (Exception e7) {
+			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e7.toString()); BA.debugLineNum = 522;BA.debugLine="Log(LastException.Message)";
+Debug.ShouldStop(512);
+autonomouscachemanager.__c.runVoidMethod ("LogImpl","284541447",autonomouscachemanager.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
- BA.debugLineNum = 363;BA.debugLine="Dim startIndex As Int = storedTrackIndex + 1";
-Debug.ShouldStop(1024);
-_startindex = RemoteObject.solve(new RemoteObject[] {_storedtrackindex,RemoteObject.createImmutable(1)}, "+",1, 1);Debug.locals.put("startIndex", _startindex);Debug.locals.put("startIndex", _startindex);
- BA.debugLineNum = 364;BA.debugLine="If startIndex < 0 Then startIndex = 0";
+ BA.debugLineNum = 524;BA.debugLine="End Sub";
 Debug.ShouldStop(2048);
-if (RemoteObject.solveBoolean("<",_startindex,BA.numberCast(double.class, 0))) { 
-_startindex = BA.numberCast(int.class, 0);Debug.locals.put("startIndex", _startindex);};
- BA.debugLineNum = 365;BA.debugLine="If startIndex >= orderSize Then startIndex = star";
-Debug.ShouldStop(4096);
-if (RemoteObject.solveBoolean("g",_startindex,BA.numberCast(double.class, _ordersize))) { 
-_startindex = RemoteObject.solve(new RemoteObject[] {_startindex,_ordersize}, "%",0, 1);Debug.locals.put("startIndex", _startindex);};
- BA.debugLineNum = 367;BA.debugLine="Return startIndex";
-Debug.ShouldStop(16384);
-if (true) return _startindex;
- BA.debugLineNum = 368;BA.debugLine="End Sub";
-Debug.ShouldStop(32768);
-return RemoteObject.createImmutable(0);
+return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
 			throw Debug.ErrorCaught(e);
@@ -1208,61 +1346,37 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
-public static RemoteObject  _resolvemissingforplaylistfrommanifest(RemoteObject __ref,RemoteObject _manifest,RemoteObject _minreserve) throws Exception{
+public static RemoteObject  _resolveslotneed(RemoteObject __ref,RemoteObject _slot,RemoteObject _minreserve,RemoteObject _trackplayliststats) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveMissingForPlaylistFromManifest (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,306);
-if (RapidSub.canDelegate("resolvemissingforplaylistfrommanifest")) { return __ref.runUserSub(false, "autonomouscachemanager","resolvemissingforplaylistfrommanifest", __ref, _manifest, _minreserve);}
-RemoteObject _playablecount = RemoteObject.createImmutable(0);
-Debug.locals.put("manifest", _manifest);
-Debug.locals.put("minReserve", _minreserve);
- BA.debugLineNum = 306;BA.debugLine="Private Sub ResolveMissingForPlaylistFromManifest(";
-Debug.ShouldStop(131072);
- BA.debugLineNum = 307;BA.debugLine="Dim playableCount As Int = CountPlayableTracksInM";
-Debug.ShouldStop(262144);
-_playablecount = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_countplayabletracksinmanifest" /*RemoteObject*/ ,(Object)(_manifest));Debug.locals.put("playableCount", _playablecount);Debug.locals.put("playableCount", _playablecount);
- BA.debugLineNum = 308;BA.debugLine="Return Max(0, minReserve - playableCount)";
-Debug.ShouldStop(524288);
-if (true) return BA.numberCast(int.class, autonomouscachemanager.__c.runMethod(true,"Max",(Object)(BA.numberCast(double.class, 0)),(Object)(BA.numberCast(double.class, RemoteObject.solve(new RemoteObject[] {_minreserve,_playablecount}, "-",1, 1)))));
- BA.debugLineNum = 309;BA.debugLine="End Sub";
-Debug.ShouldStop(1048576);
-return RemoteObject.createImmutable(0);
-}
-catch (Exception e) {
-			throw Debug.ErrorCaught(e);
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
-public static RemoteObject  _resolveslotneed(RemoteObject __ref,RemoteObject _slot,RemoteObject _minreserve) throws Exception{
-try {
-		Debug.PushSubsStack("ResolveSlotNeed (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,187);
-if (RapidSub.canDelegate("resolveslotneed")) { return __ref.runUserSub(false, "autonomouscachemanager","resolveslotneed", __ref, _slot, _minreserve);}
+		Debug.PushSubsStack("ResolveSlotNeed (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,193);
+if (RapidSub.canDelegate("resolveslotneed")) { return __ref.runUserSub(false, "autonomouscachemanager","resolveslotneed", __ref, _slot, _minreserve, _trackplayliststats);}
 RemoteObject _playlists = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _playablecount = RemoteObject.createImmutable(0);
 Debug.locals.put("slot", _slot);
 Debug.locals.put("minReserve", _minreserve);
- BA.debugLineNum = 187;BA.debugLine="Private Sub ResolveSlotNeed(slot As Map, minReserv";
-Debug.ShouldStop(67108864);
- BA.debugLineNum = 188;BA.debugLine="If slot.IsInitialized = False Or slot.Size = 0 Th";
-Debug.ShouldStop(134217728);
+Debug.locals.put("trackPlaylistStats", _trackplayliststats);
+ BA.debugLineNum = 193;BA.debugLine="Private Sub ResolveSlotNeed(slot As Map, minReserv";
+Debug.ShouldStop(1);
+ BA.debugLineNum = 194;BA.debugLine="If slot.IsInitialized = False Or slot.Size = 0 Th";
+Debug.ShouldStop(2);
 if (RemoteObject.solveBoolean("=",_slot.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_slot.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 190;BA.debugLine="Dim playlists As List = GetSlotPlaylists(slot)";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 196;BA.debugLine="Dim playlists As List = GetSlotPlaylists(slot)";
+Debug.ShouldStop(8);
 _playlists = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _playlists = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_getslotplaylists" /*RemoteObject*/ ,(Object)(_slot));Debug.locals.put("playlists", _playlists);Debug.locals.put("playlists", _playlists);
- BA.debugLineNum = 191;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 197;BA.debugLine="If playlists.IsInitialized = False Or playlists.S";
+Debug.ShouldStop(16);
 if (RemoteObject.solveBoolean("=",_playlists.runMethod(true,"IsInitialized"),autonomouscachemanager.__c.getField(true,"False")) || RemoteObject.solveBoolean("=",_playlists.runMethod(true,"getSize"),BA.numberCast(double.class, 0))) { 
 if (true) return BA.numberCast(int.class, 0);};
- BA.debugLineNum = 193;BA.debugLine="Dim playableCount As Int = CountPlayableTracksInS";
-Debug.ShouldStop(1);
-_playablecount = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_countplayabletracksinslot" /*RemoteObject*/ ,(Object)(_slot));Debug.locals.put("playableCount", _playablecount);Debug.locals.put("playableCount", _playablecount);
- BA.debugLineNum = 194;BA.debugLine="Return Max(0, minReserve - playableCount)";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 199;BA.debugLine="Dim playableCount As Int = CountPlayableTracksInS";
+Debug.ShouldStop(64);
+_playablecount = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_countplayabletracksinslot" /*RemoteObject*/ ,(Object)(_slot),(Object)(_trackplayliststats));Debug.locals.put("playableCount", _playablecount);Debug.locals.put("playableCount", _playablecount);
+ BA.debugLineNum = 200;BA.debugLine="Return Max(0, minReserve - playableCount)";
+Debug.ShouldStop(128);
 if (true) return BA.numberCast(int.class, autonomouscachemanager.__c.runMethod(true,"Max",(Object)(BA.numberCast(double.class, 0)),(Object)(BA.numberCast(double.class, RemoteObject.solve(new RemoteObject[] {_minreserve,_playablecount}, "-",1, 1)))));
- BA.debugLineNum = 195;BA.debugLine="End Sub";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 201;BA.debugLine="End Sub";
+Debug.ShouldStop(256);
 return RemoteObject.createImmutable(0);
 }
 catch (Exception e) {
@@ -1273,45 +1387,45 @@ finally {
 		}}
 public static RemoteObject  _runpruneifneeded(RemoteObject __ref,RemoteObject _initiator) throws Exception{
 try {
-		Debug.PushSubsStack("RunPruneIfNeeded (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,370);
+		Debug.PushSubsStack("RunPruneIfNeeded (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,380);
 if (RapidSub.canDelegate("runpruneifneeded")) { return __ref.runUserSub(false, "autonomouscachemanager","runpruneifneeded", __ref, _initiator);}
 RemoteObject _protectedtrackids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _relevanttrackids = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _removedcount = RemoteObject.createImmutable(0);
 Debug.locals.put("initiator", _initiator);
- BA.debugLineNum = 370;BA.debugLine="Private Sub RunPruneIfNeeded(initiator As String)";
-Debug.ShouldStop(131072);
- BA.debugLineNum = 371;BA.debugLine="If DateTime.Now - lastPruneAt < pruneCooldownMs T";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 380;BA.debugLine="Private Sub RunPruneIfNeeded(initiator As String)";
+Debug.ShouldStop(134217728);
+ BA.debugLineNum = 381;BA.debugLine="If DateTime.Now - lastPruneAt < pruneCooldownMs T";
+Debug.ShouldStop(268435456);
 if (RemoteObject.solveBoolean("<",RemoteObject.solve(new RemoteObject[] {autonomouscachemanager.__c.getField(false,"DateTime").runMethod(true,"getNow"),__ref.getField(true,"_lastpruneat" /*RemoteObject*/ )}, "-",1, 2),__ref.getField(true,"_prunecooldownms" /*RemoteObject*/ ))) { 
 if (true) return RemoteObject.createImmutable("");};
- BA.debugLineNum = 373;BA.debugLine="Dim protectedTrackIds As List = BuildProtectedTra";
-Debug.ShouldStop(1048576);
+ BA.debugLineNum = 383;BA.debugLine="Dim protectedTrackIds As List = BuildProtectedTra";
+Debug.ShouldStop(1073741824);
 _protectedtrackids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _protectedtrackids = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_buildprotectedtrackids" /*RemoteObject*/ );Debug.locals.put("protectedTrackIds", _protectedtrackids);Debug.locals.put("protectedTrackIds", _protectedtrackids);
- BA.debugLineNum = 374;BA.debugLine="Dim relevantTrackIds As List = BuildRelevantTrack";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 384;BA.debugLine="Dim relevantTrackIds As List = BuildRelevantTrack";
+Debug.ShouldStop(-2147483648);
 _relevanttrackids = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
 _relevanttrackids = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_buildrelevanttrackids" /*RemoteObject*/ );Debug.locals.put("relevantTrackIds", _relevanttrackids);Debug.locals.put("relevantTrackIds", _relevanttrackids);
- BA.debugLineNum = 376;BA.debugLine="Dim removedCount As Int = mediaCacheService.Prune";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 386;BA.debugLine="Dim removedCount As Int = mediaCacheService.Prune";
+Debug.ShouldStop(2);
 _removedcount = __ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_prunetrackcacheifneeded" /*RemoteObject*/ ,(Object)(_protectedtrackids),(Object)(_relevanttrackids));Debug.locals.put("removedCount", _removedcount);Debug.locals.put("removedCount", _removedcount);
- BA.debugLineNum = 377;BA.debugLine="lastPruneAt = DateTime.Now";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 387;BA.debugLine="lastPruneAt = DateTime.Now";
+Debug.ShouldStop(4);
 __ref.setField ("_lastpruneat" /*RemoteObject*/ ,autonomouscachemanager.__c.getField(false,"DateTime").runMethod(true,"getNow"));
- BA.debugLineNum = 379;BA.debugLine="If removedCount > 0 Then";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 389;BA.debugLine="If removedCount > 0 Then";
+Debug.ShouldStop(16);
 if (RemoteObject.solveBoolean(">",_removedcount,BA.numberCast(double.class, 0))) { 
- BA.debugLineNum = 380;BA.debugLine="Trace(\"autocache prune completed initiator=\" & i";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 390;BA.debugLine="Trace(\"autocache prune completed initiator=\" & i";
+Debug.ShouldStop(32);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("autocache prune completed initiator="),_initiator,RemoteObject.createImmutable(" removed="),_removedcount)));
  }else {
- BA.debugLineNum = 382;BA.debugLine="Trace(\"autocache prune completed initiator=\" & i";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 392;BA.debugLine="Trace(\"autocache prune completed initiator=\" & i";
+Debug.ShouldStop(128);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("autocache prune completed initiator="),_initiator,RemoteObject.createImmutable(" removed=0"))));
  };
- BA.debugLineNum = 384;BA.debugLine="End Sub";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 394;BA.debugLine="End Sub";
+Debug.ShouldStop(512);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1322,7 +1436,7 @@ finally {
 		}}
 public static RemoteObject  _runstepasync(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("RunStepAsync (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,110);
+		Debug.PushSubsStack("RunStepAsync (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,114);
 if (RapidSub.canDelegate("runstepasync")) { return __ref.runUserSub(false, "autonomouscachemanager","runstepasync", __ref);}
 ResumableSub_RunStepAsync rsub = new ResumableSub_RunStepAsync(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -1345,12 +1459,12 @@ RemoteObject __ref;
 b4j.example.autonomouscachemanager parent;
 RemoteObject _summary = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _offlinedata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+RemoteObject _trackplayliststats = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _nowticks = RemoteObject.createImmutable(0L);
 RemoteObject _currentslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _nextslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _currentneed = RemoteObject.createImmutable(0);
 RemoteObject _nextneed = RemoteObject.createImmutable(0);
-RemoteObject _targetdescriptors = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _desiredtrackitems = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _actualmaxdownloads = RemoteObject.createImmutable(0);
 RemoteObject _downloaded = RemoteObject.createImmutable(false);
@@ -1358,7 +1472,7 @@ RemoteObject _downloaded = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("RunStepAsync (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,110);
+		Debug.PushSubsStack("RunStepAsync (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,114);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -1370,14 +1484,23 @@ case 0:
 //C
 this.state = 1;
 Debug.locals.put("_ref", __ref);
- BA.debugLineNum = 111;BA.debugLine="Dim summary As Map";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 115;BA.debugLine="Dim summary As Map";
+Debug.ShouldStop(262144);
 _summary = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");Debug.locals.put("summary", _summary);
- BA.debugLineNum = 112;BA.debugLine="summary.Initialize";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 116;BA.debugLine="summary.Initialize";
+Debug.ShouldStop(524288);
 _summary.runVoidMethod ("Initialize");
- BA.debugLineNum = 114;BA.debugLine="If kvs.IsInitialized = False Or offlineStoreServi";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 117;BA.debugLine="Sleep(0)";
+Debug.ShouldStop(1048576);
+parent.__c.runVoidMethod ("Sleep",__ref.getField(false, "ba"),anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "autonomouscachemanager", "runstepasync"),BA.numberCast(int.class, 0));
+this.state = 28;
+return;
+case 28:
+//C
+this.state = 1;
+;
+ BA.debugLineNum = 119;BA.debugLine="If kvs.IsInitialized = False Or offlineStoreServi";
+Debug.ShouldStop(4194304);
 if (true) break;
 
 case 1:
@@ -1390,17 +1513,17 @@ this.state = 3;
 case 3:
 //C
 this.state = 4;
- BA.debugLineNum = 115;BA.debugLine="summary.Put(\"status\", \"not_initialized\")";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 120;BA.debugLine="summary.Put(\"status\", \"not_initialized\")";
+Debug.ShouldStop(8388608);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("not_initialized"))));
- BA.debugLineNum = 116;BA.debugLine="Return summary";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 121;BA.debugLine="Return summary";
+Debug.ShouldStop(16777216);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_summary));return;};
  if (true) break;
 ;
- BA.debugLineNum = 119;BA.debugLine="If IsFailureCooldownActive Then";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 124;BA.debugLine="If IsFailureCooldownActive Then";
+Debug.ShouldStop(134217728);
 
 case 4:
 //if
@@ -1412,20 +1535,20 @@ this.state = 6;
 case 6:
 //C
 this.state = 7;
- BA.debugLineNum = 120;BA.debugLine="summary.Put(\"status\", \"failure_cooldown\")";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 125;BA.debugLine="summary.Put(\"status\", \"failure_cooldown\")";
+Debug.ShouldStop(268435456);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("failure_cooldown"))));
- BA.debugLineNum = 121;BA.debugLine="Trace(\"autocache step skipped reason=failure_coo";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 126;BA.debugLine="Trace(\"autocache step skipped reason=failure_coo";
+Debug.ShouldStop(536870912);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("autocache step skipped reason=failure_cooldown")));
- BA.debugLineNum = 122;BA.debugLine="Return summary";
-Debug.ShouldStop(33554432);
+ BA.debugLineNum = 127;BA.debugLine="Return summary";
+Debug.ShouldStop(1073741824);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_summary));return;};
  if (true) break;
 ;
- BA.debugLineNum = 125;BA.debugLine="If IsDownloadCooldownActive Then";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 130;BA.debugLine="If IsDownloadCooldownActive Then";
+Debug.ShouldStop(2);
 
 case 7:
 //if
@@ -1437,17 +1560,17 @@ this.state = 9;
 case 9:
 //C
 this.state = 10;
- BA.debugLineNum = 126;BA.debugLine="summary.Put(\"status\", \"download_cooldown\")";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 131;BA.debugLine="summary.Put(\"status\", \"download_cooldown\")";
+Debug.ShouldStop(4);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("download_cooldown"))));
- BA.debugLineNum = 127;BA.debugLine="Trace(\"autocache step skipped reason=download_co";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 132;BA.debugLine="Trace(\"autocache step skipped reason=download_co";
+Debug.ShouldStop(8);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("autocache step skipped reason=download_cooldown")));
- BA.debugLineNum = 128;BA.debugLine="RunPruneIfNeeded(\"cooldown\")";
-Debug.ShouldStop(-2147483648);
+ BA.debugLineNum = 133;BA.debugLine="RunPruneIfNeeded(\"cooldown\")";
+Debug.ShouldStop(16);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_runpruneifneeded" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("cooldown")));
- BA.debugLineNum = 129;BA.debugLine="Return summary";
-Debug.ShouldStop(1);
+ BA.debugLineNum = 134;BA.debugLine="Return summary";
+Debug.ShouldStop(32);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_summary));return;};
  if (true) break;
@@ -1456,12 +1579,12 @@ case 10:
 //C
 this.state = 11;
 ;
- BA.debugLineNum = 132;BA.debugLine="Dim offlineData As Map = offlineStoreService.Load";
-Debug.ShouldStop(8);
+ BA.debugLineNum = 137;BA.debugLine="Dim offlineData As Map = offlineStoreService.Load";
+Debug.ShouldStop(256);
 _offlinedata = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _offlinedata = __ref.getField(false,"_offlinestoreservice" /*RemoteObject*/ ).runClassMethod (b4j.example.offlinestore.class, "_loadofflinedata" /*RemoteObject*/ );Debug.locals.put("offlineData", _offlinedata);Debug.locals.put("offlineData", _offlinedata);
- BA.debugLineNum = 133;BA.debugLine="If offlineData.IsInitialized = False Or offlineDa";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 138;BA.debugLine="If offlineData.IsInitialized = False Or offlineDa";
+Debug.ShouldStop(512);
 if (true) break;
 
 case 11:
@@ -1474,14 +1597,14 @@ this.state = 13;
 case 13:
 //C
 this.state = 14;
- BA.debugLineNum = 134;BA.debugLine="summary.Put(\"status\", \"no_offline_data\")";
-Debug.ShouldStop(32);
+ BA.debugLineNum = 139;BA.debugLine="summary.Put(\"status\", \"no_offline_data\")";
+Debug.ShouldStop(1024);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("no_offline_data"))));
- BA.debugLineNum = 135;BA.debugLine="Trace(\"autocache step skipped reason=no_offline_";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 140;BA.debugLine="Trace(\"autocache step skipped reason=no_offline_";
+Debug.ShouldStop(2048);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("autocache step skipped reason=no_offline_data")));
- BA.debugLineNum = 136;BA.debugLine="Return summary";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 141;BA.debugLine="Return summary";
+Debug.ShouldStop(4096);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_summary));return;};
  if (true) break;
@@ -1490,45 +1613,45 @@ case 14:
 //C
 this.state = 15;
 ;
- BA.debugLineNum = 139;BA.debugLine="mediaCacheService.EnsureTrackCacheReady";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 144;BA.debugLine="mediaCacheService.EnsureTrackCacheReady";
+Debug.ShouldStop(32768);
 __ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_ensuretrackcacheready" /*RemoteObject*/ );
- BA.debugLineNum = 141;BA.debugLine="Dim nowTicks As Long = DateTime.Now";
-Debug.ShouldStop(4096);
+ BA.debugLineNum = 145;BA.debugLine="Dim trackPlaylistStats As Map = mediaCacheService";
+Debug.ShouldStop(65536);
+_trackplayliststats = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
+_trackplayliststats = __ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_getcachedtrackplayliststats" /*RemoteObject*/ );Debug.locals.put("trackPlaylistStats", _trackplayliststats);Debug.locals.put("trackPlaylistStats", _trackplayliststats);
+ BA.debugLineNum = 147;BA.debugLine="Dim nowTicks As Long = DateTime.Now";
+Debug.ShouldStop(262144);
 _nowticks = parent.__c.getField(false,"DateTime").runMethod(true,"getNow");Debug.locals.put("nowTicks", _nowticks);Debug.locals.put("nowTicks", _nowticks);
- BA.debugLineNum = 142;BA.debugLine="Dim currentSlot As Map = dataResolverService.Reso";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 148;BA.debugLine="Dim currentSlot As Map = dataResolverService.Reso";
+Debug.ShouldStop(524288);
 _currentslot = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _currentslot = __ref.getField(false,"_dataresolverservice" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_resolvedataslotatticks" /*RemoteObject*/ ,(Object)(_offlinedata),(Object)(_nowticks));Debug.locals.put("currentSlot", _currentslot);Debug.locals.put("currentSlot", _currentslot);
- BA.debugLineNum = 143;BA.debugLine="Dim nextSlot As Map = dataResolverService.Resolve";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 149;BA.debugLine="Dim nextSlot As Map = dataResolverService.Resolve";
+Debug.ShouldStop(1048576);
 _nextslot = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.Map");
 _nextslot = __ref.getField(false,"_dataresolverservice" /*RemoteObject*/ ).runClassMethod (b4j.example.dataplaybackresolver.class, "_resolvenextdataslotatticks" /*RemoteObject*/ ,(Object)(_offlinedata),(Object)(_nowticks));Debug.locals.put("nextSlot", _nextslot);Debug.locals.put("nextSlot", _nextslot);
- BA.debugLineNum = 145;BA.debugLine="Dim currentNeed As Int = ResolveSlotNeed(currentS";
-Debug.ShouldStop(65536);
-_currentneed = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_resolveslotneed" /*RemoteObject*/ ,(Object)(_currentslot),(Object)(__ref.getField(true,"_currentslotminreserve" /*RemoteObject*/ )));Debug.locals.put("currentNeed", _currentneed);Debug.locals.put("currentNeed", _currentneed);
- BA.debugLineNum = 146;BA.debugLine="Dim nextNeed As Int = ResolveSlotNeed(nextSlot, n";
-Debug.ShouldStop(131072);
-_nextneed = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_resolveslotneed" /*RemoteObject*/ ,(Object)(_nextslot),(Object)(__ref.getField(true,"_nextslotminreserve" /*RemoteObject*/ )));Debug.locals.put("nextNeed", _nextneed);Debug.locals.put("nextNeed", _nextneed);
- BA.debugLineNum = 148;BA.debugLine="Dim targetDescriptors As List = BuildTargetPlayli";
-Debug.ShouldStop(524288);
-_targetdescriptors = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
-_targetdescriptors = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_buildtargetplaylistdescriptors" /*RemoteObject*/ ,(Object)(_currentslot),(Object)(_nextslot));Debug.locals.put("targetDescriptors", _targetdescriptors);Debug.locals.put("targetDescriptors", _targetdescriptors);
- BA.debugLineNum = 149;BA.debugLine="Dim desiredTrackItems As List = BuildDesiredTrack";
-Debug.ShouldStop(1048576);
-_desiredtrackitems = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
-_desiredtrackitems = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_builddesiredtrackitems" /*RemoteObject*/ ,(Object)(_targetdescriptors),(Object)(_currentneed),(Object)(_nextneed));Debug.locals.put("desiredTrackItems", _desiredtrackitems);Debug.locals.put("desiredTrackItems", _desiredtrackitems);
- BA.debugLineNum = 151;BA.debugLine="summary.Put(\"current_need\", currentNeed)";
+ BA.debugLineNum = 151;BA.debugLine="Dim currentNeed As Int = ResolveSlotNeed(currentS";
 Debug.ShouldStop(4194304);
-_summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("current_need"))),(Object)((_currentneed)));
- BA.debugLineNum = 152;BA.debugLine="summary.Put(\"next_need\", nextNeed)";
+_currentneed = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_resolveslotneed" /*RemoteObject*/ ,(Object)(_currentslot),(Object)(__ref.getField(true,"_currentslotminreserve" /*RemoteObject*/ )),(Object)(_trackplayliststats));Debug.locals.put("currentNeed", _currentneed);Debug.locals.put("currentNeed", _currentneed);
+ BA.debugLineNum = 152;BA.debugLine="Dim nextNeed As Int = ResolveSlotNeed(nextSlot, n";
 Debug.ShouldStop(8388608);
+_nextneed = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_resolveslotneed" /*RemoteObject*/ ,(Object)(_nextslot),(Object)(__ref.getField(true,"_nextslotminreserve" /*RemoteObject*/ )),(Object)(_trackplayliststats));Debug.locals.put("nextNeed", _nextneed);Debug.locals.put("nextNeed", _nextneed);
+ BA.debugLineNum = 154;BA.debugLine="Dim desiredTrackItems As List = BuildDesiredTrack";
+Debug.ShouldStop(33554432);
+_desiredtrackitems = RemoteObject.createNew ("anywheresoftware.b4a.objects.collections.List");
+_desiredtrackitems = __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_builddesiredtrackitemsforslots" /*RemoteObject*/ ,(Object)(_currentslot),(Object)(_nextslot),(Object)(_currentneed),(Object)(_nextneed),(Object)(_trackplayliststats));Debug.locals.put("desiredTrackItems", _desiredtrackitems);Debug.locals.put("desiredTrackItems", _desiredtrackitems);
+ BA.debugLineNum = 156;BA.debugLine="summary.Put(\"current_need\", currentNeed)";
+Debug.ShouldStop(134217728);
+_summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("current_need"))),(Object)((_currentneed)));
+ BA.debugLineNum = 157;BA.debugLine="summary.Put(\"next_need\", nextNeed)";
+Debug.ShouldStop(268435456);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("next_need"))),(Object)((_nextneed)));
- BA.debugLineNum = 153;BA.debugLine="summary.Put(\"candidate_count\", desiredTrackItems.";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 158;BA.debugLine="summary.Put(\"candidate_count\", desiredTrackItems.";
+Debug.ShouldStop(536870912);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("candidate_count"))),(Object)((_desiredtrackitems.runMethod(true,"getSize"))));
- BA.debugLineNum = 155;BA.debugLine="If desiredTrackItems.Size = 0 Then";
-Debug.ShouldStop(67108864);
+ BA.debugLineNum = 160;BA.debugLine="If desiredTrackItems.Size = 0 Then";
+Debug.ShouldStop(-2147483648);
 if (true) break;
 
 case 15:
@@ -1541,17 +1664,17 @@ this.state = 17;
 case 17:
 //C
 this.state = 18;
- BA.debugLineNum = 156;BA.debugLine="summary.Put(\"status\", \"nothing_to_download\")";
-Debug.ShouldStop(134217728);
+ BA.debugLineNum = 161;BA.debugLine="summary.Put(\"status\", \"nothing_to_download\")";
+Debug.ShouldStop(1);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("nothing_to_download"))));
- BA.debugLineNum = 157;BA.debugLine="Trace(\"autocache step no work currentNeed=\" & cu";
-Debug.ShouldStop(268435456);
+ BA.debugLineNum = 162;BA.debugLine="Trace(\"autocache step no work currentNeed=\" & cu";
+Debug.ShouldStop(2);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("autocache step no work currentNeed="),_currentneed,RemoteObject.createImmutable(" nextNeed="),_nextneed)));
- BA.debugLineNum = 158;BA.debugLine="RunPruneIfNeeded(\"idle\")";
-Debug.ShouldStop(536870912);
+ BA.debugLineNum = 163;BA.debugLine="RunPruneIfNeeded(\"idle\")";
+Debug.ShouldStop(4);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_runpruneifneeded" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("idle")));
- BA.debugLineNum = 159;BA.debugLine="Return summary";
-Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 164;BA.debugLine="Return summary";
+Debug.ShouldStop(8);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_summary));return;};
  if (true) break;
@@ -1560,24 +1683,24 @@ case 18:
 //C
 this.state = 19;
 ;
- BA.debugLineNum = 162;BA.debugLine="Dim actualMaxDownloads As Int = Min(maxDownloadsP";
-Debug.ShouldStop(2);
+ BA.debugLineNum = 167;BA.debugLine="Dim actualMaxDownloads As Int = Min(maxDownloadsP";
+Debug.ShouldStop(64);
 _actualmaxdownloads = BA.numberCast(int.class, parent.__c.runMethod(true,"Min",(Object)(BA.numberCast(double.class, __ref.getField(true,"_maxdownloadsperstep" /*RemoteObject*/ ))),(Object)(BA.numberCast(double.class, _desiredtrackitems.runMethod(true,"getSize")))));Debug.locals.put("actualMaxDownloads", _actualmaxdownloads);Debug.locals.put("actualMaxDownloads", _actualmaxdownloads);
- BA.debugLineNum = 163;BA.debugLine="Trace(\"autocache step download start candidates=\"";
-Debug.ShouldStop(4);
+ BA.debugLineNum = 168;BA.debugLine="Trace(\"autocache step download start candidates=\"";
+Debug.ShouldStop(128);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.concat(RemoteObject.createImmutable("autocache step download start candidates="),_desiredtrackitems.runMethod(true,"getSize"),RemoteObject.createImmutable(" maxDownloads="),_actualmaxdownloads)));
- BA.debugLineNum = 165;BA.debugLine="Wait For (mediaCacheService.EnsureTracksCached(de";
-Debug.ShouldStop(16);
+ BA.debugLineNum = 170;BA.debugLine="Wait For (mediaCacheService.EnsureTracksCached(de";
+Debug.ShouldStop(512);
 parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "autonomouscachemanager", "runstepasync"), __ref.getField(false,"_mediacacheservice" /*RemoteObject*/ ).runClassMethod (b4j.example.mediacache.class, "_ensuretrackscached" /*RemoteObject*/ ,(Object)(_desiredtrackitems),(Object)(_actualmaxdownloads)));
-this.state = 28;
+this.state = 29;
 return;
-case 28:
+case 29:
 //C
 this.state = 19;
 _downloaded = (RemoteObject) result.getArrayElement(true,RemoteObject.createImmutable(1));Debug.locals.put("downloaded", _downloaded);
 ;
- BA.debugLineNum = 167;BA.debugLine="If HasMediaCacheRecentFailure Then";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 172;BA.debugLine="If HasMediaCacheRecentFailure Then";
+Debug.ShouldStop(2048);
 if (true) break;
 
 case 19:
@@ -1590,23 +1713,23 @@ this.state = 21;
 case 21:
 //C
 this.state = 22;
- BA.debugLineNum = 168;BA.debugLine="lastFailureAt = DateTime.Now";
-Debug.ShouldStop(128);
+ BA.debugLineNum = 173;BA.debugLine="lastFailureAt = DateTime.Now";
+Debug.ShouldStop(4096);
 __ref.setField ("_lastfailureat" /*RemoteObject*/ ,parent.__c.getField(false,"DateTime").runMethod(true,"getNow"));
- BA.debugLineNum = 169;BA.debugLine="summary.Put(\"status\", \"network_failure\")";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 174;BA.debugLine="summary.Put(\"status\", \"network_failure\")";
+Debug.ShouldStop(8192);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("network_failure"))));
- BA.debugLineNum = 170;BA.debugLine="Trace(\"autocache step network failure\")";
-Debug.ShouldStop(512);
+ BA.debugLineNum = 175;BA.debugLine="Trace(\"autocache step network failure\")";
+Debug.ShouldStop(16384);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_trace" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("autocache step network failure")));
- BA.debugLineNum = 171;BA.debugLine="Return summary";
-Debug.ShouldStop(1024);
+ BA.debugLineNum = 176;BA.debugLine="Return summary";
+Debug.ShouldStop(32768);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_summary));return;};
  if (true) break;
 ;
- BA.debugLineNum = 174;BA.debugLine="If downloaded Then";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 179;BA.debugLine="If downloaded Then";
+Debug.ShouldStop(262144);
 
 case 22:
 //if
@@ -1620,25 +1743,28 @@ this.state = 26;
 case 24:
 //C
 this.state = 27;
- BA.debugLineNum = 175;BA.debugLine="lastSuccessfulDownloadAt = DateTime.Now";
-Debug.ShouldStop(16384);
+ BA.debugLineNum = 180;BA.debugLine="lastSuccessfulDownloadAt = DateTime.Now";
+Debug.ShouldStop(524288);
 __ref.setField ("_lastsuccessfuldownloadat" /*RemoteObject*/ ,parent.__c.getField(false,"DateTime").runMethod(true,"getNow"));
- BA.debugLineNum = 176;BA.debugLine="summary.Put(\"status\", \"downloaded\")";
-Debug.ShouldStop(32768);
+ BA.debugLineNum = 181;BA.debugLine="summary.Put(\"status\", \"downloaded\")";
+Debug.ShouldStop(1048576);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("downloaded"))));
- BA.debugLineNum = 177;BA.debugLine="summary.Put(\"downloaded\", True)";
-Debug.ShouldStop(65536);
+ BA.debugLineNum = 182;BA.debugLine="summary.Put(\"downloaded\", True)";
+Debug.ShouldStop(2097152);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("downloaded"))),(Object)((parent.__c.getField(true,"True"))));
+ BA.debugLineNum = 183;BA.debugLine="RequestPlaybackResumeIfNeeded";
+Debug.ShouldStop(4194304);
+__ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_requestplaybackresumeifneeded" /*RemoteObject*/ );
  if (true) break;
 
 case 26:
 //C
 this.state = 27;
- BA.debugLineNum = 179;BA.debugLine="summary.Put(\"status\", \"no_new_downloads\")";
-Debug.ShouldStop(262144);
+ BA.debugLineNum = 185;BA.debugLine="summary.Put(\"status\", \"no_new_downloads\")";
+Debug.ShouldStop(16777216);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("status"))),(Object)((RemoteObject.createImmutable("no_new_downloads"))));
- BA.debugLineNum = 180;BA.debugLine="summary.Put(\"downloaded\", False)";
-Debug.ShouldStop(524288);
+ BA.debugLineNum = 186;BA.debugLine="summary.Put(\"downloaded\", False)";
+Debug.ShouldStop(33554432);
 _summary.runVoidMethod ("Put",(Object)(RemoteObject.createImmutable(("downloaded"))),(Object)((parent.__c.getField(true,"False"))));
  if (true) break;
 
@@ -1646,15 +1772,15 @@ case 27:
 //C
 this.state = -1;
 ;
- BA.debugLineNum = 183;BA.debugLine="RunPruneIfNeeded(\"post_download\")";
-Debug.ShouldStop(4194304);
+ BA.debugLineNum = 189;BA.debugLine="RunPruneIfNeeded(\"post_download\")";
+Debug.ShouldStop(268435456);
 __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_runpruneifneeded" /*RemoteObject*/ ,(Object)(RemoteObject.createImmutable("post_download")));
- BA.debugLineNum = 184;BA.debugLine="Return summary";
-Debug.ShouldStop(8388608);
+ BA.debugLineNum = 190;BA.debugLine="Return summary";
+Debug.ShouldStop(536870912);
 if (true) {
 parent.__c.runVoidMethod ("ReturnFromResumableSub",this.remoteResumableSub,(_summary));return;};
- BA.debugLineNum = 185;BA.debugLine="End Sub";
-Debug.ShouldStop(16777216);
+ BA.debugLineNum = 191;BA.debugLine="End Sub";
+Debug.ShouldStop(1073741824);
 if (true) break;
 
             }
@@ -1669,9 +1795,74 @@ finally {
 }
 public static void  _complete(RemoteObject __ref,RemoteObject _downloaded) throws Exception{
 }
+public static void  _runstepasyncdeferred(RemoteObject __ref) throws Exception{
+try {
+		Debug.PushSubsStack("RunStepAsyncDeferred (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,109);
+if (RapidSub.canDelegate("runstepasyncdeferred")) { __ref.runUserSub(false, "autonomouscachemanager","runstepasyncdeferred", __ref); return;}
+ResumableSub_RunStepAsyncDeferred rsub = new ResumableSub_RunStepAsyncDeferred(null,__ref);
+rsub.resume(null, null);
+}
+catch (Exception e) {
+			throw Debug.ErrorCaught(e);
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
+public static class ResumableSub_RunStepAsyncDeferred extends BA.ResumableSub {
+public ResumableSub_RunStepAsyncDeferred(b4j.example.autonomouscachemanager parent,RemoteObject __ref) {
+this.parent = parent;
+this.__ref = __ref;
+}
+java.util.LinkedHashMap<String, Object> rsLocals = new java.util.LinkedHashMap<String, Object>();
+RemoteObject __ref;
+b4j.example.autonomouscachemanager parent;
+RemoteObject _summary = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
+
+@Override
+public void resume(BA ba, RemoteObject result) throws Exception{
+try {
+		Debug.PushSubsStack("RunStepAsyncDeferred (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,109);
+Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
+
+    while (true) {
+        switch (state) {
+            case -1:
+return;
+
+case 0:
+//C
+this.state = -1;
+Debug.locals.put("_ref", __ref);
+ BA.debugLineNum = 110;BA.debugLine="Wait For (RunStepAsync) Complete (summary As Map)";
+Debug.ShouldStop(8192);
+parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "autonomouscachemanager", "runstepasyncdeferred"), __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_runstepasync" /*RemoteObject*/ ));
+this.state = 1;
+return;
+case 1:
+//C
+this.state = -1;
+_summary = (RemoteObject) result.getArrayElement(false,RemoteObject.createImmutable(1));Debug.locals.put("summary", _summary);
+;
+ BA.debugLineNum = 111;BA.debugLine="stepInProgress = False";
+Debug.ShouldStop(16384);
+__ref.setField ("_stepinprogress" /*RemoteObject*/ ,parent.__c.getField(true,"False"));
+ BA.debugLineNum = 112;BA.debugLine="End Sub";
+Debug.ShouldStop(32768);
+if (true) break;
+
+            }
+        }
+    }
+catch (Exception e) {
+			throw Debug.ErrorCaught(e);
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
+}
 public static RemoteObject  _setcooldowns(RemoteObject __ref,RemoteObject _downloadcooldownvalue,RemoteObject _failurecooldownvalue,RemoteObject _prunecooldownvalue) throws Exception{
 try {
-		Debug.PushSubsStack("SetCooldowns (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,78);
+		Debug.PushSubsStack("SetCooldowns (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,78);
 if (RapidSub.canDelegate("setcooldowns")) { return __ref.runUserSub(false, "autonomouscachemanager","setcooldowns", __ref, _downloadcooldownvalue, _failurecooldownvalue, _prunecooldownvalue);}
 Debug.locals.put("downloadCooldownValue", _downloadcooldownvalue);
 Debug.locals.put("failureCooldownValue", _failurecooldownvalue);
@@ -1702,7 +1893,7 @@ finally {
 		}}
 public static RemoteObject  _start(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("Start (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,84);
+		Debug.PushSubsStack("Start (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,84);
 if (RapidSub.canDelegate("start")) { return __ref.runUserSub(false, "autonomouscachemanager","start", __ref);}
  BA.debugLineNum = 84;BA.debugLine="Public Sub Start";
 Debug.ShouldStop(524288);
@@ -1730,7 +1921,7 @@ finally {
 		}}
 public static RemoteObject  _stopmanager(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StopManager (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,91);
+		Debug.PushSubsStack("StopManager (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,91);
 if (RapidSub.canDelegate("stopmanager")) { return __ref.runUserSub(false, "autonomouscachemanager","stopmanager", __ref);}
  BA.debugLineNum = 91;BA.debugLine="Public Sub StopManager";
 Debug.ShouldStop(67108864);
@@ -1755,45 +1946,45 @@ finally {
 		}}
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,518);
+		Debug.PushSubsStack("Trace (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,539);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "autonomouscachemanager","trace", __ref, _message);}
 Debug.locals.put("message", _message);
- BA.debugLineNum = 518;BA.debugLine="Private Sub Trace(message As String)";
-Debug.ShouldStop(32);
- BA.debugLineNum = 519;BA.debugLine="If traceTarget = Null Then";
-Debug.ShouldStop(64);
+ BA.debugLineNum = 539;BA.debugLine="Private Sub Trace(message As String)";
+Debug.ShouldStop(67108864);
+ BA.debugLineNum = 540;BA.debugLine="If traceTarget = Null Then";
+Debug.ShouldStop(134217728);
 if (RemoteObject.solveBoolean("n",__ref.getField(false,"_tracetarget" /*RemoteObject*/ ))) { 
- BA.debugLineNum = 520;BA.debugLine="Log(message)";
-Debug.ShouldStop(128);
-autonomouscachemanager.__c.runVoidMethod ("LogImpl","289980930",_message,0);
- BA.debugLineNum = 521;BA.debugLine="Return";
-Debug.ShouldStop(256);
+ BA.debugLineNum = 541;BA.debugLine="Log(message)";
+Debug.ShouldStop(268435456);
+autonomouscachemanager.__c.runVoidMethod ("LogImpl","229360130",_message,0);
+ BA.debugLineNum = 542;BA.debugLine="Return";
+Debug.ShouldStop(536870912);
 if (true) return RemoteObject.createImmutable("");
  };
- BA.debugLineNum = 524;BA.debugLine="If traceSubName = \"\" Then";
-Debug.ShouldStop(2048);
+ BA.debugLineNum = 545;BA.debugLine="If traceSubName = \"\" Then";
+Debug.ShouldStop(1);
 if (RemoteObject.solveBoolean("=",__ref.getField(true,"_tracesubname" /*RemoteObject*/ ),BA.ObjectToString(""))) { 
- BA.debugLineNum = 525;BA.debugLine="Log(message)";
-Debug.ShouldStop(4096);
-autonomouscachemanager.__c.runVoidMethod ("LogImpl","289980935",_message,0);
- BA.debugLineNum = 526;BA.debugLine="Return";
-Debug.ShouldStop(8192);
+ BA.debugLineNum = 546;BA.debugLine="Log(message)";
+Debug.ShouldStop(2);
+autonomouscachemanager.__c.runVoidMethod ("LogImpl","229360135",_message,0);
+ BA.debugLineNum = 547;BA.debugLine="Return";
+Debug.ShouldStop(4);
 if (true) return RemoteObject.createImmutable("");
  };
- BA.debugLineNum = 529;BA.debugLine="Try";
-Debug.ShouldStop(65536);
-try { BA.debugLineNum = 530;BA.debugLine="CallSub2(traceTarget, traceSubName, message)";
-Debug.ShouldStop(131072);
+ BA.debugLineNum = 550;BA.debugLine="Try";
+Debug.ShouldStop(32);
+try { BA.debugLineNum = 551;BA.debugLine="CallSub2(traceTarget, traceSubName, message)";
+Debug.ShouldStop(64);
 autonomouscachemanager.__c.runMethodAndSync(false,"CallSubNew2",__ref.getField(false, "ba"),(Object)(__ref.getField(false,"_tracetarget" /*RemoteObject*/ )),(Object)(__ref.getField(true,"_tracesubname" /*RemoteObject*/ )),(Object)((_message)));
  Debug.CheckDeviceExceptions();
 } 
        catch (Exception e12) {
-			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e12.toString()); BA.debugLineNum = 532;BA.debugLine="Log(message)";
-Debug.ShouldStop(524288);
-autonomouscachemanager.__c.runVoidMethod ("LogImpl","289980942",_message,0);
+			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e12.toString()); BA.debugLineNum = 553;BA.debugLine="Log(message)";
+Debug.ShouldStop(256);
+autonomouscachemanager.__c.runVoidMethod ("LogImpl","229360142",_message,0);
  };
- BA.debugLineNum = 534;BA.debugLine="End Sub";
-Debug.ShouldStop(2097152);
+ BA.debugLineNum = 555;BA.debugLine="End Sub";
+Debug.ShouldStop(1024);
 return RemoteObject.createImmutable("");
 }
 catch (Exception e) {
@@ -1802,114 +1993,34 @@ catch (Exception e) {
 finally {
 			Debug.PopSubsStack();
 		}}
-public static void  _workertimer_tick(RemoteObject __ref) throws Exception{
+public static RemoteObject  _workertimer_tick(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("workerTimer_Tick (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,101);
-if (RapidSub.canDelegate("workertimer_tick")) { __ref.runUserSub(false, "autonomouscachemanager","workertimer_tick", __ref); return;}
-ResumableSub_workerTimer_Tick rsub = new ResumableSub_workerTimer_Tick(null,__ref);
-rsub.resume(null, null);
-}
-catch (Exception e) {
-			throw Debug.ErrorCaught(e);
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
-public static class ResumableSub_workerTimer_Tick extends BA.ResumableSub {
-public ResumableSub_workerTimer_Tick(b4j.example.autonomouscachemanager parent,RemoteObject __ref) {
-this.parent = parent;
-this.__ref = __ref;
-}
-java.util.LinkedHashMap<String, Object> rsLocals = new java.util.LinkedHashMap<String, Object>();
-RemoteObject __ref;
-b4j.example.autonomouscachemanager parent;
-RemoteObject _summary = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
-
-@Override
-public void resume(BA ba, RemoteObject result) throws Exception{
-try {
-		Debug.PushSubsStack("workerTimer_Tick (autonomouscachemanager) ","autonomouscachemanager",24,__ref.getField(false, "ba"),__ref,101);
-Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
-
-    while (true) {
-        switch (state) {
-            case -1:
-return;
-
-case 0:
-//C
-this.state = 1;
-Debug.locals.put("_ref", __ref);
+		Debug.PushSubsStack("workerTimer_Tick (autonomouscachemanager) ","autonomouscachemanager",3,__ref.getField(false, "ba"),__ref,101);
+if (RapidSub.canDelegate("workertimer_tick")) { return __ref.runUserSub(false, "autonomouscachemanager","workertimer_tick", __ref);}
+ BA.debugLineNum = 101;BA.debugLine="Private Sub workerTimer_Tick";
+Debug.ShouldStop(16);
  BA.debugLineNum = 102;BA.debugLine="If isRunning = False Then Return";
 Debug.ShouldStop(32);
-if (true) break;
-
-case 1:
-//if
-this.state = 6;
-if (RemoteObject.solveBoolean("=",__ref.getField(true,"_isrunning" /*RemoteObject*/ ),parent.__c.getField(true,"False"))) { 
-this.state = 3;
-;}if (true) break;
-
-case 3:
-//C
-this.state = 6;
-if (true) return ;
-if (true) break;
-
-case 6:
-//C
-this.state = 7;
-;
+if (RemoteObject.solveBoolean("=",__ref.getField(true,"_isrunning" /*RemoteObject*/ ),autonomouscachemanager.__c.getField(true,"False"))) { 
+if (true) return RemoteObject.createImmutable("");};
  BA.debugLineNum = 103;BA.debugLine="If stepInProgress Then Return";
 Debug.ShouldStop(64);
-if (true) break;
-
-case 7:
-//if
-this.state = 12;
 if (__ref.getField(true,"_stepinprogress" /*RemoteObject*/ ).<Boolean>get().booleanValue()) { 
-this.state = 9;
-;}if (true) break;
-
-case 9:
-//C
-this.state = 12;
-if (true) return ;
-if (true) break;
-
-case 12:
-//C
-this.state = -1;
-;
+if (true) return RemoteObject.createImmutable("");};
  BA.debugLineNum = 105;BA.debugLine="stepInProgress = True";
 Debug.ShouldStop(256);
-__ref.setField ("_stepinprogress" /*RemoteObject*/ ,parent.__c.getField(true,"True"));
- BA.debugLineNum = 106;BA.debugLine="Wait For (RunStepAsync) Complete (summary As Map)";
+__ref.setField ("_stepinprogress" /*RemoteObject*/ ,autonomouscachemanager.__c.getField(true,"True"));
+ BA.debugLineNum = 106;BA.debugLine="CallSubDelayed(Me, \"RunStepAsyncDeferred\")";
 Debug.ShouldStop(512);
-parent.__c.runVoidMethod ("WaitFor","complete", __ref.getField(false, "ba"), anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSub(this, "autonomouscachemanager", "workertimer_tick"), __ref.runClassMethod (b4j.example.autonomouscachemanager.class, "_runstepasync" /*RemoteObject*/ ));
-this.state = 13;
-return;
-case 13:
-//C
-this.state = -1;
-_summary = (RemoteObject) result.getArrayElement(false,RemoteObject.createImmutable(1));Debug.locals.put("summary", _summary);
-;
- BA.debugLineNum = 107;BA.debugLine="stepInProgress = False";
+autonomouscachemanager.__c.runVoidMethod ("CallSubDelayed",__ref.getField(false, "ba"),(Object)(__ref),(Object)(RemoteObject.createImmutable("RunStepAsyncDeferred")));
+ BA.debugLineNum = 107;BA.debugLine="End Sub";
 Debug.ShouldStop(1024);
-__ref.setField ("_stepinprogress" /*RemoteObject*/ ,parent.__c.getField(true,"False"));
- BA.debugLineNum = 108;BA.debugLine="End Sub";
-Debug.ShouldStop(2048);
-if (true) break;
-
-            }
-        }
-    }
+return RemoteObject.createImmutable("");
+}
 catch (Exception e) {
 			throw Debug.ErrorCaught(e);
 		} 
 finally {
 			Debug.PopSubsStack();
 		}}
-}
 }

@@ -178,6 +178,9 @@ Sub Class_Globals
 	Private initialStartFadePending As Boolean
 	Private isHistoryFlushInProgress As Boolean
 	Private cachedRelevantTrackIds As List
+	Private lastPlayButtonInputAt As Long
+	Private lastHeaderActionInputAt As Long
+	Private lastUserPlaybackInputAt As Long
 	Private lastTrackCachePruneAt As Long
 	Private consecutiveAudioOutputErrors As Int
 	Private isAudioOutputRecoveryPause As Boolean
@@ -186,8 +189,10 @@ Sub Class_Globals
 	Private lastPlaybackWatchdogProgressAt As Long
 	Private lastPlaybackWatchdogRecoveryAt As Long
 	Private isPlaybackWatchdogTickInProgress As Boolean
+	Private isPlaybackDirectorTickQueued As Boolean
 	Private playbackActivationToken As Long
 	Private scheduledBreakAt As Long
+	Private audioTimeupdateQueuedByKey As Map
 
 	Private playlistIndex As Int = -1
 	Private orbitPulseStep As Int
@@ -568,11 +573,13 @@ Private Sub InitState
 	playbackDirectorTimer.Enabled = True
 	isHistoryFlushInProgress = False
 	isPlaybackWatchdogTickInProgress = False
+	isPlaybackDirectorTickQueued = False
 	isStartupSequenceInProgress = False
 	stateStore.SetStartupSequenceInProgress(False)
 	isAdWarmupDeferredAfterStartup = False
 	isPostStartTasksDeferredAfterStartup = False
 	cachedRelevantTrackIds.Initialize
+	audioTimeupdateQueuedByKey.Initialize
 	lastTrackCachePruneAt = 0
 	playbackFlowState = FLOW_IDLE
 	ResetPlaybackWatchdogState
@@ -884,10 +891,15 @@ Private Sub HistoryFlushTimer_Tick
 	If playerCode = "" Then Return
 	If GetPendingHistoryFileCount <= 0 Then Return
 	If isHistoryFlushInProgress Then Return
+	If ShouldDeferHistoryFlushForPlaybackUi Then Return
 	FlushHistoryBufferAsync
 End Sub
 
 Private Sub FlushHistoryBufferAsync
+	CallSubDelayed(Me, "RunHistoryFlushAsync")
+End Sub
+
+Private Sub RunHistoryFlushAsync
 	Wait For (FlushHistoryBuffer) Complete (unused As Boolean)
 End Sub
 
@@ -922,6 +934,16 @@ Private Sub CacheAuditTimer_Tick
 		cacheAuditTimer.Enabled = True
 		Return
 	End If
+	If playbackFlowState <> FLOW_IDLE Then
+		cacheAuditTimer.Interval = CACHE_AUDIT_RECHECK_INTERVAL_MS
+		cacheAuditTimer.Enabled = True
+		Return
+	End If
+	If ShouldDeferCacheWorkerForPlaybackUi Then
+		cacheAuditTimer.Interval = CACHE_AUDIT_STEP_INTERVAL_MS
+		cacheAuditTimer.Enabled = True
+		Return
+	End If
 	If mediaCacheService.IsCacheAuditInProgress = False Then mediaCacheService.StartCacheAudit
 	Dim hasMore As Boolean = mediaCacheService.RunCacheAuditStep
 	If hasMore Then
@@ -932,6 +954,14 @@ Private Sub CacheAuditTimer_Tick
 		cacheAuditTimer.Interval = CACHE_AUDIT_RECHECK_INTERVAL_MS
 	End If
 	cacheAuditTimer.Enabled = True
+End Sub
+
+Private Sub ShouldDeferCacheWorkerForPlaybackUi As Boolean
+	If DateTime.Now - lastUserPlaybackInputAt < 1500 Then Return True
+	If playbackFlowState = FLOW_STARTING Then Return True
+	If playbackFlowState = FLOW_STOPPING Then Return True
+	If playbackFlowState = FLOW_TRANSITIONING Then Return True
+	Return False
 End Sub
 
 Private Sub PruneTrackCacheIfNeeded(initiator As String)
@@ -1285,6 +1315,13 @@ Private Sub UpdateVisibleMode
 End Sub
 
 Private Sub PlayButtonPane_Click
+	HandlePlayButtonInput
+End Sub
+
+Private Sub HandlePlayButtonInput
+	If DateTime.Now - lastPlayButtonInputAt < 250 Then Return
+	lastPlayButtonInputAt = DateTime.Now
+	lastUserPlaybackInputAt = DateTime.Now
 	If playerCode = "" Then
 		ShowSetupScreen(MessageValue("player_required"))
 		Return
@@ -1303,15 +1340,40 @@ Private Sub PlayButtonPane_Click
 		dataPolicyState.ClearPolicyPause
 		SetStopIcon
 		HideContentBlocks
-		Wait For (StartFirstTrack("manual")) Complete (unused As Boolean)
+		Sleep(0)
+		CallSubDelayed(Me, "StartFirstTrackManualAsync")
 		Return
 	End If
 	If CanStopPlaybackNow(True) = False Then Return
+	Sleep(0)
+	CallSubDelayed(Me, "StopPlayerAsync")
+End Sub
+
+Private Sub StartFirstTrackManualAsync
+	Wait For (StartFirstTrack("manual")) Complete (unused As Boolean)
+End Sub
+
+Private Sub StopPlayerAsync
 	Wait For (StopPlayer) Complete (unused2 As Boolean)
 End Sub
 
+Public Sub AutoResumeAfterCacheWarmup
+	If orchestrationState.IsStarted = False Then Return
+	If orchestrationState.IsStoppedByUser Then Return
+	If orchestrationState.IsStopping Then Return
+	If IsPolicyPauseState Then Return
+	If playbackFlowState <> FLOW_IDLE Then Return
+	If stateStore.HasAnyCachedTrack = False Then Return
+	TraceLog("autocache resume trigger mode=auto")
+	CallSubDelayed(Me, "StartFirstTrackAutoAsync")
+End Sub
+
+Private Sub StartFirstTrackAutoAsync
+	Wait For (StartFirstTrack("auto")) Complete (unused As Boolean)
+End Sub
+
 Private Sub PlayButtonPane_MouseClicked (eventData As MouseEvent)
-	PlayButtonPane_Click
+	HandlePlayButtonInput
 End Sub
 
 Private Sub PlayButtonPane_MouseEntered (eventData As MouseEvent)
@@ -1323,6 +1385,12 @@ Private Sub PlayButtonPane_MouseExited (eventData As MouseEvent)
 End Sub
 
 Private Sub HeaderActionPane_Click
+	HandleHeaderActionInput
+End Sub
+
+Private Sub HandleHeaderActionInput
+	If DateTime.Now - lastHeaderActionInputAt < 250 Then Return
+	lastHeaderActionInputAt = DateTime.Now
 	If appScreenMode = "player" Then
 		ShowSettingsScreen
 	Else If appScreenMode = "settings" Then
@@ -1331,7 +1399,7 @@ Private Sub HeaderActionPane_Click
 End Sub
 
 Private Sub HeaderActionPane_MouseClicked (eventData As MouseEvent)
-	HeaderActionPane_Click
+	HandleHeaderActionInput
 End Sub
 
 Private Sub HeaderActionPane_MouseEntered (eventData As MouseEvent)
@@ -1582,6 +1650,7 @@ Private Sub ExecutePlaybackTickDecision(decision As Map) As ResumableSub
 End Sub
 
 Private Sub RunPlaybackDirectorTick(source As String) As ResumableSub
+	Dim startedAt As Long = DateTime.Now
 	If directorState.IsTickInProgress Then Return False
 	If Transition_GetDirectorActiveAudioKey = "" Then Return False
 	If orchestrationState.IsStarted = False Or orchestrationState.IsStoppedByUser Or IsPlaybackFlowActive = False Then Return False
@@ -1600,6 +1669,7 @@ Private Sub RunPlaybackDirectorTick(source As String) As ResumableSub
 	Wait For (ExecutePlaybackTickDecision(decision)) Complete (executed As Boolean)
 	directorState.ClearDecision
 	directorState.IsTickInProgress = False
+	LogSlowMainOperation("director_tick:" & source, startedAt)
 	Return executed
 End Sub
 
@@ -1616,9 +1686,12 @@ Private Sub RunPlaybackDirectorAdvance(source As String, allowLoad As Boolean) A
 End Sub
 
 Private Sub ResolveDispatchDecision(allowLoad As Boolean) As Map
-	Dim probeItem As Map = stateStore.ResolveNextLocalTrackItem
-	Dim hasLocalReserve As Boolean = probeItem.IsInitialized And probeItem.Size > 0
-	If hasLocalReserve = False Then hasLocalReserve = stateStore.HasAnyCachedTrack
+	Dim hasLocalReserve As Boolean = False
+	If LOCAL_PLAYBACK_ONLY Then
+		hasLocalReserve = GetCurrentSlotLocalReserveCount > 0 Or stateStore.HasAnyCachedTrack
+	Else
+		hasLocalReserve = USE_DATA_PLAYBACK_RESOLVER
+	End If
 	Return offlinePlaybackCore.ResolveAdvanceDecision( _
 		ShouldPrioritizeQueueHeadOverPrepared, _
 		CanUsePreparedItemNow, _
@@ -2309,7 +2382,11 @@ Public Sub Facade_LoadNextAndPlayCore As ResumableSub
 	If LOCAL_PLAYBACK_ONLY Then
 		Wait For (RunPlaybackDirectorAdvance("load_next_and_play:" & nextStartMode, False)) Complete (offlineDispatched As Boolean)
 		If offlineDispatched Then Return True
-		HandleNoLocalTracks("")
+		If stateStore.HasAnyCachedTrack Then
+			HandleNoLocalTracks("")
+		Else
+			HandleCacheWarmupPending
+		End If
 		Return False
 	End If
 	If USE_DATA_PLAYBACK_RESOLVER Then
@@ -2338,7 +2415,7 @@ Private Sub PopulatePlaybackQueue As ResumableSub
 	Dim playableReserve As Int = stateStore.GetLocalPlayableQueueCount(playQueue)
 	If LOCAL_PLAYBACK_ONLY Then
 		If HasDispatchableQueueItem Or stateStore.HasAnyCachedTrack Then Return True
-		HandleNoLocalTracks("")
+		HandleCacheWarmupPending
 		Return False
 	End If
 	If IsPlaybackAllowedByCurrentData = False Then
@@ -2862,9 +2939,15 @@ Private Sub HandleLocalTemporaryState(text As String)
 	playerDataCoordinator.HandleLocalTemporaryState(text)
 End Sub
 
+Private Sub HandleCacheWarmupPending
+	ClearPlaybackState
+	ShowMessage("Подготовка воспроизведения...")
+	SetPlaybackFlowState(FLOW_IDLE, "cache_warmup")
+End Sub
+
 Private Sub HandleNoLocalTracks(text As String)
 	ClearPlaybackState
-	If text = "" Then text = "Нет локальных треков"
+	If text = "" Then text = "Подготовка воспроизведения..."
 	ShowMessage(text)
 	SetPlaybackFlowState(FLOW_IDLE, "no_local_tracks")
 End Sub
@@ -3069,6 +3152,7 @@ End Sub
 Private Sub FlushHistoryBuffer As ResumableSub
 	If isHistoryFlushInProgress Then Return False
 	If playerCode = "" Or deviceId = "" Then Return False
+	Dim startedAt As Long = DateTime.Now
 	Dim pendingHistoryFileName As String = GetOldestPendingHistoryFileName
 	If pendingHistoryFileName = "" Then Return True
 	isHistoryFlushInProgress = True
@@ -3082,8 +3166,8 @@ Private Sub FlushHistoryBuffer As ResumableSub
 	payload = NormalizeNdjsonPayload(payload)
 	If payload = "" Or batchDate = "" Then
 		DeleteHistoryPendingFile(pendingHistoryFileName)
-		RefreshPendingHistoryState
 		isHistoryFlushInProgress = False
+		LogSlowMainOperation("history_flush:empty", startedAt)
 		Return False
 	End If
 	Dim recordCount As Int = CountNdjsonRecords(payload)
@@ -3113,7 +3197,6 @@ Private Sub FlushHistoryBuffer As ResumableSub
 	If success Then
 		stateStore.SetLastHistoryOkNow
 		DeleteHistoryPendingFile(pendingHistoryFileName)
-		RefreshPendingHistoryState
 		TraceInfo("history", "история отправлена", "records=" & recordCount)
 	Else
 		TraceWarn("history", "история не отправлена", "records=" & recordCount)
@@ -3121,6 +3204,7 @@ Private Sub FlushHistoryBuffer As ResumableSub
 	WriteHealthSnapshot("history")
 	j.Release
 	isHistoryFlushInProgress = False
+	LogSlowMainOperation("history_flush", startedAt)
 	Return success
 End Sub
 
@@ -3162,14 +3246,18 @@ Private Sub RefreshPendingHistoryState
 End Sub
 
 Private Sub GetPendingHistoryFileCount As Int
-	If File.Exists(GetHistoryDir, "") = False Then Return 0
-	Dim listedFiles As List = File.ListFiles(GetHistoryDir)
-	If listedFiles.IsInitialized = False Then Return 0
-	Dim count As Int = 0
-	For Each fileName As String In listedFiles
-		If IsHistoryFileName(fileName) Then count = count + 1
-	Next
-	Return count
+	Dim storedCount As Int = storage.GetDefault("pending_history_count", -1)
+	If storedCount >= 0 Then Return storedCount
+	RefreshPendingHistoryState
+	Return Max(0, storage.GetDefault("pending_history_count", 0))
+End Sub
+
+Private Sub ShouldDeferHistoryFlushForPlaybackUi As Boolean
+	If DateTime.Now - lastUserPlaybackInputAt < 1500 Then Return True
+	If playbackFlowState = FLOW_STARTING Then Return True
+	If playbackFlowState = FLOW_STOPPING Then Return True
+	If playbackFlowState = FLOW_TRANSITIONING Then Return True
+	Return False
 End Sub
 
 Private Sub CountAllPendingHistoryRecords As Int
@@ -3254,7 +3342,11 @@ End Sub
 
 Private Sub DeleteHistoryPendingFile(fileName As String)
 	If fileName = "" Then Return
-	If File.Exists(GetHistoryDir, fileName) Then File.Delete(GetHistoryDir, fileName)
+	If File.Exists(GetHistoryDir, fileName) Then
+		File.Delete(GetHistoryDir, fileName)
+		Dim currentCount As Int = Max(0, storage.GetDefault("pending_history_count", 0) - 1)
+		storage.Put("pending_history_count", currentCount)
+	End If
 End Sub
 
 Private Sub GetHistoryDir As String
@@ -3404,11 +3496,25 @@ Private Sub HandleAudioCompleteAsync(audioKey As String)
 End Sub
 
 Private Sub HandleAudioTimeupdateAsync(audioKey As String)
+	If audioTimeupdateQueuedByKey.GetDefault(audioKey, False) Then Return
+	audioTimeupdateQueuedByKey.Put(audioKey, True)
+	CallSubDelayed2(Me, "RunAudioTimeupdateAsync", audioKey)
+End Sub
+
+Private Sub RunAudioTimeupdateAsync(audioKey As String)
 	Wait For (HandleAudioTimeupdate(audioKey)) Complete (unused As Boolean)
+	audioTimeupdateQueuedByKey.Remove(audioKey)
 End Sub
 
 Private Sub PlaybackDirectorTimer_Tick
-	Wait For (RunPlaybackDirectorTick("director_timer")) Complete (unused As Boolean)
+	If isPlaybackDirectorTickQueued Then Return
+	isPlaybackDirectorTickQueued = True
+	CallSubDelayed2(Me, "RunPlaybackDirectorTimerAsync", "director_timer")
+End Sub
+
+Private Sub RunPlaybackDirectorTimerAsync(source As String)
+	Wait For (RunPlaybackDirectorTick(source)) Complete (unused As Boolean)
+	isPlaybackDirectorTickQueued = False
 End Sub
 
 ' Ready только сообщает факт; дальнейшая трактовка зависит от pending role в director-state.
@@ -3468,6 +3574,7 @@ End Sub
 
 ' Complete не выбирает следующий шаг сам — он передаёт управление в общий advance path.
 Private Sub HandleAudioComplete(audioKey As String) As ResumableSub
+	Dim startedAt As Long = DateTime.Now
 	If CanAdvancePlaybackNow("audio_complete:" & audioKey, True) = False Then Return False
 	Dim activeAudioKey As String = Transition_GetDirectorActiveAudioKey
 	Dim activeItem As Map = Transition_GetDirectorActiveItem
@@ -3491,6 +3598,7 @@ Private Sub HandleAudioComplete(audioKey As String) As ResumableSub
 		Return True
 	End If
 	Wait For (RunPlaybackDirectorAdvance("audio_complete:" & audioKey, True)) Complete (dispatched As Boolean)
+	LogSlowMainOperation("audio_complete:" & audioKey, startedAt)
 	Return dispatched
 End Sub
 
@@ -3519,6 +3627,12 @@ End Sub
 
 Private Sub TraceWarn(category As String, message As String, details As String)
 	traceRouter.TraceWarn(category, message, details)
+End Sub
+
+Private Sub LogSlowMainOperation(operationName As String, startedAt As Long)
+	Dim elapsed As Long = DateTime.Now - startedAt
+	If elapsed < 50 Then Return
+	TraceDebug("main slow op=" & operationName & " elapsedMs=" & elapsed & " flow=" & playbackFlowState)
 End Sub
 
 Private Sub TraceError(category As String, message As String, details As String)
@@ -3589,7 +3703,7 @@ Private Sub WriteSystemSnapshot(trigger As String)
 	TraceInfo("system", "кэш рекламы", "adCount=" & ResolveAdCacheFileCountText & _
 		" adIndex=" & mediaCacheService.GetCachedAdCount & _
 		" adMb=" & ResolveAdCacheSizeMbText)
-	TraceInfo("system", "история", "pendingHistory=" & CountAllPendingHistoryRecords)
+	TraceInfo("system", "история", "pendingHistory=" & GetPendingHistoryFileCount)
 End Sub
 
 Private Sub IsPlaybackRunningForTrace As String

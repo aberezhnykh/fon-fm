@@ -253,10 +253,76 @@ Public Sub ResolveOrderedCachedTrackFromPlaylistById(playlistId As String, media
 		End If
 	Next
 	If selectedTrack.IsInitialized = False Or selectedTrack.Size = 0 Then
-		Trace("playlist resolve empty playlistId=" & playlistId & " orderSize=" & order.Size)
+		For offset = 0 To order.Size - 1
+			Dim fallbackOrderIndex As Int = (startIndex + offset) Mod order.Size
+			Dim fallbackTrackId As String = order.Get(fallbackOrderIndex)
+			If fallbackTrackId = "" Then Continue
+			If storedTrackIndex >= 0 And order.Size > 1 And fallbackOrderIndex = storedTrackIndex Then Continue
+			If mediaCacheService.IsTrackCached(fallbackTrackId) = False Then Continue
+			Dim fallbackTrackObject As Object = trackMap.GetDefault(fallbackTrackId, Null)
+			If (fallbackTrackObject Is Map) = False Then Continue
+			selectedTrack = CloneMap(fallbackTrackObject)
+			selectedTrack.Put("playlist_title", playlistTitle)
+			storageRef.Put(trackIndexKey, fallbackOrderIndex)
+			storageRef.Put(cursorKey, fallbackOrderIndex + 1)
+			selectedTrack.Put("playlist_track_index", fallbackOrderIndex)
+			selectedTrack.Put("playlist_cursor", fallbackOrderIndex + 1)
+			Trace("playlist resolve fallback_index playlistId=" & playlistId & " orderIndex=" & fallbackOrderIndex & " trackId=" & fallbackTrackId)
+			Exit
+		Next
+		If selectedTrack.IsInitialized = False Or selectedTrack.Size = 0 Then
+			Trace("playlist resolve empty playlistId=" & playlistId & " orderSize=" & order.Size)
+		End If
 	End If
 	If selectedTrack.IsInitialized And selectedTrack.Size > 0 Then Return selectedTrack
 	Return emptyTrack
+End Sub
+
+Public Sub GetUpcomingPlaybackTracksById(playlistId As String, limitCount As Int, mediaCacheService As MediaCache, includeCached As Boolean) As List
+	Dim result As List
+	result.Initialize
+	If storageRef.IsInitialized = False Then Return result
+	If playlistId = "" Or limitCount <= 0 Then Return result
+	Dim manifest As Map = LoadOrBuildPlaylistPlaybackManifestById(playlistId)
+	If manifest.IsInitialized = False Or manifest.Size = 0 Then Return result
+	Dim playlistTitle As String = manifest.GetDefault("title", "")
+	Dim order As List = manifest.GetDefault("order", Null)
+	If order.IsInitialized = False Or order.Size = 0 Then Return result
+	Dim trackMap As Map = manifest.GetDefault("tracks", Null)
+	If trackMap.IsInitialized = False Or trackMap.Size = 0 Then Return result
+	
+	Dim cursorKey As String = PlaylistPlaybackCursorKey(playlistId)
+	Dim storedCursor As Int = storageRef.GetDefault(cursorKey, -1)
+	Dim trackIndexKey As String = PlaylistTrackIndexKey(playlistId)
+	Dim storedTrackIndexValue As Int = storageRef.GetDefault(trackIndexKey, -1)
+	If storedCursor < 0 Then
+		If storedTrackIndexValue >= 0 Then storedCursor = storedTrackIndexValue + 1
+	End If
+	Dim storedTrackIndex As Int = storedCursor - 1
+	If storedTrackIndex >= order.Size Then storedTrackIndex = storedTrackIndex Mod order.Size
+	
+	Dim startIndex As Int = storedTrackIndex + 1
+	If startIndex < 0 Then startIndex = 0
+	If startIndex >= order.Size Then startIndex = startIndex Mod order.Size
+	
+	For offset = 0 To order.Size - 1
+		If result.Size >= limitCount Then Exit
+		Dim orderIndex As Int = (startIndex + offset) Mod order.Size
+		Dim trackId As String = order.Get(orderIndex)
+		If trackId = "" Then Continue
+		If storedTrackIndex >= 0 And order.Size > 1 And orderIndex = storedTrackIndex Then Continue
+		Dim trackObject As Object = trackMap.GetDefault(trackId, Null)
+		If (trackObject Is Map) = False Then Continue
+		Dim track As Map = CloneMap(trackObject)
+		track.Put("playlist_id", playlistId)
+		track.Put("playlist_title", playlistTitle)
+		track.Put("playlist_track_index", orderIndex)
+		track.Put("playlist_cursor", orderIndex + 1)
+		If includeCached = False And mediaCacheService.HasValidatedLocalMedia(track) Then Continue
+		result.Add(track)
+	Next
+	
+	Return result
 End Sub
 
 Private Sub LoadOrBuildPlaylistPlaybackManifestById(playlistId As String) As Map

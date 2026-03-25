@@ -394,6 +394,7 @@ End Sub
 Public Sub ResolveNextLocalTrackItem As Map
 	Dim emptyItem As Map
 	emptyItem.Initialize
+	mediaCacheRef.EnsureTrackCacheReady
 	If HasUsableDataPlaybackInstructions = False Then Return ResolveAnyCachedLocalTrackItem(emptyItem)
 	Dim currentSlot As Map = dataResolverRef.ResolveDataSlotAtTicks(OfflineData, EffectiveNowTicks)
 	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then
@@ -401,11 +402,11 @@ Public Sub ResolveNextLocalTrackItem As Map
 	End If
 	Dim playlists As List = currentSlot.GetDefault("playlists", Null)
 	If playlists.IsInitialized = False Or playlists.Size = 0 Then
-		Return ResolveAnyCachedLocalTrackItem(currentSlot)
+		Return ResolveAnyCachedLocalTrackItem(emptyItem)
 	End If
 	Dim resolvedItem As Map = ResolveSequentialSlotTrackItem(currentSlot, playlists)
 	If resolvedItem.IsInitialized And resolvedItem.Size > 0 Then Return resolvedItem
-	resolvedItem = ResolveAnyCachedLocalTrackItem(currentSlot)
+	resolvedItem = ResolveSlotScopedCachedTrackItem(currentSlot, playlists)
 	Return resolvedItem
 End Sub
 
@@ -506,6 +507,41 @@ Private Sub ResolveAnyCachedLocalTrackItem(currentSlot As Map) As Map
 		End If
 	End If
 	If selectedItem.IsInitialized And selectedItem.Size > 0 Then Return selectedItem
+	Return emptyItem
+End Sub
+
+Private Sub ResolveSlotScopedCachedTrackItem(currentSlot As Map, playlists As List) As Map
+	Dim emptyItem As Map
+	emptyItem.Initialize
+	If currentSlot.IsInitialized = False Or currentSlot.Size = 0 Then Return emptyItem
+	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return emptyItem
+	
+	mediaCacheRef.EnsureTrackCacheReady
+	Dim slotKey As String = BuildDataSlotKey(currentSlot)
+	Dim workingCursors As Map = dataResolverRef.ClonePlaylistCursors
+	Dim cursorValue As Int = workingCursors.GetDefault(slotKey, 0)
+	If cursorValue < 0 Then cursorValue = 0
+	Dim startIndex As Int = cursorValue Mod playlists.Size
+	
+	For offset = 0 To playlists.Size - 1
+		Dim playlistIndex As Int = (startIndex + offset) Mod playlists.Size
+		Dim playlistObject As Object = playlists.Get(playlistIndex)
+		If (playlistObject Is Map) = False Then Continue
+		
+		Dim playlistDescriptor As Map = playlistObject
+		Dim playlistId As String = playlistDescriptor.GetDefault("id", "")
+		If playlistId = "" Then Continue
+		
+		Dim cachedTrack As Map = mediaCacheRef.ResolveAnyCachedTrackFromIndex(playlistId, "")
+		If cachedTrack.IsInitialized = False Or cachedTrack.Size = 0 Then Continue
+		
+		Dim normalizedDescriptor As Map = CloneMap(playlistDescriptor)
+		normalizedDescriptor.Put("_slot_key", slotKey)
+		normalizedDescriptor.Put("_playlist_index", playlistIndex)
+		Dim queueItem As Map = dataResolverRef.CreateQueueTrackFromPlaylist(currentSlot, normalizedDescriptor, cachedTrack, OfflineData)
+		If queueItem.IsInitialized And queueItem.Size > 0 Then Return queueItem
+	Next
+	
 	Return emptyItem
 End Sub
 

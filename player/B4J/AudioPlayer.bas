@@ -48,6 +48,7 @@ End Sub
 
 ' Загружает media в player и выдаёт новый load token, чтобы старые Ready/Error/Complete не ломали актуальный playback.
 Public Sub LoadUrl(url As String, volume As Double)
+	Dim startedAt As Long = DateTime.Now
 	Reset
 	currentLoadToken = currentLoadToken + 1
 	activeEventLoadToken = currentLoadToken
@@ -64,6 +65,7 @@ Public Sub LoadUrl(url As String, volume As Double)
 	Catch
 		NotifyError(LastException.Message)
 	End Try
+	LogSlowOperation("LoadUrl", startedAt)
 End Sub
 
 Public Sub Play
@@ -95,6 +97,7 @@ End Sub
 
 ' Останавливает playback сразу или через fade-out, в зависимости от fadeTimeMs и текущей громкости.
 Public Sub Stop(fadeTimeMs As Int)
+	Dim startedAt As Long = DateTime.Now
 	loadTimer.Enabled = False
 	checkTimer.Enabled = False
 	timeUpdateTimer.Enabled = False
@@ -112,10 +115,12 @@ Public Sub Stop(fadeTimeMs As Int)
 	Else
 		StopImmediately
 	End If
+	LogSlowOperation("Stop", startedAt)
 End Sub
 
 ' Полный reset player instance, таймеров и токенов текущей загрузки.
 Public Sub Reset
+	Dim startedAt As Long = DateTime.Now
 	loadTimer.Enabled = False
 	checkTimer.Enabled = False
 	timeUpdateTimer.Enabled = False
@@ -141,6 +146,7 @@ Public Sub Reset
 			End Try
 		End If
 	End If
+	LogSlowOperation("Reset", startedAt)
 End Sub
 
 Public Sub IsStopped As Boolean
@@ -319,6 +325,7 @@ Private Sub SetPlayerVolume(volumeValue As Double)
 End Sub
 
 Private Sub StopImmediately
+	Dim startedAt As Long = DateTime.Now
 	fadeTimer.Enabled = False
 	fadeMode = FADE_NONE
 	playerState = STATE_STOPPED
@@ -331,6 +338,13 @@ Private Sub StopImmediately
 	Catch
 		TraceInternalError("stop_immediately")
 	End Try
+	LogSlowOperation("StopImmediately", startedAt)
+End Sub
+
+Private Sub LogSlowOperation(operationName As String, startedAt As Long)
+	Dim elapsed As Long = DateTime.Now - startedAt
+	If elapsed < 50 Then Return
+	TraceDiagnostic("audio slow op=" & eventName & "." & operationName & " elapsedMs=" & elapsed & " state=" & playerState)
 End Sub
 
 Private Sub TraceInternalError(context As String)

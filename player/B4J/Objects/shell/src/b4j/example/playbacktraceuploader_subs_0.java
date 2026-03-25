@@ -25,7 +25,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _flushtracebuffer(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("FlushTraceBuffer (playbacktraceuploader) ","playbacktraceuploader",11,__ref.getField(false, "ba"),__ref,34);
+		Debug.PushSubsStack("FlushTraceBuffer (playbacktraceuploader) ","playbacktraceuploader",16,__ref.getField(false, "ba"),__ref,34);
 if (RapidSub.canDelegate("flushtracebuffer")) { return __ref.runUserSub(false, "playbacktraceuploader","flushtracebuffer", __ref);}
 ResumableSub_FlushTraceBuffer rsub = new ResumableSub_FlushTraceBuffer(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -58,7 +58,7 @@ RemoteObject _statuscode = RemoteObject.createImmutable(0);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("FlushTraceBuffer (playbacktraceuploader) ","playbacktraceuploader",11,__ref.getField(false, "ba"),__ref,34);
+		Debug.PushSubsStack("FlushTraceBuffer (playbacktraceuploader) ","playbacktraceuploader",16,__ref.getField(false, "ba"),__ref,34);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -457,7 +457,7 @@ public static void  _jobdone(RemoteObject __ref,RemoteObject _j) throws Exceptio
 }
 public static void  _flushtracebufferasync(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("FlushTraceBufferAsync (playbacktraceuploader) ","playbacktraceuploader",11,__ref.getField(false, "ba"),__ref,30);
+		Debug.PushSubsStack("FlushTraceBufferAsync (playbacktraceuploader) ","playbacktraceuploader",16,__ref.getField(false, "ba"),__ref,30);
 if (RapidSub.canDelegate("flushtracebufferasync")) { __ref.runUserSub(false, "playbacktraceuploader","flushtracebufferasync", __ref); return;}
 ResumableSub_FlushTraceBufferAsync rsub = new ResumableSub_FlushTraceBufferAsync(null,__ref);
 rsub.resume(null, null);
@@ -481,7 +481,7 @@ RemoteObject _unused = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("FlushTraceBufferAsync (playbacktraceuploader) ","playbacktraceuploader",11,__ref.getField(false, "ba"),__ref,30);
+		Debug.PushSubsStack("FlushTraceBufferAsync (playbacktraceuploader) ","playbacktraceuploader",16,__ref.getField(false, "ba"),__ref,30);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -521,7 +521,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _unused) throws Ex
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _store,RemoteObject _tracesvc,RemoteObject _syncworker,RemoteObject _baseurl,RemoteObject _appversion) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbacktraceuploader) ","playbacktraceuploader",11,__ref.getField(false, "ba"),__ref,14);
+		Debug.PushSubsStack("Initialize (playbacktraceuploader) ","playbacktraceuploader",16,__ref.getField(false, "ba"),__ref,14);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbacktraceuploader","initialize", __ref, _ba, _store, _tracesvc, _syncworker, _baseurl, _appversion);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -559,7 +559,7 @@ finally {
 		}}
 public static RemoteObject  _istraceuploadenabled(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsTraceUploadEnabled (playbacktraceuploader) ","playbacktraceuploader",11,__ref.getField(false, "ba"),__ref,22);
+		Debug.PushSubsStack("IsTraceUploadEnabled (playbacktraceuploader) ","playbacktraceuploader",16,__ref.getField(false, "ba"),__ref,22);
 if (RapidSub.canDelegate("istraceuploadenabled")) { return __ref.runUserSub(false, "playbacktraceuploader","istraceuploadenabled", __ref);}
  BA.debugLineNum = 22;BA.debugLine="Public Sub IsTraceUploadEnabled As Boolean";
 Debug.ShouldStop(2097152);
@@ -578,7 +578,7 @@ finally {
 		}}
 public static RemoteObject  _isuploadinprogress(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsUploadInProgress (playbacktraceuploader) ","playbacktraceuploader",11,__ref.getField(false, "ba"),__ref,26);
+		Debug.PushSubsStack("IsUploadInProgress (playbacktraceuploader) ","playbacktraceuploader",16,__ref.getField(false, "ba"),__ref,26);
 if (RapidSub.canDelegate("isuploadinprogress")) { return __ref.runUserSub(false, "playbacktraceuploader","isuploadinprogress", __ref);}
  BA.debugLineNum = 26;BA.debugLine="Public Sub IsUploadInProgress As Boolean";
 Debug.ShouldStop(33554432);
@@ -597,7 +597,7 @@ finally {
 		}}
 public static RemoteObject  _joinlist(RemoteObject __ref,RemoteObject _items,RemoteObject _separator) throws Exception{
 try {
-		Debug.PushSubsStack("JoinList (playbacktraceuploader) ","playbacktraceuploader",11,__ref.getField(false, "ba"),__ref,95);
+		Debug.PushSubsStack("JoinList (playbacktraceuploader) ","playbacktraceuploader",16,__ref.getField(false, "ba"),__ref,95);
 if (RapidSub.canDelegate("joinlist")) { return __ref.runUserSub(false, "playbacktraceuploader","joinlist", __ref, _items, _separator);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 int _i = 0;

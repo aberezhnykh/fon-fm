@@ -8,7 +8,7 @@ public class playeruicontroller_subs_0 {
 
 public static RemoteObject  _advanceorbitframe(RemoteObject __ref,RemoteObject _stepindex,RemoteObject _fadestep) throws Exception{
 try {
-		Debug.PushSubsStack("AdvanceOrbitFrame (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,277);
+		Debug.PushSubsStack("AdvanceOrbitFrame (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,277);
 if (RapidSub.canDelegate("advanceorbitframe")) { return __ref.runUserSub(false, "playeruicontroller","advanceorbitframe", __ref, _stepindex, _fadestep);}
 Debug.locals.put("stepIndex", _stepindex);
 Debug.locals.put("fadeStep", _fadestep);
@@ -47,7 +47,7 @@ finally {
 		}}
 public static RemoteObject  _applyorbitframe(RemoteObject __ref,RemoteObject _stepindex) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyOrbitFrame (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,355);
+		Debug.PushSubsStack("ApplyOrbitFrame (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,355);
 if (RapidSub.canDelegate("applyorbitframe")) { return __ref.runUserSub(false, "playeruicontroller","applyorbitframe", __ref, _stepindex);}
 RemoteObject _opacity = RemoteObject.createImmutable(0);
 RemoteObject _basephase = RemoteObject.createImmutable(0);
@@ -90,7 +90,7 @@ finally {
 		}}
 public static RemoteObject  _applyorbitstate(RemoteObject __ref,RemoteObject _opacity) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyOrbitState (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,367);
+		Debug.PushSubsStack("ApplyOrbitState (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,367);
 if (RapidSub.canDelegate("applyorbitstate")) { return __ref.runUserSub(false, "playeruicontroller","applyorbitstate", __ref, _opacity);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("opacity", _opacity);
@@ -115,7 +115,7 @@ finally {
 		}}
 public static RemoteObject  _applystoppedstate(RemoteObject __ref,RemoteObject _idletext) throws Exception{
 try {
-		Debug.PushSubsStack("ApplyStoppedState (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,76);
+		Debug.PushSubsStack("ApplyStoppedState (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,76);
 if (RapidSub.canDelegate("applystoppedstate")) { return __ref.runUserSub(false, "playeruicontroller","applystoppedstate", __ref, _idletext);}
 Debug.locals.put("idleText", _idletext);
  BA.debugLineNum = 76;BA.debugLine="Public Sub ApplyStoppedState(idleText As String)";
@@ -138,7 +138,7 @@ finally {
 		}}
 public static RemoteObject  _bringtofront(RemoteObject __ref,RemoteObject _view) throws Exception{
 try {
-		Debug.PushSubsStack("BringToFront (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,350);
+		Debug.PushSubsStack("BringToFront (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,350);
 if (RapidSub.canDelegate("bringtofront")) { return __ref.runUserSub(false, "playeruicontroller","bringtofront", __ref, _view);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("view", _view);
@@ -238,7 +238,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _configureplayerheader(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("ConfigurePlayerHeader (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,191);
+		Debug.PushSubsStack("ConfigurePlayerHeader (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,191);
 if (RapidSub.canDelegate("configureplayerheader")) { return __ref.runUserSub(false, "playeruicontroller","configureplayerheader", __ref);}
  BA.debugLineNum = 191;BA.debugLine="Public Sub ConfigurePlayerHeader";
 Debug.ShouldStop(1073741824);
@@ -260,7 +260,7 @@ finally {
 		}}
 public static RemoteObject  _configuresetupscreen(RemoteObject __ref,RemoteObject _mode,RemoteObject _formattedplayercode,RemoteObject _messagetext,RemoteObject _setuptitle,RemoteObject _settingsthanks,RemoteObject _submittext,RemoteObject _logouttext) throws Exception{
 try {
-		Debug.PushSubsStack("ConfigureSetupScreen (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,168);
+		Debug.PushSubsStack("ConfigureSetupScreen (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,168);
 if (RapidSub.canDelegate("configuresetupscreen")) { return __ref.runUserSub(false, "playeruicontroller","configuresetupscreen", __ref, _mode, _formattedplayercode, _messagetext, _setuptitle, _settingsthanks, _submittext, _logouttext);}
 RemoteObject _issettingsmode = RemoteObject.createImmutable(false);
 Debug.locals.put("mode", _mode);
@@ -339,7 +339,7 @@ finally {
 		}}
 public static RemoteObject  _hidecontentblocks(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HideContentBlocks (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,82);
+		Debug.PushSubsStack("HideContentBlocks (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,82);
 if (RapidSub.canDelegate("hidecontentblocks")) { return __ref.runUserSub(false, "playeruicontroller","hidecontentblocks", __ref);}
  BA.debugLineNum = 82;BA.debugLine="Public Sub HideContentBlocks";
 Debug.ShouldStop(131072);
@@ -370,7 +370,7 @@ finally {
 		}}
 public static RemoteObject  _hidepin(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HidePin (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,106);
+		Debug.PushSubsStack("HidePin (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,106);
 if (RapidSub.canDelegate("hidepin")) { return __ref.runUserSub(false, "playeruicontroller","hidepin", __ref);}
  BA.debugLineNum = 106;BA.debugLine="Public Sub HidePin";
 Debug.ShouldStop(512);
@@ -395,7 +395,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _xuivalue,RemoteObject _streamlabel,RemoteObject _infolabel,RemoteObject _headerlabel,RemoteObject _connectioniconlabel,RemoteObject _headeractionlabel,RemoteObject _setupmessagelabel,RemoteObject _playiconlabel,RemoteObject _confirmpanevalue,RemoteObject _confirmyesbutton,RemoteObject _confirmnobutton,RemoteObject _setuppanevalue,RemoteObject _playerpanevalue,RemoteObject _headeractionpanevalue,RemoteObject _playbuttonpanevalue,RemoteObject _orbitpanevalue,RemoteObject _accesscirclepanevalue,RemoteObject _accesscorepanevalue,RemoteObject _accessinputpanevalue,RemoteObject _setupsubmitbutton,RemoteObject _playercodeinput,RemoteObject _playercodeinputview,RemoteObject _iconcloudokvalue,RemoteObject _iconcloudoffvalue,RemoteObject _iconclouddegradedvalue,RemoteObject _iconmorevalue,RemoteObject _iconclosevalue,RemoteObject _iconplayvalue,RemoteObject _iconstopvalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,43);
+		Debug.PushSubsStack("Initialize (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,43);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playeruicontroller","initialize", __ref, _ba, _xuivalue, _streamlabel, _infolabel, _headerlabel, _connectioniconlabel, _headeractionlabel, _setupmessagelabel, _playiconlabel, _confirmpanevalue, _confirmyesbutton, _confirmnobutton, _setuppanevalue, _playerpanevalue, _headeractionpanevalue, _playbuttonpanevalue, _orbitpanevalue, _accesscirclepanevalue, _accesscorepanevalue, _accessinputpanevalue, _setupsubmitbutton, _playercodeinput, _playercodeinputview, _iconcloudokvalue, _iconcloudoffvalue, _iconclouddegradedvalue, _iconmorevalue, _iconclosevalue, _iconplayvalue, _iconstopvalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -529,7 +529,7 @@ finally {
 		}}
 public static RemoteObject  _isorbitidle(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("IsOrbitIdle (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,287);
+		Debug.PushSubsStack("IsOrbitIdle (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,287);
 if (RapidSub.canDelegate("isorbitidle")) { return __ref.runUserSub(false, "playeruicontroller","isorbitidle", __ref);}
  BA.debugLineNum = 287;BA.debugLine="Public Sub IsOrbitIdle As Boolean";
 Debug.ShouldStop(1073741824);
@@ -548,7 +548,7 @@ finally {
 		}}
 public static RemoteObject  _joinlist(RemoteObject __ref,RemoteObject _items,RemoteObject _separator) throws Exception{
 try {
-		Debug.PushSubsStack("JoinList (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,372);
+		Debug.PushSubsStack("JoinList (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,372);
 if (RapidSub.canDelegate("joinlist")) { return __ref.runUserSub(false, "playeruicontroller","joinlist", __ref, _items, _separator);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 int _i = 0;
@@ -599,7 +599,7 @@ finally {
 		}}
 public static RemoteObject  _renderplayerhead(RemoteObject __ref,RemoteObject _formattedcode,RemoteObject _title) throws Exception{
 try {
-		Debug.PushSubsStack("RenderPlayerHead (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,159);
+		Debug.PushSubsStack("RenderPlayerHead (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,159);
 if (RapidSub.canDelegate("renderplayerhead")) { return __ref.runUserSub(false, "playeruicontroller","renderplayerhead", __ref, _formattedcode, _title);}
 Debug.locals.put("formattedCode", _formattedcode);
 Debug.locals.put("title", _title);
@@ -628,7 +628,7 @@ finally {
 		}}
 public static RemoteObject  _setplayicon(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("SetPlayIcon (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,220);
+		Debug.PushSubsStack("SetPlayIcon (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,220);
 if (RapidSub.canDelegate("setplayicon")) { return __ref.runUserSub(false, "playeruicontroller","setplayicon", __ref);}
  BA.debugLineNum = 220;BA.debugLine="Public Sub SetPlayIcon";
 Debug.ShouldStop(134217728);
@@ -662,7 +662,7 @@ finally {
 		}}
 public static RemoteObject  _setstatustext(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("SetStatusText (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,128);
+		Debug.PushSubsStack("SetStatusText (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,128);
 if (RapidSub.canDelegate("setstatustext")) { return __ref.runUserSub(false, "playeruicontroller","setstatustext", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 128;BA.debugLine="Public Sub SetStatusText(text As String)";
@@ -682,7 +682,7 @@ finally {
 		}}
 public static RemoteObject  _setstopicon(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("SetStopIcon (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,229);
+		Debug.PushSubsStack("SetStopIcon (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,229);
 if (RapidSub.canDelegate("setstopicon")) { return __ref.runUserSub(false, "playeruicontroller","setstopicon", __ref);}
  BA.debugLineNum = 229;BA.debugLine="Public Sub SetStopIcon";
 Debug.ShouldStop(16);
@@ -716,7 +716,7 @@ finally {
 		}}
 public static RemoteObject  _setstreamtext(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("SetStreamText (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,124);
+		Debug.PushSubsStack("SetStreamText (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,124);
 if (RapidSub.canDelegate("setstreamtext")) { return __ref.runUserSub(false, "playeruicontroller","setstreamtext", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 124;BA.debugLine="Public Sub SetStreamText(text As String)";
@@ -736,7 +736,7 @@ finally {
 		}}
 public static RemoteObject  _showadmeta(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ShowAdMeta (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,120);
+		Debug.PushSubsStack("ShowAdMeta (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,120);
 if (RapidSub.canDelegate("showadmeta")) { return __ref.runUserSub(false, "playeruicontroller","showadmeta", __ref, _item);}
 Debug.locals.put("item", _item);
  BA.debugLineNum = 120;BA.debugLine="Public Sub ShowAdMeta(item As Map)";
@@ -756,7 +756,7 @@ finally {
 		}}
 public static RemoteObject  _showclaimprompt(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("ShowClaimPrompt (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,100);
+		Debug.PushSubsStack("ShowClaimPrompt (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,100);
 if (RapidSub.canDelegate("showclaimprompt")) { return __ref.runUserSub(false, "playeruicontroller","showclaimprompt", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 100;BA.debugLine="Public Sub ShowClaimPrompt(text As String)";
@@ -782,7 +782,7 @@ finally {
 		}}
 public static RemoteObject  _showmessage(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("ShowMessage (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,94);
+		Debug.PushSubsStack("ShowMessage (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,94);
 if (RapidSub.canDelegate("showmessage")) { return __ref.runUserSub(false, "playeruicontroller","showmessage", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 94;BA.debugLine="Public Sub ShowMessage(text As String)";
@@ -805,7 +805,7 @@ finally {
 		}}
 public static RemoteObject  _showstream(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("ShowStream (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,90);
+		Debug.PushSubsStack("ShowStream (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,90);
 if (RapidSub.canDelegate("showstream")) { return __ref.runUserSub(false, "playeruicontroller","showstream", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 90;BA.debugLine="Public Sub ShowStream(text As String)";
@@ -825,7 +825,7 @@ finally {
 		}}
 public static RemoteObject  _showtrackmeta(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("ShowTrackMeta (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,112);
+		Debug.PushSubsStack("ShowTrackMeta (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,112);
 if (RapidSub.canDelegate("showtrackmeta")) { return __ref.runUserSub(false, "playeruicontroller","showtrackmeta", __ref, _item);}
 RemoteObject _parts = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 Debug.locals.put("item", _item);
@@ -860,7 +860,7 @@ finally {
 		}}
 public static RemoteObject  _startorbitanimation(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StartOrbitAnimation (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,268);
+		Debug.PushSubsStack("StartOrbitAnimation (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,268);
 if (RapidSub.canDelegate("startorbitanimation")) { return __ref.runUserSub(false, "playeruicontroller","startorbitanimation", __ref);}
  BA.debugLineNum = 268;BA.debugLine="Public Sub StartOrbitAnimation";
 Debug.ShouldStop(2048);
@@ -879,7 +879,7 @@ finally {
 		}}
 public static RemoteObject  _stoporbitanimation(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("StopOrbitAnimation (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,272);
+		Debug.PushSubsStack("StopOrbitAnimation (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,272);
 if (RapidSub.canDelegate("stoporbitanimation")) { return __ref.runUserSub(false, "playeruicontroller","stoporbitanimation", __ref);}
  BA.debugLineNum = 272;BA.debugLine="Public Sub StopOrbitAnimation";
 Debug.ShouldStop(32768);
@@ -902,7 +902,7 @@ finally {
 		}}
 public static RemoteObject  _updatecodeinputappearance(RemoteObject __ref,RemoteObject _isfocused) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateCodeInputAppearance (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,328);
+		Debug.PushSubsStack("UpdateCodeInputAppearance (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,328);
 if (RapidSub.canDelegate("updatecodeinputappearance")) { return __ref.runUserSub(false, "playeruicontroller","updatecodeinputappearance", __ref, _isfocused);}
 RemoteObject _fillcolor = RemoteObject.createImmutable(0);
 RemoteObject _bordercolor = RemoteObject.createImmutable(0);
@@ -975,7 +975,7 @@ finally {
 		}}
 public static RemoteObject  _updateconnectionindicator(RemoteObject __ref,RemoteObject _mode) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateConnectionIndicator (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,133);
+		Debug.PushSubsStack("UpdateConnectionIndicator (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,133);
 if (RapidSub.canDelegate("updateconnectionindicator")) { return __ref.runUserSub(false, "playeruicontroller","updateconnectionindicator", __ref, _mode);}
 RemoteObject _icontext = RemoteObject.createImmutable("");
 RemoteObject _iconcolor = RemoteObject.createImmutable(0);
@@ -1059,7 +1059,7 @@ finally {
 		}}
 public static RemoteObject  _updateheaderactionappearance(RemoteObject __ref,RemoteObject _ishovered) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateHeaderActionAppearance (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,291);
+		Debug.PushSubsStack("UpdateHeaderActionAppearance (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,291);
 if (RapidSub.canDelegate("updateheaderactionappearance")) { return __ref.runUserSub(false, "playeruicontroller","updateheaderactionappearance", __ref, _ishovered);}
 RemoteObject _fillcolor = RemoteObject.createImmutable(0);
 RemoteObject _bordercolor = RemoteObject.createImmutable(0);
@@ -1123,7 +1123,7 @@ finally {
 		}}
 public static RemoteObject  _updateplaybuttonappearance(RemoteObject __ref,RemoteObject _ishovered,RemoteObject _isstarted) throws Exception{
 try {
-		Debug.PushSubsStack("UpdatePlayButtonAppearance (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,238);
+		Debug.PushSubsStack("UpdatePlayButtonAppearance (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,238);
 if (RapidSub.canDelegate("updateplaybuttonappearance")) { return __ref.runUserSub(false, "playeruicontroller","updateplaybuttonappearance", __ref, _ishovered, _isstarted);}
 RemoteObject _backgroundcolor = RemoteObject.createImmutable(0);
 RemoteObject _bordercolor = RemoteObject.createImmutable(0);
@@ -1209,7 +1209,7 @@ finally {
 		}}
 public static RemoteObject  _updateresponsivestyles(RemoteObject __ref,RemoteObject _streamfontsize,RemoteObject _infofontsize,RemoteObject _playfontsize,RemoteObject _stopfontsize,RemoteObject _headeractionsizevalue,RemoteObject _codesize,RemoteObject _iscodeinputfocused,RemoteObject _showstopicon) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateResponsiveStyles (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,203);
+		Debug.PushSubsStack("UpdateResponsiveStyles (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,203);
 if (RapidSub.canDelegate("updateresponsivestyles")) { return __ref.runUserSub(false, "playeruicontroller","updateresponsivestyles", __ref, _streamfontsize, _infofontsize, _playfontsize, _stopfontsize, _headeractionsizevalue, _codesize, _iscodeinputfocused, _showstopicon);}
 Debug.locals.put("streamFontSize", _streamfontsize);
 Debug.locals.put("infoFontSize", _infofontsize);
@@ -1271,7 +1271,7 @@ finally {
 		}}
 public static RemoteObject  _updatetextbuttonappearance(RemoteObject __ref,RemoteObject _buttonview,RemoteObject _ishovered) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateTextButtonAppearance (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,310);
+		Debug.PushSubsStack("UpdateTextButtonAppearance (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,310);
 if (RapidSub.canDelegate("updatetextbuttonappearance")) { return __ref.runUserSub(false, "playeruicontroller","updatetextbuttonappearance", __ref, _buttonview, _ishovered);}
 RemoteObject _fillcolor = RemoteObject.createImmutable(0);
 RemoteObject _bordercolor = RemoteObject.createImmutable(0);
@@ -1333,7 +1333,7 @@ finally {
 		}}
 public static RemoteObject  _updatevisiblemode(RemoteObject __ref,RemoteObject _mode) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateVisibleMode (playeruicontroller) ","playeruicontroller",14,__ref.getField(false, "ba"),__ref,197);
+		Debug.PushSubsStack("UpdateVisibleMode (playeruicontroller) ","playeruicontroller",11,__ref.getField(false, "ba"),__ref,197);
 if (RapidSub.canDelegate("updatevisiblemode")) { return __ref.runUserSub(false, "playeruicontroller","updatevisiblemode", __ref, _mode);}
 Debug.locals.put("mode", _mode);
  BA.debugLineNum = 197;BA.debugLine="Public Sub UpdateVisibleMode(mode As String)";

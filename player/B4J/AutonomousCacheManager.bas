@@ -109,6 +109,10 @@ Private Sub workerTimer_Tick
 	If stepInProgress Then Return
 	
 	stepInProgress = True
+	CallSubDelayed(Me, "RunStepAsyncDeferred")
+End Sub
+
+Private Sub RunStepAsyncDeferred
 	Wait For (RunStepAsync) Complete (summary As Map)
 	stepInProgress = False
 End Sub
@@ -116,6 +120,7 @@ End Sub
 Public Sub RunStepAsync As ResumableSub
 	Dim summary As Map
 	summary.Initialize
+	Sleep(0)
 	
 	If kvs.IsInitialized = False Or offlineStoreService.IsInitialized = False Or dataResolverService.IsInitialized = False Or mediaCacheService.IsInitialized = False Then
 		summary.Put("status", "not_initialized")
@@ -143,16 +148,16 @@ Public Sub RunStepAsync As ResumableSub
 	End If
 	
 	mediaCacheService.EnsureTrackCacheReady
+	Dim trackPlaylistStats As Map = mediaCacheService.GetCachedTrackPlaylistStats
 	
 	Dim nowTicks As Long = DateTime.Now
 	Dim currentSlot As Map = dataResolverService.ResolveDataSlotAtTicks(offlineData, nowTicks)
 	Dim nextSlot As Map = dataResolverService.ResolveNextDataSlotAtTicks(offlineData, nowTicks)
 	
-	Dim currentNeed As Int = ResolveSlotNeed(currentSlot, currentSlotMinReserve)
-	Dim nextNeed As Int = ResolveSlotNeed(nextSlot, nextSlotMinReserve)
+	Dim currentNeed As Int = ResolveSlotNeed(currentSlot, currentSlotMinReserve, trackPlaylistStats)
+	Dim nextNeed As Int = ResolveSlotNeed(nextSlot, nextSlotMinReserve, trackPlaylistStats)
 	
-	Dim targetDescriptors As List = BuildTargetPlaylistDescriptors(currentSlot, nextSlot)
-	Dim desiredTrackItems As List = BuildDesiredTrackItems(targetDescriptors, currentNeed, nextNeed)
+	Dim desiredTrackItems As List = BuildDesiredTrackItemsForSlots(currentSlot, nextSlot, currentNeed, nextNeed, trackPlaylistStats)
 	
 	summary.Put("current_need", currentNeed)
 	summary.Put("next_need", nextNeed)
@@ -181,6 +186,7 @@ Public Sub RunStepAsync As ResumableSub
 		lastSuccessfulDownloadAt = DateTime.Now
 		summary.Put("status", "downloaded")
 		summary.Put("downloaded", True)
+		RequestPlaybackResumeIfNeeded
 	Else
 		summary.Put("status", "no_new_downloads")
 		summary.Put("downloaded", False)
@@ -190,17 +196,17 @@ Public Sub RunStepAsync As ResumableSub
 	Return summary
 End Sub
 
-Private Sub ResolveSlotNeed(slot As Map, minReserve As Int) As Int
+Private Sub ResolveSlotNeed(slot As Map, minReserve As Int, trackPlaylistStats As Map) As Int
 	If slot.IsInitialized = False Or slot.Size = 0 Then Return 0
 	
 	Dim playlists As List = GetSlotPlaylists(slot)
 	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return 0
 	
-	Dim playableCount As Int = CountPlayableTracksInSlot(slot)
+	Dim playableCount As Int = CountPlayableTracksInSlot(slot, trackPlaylistStats)
 	Return Max(0, minReserve - playableCount)
 End Sub
 
-Private Sub CountPlayableTracksInSlot(slot As Map) As Int
+Private Sub CountPlayableTracksInSlot(slot As Map, trackPlaylistStats As Map) As Int
 	If slot.IsInitialized = False Then Return 0
 	
 	Dim playlists As List = GetSlotPlaylists(slot)
@@ -213,54 +219,54 @@ Private Sub CountPlayableTracksInSlot(slot As Map) As Int
 		Dim playlistDescriptor As Map = playlistObject
 		Dim playlistId As String = GetPlaylistIdFromDescriptor(playlistDescriptor)
 		If playlistId = "" Then Continue
-		
-		Dim manifest As Map = LoadPlaylistManifestSafe(playlistId)
-		totalCount = totalCount + CountPlayableTracksInManifest(manifest)
+		totalCount = totalCount + GetCachedTrackCountForPlaylist(trackPlaylistStats, playlistId)
 	Next
 	
 	Return totalCount
 End Sub
 
-Private Sub CountPlayableTracksInManifest(manifest As Map) As Int
-	If manifest.IsInitialized = False Then Return 0
-	
-	Dim order As List = manifest.GetDefault("order", Null)
-	Dim trackMap As Map = manifest.GetDefault("tracks", Null)
-	If order.IsInitialized = False Or order.Size = 0 Then Return 0
-	If trackMap.IsInitialized = False Or trackMap.Size = 0 Then Return 0
-	
-	Dim totalCount As Int = 0
-	For Each trackId As String In order
-		If trackId = "" Then Continue
-		Dim trackObject As Object = trackMap.GetDefault(trackId, Null)
-		If (trackObject Is Map) = False Then Continue
-		Dim track As Map = trackObject
-		If mediaCacheService.HasValidatedLocalMedia(track) Then
-			totalCount = totalCount + 1
-		End If
-	Next
-	
-	Return totalCount
-End Sub
-
-Private Sub BuildTargetPlaylistDescriptors(currentSlot As Map, nextSlot As Map) As List
+Private Sub BuildDesiredTrackItemsForSlots(currentSlot As Map, nextSlot As Map, currentNeed As Int, nextNeed As Int, trackPlaylistStats As Map) As List
 	Dim result As List
 	result.Initialize
 	
-	Dim seen As Map
-	seen.Initialize
+	Dim seenTrackIds As Map
+	seenTrackIds.Initialize
 	
-	AddSlotPlaylistDescriptors(result, seen, currentSlot)
-	AddSlotPlaylistDescriptors(result, seen, nextSlot)
+	AddDesiredTrackItemsForSlot(result, seenTrackIds, currentSlot, currentSlotMinReserve, currentNeed, "current", trackPlaylistStats)
+	AddDesiredTrackItemsForSlot(result, seenTrackIds, nextSlot, nextSlotMinReserve, nextNeed, "next", trackPlaylistStats)
 	
 	Return result
 End Sub
 
-Private Sub AddSlotPlaylistDescriptors(result As List, seen As Map, slot As Map)
+Private Sub AddDesiredTrackItemsForSlot(result As List, seenTrackIds As Map, slot As Map, slotReserve As Int, slotNeed As Int, slotLabel As String, trackPlaylistStats As Map)
 	If slot.IsInitialized = False Or slot.Size = 0 Then Return
 	
 	Dim playlists As List = GetSlotPlaylists(slot)
 	If playlists.IsInitialized = False Or playlists.Size = 0 Then Return
+	
+	Dim playlistIds As List
+	playlistIds.Initialize
+	Dim totalPlayable As Int = 0
+	Dim allPlaylistsReady As Boolean = True
+	
+	For Each playlistObject As Object In playlists
+		If (playlistObject Is Map) = False Then Continue
+		Dim descriptor As Map = playlistObject
+		Dim playlistId As String = GetPlaylistIdFromDescriptor(descriptor)
+		If playlistId = "" Then Continue
+		If playlistIds.IndexOf(playlistId) >= 0 Then Continue
+		playlistIds.Add(playlistId)
+		Dim playlistPlayableCount As Int = GetCachedTrackCountForPlaylist(trackPlaylistStats, playlistId)
+		totalPlayable = totalPlayable + playlistPlayableCount
+		If playlistPlayableCount < perPlaylistMinReserve Then allPlaylistsReady = False
+	Next
+	
+	If playlistIds.Size = 0 Then Return
+	If slotNeed <= 0 And totalPlayable >= slotReserve And allPlaylistsReady Then Return
+	
+	Dim manifestsByPlaylist As Map
+	manifestsByPlaylist.Initialize
+	totalPlayable = 0
 	
 	For Each playlistObject As Object In playlists
 		If (playlistObject Is Map) = False Then Continue
@@ -268,109 +274,91 @@ Private Sub AddSlotPlaylistDescriptors(result As List, seen As Map, slot As Map)
 		Dim descriptor As Map = playlistObject
 		Dim playlistId As String = GetPlaylistIdFromDescriptor(descriptor)
 		If playlistId = "" Then Continue
-		If seen.ContainsKey(playlistId) Then Continue
-		
-		seen.Put(playlistId, True)
-		result.Add(CloneMap(descriptor))
-	Next
-End Sub
-
-Private Sub BuildDesiredTrackItems(targetDescriptors As List, currentNeed As Int, nextNeed As Int) As List
-	Dim result As List
-	result.Initialize
-	
-	If targetDescriptors.IsInitialized = False Or targetDescriptors.Size = 0 Then Return result
-	
-	Dim seenTrackIds As Map
-	seenTrackIds.Initialize
-	
-	Dim priorityBudget As Int = currentNeed + nextNeed
-	If priorityBudget <= 0 Then priorityBudget = perPlaylistMinReserve
-	
-	For Each descriptorObject As Object In targetDescriptors
-		If (descriptorObject Is Map) = False Then Continue
-		
-		Dim descriptor As Map = descriptorObject
-		Dim playlistId As String = GetPlaylistIdFromDescriptor(descriptor)
-		If playlistId = "" Then Continue
 		
 		Dim manifest As Map = LoadPlaylistManifestSafe(playlistId)
 		If manifest.IsInitialized = False Or manifest.Size = 0 Then Continue
+		If manifestsByPlaylist.ContainsKey(playlistId) Then Continue
 		
-		Dim missingForPlaylist As Int = ResolveMissingForPlaylistFromManifest(manifest, perPlaylistMinReserve)
-		If missingForPlaylist <= 0 And priorityBudget <= 0 Then Continue
-		
-		Dim desiredForPlaylist As Int = Max(perPlaylistMinReserve, missingForPlaylist)
-		If priorityBudget > 0 Then desiredForPlaylist = Max(desiredForPlaylist, 1)
-		
-		CollectUncachedTracksFromManifest(result, seenTrackIds, manifest, playlistId, desiredForPlaylist)
+		manifestsByPlaylist.Put(playlistId, manifest)
+		totalPlayable = totalPlayable + GetCachedTrackCountForPlaylist(trackPlaylistStats, playlistId)
 	Next
 	
-	Return result
+	If playlistIds.Size = 0 Then Return
+	
+	Dim remainingNeed As Int = Max(0, slotReserve - totalPlayable)
+	If slotNeed > remainingNeed Then remainingNeed = slotNeed
+	
+	For Each playlistId As String In playlistIds
+		Dim manifest As Map = manifestsByPlaylist.Get(playlistId)
+		Dim playableInPlaylist As Int = GetCachedTrackCountForPlaylist(trackPlaylistStats, playlistId)
+		Dim missingForPlaylist As Int = Max(0, perPlaylistMinReserve - playableInPlaylist)
+		If missingForPlaylist <= 0 Then Continue
+		Dim addedCount As Int = CollectUpcomingTracksForPlaylist(result, seenTrackIds, playlistId, missingForPlaylist)
+		If addedCount > 0 Then
+			Trace("autocache slot fill slot=" & slotLabel & " playlistId=" & playlistId & " added=" & addedCount & " reason=per_playlist_min")
+		End If
+	Next
+	
+	If remainingNeed <= 0 Then Return
+	
+	Do While remainingNeed > 0
+		Dim addedInRound As Int = 0
+		For Each playlistId As String In playlistIds
+			If remainingNeed <= 0 Then Exit
+			Dim addedCount As Int = CollectUpcomingTracksForPlaylist(result, seenTrackIds, playlistId, 1)
+			If addedCount <= 0 Then Continue
+			addedInRound = addedInRound + addedCount
+			remainingNeed = Max(0, remainingNeed - addedCount)
+		Next
+		If addedInRound <= 0 Then Exit
+	Loop
 End Sub
 
-Private Sub ResolveMissingForPlaylistFromManifest(manifest As Map, minReserve As Int) As Int
-	Dim playableCount As Int = CountPlayableTracksInManifest(manifest)
-	Return Max(0, minReserve - playableCount)
+Private Sub GetCachedTrackCountForPlaylist(trackPlaylistStats As Map, playlistId As String) As Int
+	If trackPlaylistStats.IsInitialized = False Then Return 0
+	Dim statsKey As String = playlistId
+	If statsKey = "" Then statsKey = "_unknown"
+	Dim playlistEntry As Map = trackPlaylistStats.GetDefault(statsKey, Null)
+	If playlistEntry.IsInitialized = False Then Return 0
+	Return playlistEntry.GetDefault("count", 0)
 End Sub
 
-Private Sub CollectUncachedTracksFromManifest(result As List, seenTrackIds As Map, manifest As Map, playlistId As String, limitCount As Int)
-	If limitCount <= 0 Then Return
-	If manifest.IsInitialized = False Then Return
-	
-	Dim order As List = manifest.GetDefault("order", Null)
-	Dim trackMap As Map = manifest.GetDefault("tracks", Null)
-	If order.IsInitialized = False Or order.Size = 0 Then Return
-	If trackMap.IsInitialized = False Or trackMap.Size = 0 Then Return
-	
+Private Sub CollectUpcomingTracksForPlaylist(result As List, seenTrackIds As Map, playlistId As String, limitCount As Int) As Int
+	If playlistId = "" Or limitCount <= 0 Then Return 0
+	Dim requestCount As Int = Max(limitCount * 8, perPlaylistMinReserve * 8)
+	Dim upcomingTracks As List = dataResolverService.GetUpcomingPlaybackTracksById(playlistId, requestCount, mediaCacheService, False)
+	If upcomingTracks.IsInitialized = False Or upcomingTracks.Size = 0 Then Return 0
 	Dim addedCount As Int = 0
-	Dim startIndex As Int = ResolveManifestPrefetchStartIndex(playlistId, order.Size)
-	Dim trackIndexKey As String = "playlist_track_index_" & playlistId
-	
-	For offset = 0 To order.Size - 1
+	For Each trackObject As Object In upcomingTracks
 		If addedCount >= limitCount Then Exit
-		
-		Dim orderIndex As Int = (startIndex + offset) Mod order.Size
-		Dim trackId As String = order.Get(orderIndex)
+		If (trackObject Is Map) = False Then Continue
+		Dim track As Map = trackObject
+		Dim trackId As String = track.GetDefault("id", "")
 		If trackId = "" Then Continue
 		If seenTrackIds.ContainsKey(trackId) Then Continue
-		
-		Dim trackObject As Object = trackMap.GetDefault(trackId, Null)
-		If (trackObject Is Map) = False Then Continue
-		
-		Dim track As Map = trackObject
-		If mediaCacheService.HasValidatedLocalMedia(track) Then Continue
-		
+		If IsTrackAlreadyAvailable(track, playlistId) Then Continue
 		Dim normalizedTrack As Map = CloneMap(track)
 		If normalizedTrack.ContainsKey("type") = False Then normalizedTrack.Put("type", "track")
-		If normalizedTrack.ContainsKey("playlist_id") = False Then normalizedTrack.Put("playlist_id", playlistId)
-		normalizedTrack.Put("playlist_track_index", orderIndex)
-		normalizedTrack.Put("playlist_prefetch_source", "manifest_order")
-		
+		normalizedTrack.Put("playlist_prefetch_source", "playback_upcoming")
 		result.Add(normalizedTrack)
 		seenTrackIds.Put(trackId, True)
 		addedCount = addedCount + 1
-		
-		Trace("autocache candidate playlistId=" & playlistId & " orderIndex=" & orderIndex & " trackId=" & trackId & " basedOnKey=" & trackIndexKey)
+		Trace("autocache candidate playlistId=" & playlistId & " orderIndex=" & normalizedTrack.GetDefault("playlist_track_index", -1) & " trackId=" & trackId & " source=playback_manifest_cursor")
 	Next
+	Return addedCount
 End Sub
 
-Private Sub ResolveManifestPrefetchStartIndex(playlistId As String, orderSize As Int) As Int
-	If orderSize <= 0 Then Return 0
-	
-	Dim storedTrackIndex As Int = -1
-	
-	Try
-		storedTrackIndex = kvs.GetDefault("playlist_track_index_" & playlistId, -1)
-	Catch
-		storedTrackIndex = -1
-	End Try
-	
-	Dim startIndex As Int = storedTrackIndex + 1
-	If startIndex < 0 Then startIndex = 0
-	If startIndex >= orderSize Then startIndex = startIndex Mod orderSize
-	
-	Return startIndex
+Private Sub IsTrackAlreadyAvailable(track As Map, playlistId As String) As Boolean
+	If track.IsInitialized = False Then Return False
+	Dim trackId As String = track.GetDefault("id", "")
+	If trackId = "" Then Return False
+	If playlistId = "" Then playlistId = track.GetDefault("playlist_id", "")
+	If playlistId <> "" And mediaCacheService.HasTrackFileByPlaylist(trackId, playlistId) Then Return True
+	If mediaCacheService.IsTrackCached(trackId) Then Return True
+	Dim normalizedTrack As Map = CloneMap(track)
+	If normalizedTrack.ContainsKey("type") = False Then normalizedTrack.Put("type", "track")
+	If playlistId <> "" And normalizedTrack.ContainsKey("playlist_id") = False Then normalizedTrack.Put("playlist_id", playlistId)
+	Return mediaCacheService.HasValidatedLocalMedia(normalizedTrack)
 End Sub
 
 Private Sub RunPruneIfNeeded(initiator As String)
@@ -506,6 +494,17 @@ End Sub
 Private Sub IsFailureCooldownActive As Boolean
 	If lastFailureAt <= 0 Then Return False
 	Return DateTime.Now - lastFailureAt < failureCooldownMs
+End Sub
+
+Private Sub RequestPlaybackResumeIfNeeded
+	If traceTarget = Null Then Return
+	Try
+		If SubExists(traceTarget, "AutoResumeAfterCacheWarmup") Then
+			CallSubDelayed(traceTarget, "AutoResumeAfterCacheWarmup")
+		End If
+	Catch
+		Log(LastException.Message)
+	End Try
 End Sub
 
 Private Sub CloneMap(sourceMap As Map) As Map

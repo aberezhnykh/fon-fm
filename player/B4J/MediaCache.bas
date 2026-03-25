@@ -50,6 +50,8 @@ Private Const TRACK_CACHE_HARD_LIMIT_MB As Long = 1536
 	Private cachedTrackBytes As Long
 	Private cachedAdBytes As Long
 	Private cachedTrackPlaylistStats As Map
+	Private cacheAuditListingInProgress As Boolean
+	Private cacheAuditListingDir As String
 End Sub
 
 Public Sub Initialize(storageDirValue As String, storageValue As KeyValueStore, targetModuleValue As Object, traceSubNameValue As String, deviceIdValue As String)
@@ -84,6 +86,8 @@ Public Sub StartCacheAudit
 	cacheAuditAddedCount = 0
 	cacheAuditRemovedCount = 0
 	cacheAuditTempDeletedCount = 0
+	cacheAuditListingInProgress = False
+	cacheAuditListingDir = ""
 	cacheAuditInProgress = True
 End Sub
 
@@ -96,6 +100,7 @@ Public Sub RunCacheAuditStep As Boolean
 			Return False
 		End If
 	End If
+	If cacheAuditListingInProgress Then Return True
 	ProcessCurrentCacheAuditBatch
 	If cacheAuditCurrentPosition >= cacheAuditCurrentFileNames.Size Then
 		FinalizeCurrentCacheAuditType
@@ -204,11 +209,13 @@ End Sub
 
 Public Sub IsTrackCached(trackId As String) As Boolean
 	If trackId = "" Then Return False
+	If ValidateIndexedFile("track", trackId) Then Return True
+	BackfillTrackIndexFromFiles
 	Return ValidateIndexedFile("track", trackId)
 End Sub
 
 Public Sub HasTrackFileByPlaylist(trackId As String, playlistId As String) As Boolean
-	If trackId = "" Or playlistId = "" Then Return False
+	If trackId = "" Then Return False
 	Return IsCachedFileUsable(GetTracksDir, BuildTrackCacheRelativeFileName(trackId, playlistId))
 End Sub
 
@@ -247,9 +254,10 @@ End Sub
 
 Public Sub EnsureTrackCacheReady
 	If DirectoryExists(GetTracksDir) = False Then Return
+	MigrateLegacyTrackCacheLayout
 	Dim actualTrackFiles As Int = CountTrackFilesOnDisk
 	If actualTrackFiles = 0 Then Return
-	If cachedTrackCount = actualTrackFiles And cachedTrackPlaylistStats.IsInitialized And cachedTrackPlaylistStats.Size > 0 Then Return
+	If cachedTrackCount = actualTrackFiles And cachedTrackIndex.IsInitialized And cachedTrackIndex.Size = actualTrackFiles Then Return
 	BackfillTrackIndexFromFiles
 	RebuildCacheStatsFromIndexes
 	SaveCacheStatsSnapshot
@@ -273,43 +281,36 @@ Private Sub CountTrackFilesOnDisk As Int
 End Sub
 
 Public Sub HasAnyTrackFilesOnDisk As Boolean
-	Dim hasFiles As Boolean = False
 	If DirectoryExists(GetTracksDir) = False Then Return False
 	Try
-		Dim playlistDirs As List = File.ListFiles(GetTracksDir)
-		If playlistDirs.IsInitialized And playlistDirs.Size > 0 Then
-			For Each playlistId As String In playlistDirs
-				If playlistId = "" Then Continue
-				If File.IsDirectory(GetTracksDir, playlistId) = False Then Continue
-				Dim playlistDir As String = File.Combine(GetTracksDir, playlistId)
-				Dim files As List = File.ListFiles(playlistDir)
-				If files.IsInitialized = False Then Continue
-				For Each fileName As String In files
-					If fileName = "" Then Continue
-					If File.IsDirectory(playlistDir, fileName) Then Continue
-					If fileName.EndsWith(".tmp") Then Continue
-					hasFiles = True
-					Exit
-				Next
-				If hasFiles Then Exit
-			Next
-		End If
+		Dim listedFiles As List = ListTrackCacheFilesRecursive
+		If listedFiles.IsInitialized = False Then Return False
+		For Each fileName As String In listedFiles
+			If fileName = "" Then Continue
+			If fileName.EndsWith(".tmp") Then Continue
+			Return True
+		Next
 	Catch
 		Trace("Не удалось проверить наличие track файлов на диске. message=" & LastException.Message)
 	End Try
-	Return hasFiles
+	Return False
 End Sub
 
 Public Sub GetCachedTrackPlaylistIdsOnDisk As List
 	Dim result As List
 	result.Initialize
 	If DirectoryExists(GetTracksDir) = False Then Return result
+	EnsureTrackCacheReady
+	Dim seenIds As Map
+	seenIds.Initialize
 	Try
-		Dim playlistDirs As List = File.ListFiles(GetTracksDir)
-		If playlistDirs.IsInitialized Then
-			For Each playlistId As String In playlistDirs
-				If playlistId = "" Then Continue
-				If File.IsDirectory(GetTracksDir, playlistId) = False Then Continue
+		If cachedTrackIndex.IsInitialized Then
+			For Each trackId As String In cachedTrackIndex.Keys
+				Dim entry As Map = cachedTrackIndex.GetDefault(trackId, Null)
+				If entry.IsInitialized = False Then Continue
+				Dim playlistId As String = entry.GetDefault("playlist_id", "")
+				If playlistId = "" Or seenIds.ContainsKey(playlistId) Then Continue
+				seenIds.Put(playlistId, True)
 				result.Add(playlistId)
 			Next
 		End If
@@ -497,6 +498,8 @@ End Sub
 Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As ResumableSub
 	Dim trackId As String = item.GetDefault("id", "")
 	If trackId = "" Then Return False
+	Dim playlistId As String = ResolveTrackPlaylistId(item, trackIndex, trackId)
+	If TryRestoreTrackByExpectedPath(trackId, playlistId, item, trackIndex) Then Return False
 	If TryRestoreExistingCachedMedia("track", trackId, item, trackIndex) Then Return False
 	If IsTrackCached(trackId) Then
 		UpdateTrackIndex(item, trackIndex)
@@ -513,20 +516,19 @@ Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As Resumable
 	Wait For (j) JobDone(j As HttpJob)
 	If j.Success Then
 		Try
-				Dim playlistId As String = ResolveTrackPlaylistId(item, trackIndex, trackId)
-				Dim trackDir As String = GetTrackPlaylistDir(playlistId)
-				EnsureDirectory(trackDir)
-				Dim tempFileName As String = BuildTempCacheFileName(trackId)
+			Dim trackDir As String = GetTracksDir
+			EnsureDirectory(trackDir)
+			Dim tempFileName As String = BuildTempCacheFileName(trackId)
+			DeleteFileIfExists(trackDir, tempFileName)
+			Dim outStream As OutputStream = File.OpenOutput(trackDir, tempFileName, False)
+			TransformStreamWithXor(j.GetInputStream, outStream, BuildTrackObfuscationKey(trackId))
+			outStream.Close
+			If IsCachedFileUsable(trackDir, tempFileName) = False Then
 				DeleteFileIfExists(trackDir, tempFileName)
-				Dim outStream As OutputStream = File.OpenOutput(trackDir, tempFileName, False)
-				TransformStreamWithXor(j.GetInputStream, outStream, BuildTrackObfuscationKey(trackId))
-				outStream.Close
-				If IsCachedFileUsable(trackDir, tempFileName) = False Then
-					DeleteFileIfExists(trackDir, tempFileName)
-					Trace("Не удалось сохранить трек в кэш. id=" & trackId & ", message=empty temp file")
-					j.Release
-					Return False
-				End If
+				Trace("Не удалось сохранить трек в кэш. id=" & trackId & ", message=empty temp file")
+				j.Release
+				Return False
+			End If
 			If ReplaceCacheFile(trackDir, tempFileName, BuildTrackCacheFileName(trackId)) = False Then
 				DeleteFileIfExists(trackDir, tempFileName)
 				Trace("Не удалось сохранить трек в кэш. id=" & trackId & ", message=rename failed")
@@ -550,7 +552,8 @@ Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As Resumable
 			Return True
 		Catch
 			Dim failedPlaylistId As String = ResolveTrackPlaylistId(item, trackIndex, trackId)
-			DeleteFileIfExists(GetTrackPlaylistDir(failedPlaylistId), BuildTempCacheFileName(trackId))
+			DeleteFileIfExists(GetTracksDir, BuildTempCacheFileName(trackId))
+			If failedPlaylistId <> "" Then DeleteFileIfExists(GetTrackPlaylistDir(failedPlaylistId), BuildTempCacheFileName(trackId))
 			Trace("Не удалось сохранить трек в кэш. id=" & trackId & ", message=" & LastException.Message)
 		End Try
 	Else
@@ -559,6 +562,16 @@ Private Sub EnsureSingleTrackCached(item As Map, trackIndex As Map) As Resumable
 	End If
 	j.Release
 	Return False
+End Sub
+
+Private Sub TryRestoreTrackByExpectedPath(trackId As String, playlistId As String, item As Map, trackIndex As Map) As Boolean
+	If trackId = "" Then Return False
+	Dim relativeFileName As String = BuildTrackCacheRelativeFileName(trackId, playlistId)
+	If IsCachedFileUsable(GetTracksDir, relativeFileName) = False Then Return False
+	EnsureTrackIndexEntry(trackId, playlistId, relativeFileName)
+	UpdateTrackIndex(item, trackIndex)
+	SaveTrackIndex
+	Return True
 End Sub
 
 Private Sub UpdateAdIndex(ad As Map, adIndex As Map)
@@ -680,6 +693,7 @@ Private Sub LoadIndexesFromStorage
 	cachedTrackIndex = storage.GetDefault("cached_track_index", Null)
 	If cachedTrackIndex.IsInitialized = False Then cachedTrackIndex.Initialize
 	LoadCacheStatsSnapshot
+	MigrateLegacyTrackCacheLayout
 	NormalizeTrackIndexFileNames(cachedTrackIndex)
 	BackfillTrackIndexFromFiles
 	RebuildCacheStatsFromIndexes
@@ -724,14 +738,17 @@ Private Sub BuildTrackCacheFileName(trackId As String) As String
 End Sub
 
 Private Sub BuildTrackCacheRelativeFileName(trackId As String, playlistId As String) As String
-	Dim fileName As String = BuildTrackCacheFileName(trackId)
-	If playlistId = "" Then Return fileName
-	Return File.Combine(playlistId, fileName)
+	Dim unusedPlaylistId As String = playlistId
+	If unusedPlaylistId = "" Then
+	End If
+	Return BuildTrackCacheFileName(trackId)
 End Sub
 
 Private Sub GetTrackPlaylistDir(playlistId As String) As String
-	If playlistId = "" Then Return GetTracksDir
-	Return File.Combine(GetTracksDir, playlistId)
+	Dim unusedPlaylistId As String = playlistId
+	If unusedPlaylistId = "" Then
+	End If
+	Return GetTracksDir
 End Sub
 
 Private Sub IsCachedFileUsable(dir As String, fileName As String) As Boolean
@@ -805,10 +822,8 @@ Private Sub ResolveTrackRelativeFileNameFromItem(item As Map) As String
 	Dim trackId As String = item.GetDefault("id", "")
 	If trackId = "" Then Return ""
 	Dim playlistId As String = item.GetDefault("playlist_id", "")
-	If playlistId <> "" Then
-		Dim preferredRelativeName As String = BuildTrackCacheRelativeFileName(trackId, playlistId)
-		If IsCachedFileUsable(GetTracksDir, preferredRelativeName) Then Return preferredRelativeName
-	End If
+	Dim preferredRelativeName As String = BuildTrackCacheRelativeFileName(trackId, playlistId)
+	If IsCachedFileUsable(GetTracksDir, preferredRelativeName) Then Return preferredRelativeName
 	Return ResolveTrackCacheFileName(trackId, cachedTrackIndex)
 End Sub
 
@@ -824,7 +839,99 @@ Private Sub EnsureTrackIndexEntry(trackId As String, playlistId As String, relat
 	If entry.ContainsKey("saved_at") = False Then entry.Put("saved_at", DateTime.Now)
 	entry.Put("last_used_at", DateTime.Now)
 	cachedTrackIndex.Put(trackId, entry)
-	SaveTrackIndex
+	cachedTrackIndexDirty = True
+End Sub
+
+Private Sub MigrateLegacyTrackCacheLayout
+	If DirectoryExists(GetTracksDir) = False Then Return
+	Dim listedFiles As List = ListTrackCacheFilesRecursive
+	If listedFiles.IsInitialized = False Or listedFiles.Size = 0 Then Return
+	Dim migratedCount As Int = 0
+	For Each relativeFileName As String In listedFiles
+		If relativeFileName = "" Or relativeFileName.EndsWith(".tmp") Then Continue
+		If relativeFileName.Contains("/") = False And relativeFileName.Contains("\") = False Then Continue
+		Dim flatFileName As String = ResolveRelativeLeafName(relativeFileName)
+		If flatFileName = "" Then Continue
+		If MoveLegacyTrackFileToFlat(relativeFileName, flatFileName) Then migratedCount = migratedCount + 1
+	Next
+	If migratedCount > 0 Then
+		Trace("Миграция кэша треков в плоскую структуру завершена. moved=" & migratedCount)
+	End If
+	CleanupLegacyTrackSubdirs
+End Sub
+
+Private Sub MoveLegacyTrackFileToFlat(sourceRelativeName As String, flatFileName As String) As Boolean
+	If sourceRelativeName = "" Or flatFileName = "" Then Return False
+	If IsCachedFileUsable(GetTracksDir, sourceRelativeName) = False Then Return False
+	If IsCachedFileUsable(GetTracksDir, flatFileName) Then
+		DeleteFileIfExists(GetTracksDir, sourceRelativeName)
+		Return False
+	End If
+	Dim sourceDir As String = ResolveRelativeParentDir(GetTracksDir, sourceRelativeName)
+	Dim sourceLeaf As String = ResolveRelativeLeafName(sourceRelativeName)
+	Dim inputStream As InputStream
+	Dim outputStream As OutputStream
+	Try
+		inputStream = File.OpenInput(sourceDir, sourceLeaf)
+		outputStream = File.OpenOutput(GetTracksDir, flatFileName, False)
+		File.Copy2(inputStream, outputStream)
+		outputStream.Close
+		inputStream.Close
+		If IsCachedFileUsable(GetTracksDir, flatFileName) = False Then
+			DeleteFileIfExists(GetTracksDir, flatFileName)
+			Return False
+		End If
+		DeleteFileIfExists(GetTracksDir, sourceRelativeName)
+		Return True
+	Catch
+		Try
+			If outputStream.IsInitialized Then outputStream.Close
+		Catch
+			Log(LastException.Message)
+		End Try
+		Try
+			If inputStream.IsInitialized Then inputStream.Close
+		Catch
+			Log(LastException.Message)
+		End Try
+		DeleteFileIfExists(GetTracksDir, flatFileName)
+		Trace("Не удалось переместить legacy track cache файл. source=" & sourceRelativeName & ", message=" & LastException.Message)
+		Return False
+	End Try
+End Sub
+
+Private Sub CleanupLegacyTrackSubdirs
+	Try
+		Dim listed As List = File.ListFiles(GetTracksDir)
+		If listed.IsInitialized = False Then Return
+		For Each name As String In listed
+			If name = "" Then Continue
+			If File.IsDirectory(GetTracksDir, name) = False Then Continue
+			DeleteTrackSubdirRecursive(File.Combine(GetTracksDir, name))
+		Next
+	Catch
+		Trace("Не удалось очистить legacy папки кэша треков. message=" & LastException.Message)
+	End Try
+End Sub
+
+Private Sub DeleteTrackSubdirRecursive(path As String)
+	Try
+		If DirectoryExists(path) = False Then Return
+		Dim listed As List = File.ListFiles(path)
+		If listed.IsInitialized Then
+			For Each name As String In listed
+				If name = "" Then Continue
+				If File.IsDirectory(path, name) Then
+					DeleteTrackSubdirRecursive(File.Combine(path, name))
+				Else
+					File.Delete(path, name)
+				End If
+			Next
+		End If
+		File.Delete(path, "")
+	Catch
+		Trace("Не удалось удалить legacy папку кэша треков. dir=" & path & ", message=" & LastException.Message)
+	End Try
 End Sub
 
 Private Sub BuildTrackObfuscationKey(trackId As String) As Byte()
@@ -1055,21 +1162,32 @@ Private Sub PrepareNextCacheAuditType As Boolean
 	Dim auditDir As String = GetAuditDirByType(cacheAuditCurrentType)
 	Try
 		If DirectoryExists(auditDir) Then
-			Dim listedFiles As List
-			If cacheAuditCurrentType = "tracks" Then
-				listedFiles = ListTrackCacheFilesRecursive
-			Else
-				listedFiles = File.ListFiles(auditDir)
-			End If
-			If listedFiles.IsInitialized Then
-				For Each fileName As String In listedFiles
-					cacheAuditCurrentFileNames.Add(fileName)
-				Next
-			End If
+			cacheAuditListingDir = auditDir
+			cacheAuditListingInProgress = True
+			StartCacheAuditFileListingAsync
 		End If
 	Catch
 		Trace("Не удалось получить список файлов для аудита кэша. type=" & cacheAuditCurrentType & ", message=" & LastException.Message)
 	End Try
+	Return True
+End Sub
+
+Private Sub StartCacheAuditFileListingAsync As ResumableSub
+	Dim listedFiles As List
+	listedFiles.Initialize
+	Wait For (File.ListFilesAsync(cacheAuditListingDir)) Complete (success As Boolean, files As List)
+	If success And files.IsInitialized Then
+		listedFiles = files
+	Else
+		Trace("Не удалось получить список файлов для аудита кэша async. type=" & cacheAuditCurrentType & ", success=" & success)
+	End If
+	If cacheAuditCurrentFileNames.IsInitialized = False Then cacheAuditCurrentFileNames.Initialize
+	cacheAuditCurrentFileNames.Clear
+	For Each fileName As String In listedFiles
+		cacheAuditCurrentFileNames.Add(fileName)
+	Next
+	cacheAuditListingInProgress = False
+	cacheAuditListingDir = ""
 	Return True
 End Sub
 
@@ -1081,6 +1199,7 @@ Private Sub ProcessCurrentCacheAuditBatch
 		Dim fileName As String = cacheAuditCurrentFileNames.Get(cacheAuditCurrentPosition)
 		cacheAuditCurrentPosition = cacheAuditCurrentPosition + 1
 		If fileName = "" Then Continue
+		If File.IsDirectory(auditDir, fileName) Then Continue
 		If fileName.EndsWith(".tmp") Then
 			DeleteFileIfExists(auditDir, fileName)
 			cacheAuditTempDeletedCount = cacheAuditTempDeletedCount + 1
@@ -1133,6 +1252,8 @@ Private Sub FinishCacheAudit
 	If cacheAuditTrackIndexChanged Then SaveTrackIndex
 	cacheAuditInProgress = False
 	cacheAuditCurrentType = ""
+	cacheAuditListingInProgress = False
+	cacheAuditListingDir = ""
 	Trace("Аудит кэша завершен. added=" & cacheAuditAddedCount & ", removed=" & cacheAuditRemovedCount & ", tempDeleted=" & cacheAuditTempDeletedCount & ", ads=" & cachedAdIndex.Size & ", tracks=" & cachedTrackIndex.Size)
 End Sub
 
@@ -1159,23 +1280,30 @@ End Sub
 Private Sub AddIndexedFileFromAudit(itemType As String, fileName As String, auditIndex As Map)
 	Dim entry As Map
 	entry.Initialize
-	entry.Put("id", fileName)
 	entry.Put("saved_at", DateTime.Now)
 	entry.Put("last_used_at", DateTime.Now)
 	If itemType = "ads" Then
+		entry.Put("id", fileName)
 		entry.Put("title", "")
 		entry.Put("duration", 0)
 		entry.Put("gain", 0)
+		auditIndex.Put(fileName, entry)
 	Else
+		Dim trackId As String = FindTrackIdByFileName(fileName, auditIndex)
+		If trackId = "" Then Return
+		entry.Put("id", trackId)
 		entry.Put("title", "")
 		entry.Put("set", "")
 		entry.Put("stream", "")
 		entry.Put("gain", 0)
-		entry.Put("playlist_id", ExtractPlaylistIdFromTrackRelativePath(fileName))
+		Dim existingEntry As Map = auditIndex.GetDefault(trackId, Null)
+		Dim playlistId As String = ExtractPlaylistIdFromTrackRelativePath(fileName)
+		If playlistId = "" And existingEntry.IsInitialized Then playlistId = existingEntry.GetDefault("playlist_id", "")
+		entry.Put("playlist_id", playlistId)
 		entry.Put("file_name", fileName)
 		entry.Put("size_bytes", GetFileSizeSafe(GetTracksDir, fileName))
+		auditIndex.Put(trackId, entry)
 	End If
-	auditIndex.Put(fileName, entry)
 	MarkAuditIndexChanged(itemType)
 End Sub
 
@@ -1200,10 +1328,49 @@ Private Sub FindTrackIdByFileNameWithMetadata(fileName As String, trackIndex As 
 	Dim resolvedTrackId As String = FindTrackIdByFileName(fileName, trackIndex)
 	If resolvedTrackId <> "" Then Return resolvedTrackId
 	Dim playlistId As String = ExtractPlaylistIdFromTrackRelativePath(fileName)
-	If playlistId = "" Then Return ""
+	If playlistId = "" Then
+		Dim globalTrackMap As Map = LoadGlobalTrackFileMap(playlistTrackMaps)
+		If globalTrackMap.IsInitialized = False Then Return ""
+		Return globalTrackMap.GetDefault(File.GetName(fileName), "")
+	End If
 	Dim playlistTrackMap As Map = LoadPlaylistTrackFileMap(playlistId, playlistTrackMaps)
 	If playlistTrackMap.IsInitialized = False Then Return ""
 	Return playlistTrackMap.GetDefault(fileName, "")
+End Sub
+
+Private Sub LoadGlobalTrackFileMap(playlistTrackMaps As Map) As Map
+	Dim emptyMap As Map
+	emptyMap.Initialize
+	Dim cacheKey As String = "__global_track_file_map__"
+	If playlistTrackMaps.ContainsKey(cacheKey) Then Return playlistTrackMaps.Get(cacheKey)
+	Dim result As Map
+	result.Initialize
+	Dim playlistsDir As String = File.Combine(storageDir, "playlists")
+	If DirectoryExists(playlistsDir) = False Then
+		playlistTrackMaps.Put(cacheKey, result)
+		Return result
+	End If
+	Try
+		Dim listed As List = File.ListFiles(playlistsDir)
+		If listed.IsInitialized Then
+			For Each fileName As String In listed
+				If fileName = "" Then Continue
+				If fileName.ToLowerCase.EndsWith(".json") = False Then Continue
+				Dim playlistId As String = fileName.SubString2(0, fileName.Length - 5)
+				If playlistId = "" Then Continue
+				Dim playlistTrackMap As Map = LoadPlaylistTrackFileMap(playlistId, playlistTrackMaps)
+				If playlistTrackMap.IsInitialized = False Then Continue
+				For Each relativeName As String In playlistTrackMap.Keys
+					If result.ContainsKey(relativeName) Then Continue
+					result.Put(relativeName, playlistTrackMap.Get(relativeName))
+				Next
+			Next
+		End If
+	Catch
+		Trace("Не удалось восстановить глобальную track map по playlist metadata. message=" & LastException.Message)
+	End Try
+	playlistTrackMaps.Put(cacheKey, result)
+	Return result
 End Sub
 
 Private Sub NormalizeTrackIndexFileNames(trackIndex As Map)
@@ -1248,7 +1415,8 @@ Private Sub BackfillTrackIndexFromFiles
 				changed = True
 			End If
 			Dim playlistId As String = ExtractPlaylistIdFromTrackRelativePath(fileName)
-			If entry.GetDefault("playlist_id", "") <> playlistId Then
+			If playlistId = "" Then playlistId = ResolvePlaylistIdForTrackId(trackId, entry.GetDefault("playlist_id", ""), playlistTrackMaps)
+			If playlistId <> "" And entry.GetDefault("playlist_id", "") <> playlistId Then
 				entry.Put("playlist_id", playlistId)
 				changed = True
 			End If
@@ -1276,6 +1444,64 @@ Private Sub BackfillTrackIndexFromFiles
 		Trace("Не удалось выполнить стартовую переиндексацию кэша треков. message=" & LastException.Message)
 	End Try
 	If changed Then SaveTrackIndex
+End Sub
+
+Private Sub ResolvePlaylistIdForTrackId(trackId As String, preferredPlaylistId As String, playlistTrackMaps As Map) As String
+	If trackId = "" Then Return ""
+	If preferredPlaylistId <> "" Then Return preferredPlaylistId
+	Dim playlistsDir As String = File.Combine(storageDir, "playlists")
+	If DirectoryExists(playlistsDir) = False Then Return ""
+	Try
+		Dim listed As List = File.ListFiles(playlistsDir)
+		If listed.IsInitialized = False Then Return ""
+		For Each fileName As String In listed
+			If fileName = "" Then Continue
+			If fileName.ToLowerCase.EndsWith(".json") = False Then Continue
+			Dim playlistId As String = fileName.SubString2(0, fileName.Length - 5)
+			If playlistId = "" Then Continue
+			Dim playlistTrackIds As Map = LoadPlaylistTrackIdMap(playlistId, playlistTrackMaps)
+			If playlistTrackIds.IsInitialized = False Then Continue
+			If playlistTrackIds.ContainsKey(trackId) Then Return playlistId
+		Next
+	Catch
+		Trace("Не удалось определить playlist_id для cached track. trackId=" & trackId & ", message=" & LastException.Message)
+	End Try
+	Return ""
+End Sub
+
+Private Sub LoadPlaylistTrackIdMap(playlistId As String, playlistTrackMaps As Map) As Map
+	Dim emptyMap As Map
+	emptyMap.Initialize
+	If playlistId = "" Then Return emptyMap
+	Dim cacheKey As String = "ids:" & playlistId
+	If playlistTrackMaps.ContainsKey(cacheKey) Then Return playlistTrackMaps.Get(cacheKey)
+	Dim result As Map
+	result.Initialize
+	Dim playlistsDir As String = File.Combine(storageDir, "playlists")
+	Dim metadataFileName As String = playlistId & ".json"
+	If File.Exists(playlistsDir, metadataFileName) = False Then
+		playlistTrackMaps.Put(cacheKey, result)
+		Return result
+	End If
+	Try
+		Dim parser As JSONParser
+		parser.Initialize(File.ReadString(playlistsDir, metadataFileName))
+		Dim playlistData As Map = parser.NextObject
+		Dim tracks As List = playlistData.GetDefault("tracks", Null)
+		If tracks.IsInitialized Then
+			For Each trackObject As Object In tracks
+				If (trackObject Is Map) = False Then Continue
+				Dim track As Map = trackObject
+				Dim trackId As String = track.GetDefault("id", "")
+				If trackId = "" Then Continue
+				result.Put(trackId, True)
+			Next
+		End If
+	Catch
+		Trace("Не удалось восстановить track id map по playlist metadata. playlistId=" & playlistId & ", message=" & LastException.Message)
+	End Try
+	playlistTrackMaps.Put(cacheKey, result)
+	Return result
 End Sub
 
 Private Sub LoadPlaylistTrackFileMap(playlistId As String, playlistTrackMaps As Map) As Map
@@ -1406,7 +1632,7 @@ Private Sub CleanupEmptyTrackPlaylistDir(relativeFileName As String)
 	Dim playlistId As String = ExtractPlaylistIdFromTrackRelativePath(relativeFileName)
 	If playlistId = "" Then Return
 	Try
-		Dim playlistDir As String = GetTrackPlaylistDir(playlistId)
+		Dim playlistDir As String = File.Combine(GetTracksDir, playlistId)
 		If DirectoryExists(playlistDir) = False Then Return
 		Dim listed As List = File.ListFiles(playlistDir)
 		If listed.IsInitialized = False Or listed.Size = 0 Then

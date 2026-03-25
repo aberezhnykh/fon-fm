@@ -338,6 +338,7 @@ Private Sub CleanupObsoletePlaylistMetadata(descriptors As List)
 		If File.Exists(GetOfflinePlaylistsDir, PlaylistMetadataFileName(playlistId)) Then
 			File.Delete(GetOfflinePlaylistsDir, PlaylistMetadataFileName(playlistId))
 		End If
+		InvalidatePlaylistPlaybackOrder(playlistId)
 		cachedPlaylistIndex.Remove(playlistId)
 		removedCount = removedCount + 1
 	Next

@@ -8,7 +8,7 @@ public class playbackdatacoordinator_subs_0 {
 
 public static RemoteObject  _activatelocalfallback(RemoteObject __ref,RemoteObject _markdegraded,RemoteObject _reason) throws Exception{
 try {
-		Debug.PushSubsStack("ActivateLocalFallback (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,188);
+		Debug.PushSubsStack("ActivateLocalFallback (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,188);
 if (RapidSub.canDelegate("activatelocalfallback")) { return __ref.runUserSub(false, "playbackdatacoordinator","activatelocalfallback", __ref, _markdegraded, _reason);}
 Debug.locals.put("markDegraded", _markdegraded);
 Debug.locals.put("reason", _reason);
@@ -47,7 +47,7 @@ finally {
 		}}
 public static RemoteObject  _allowregularadsattargetminute(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _targetminutetimestamp) throws Exception{
 try {
-		Debug.PushSubsStack("AllowRegularAdsAtTargetMinute (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,342);
+		Debug.PushSubsStack("AllowRegularAdsAtTargetMinute (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,342);
 if (RapidSub.canDelegate("allowregularadsattargetminute")) { return __ref.runUserSub(false, "playbackdatacoordinator","allowregularadsattargetminute", __ref, _offlinedata, _targetminutetimestamp);}
 RemoteObject _targetticks = RemoteObject.createImmutable(0L);
 RemoteObject _targetslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -90,7 +90,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _countcachedtracksinplaylist(RemoteObject __ref,RemoteObject _playlistdata) throws Exception{
 try {
-		Debug.PushSubsStack("CountCachedTracksInPlaylist (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,314);
+		Debug.PushSubsStack("CountCachedTracksInPlaylist (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,314);
 if (RapidSub.canDelegate("countcachedtracksinplaylist")) { return __ref.runUserSub(false, "playbackdatacoordinator","countcachedtracksinplaylist", __ref, _playlistdata);}
 RemoteObject _tracks = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _totalcount = RemoteObject.createImmutable(0);
@@ -165,7 +165,7 @@ finally {
 		}}
 public static RemoteObject  _countplayablelocaltracksincurrentslot(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _effectivenowticks) throws Exception{
 try {
-		Debug.PushSubsStack("CountPlayableLocalTracksInCurrentSlot (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,296);
+		Debug.PushSubsStack("CountPlayableLocalTracksInCurrentSlot (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,296);
 if (RapidSub.canDelegate("countplayablelocaltracksincurrentslot")) { return __ref.runUserSub(false, "playbackdatacoordinator","countplayablelocaltracksincurrentslot", __ref, _offlinedata, _effectivenowticks);}
 RemoteObject _currentslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _playlists = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
@@ -247,7 +247,7 @@ finally {
 		}}
 public static RemoteObject  _createinitializedmap(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("CreateInitializedMap (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,415);
+		Debug.PushSubsStack("CreateInitializedMap (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,415);
 if (RapidSub.canDelegate("createinitializedmap")) { return __ref.runUserSub(false, "playbackdatacoordinator","createinitializedmap", __ref);}
 RemoteObject _m = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
  BA.debugLineNum = 415;BA.debugLine="Private Sub CreateInitializedMap As Map";
@@ -273,7 +273,7 @@ finally {
 		}}
 public static RemoteObject  _handleblockedstate(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HandleBlockedState (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,168);
+		Debug.PushSubsStack("HandleBlockedState (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,168);
 if (RapidSub.canDelegate("handleblockedstate")) { return __ref.runUserSub(false, "playbackdatacoordinator","handleblockedstate", __ref);}
  BA.debugLineNum = 168;BA.debugLine="Public Sub HandleBlockedState";
 Debug.ShouldStop(128);
@@ -298,7 +298,7 @@ finally {
 		}}
 public static RemoteObject  _handlefetchfailure(RemoteObject __ref,RemoteObject _result) throws Exception{
 try {
-		Debug.PushSubsStack("HandleFetchFailure (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,235);
+		Debug.PushSubsStack("HandleFetchFailure (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,235);
 if (RapidSub.canDelegate("handlefetchfailure")) { return __ref.runUserSub(false, "playbackdatacoordinator","handlefetchfailure", __ref, _result);}
 ResumableSub_HandleFetchFailure rsub = new ResumableSub_HandleFetchFailure(null,__ref,_result);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -325,7 +325,7 @@ RemoteObject _result;
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("HandleFetchFailure (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,235);
+		Debug.PushSubsStack("HandleFetchFailure (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,235);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -416,7 +416,7 @@ finally {
 }
 public static RemoteObject  _handlelocaltemporarystate(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("HandleLocalTemporaryState (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,199);
+		Debug.PushSubsStack("HandleLocalTemporaryState (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,199);
 if (RapidSub.canDelegate("handlelocaltemporarystate")) { return __ref.runUserSub(false, "playbackdatacoordinator","handlelocaltemporarystate", __ref, _text);}
 RemoteObject _fallbackready = RemoteObject.createImmutable(false);
 Debug.locals.put("text", _text);
@@ -478,7 +478,7 @@ finally {
 		}}
 public static RemoteObject  _handlemediaerror(RemoteObject __ref) throws Exception{
 try {
-		Debug.PushSubsStack("HandleMediaError (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,272);
+		Debug.PushSubsStack("HandleMediaError (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,272);
 if (RapidSub.canDelegate("handlemediaerror")) { return __ref.runUserSub(false, "playbackdatacoordinator","handlemediaerror", __ref);}
 ResumableSub_HandleMediaError rsub = new ResumableSub_HandleMediaError(null,__ref);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -503,7 +503,7 @@ b4j.example.playbackdatacoordinator parent;
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("HandleMediaError (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,272);
+		Debug.PushSubsStack("HandleMediaError (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,272);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -571,7 +571,7 @@ finally {
 }
 public static RemoteObject  _handleshutdownmessage(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("HandleShutdownMessage (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,220);
+		Debug.PushSubsStack("HandleShutdownMessage (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,220);
 if (RapidSub.canDelegate("handleshutdownmessage")) { return __ref.runUserSub(false, "playbackdatacoordinator","handleshutdownmessage", __ref, _text);}
 RemoteObject _safetext = RemoteObject.createImmutable("");
 Debug.locals.put("text", _text);
@@ -623,7 +623,7 @@ finally {
 		}}
 public static RemoteObject  _handletemporarystate(RemoteObject __ref,RemoteObject _mode,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("HandleTemporaryState (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,151);
+		Debug.PushSubsStack("HandleTemporaryState (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,151);
 if (RapidSub.canDelegate("handletemporarystate")) { return __ref.runUserSub(false, "playbackdatacoordinator","handletemporarystate", __ref, _mode, _text);}
 Debug.locals.put("mode", _mode);
 Debug.locals.put("text", _text);
@@ -678,7 +678,7 @@ finally {
 		}}
 public static RemoteObject  _hasplayablelocaltrackincurrentslot(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _effectivenowticks) throws Exception{
 try {
-		Debug.PushSubsStack("HasPlayableLocalTrackInCurrentSlot (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,292);
+		Debug.PushSubsStack("HasPlayableLocalTrackInCurrentSlot (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,292);
 if (RapidSub.canDelegate("hasplayablelocaltrackincurrentslot")) { return __ref.runUserSub(false, "playbackdatacoordinator","hasplayablelocaltrackincurrentslot", __ref, _offlinedata, _effectivenowticks);}
 Debug.locals.put("offlineData", _offlinedata);
 Debug.locals.put("effectiveNowTicks", _effectivenowticks);
@@ -699,7 +699,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _store,RemoteObject _syncworker) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,10);
+		Debug.PushSubsStack("Initialize (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,10);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbackdatacoordinator","initialize", __ref, _ba, _store, _syncworker);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -725,7 +725,7 @@ finally {
 		}}
 public static RemoteObject  _isidleslot(RemoteObject __ref,RemoteObject _slotcontext) throws Exception{
 try {
-		Debug.PushSubsStack("IsIdleSlot (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,421);
+		Debug.PushSubsStack("IsIdleSlot (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,421);
 if (RapidSub.canDelegate("isidleslot")) { return __ref.runUserSub(false, "playbackdatacoordinator","isidleslot", __ref, _slotcontext);}
 RemoteObject _playlists = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _streamid = RemoteObject.createImmutable("");
@@ -766,7 +766,7 @@ finally {
 		}}
 public static RemoteObject  _isplaybackallowed(RemoteObject __ref,RemoteObject _data,RemoteObject _effectivenowticks) throws Exception{
 try {
-		Debug.PushSubsStack("IsPlaybackAllowed (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,16);
+		Debug.PushSubsStack("IsPlaybackAllowed (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,16);
 if (RapidSub.canDelegate("isplaybackallowed")) { return __ref.runUserSub(false, "playbackdatacoordinator","isplaybackallowed", __ref, _data, _effectivenowticks);}
 RemoteObject _playerdata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _endtimestamp = RemoteObject.createImmutable(0L);
@@ -812,7 +812,7 @@ finally {
 		}}
 public static RemoteObject  _parsedateonlyendtimestamp(RemoteObject __ref,RemoteObject _textvalue) throws Exception{
 try {
-		Debug.PushSubsStack("ParseDateOnlyEndTimestamp (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,401);
+		Debug.PushSubsStack("ParseDateOnlyEndTimestamp (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,401);
 if (RapidSub.canDelegate("parsedateonlyendtimestamp")) { return __ref.runUserSub(false, "playbackdatacoordinator","parsedateonlyendtimestamp", __ref, _textvalue);}
 RemoteObject _previousdateformat = RemoteObject.createImmutable("");
 RemoteObject _daystartticks = RemoteObject.createImmutable(0L);
@@ -861,7 +861,7 @@ finally {
 		}}
 public static RemoteObject  _parseendvaluetotimestamp(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("ParseEndValueToTimestamp (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,349);
+		Debug.PushSubsStack("ParseEndValueToTimestamp (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,349);
 if (RapidSub.canDelegate("parseendvaluetotimestamp")) { return __ref.runUserSub(false, "playbackdatacoordinator","parseendvaluetotimestamp", __ref, _value);}
 RemoteObject _textvalue = RemoteObject.createImmutable("");
 RemoteObject _instantclass = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
@@ -959,7 +959,7 @@ finally {
 		}}
 public static RemoteObject  _parsetrustedonlineticks(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("ParseTrustedOnlineTicks (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,378);
+		Debug.PushSubsStack("ParseTrustedOnlineTicks (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,378);
 if (RapidSub.canDelegate("parsetrustedonlineticks")) { return __ref.runUserSub(false, "playbackdatacoordinator","parsetrustedonlineticks", __ref, _data);}
 RemoteObject _updatedtext = RemoteObject.createImmutable("");
 RemoteObject _instantclass = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
@@ -1040,7 +1040,7 @@ finally {
 		}}
 public static RemoteObject  _pauseplaybackbypolicy(RemoteObject __ref,RemoteObject _reason,RemoteObject _connectionmode) throws Exception{
 try {
-		Debug.PushSubsStack("PausePlaybackByPolicy (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,284);
+		Debug.PushSubsStack("PausePlaybackByPolicy (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,284);
 if (RapidSub.canDelegate("pauseplaybackbypolicy")) { return __ref.runUserSub(false, "playbackdatacoordinator","pauseplaybackbypolicy", __ref, _reason, _connectionmode);}
 RemoteObject _safereason = RemoteObject.createImmutable("");
 Debug.locals.put("reason", _reason);
@@ -1069,7 +1069,7 @@ finally {
 		}}
 public static RemoteObject  _refreshofflinedatanow(RemoteObject __ref,RemoteObject _fetchtimeoutms) throws Exception{
 try {
-		Debug.PushSubsStack("RefreshOfflineDataNow (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,70);
+		Debug.PushSubsStack("RefreshOfflineDataNow (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,70);
 if (RapidSub.canDelegate("refreshofflinedatanow")) { return __ref.runUserSub(false, "playbackdatacoordinator","refreshofflinedatanow", __ref, _fetchtimeoutms);}
 ResumableSub_RefreshOfflineDataNow rsub = new ResumableSub_RefreshOfflineDataNow(null,__ref,_fetchtimeoutms);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -1100,7 +1100,7 @@ RemoteObject _unused = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("RefreshOfflineDataNow (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,70);
+		Debug.PushSubsStack("RefreshOfflineDataNow (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,70);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -1552,7 +1552,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _result) throws Ex
 }
 public static RemoteObject  _resetretrydelay(RemoteObject __ref,RemoteObject _localretryinitial,RemoteObject _serverretryinitial) throws Exception{
 try {
-		Debug.PushSubsStack("ResetRetryDelay (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,267);
+		Debug.PushSubsStack("ResetRetryDelay (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,267);
 if (RapidSub.canDelegate("resetretrydelay")) { return __ref.runUserSub(false, "playbackdatacoordinator","resetretrydelay", __ref, _localretryinitial, _serverretryinitial);}
 Debug.locals.put("localRetryInitial", _localretryinitial);
 Debug.locals.put("serverRetryInitial", _serverretryinitial);
@@ -1573,7 +1573,7 @@ finally {
 		}}
 public static RemoteObject  _resolveidleuntilmessage(RemoteObject __ref,RemoteObject _offlinedata,RemoteObject _effectivenowticks) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveIdleUntilMessage (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,331);
+		Debug.PushSubsStack("ResolveIdleUntilMessage (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,331);
 if (RapidSub.canDelegate("resolveidleuntilmessage")) { return __ref.runUserSub(false, "playbackdatacoordinator","resolveidleuntilmessage", __ref, _offlinedata, _effectivenowticks);}
 RemoteObject _currentslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _nextslot = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -1620,7 +1620,7 @@ finally {
 		}}
 public static RemoteObject  _resolveplaybackblockreason(RemoteObject __ref,RemoteObject _data,RemoteObject _effectivenowticks) throws Exception{
 try {
-		Debug.PushSubsStack("ResolvePlaybackBlockReason (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,28);
+		Debug.PushSubsStack("ResolvePlaybackBlockReason (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,28);
 if (RapidSub.canDelegate("resolveplaybackblockreason")) { return __ref.runUserSub(false, "playbackdatacoordinator","resolveplaybackblockreason", __ref, _data, _effectivenowticks);}
 RemoteObject _playerdata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _pausereason = RemoteObject.createImmutable("");
@@ -1678,7 +1678,7 @@ finally {
 		}}
 public static RemoteObject  _resolveplaybackendtimestamp(RemoteObject __ref,RemoteObject _data) throws Exception{
 try {
-		Debug.PushSubsStack("ResolvePlaybackEndTimestamp (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,44);
+		Debug.PushSubsStack("ResolvePlaybackEndTimestamp (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,44);
 if (RapidSub.canDelegate("resolveplaybackendtimestamp")) { return __ref.runUserSub(false, "playbackdatacoordinator","resolveplaybackendtimestamp", __ref, _data);}
 RemoteObject _playerdata = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _playerend = RemoteObject.createImmutable(0L);
@@ -1719,7 +1719,7 @@ finally {
 		}}
 public static RemoteObject  _resolveretrydelay(RemoteObject __ref,RemoteObject _mode,RemoteObject _delayms,RemoteObject _localretrymax,RemoteObject _serverretrymax,RemoteObject _blockedretrydelay) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveRetryDelay (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,251);
+		Debug.PushSubsStack("ResolveRetryDelay (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,251);
 if (RapidSub.canDelegate("resolveretrydelay")) { return __ref.runUserSub(false, "playbackdatacoordinator","resolveretrydelay", __ref, _mode, _delayms, _localretrymax, _serverretrymax, _blockedretrydelay);}
 Debug.locals.put("mode", _mode);
 Debug.locals.put("delayMs", _delayms);
@@ -1743,7 +1743,7 @@ finally {
 		}}
 public static RemoteObject  _scheduleretry(RemoteObject __ref,RemoteObject _mode,RemoteObject _delayms,RemoteObject _localretrymax,RemoteObject _serverretrymax,RemoteObject _blockedretrydelay) throws Exception{
 try {
-		Debug.PushSubsStack("ScheduleRetry (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,256);
+		Debug.PushSubsStack("ScheduleRetry (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,256);
 if (RapidSub.canDelegate("scheduleretry")) { return __ref.runUserSub(false, "playbackdatacoordinator","scheduleretry", __ref, _mode, _delayms, _localretrymax, _serverretrymax, _blockedretrydelay);}
 Debug.locals.put("mode", _mode);
 Debug.locals.put("delayMs", _delayms);
@@ -1790,7 +1790,7 @@ finally {
 		}}
 public static RemoteObject  _stopformissingdata(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("StopForMissingData (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,175);
+		Debug.PushSubsStack("StopForMissingData (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,175);
 if (RapidSub.canDelegate("stopformissingdata")) { return __ref.runUserSub(false, "playbackdatacoordinator","stopformissingdata", __ref, _text);}
 Debug.locals.put("text", _text);
  BA.debugLineNum = 175;BA.debugLine="Public Sub StopForMissingData(text As String)";
@@ -1834,7 +1834,7 @@ finally {
 		}}
 public static RemoteObject  _updatetrustedonlinetimefromdata(RemoteObject __ref,RemoteObject _data,RemoteObject _storage,RemoteObject _storagekey) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateTrustedOnlineTimeFromData (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,55);
+		Debug.PushSubsStack("UpdateTrustedOnlineTimeFromData (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,55);
 if (RapidSub.canDelegate("updatetrustedonlinetimefromdata")) { return __ref.runUserSub(false, "playbackdatacoordinator","updatetrustedonlinetimefromdata", __ref, _data, _storage, _storagekey);}
 RemoteObject _candidateticks = RemoteObject.createImmutable(0L);
 Debug.locals.put("data", _data);
@@ -1864,7 +1864,7 @@ finally {
 		}}
 public static RemoteObject  _updatetrustedonlinetimeticks(RemoteObject __ref,RemoteObject _candidateticks,RemoteObject _storage,RemoteObject _storagekey) throws Exception{
 try {
-		Debug.PushSubsStack("UpdateTrustedOnlineTimeTicks (playbackdatacoordinator) ","playbackdatacoordinator",6,__ref.getField(false, "ba"),__ref,61);
+		Debug.PushSubsStack("UpdateTrustedOnlineTimeTicks (playbackdatacoordinator) ","playbackdatacoordinator",2,__ref.getField(false, "ba"),__ref,61);
 if (RapidSub.canDelegate("updatetrustedonlinetimeticks")) { return __ref.runUserSub(false, "playbackdatacoordinator","updatetrustedonlinetimeticks", __ref, _candidateticks, _storage, _storagekey);}
 RemoteObject _storedticks = RemoteObject.createImmutable(0L);
 Debug.locals.put("candidateTicks", _candidateticks);
