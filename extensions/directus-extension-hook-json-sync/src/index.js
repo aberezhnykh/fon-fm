@@ -641,6 +641,11 @@ export default defineHook(({ filter, action }, { services, logger, env, database
 	const runPayload = async (payload) => {
 		payload = mergePayload(payload);
 		const clientIds = payloadClientIds(payload);
+		if (clientIds.length) {
+			payload = mergePayload(payload, {
+				players: await playerIdsFromClients(clientIds),
+			});
+		}
 		await callDeletePhp(payload);
 
 		await callPhp('clients-json.php', clientIds);

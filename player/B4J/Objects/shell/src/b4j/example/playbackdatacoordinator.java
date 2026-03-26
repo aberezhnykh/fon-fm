@@ -15,6 +15,7 @@ public static RemoteObject _statestore = RemoteObject.declareNull("b4j.example.p
 public static RemoteObject _syncservice = RemoteObject.declareNull("b4j.example.networksyncservice");
 public static b4j.example.main _main = null;
 public static b4j.example.uistyle _uistyle = null;
+public static b4j.example.platformbridge _platformbridge = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;

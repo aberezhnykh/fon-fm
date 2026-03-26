@@ -13,7 +13,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (offlineplaybackengine) ","offlineplaybackengine",9,__ref.getField(false, "ba"),__ref,8);
+		Debug.PushSubsStack("Initialize (offlineplaybackengine) ","offlineplaybackengine",10,__ref.getField(false, "ba"),__ref,8);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "offlineplaybackengine","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -31,7 +31,7 @@ finally {
 		}}
 public static RemoteObject  _resolveadvancedecision(RemoteObject __ref,RemoteObject _shouldprioritizeservicequeue,RemoteObject _canuseprepareditem,RemoteObject _hasdispatchableserviceitem,RemoteObject _haslocalreserve,RemoteObject _allowload) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveAdvanceDecision (offlineplaybackengine) ","offlineplaybackengine",9,__ref.getField(false, "ba"),__ref,11);
+		Debug.PushSubsStack("ResolveAdvanceDecision (offlineplaybackengine) ","offlineplaybackengine",10,__ref.getField(false, "ba"),__ref,11);
 if (RapidSub.canDelegate("resolveadvancedecision")) { return __ref.runUserSub(false, "offlineplaybackengine","resolveadvancedecision", __ref, _shouldprioritizeservicequeue, _canuseprepareditem, _hasdispatchableserviceitem, _haslocalreserve, _allowload);}
 RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("shouldPrioritizeServiceQueue", _shouldprioritizeservicequeue);
@@ -109,7 +109,7 @@ finally {
 		}}
 public static RemoteObject  _resolvenextmusicitem(RemoteObject __ref,RemoteObject _statestore) throws Exception{
 try {
-		Debug.PushSubsStack("ResolveNextMusicItem (offlineplaybackengine) ","offlineplaybackengine",9,__ref.getField(false, "ba"),__ref,35);
+		Debug.PushSubsStack("ResolveNextMusicItem (offlineplaybackengine) ","offlineplaybackengine",10,__ref.getField(false, "ba"),__ref,35);
 if (RapidSub.canDelegate("resolvenextmusicitem")) { return __ref.runUserSub(false, "offlineplaybackengine","resolvenextmusicitem", __ref, _statestore);}
 Debug.locals.put("stateStore", _statestore);
  BA.debugLineNum = 35;BA.debugLine="Public Sub ResolveNextMusicItem(stateStore As Play";

@@ -5,6 +5,8 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' B4J-only модуль. После Android-порта должен иметь B4A-аналог с тем же публичным контрактом.
+
 ' Обёртка над MediaPlayer с защитой от stale events, fade-in/fade-out и stall detection.
 ' Даёт B4XMainPage чистые события Ready / Error / Complete / Timeupdate по audioKey.
 

@@ -1,16 +1,47 @@
 ﻿Build1=Default,b4a.example
-File1=MainPage.bal
+File1=icon.png
 FileGroup1=Default Group
 Group=Default Group
-Library1=core
-Library2=b4xpages
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
-Module1=|relative|..\B4XMainPage
-Module2=Starter
+Library1=b4xpages
+Library2=core
+Library3=javaobject
+Library4=json
+Library5=keyvaluestore
+Library6=okhttputils2
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~~\n~AddPermission(android.permission.REQUEST_INSTALL_PACKAGES)~\n~
+Module1=|relative|..\Common\AdScheduler
+Module10=|relative|..\Common\OfflineStore
+Module11=|relative|..\Common\PlatformBridge
+Module12=|relative|..\Common\PlaybackDataCoordinator
+Module13=|relative|..\Common\PlaybackDataPolicyState
+Module14=|relative|..\Common\PlaybackDirectorState
+Module15=PlaybackHost
+Module16=|relative|..\Common\PlaybackMetaState
+Module17=|relative|..\Common\PlaybackOrchestrationState
+Module18=|relative|..\Common\PlaybackPlayerSlot
+Module19=|relative|..\Common\PlaybackRuntimeState
+Module2=|relative|..\Common\AppInfo
+Module20=PlaybackServiceBridge
+Module21=|relative|..\Common\PlaybackTraceFormatter
+Module22=|relative|..\Common\PlaybackTraceRouter
+Module23=|relative|..\Common\PlaybackTraceUploader
+Module24=|relative|..\Common\PlaybackTransitionCoordinator
+Module25=|relative|..\Common\PlayerStateStore
+Module26=PlayerUiController
+Module27=Starter
+Module28=|relative|..\Common\TraceService
+Module29=UiStyle
+Module3=AudioPlayer
+Module4=|relative|..\Common\AutonomousCacheManager
+Module5=|relative|..\Common\B4XMainPage
+Module6=|relative|..\Common\DataPlaybackResolver
+Module7=|relative|..\Common\MediaCache
+Module8=|relative|..\Common\NetworkSyncService
+Module9=|relative|..\Common\OfflinePlaybackEngine
 NumberOfFiles=1
-NumberOfLibraries=2
-NumberOfModules=2
-Version=9.9
+NumberOfLibraries=6
+NumberOfModules=29
+Version=13.4
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: B4A Example
@@ -22,8 +53,8 @@ Version=9.9
 #End Region
 
 #Region  Activity Attributes 
-	#FullScreen: False
-	#IncludeTitle: True
+	#FullScreen: True
+	#IncludeTitle: False
 #End Region
 
 '#BridgeLogger: True
@@ -37,6 +68,9 @@ Sub Globals
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+	Log("Main.Activity_Create firstTime=" & FirstTime)
+	StartService(Starter)
+	StartService(HttpUtils2Service)
 	Dim pm As B4XPagesManager
 	pm.Initialize(Activity)
 End Sub
@@ -55,11 +89,19 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean
 End Sub
 
 Sub Activity_Resume
+	Log("Main.Activity_Resume")
 	B4XPages.Delegate.Activity_Resume
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
+	Log("Main.Activity_Pause userClosed=" & UserClosed)
 	B4XPages.Delegate.Activity_Pause
+End Sub
+
+Sub Application_Error (Error As Exception, StackTrace As String) As Boolean
+	Log("Main.Application_Error: " & Error.Message)
+	Log(StackTrace)
+	Return True
 End Sub
 
 Sub Activity_PermissionResult (Permission As String, Result As Boolean)

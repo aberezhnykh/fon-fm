@@ -18,6 +18,7 @@ public static RemoteObject _pendinghistoryitem = RemoteObject.declareNull("anywh
 public static RemoteObject _historystartedatticks = RemoteObject.createImmutable(0L);
 public static b4j.example.main _main = null;
 public static b4j.example.uistyle _uistyle = null;
+public static b4j.example.platformbridge _platformbridge = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;

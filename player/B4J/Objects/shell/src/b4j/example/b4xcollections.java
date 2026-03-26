@@ -58,9 +58,10 @@ public static RemoteObject _memptymap = RemoteObject.declareNull("anywheresoftwa
 public static RemoteObject _memptylist = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 public static b4j.example.main _main = null;
 public static b4j.example.uistyle _uistyle = null;
+public static b4j.example.platformbridge _platformbridge = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.httputils2service _httputils2service = null;
   public Object[] GetGlobals() {
-		return new Object[] {"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"Main",Debug.moduleToString(b4j.example.main.class),"mEmptyList",b4xcollections._memptylist,"mEmptyMap",b4xcollections._memptymap,"UiStyle",Debug.moduleToString(b4j.example.uistyle.class)};
+		return new Object[] {"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"Main",Debug.moduleToString(b4j.example.main.class),"mEmptyList",b4xcollections._memptylist,"mEmptyMap",b4xcollections._memptymap,"PlatformBridge",Debug.moduleToString(b4j.example.platformbridge.class),"UiStyle",Debug.moduleToString(b4j.example.uistyle.class)};
 }
 }

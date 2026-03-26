@@ -8,7 +8,7 @@ public class playbacktransitioncoordinator_subs_0 {
 
 public static RemoteObject  _cancrossfadeprepareditem(RemoteObject __ref,RemoteObject _runtimestate,RemoteObject _metastate,RemoteObject _orchestrationstate,RemoteObject _transitioninprogress) throws Exception{
 try {
-		Debug.PushSubsStack("CanCrossfadePreparedItem (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,39);
+		Debug.PushSubsStack("CanCrossfadePreparedItem (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,39);
 if (RapidSub.canDelegate("cancrossfadeprepareditem")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","cancrossfadeprepareditem", __ref, _runtimestate, _metastate, _orchestrationstate, _transitioninprogress);}
 Debug.locals.put("runtimeState", _runtimestate);
 Debug.locals.put("metaState", _metastate);
@@ -31,7 +31,7 @@ finally {
 		}}
 public static RemoteObject  _canstartpreparedontracktail(RemoteObject __ref,RemoteObject _runtimestate,RemoteObject _metastate,RemoteObject _orchestrationstate,RemoteObject _transitioninprogress) throws Exception{
 try {
-		Debug.PushSubsStack("CanStartPreparedOnTrackTail (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,43);
+		Debug.PushSubsStack("CanStartPreparedOnTrackTail (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,43);
 if (RapidSub.canDelegate("canstartpreparedontracktail")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","canstartpreparedontracktail", __ref, _runtimestate, _metastate, _orchestrationstate, _transitioninprogress);}
 Debug.locals.put("runtimeState", _runtimestate);
 Debug.locals.put("metaState", _metastate);
@@ -54,7 +54,7 @@ finally {
 		}}
 public static RemoteObject  _canusepreparedtransition(RemoteObject __ref,RemoteObject _runtimestate,RemoteObject _metastate,RemoteObject _orchestrationstate,RemoteObject _transitioninprogress,RemoteObject _currenttype,RemoteObject _preparedtype,RemoteObject _decisionname) throws Exception{
 try {
-		Debug.PushSubsStack("CanUsePreparedTransition (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,30);
+		Debug.PushSubsStack("CanUsePreparedTransition (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,30);
 if (RapidSub.canDelegate("canusepreparedtransition")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","canusepreparedtransition", __ref, _runtimestate, _metastate, _orchestrationstate, _transitioninprogress, _currenttype, _preparedtype, _decisionname);}
 RemoteObject _prepareditem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("runtimeState", _runtimestate);
@@ -108,7 +108,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _clonemap(RemoteObject __ref,RemoteObject _sourcemap) throws Exception{
 try {
-		Debug.PushSubsStack("CloneMap (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,278);
+		Debug.PushSubsStack("CloneMap (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,278);
 if (RapidSub.canDelegate("clonemap")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","clonemap", __ref, _sourcemap);}
 RemoteObject _clonedmap = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _key = RemoteObject.declareNull("Object");
@@ -156,7 +156,7 @@ finally {
 		}}
 public static RemoteObject  _describeitem(RemoteObject __ref,RemoteObject _item) throws Exception{
 try {
-		Debug.PushSubsStack("DescribeItem (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,265);
+		Debug.PushSubsStack("DescribeItem (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,265);
 if (RapidSub.canDelegate("describeitem")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","describeitem", __ref, _item);}
 Debug.locals.put("item", _item);
  BA.debugLineNum = 265;BA.debugLine="Private Sub DescribeItem(item As Map) As String";
@@ -180,7 +180,7 @@ finally {
 		}}
 public static RemoteObject  _getinactiveaudiokey(RemoteObject __ref,RemoteObject _runtimestate) throws Exception{
 try {
-		Debug.PushSubsStack("GetInactiveAudioKey (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,14);
+		Debug.PushSubsStack("GetInactiveAudioKey (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,14);
 if (RapidSub.canDelegate("getinactiveaudiokey")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","getinactiveaudiokey", __ref, _runtimestate);}
 Debug.locals.put("runtimeState", _runtimestate);
  BA.debugLineNum = 14;BA.debugLine="Public Sub GetInactiveAudioKey(runtimeState As Pla";
@@ -204,7 +204,7 @@ finally {
 		}}
 public static RemoteObject  _hasusableprepareditem(RemoteObject __ref,RemoteObject _runtimestate) throws Exception{
 try {
-		Debug.PushSubsStack("HasUsablePreparedItem (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,20);
+		Debug.PushSubsStack("HasUsablePreparedItem (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,20);
 if (RapidSub.canDelegate("hasusableprepareditem")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","hasusableprepareditem", __ref, _runtimestate);}
 RemoteObject _preparedaudiokey = RemoteObject.createImmutable("");
 RemoteObject _prepareditem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -245,7 +245,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _targetpagevalue) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,9);
+		Debug.PushSubsStack("Initialize (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,9);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","initialize", __ref, _ba, _targetpagevalue);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -267,7 +267,7 @@ finally {
 		}}
 public static RemoteObject  _itemsmatch(RemoteObject __ref,RemoteObject _firstitem,RemoteObject _seconditem) throws Exception{
 try {
-		Debug.PushSubsStack("ItemsMatch (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,270);
+		Debug.PushSubsStack("ItemsMatch (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,270);
 if (RapidSub.canDelegate("itemsmatch")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","itemsmatch", __ref, _firstitem, _seconditem);}
 RemoteObject _args = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("firstItem", _firstitem);
@@ -301,7 +301,7 @@ finally {
 		}}
 public static RemoteObject  _preparedfadeoutms(RemoteObject __ref,RemoteObject _metastate,RemoteObject _runtimestate,RemoteObject _trackoverlapms,RemoteObject _adtailoverlapms) throws Exception{
 try {
-		Debug.PushSubsStack("PreparedFadeOutMs (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,47);
+		Debug.PushSubsStack("PreparedFadeOutMs (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,47);
 if (RapidSub.canDelegate("preparedfadeoutms")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","preparedfadeoutms", __ref, _metastate, _runtimestate, _trackoverlapms, _adtailoverlapms);}
 RemoteObject _prepareditem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 RemoteObject _nexttype = RemoteObject.createImmutable("");
@@ -349,7 +349,7 @@ finally {
 		}}
 public static RemoteObject  _preparenextplayable(RemoteObject __ref,RemoteObject _playqueue,RemoteObject _runtimestate,RemoteObject _metastate,RemoteObject _orchestrationstate,RemoteObject _mediacacheservice,RemoteObject _playbackflowstate,RemoteObject _flowplaying,RemoteObject _flowidle,RemoteObject _flowpreparing) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareNextPlayable (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,58);
+		Debug.PushSubsStack("PrepareNextPlayable (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,58);
 if (RapidSub.canDelegate("preparenextplayable")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","preparenextplayable", __ref, _playqueue, _runtimestate, _metastate, _orchestrationstate, _mediacacheservice, _playbackflowstate, _flowplaying, _flowidle, _flowpreparing);}
 ResumableSub_PrepareNextPlayable rsub = new ResumableSub_PrepareNextPlayable(null,__ref,_playqueue,_runtimestate,_metastate,_orchestrationstate,_mediacacheservice,_playbackflowstate,_flowplaying,_flowidle,_flowpreparing);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -414,7 +414,7 @@ RemoteObject _failedargs = RemoteObject.declareNull("anywheresoftware.b4a.object
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareNextPlayable (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,58);
+		Debug.PushSubsStack("PrepareNextPlayable (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,58);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -1015,7 +1015,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _result) throws Ex
 }
 public static RemoteObject  _preparespecificplayable(RemoteObject __ref,RemoteObject _nextitem,RemoteObject _runtimestate,RemoteObject _metastate,RemoteObject _orchestrationstate,RemoteObject _playbackflowstate,RemoteObject _flowplaying,RemoteObject _flowidle,RemoteObject _flowpreparing) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareSpecificPlayable (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,164);
+		Debug.PushSubsStack("PrepareSpecificPlayable (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,164);
 if (RapidSub.canDelegate("preparespecificplayable")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","preparespecificplayable", __ref, _nextitem, _runtimestate, _metastate, _orchestrationstate, _playbackflowstate, _flowplaying, _flowidle, _flowpreparing);}
 ResumableSub_PrepareSpecificPlayable rsub = new ResumableSub_PrepareSpecificPlayable(null,__ref,_nextitem,_runtimestate,_metastate,_orchestrationstate,_playbackflowstate,_flowplaying,_flowidle,_flowpreparing);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -1071,7 +1071,7 @@ RemoteObject _failedargs = RemoteObject.declareNull("anywheresoftware.b4a.object
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("PrepareSpecificPlayable (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,164);
+		Debug.PushSubsStack("PrepareSpecificPlayable (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,164);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -1420,7 +1420,7 @@ finally {
 }
 public static RemoteObject  _promotepreparedplayer(RemoteObject __ref,RemoteObject _runtimestate,RemoteObject _dataresolver,RemoteObject _storage,RemoteObject _fadeinms,RemoteObject _fadeoutms,RemoteObject _flowtransitioning) throws Exception{
 try {
-		Debug.PushSubsStack("PromotePreparedPlayer (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,233);
+		Debug.PushSubsStack("PromotePreparedPlayer (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,233);
 if (RapidSub.canDelegate("promotepreparedplayer")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","promotepreparedplayer", __ref, _runtimestate, _dataresolver, _storage, _fadeinms, _fadeoutms, _flowtransitioning);}
 RemoteObject _preparedaudiokey = RemoteObject.createImmutable("");
 RemoteObject _prepareditem = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
@@ -1535,7 +1535,7 @@ finally {
 		}}
 public static RemoteObject  _trace(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("Trace (playbacktransitioncoordinator) ","playbacktransitioncoordinator",14,__ref.getField(false, "ba"),__ref,288);
+		Debug.PushSubsStack("Trace (playbacktransitioncoordinator) ","playbacktransitioncoordinator",23,__ref.getField(false, "ba"),__ref,288);
 if (RapidSub.canDelegate("trace")) { return __ref.runUserSub(false, "playbacktransitioncoordinator","trace", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 288;BA.debugLine="Private Sub Trace(message As String)";

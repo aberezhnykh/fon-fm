@@ -62,6 +62,44 @@ function client_json_normalize_schedule(array $scheduleJson): array {
     return $scheduleJson;
 }
 
+function client_json_delete_stale_player_routes(string $dir, string $playerId, string $keepFile): void {
+    if ($playerId === '' || !is_dir($dir)) return;
+
+    foreach (scandir($dir) ?: [] as $name) {
+        if (!is_string($name) || substr($name, -5) !== '.json') continue;
+        if ($name === $keepFile) continue;
+
+        $path = $dir . '/' . $name;
+        $json = @file_get_contents($path);
+        if (!is_string($json) || $json === '') continue;
+
+        $data = json_decode($json, true);
+        if (!is_array($data)) continue;
+        if (trim((string)($data['player'] ?? '')) !== $playerId) continue;
+
+        @unlink($path);
+    }
+}
+
+function client_json_write_player_routes(string $dir, array $players, string $clientId): void {
+    if (!is_dir($dir)) @mkdir($dir, 0775, true);
+
+    foreach ($players as $player) {
+        if (!is_array($player)) continue;
+
+        $playerId = trim((string)($player['id'] ?? ''));
+        $code = strtolower(trim((string)($player['code'] ?? '')));
+        if ($playerId === '' || $code === '') continue;
+
+        $routeFile = $code . '.json';
+        write_json_file($dir, $routeFile, clean_array([
+            'player' => $playerId,
+            'client' => $clientId,
+        ]));
+        client_json_delete_stale_player_routes($dir, $playerId, $routeFile);
+    }
+}
+
 api_key_check($ENV);
 $lock = lock_open('clients-json');
 
@@ -135,6 +173,7 @@ elseif (isset($body['ids']) && is_array($body['ids'])) $ids = array_values(array
 if (!$ids) json_out(['ok' => false, 'error' => 'no_ids'], 400);
 
 $outDir = '/var/www/app/data/cdn/data/clients';
+$playersOutDir = '/var/www/app/data/cdn/data/players';
 $done = [];
 $errs = [];
 
@@ -351,6 +390,7 @@ foreach ($ids as $id) {
         'schedules' => $schedules,
     ]));
 
+    client_json_write_player_routes($playersOutDir, $players, $id);
     write_json_file($outDir, $id . '.json', $json);
     client_json_patch_state($ENV, $id, 'done', null);
     $done[] = ['id' => $id, 'written' => true];

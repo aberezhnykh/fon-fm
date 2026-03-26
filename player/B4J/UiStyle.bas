@@ -5,6 +5,8 @@ Type=StaticCode
 Version=10.5
 @EndOfDesignText@
 
+' B4J-only JavaFX styling helper.
+
 ' Небольшой UI helper для создания и стилизации JavaFX/B4XView узлов.
 ' Нужен, чтобы держать style-операции вне основного кода страницы.
 

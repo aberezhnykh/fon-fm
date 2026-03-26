@@ -8,7 +8,7 @@ public class networksyncservice_subs_0 {
 
 public static RemoteObject  _buildparams(RemoteObject __ref,RemoteObject _params) throws Exception{
 try {
-		Debug.PushSubsStack("BuildParams (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,146);
+		Debug.PushSubsStack("BuildParams (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,146);
 if (RapidSub.canDelegate("buildparams")) { return __ref.runUserSub(false, "networksyncservice","buildparams", __ref, _params);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 RemoteObject _key = RemoteObject.createImmutable("");
@@ -56,7 +56,7 @@ finally {
 		}}
 public static RemoteObject  _checkserviceavailability(RemoteObject __ref,RemoteObject _timeoutms) throws Exception{
 try {
-		Debug.PushSubsStack("CheckServiceAvailability (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,41);
+		Debug.PushSubsStack("CheckServiceAvailability (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,41);
 if (RapidSub.canDelegate("checkserviceavailability")) { return __ref.runUserSub(false, "networksyncservice","checkserviceavailability", __ref, _timeoutms);}
 ResumableSub_CheckServiceAvailability rsub = new ResumableSub_CheckServiceAvailability(null,__ref,_timeoutms);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -86,7 +86,7 @@ RemoteObject _ok = RemoteObject.createImmutable(false);
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("CheckServiceAvailability (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,41);
+		Debug.PushSubsStack("CheckServiceAvailability (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,41);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -166,7 +166,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _classifyhttpfailure(RemoteObject __ref,RemoteObject _errormessage) throws Exception{
 try {
-		Debug.PushSubsStack("ClassifyHttpFailure (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,35);
+		Debug.PushSubsStack("ClassifyHttpFailure (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,35);
 if (RapidSub.canDelegate("classifyhttpfailure")) { return __ref.runUserSub(false, "networksyncservice","classifyhttpfailure", __ref, _errormessage);}
 Debug.locals.put("errorMessage", _errormessage);
  BA.debugLineNum = 35;BA.debugLine="Public Sub ClassifyHttpFailure(errorMessage As Str";
@@ -190,7 +190,7 @@ finally {
 		}}
 public static RemoteObject  _createclaimparams(RemoteObject __ref,RemoteObject _playercode,RemoteObject _deviceid,RemoteObject _timezoneoffsetminutes) throws Exception{
 try {
-		Debug.PushSubsStack("CreateClaimParams (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,125);
+		Debug.PushSubsStack("CreateClaimParams (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,125);
 if (RapidSub.canDelegate("createclaimparams")) { return __ref.runUserSub(false, "networksyncservice","createclaimparams", __ref, _playercode, _deviceid, _timezoneoffsetminutes);}
 RemoteObject _params = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("playerCode", _playercode);
@@ -228,7 +228,7 @@ finally {
 		}}
 public static RemoteObject  _createdataparams(RemoteObject __ref,RemoteObject _playercode,RemoteObject _deviceid,RemoteObject _timezoneoffsetminutes,RemoteObject _clientosname) throws Exception{
 try {
-		Debug.PushSubsStack("CreateDataParams (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,135);
+		Debug.PushSubsStack("CreateDataParams (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,135);
 if (RapidSub.canDelegate("createdataparams")) { return __ref.runUserSub(false, "networksyncservice","createdataparams", __ref, _playercode, _deviceid, _timezoneoffsetminutes, _clientosname);}
 RemoteObject _params = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("playerCode", _playercode);
@@ -270,7 +270,7 @@ finally {
 		}}
 public static RemoteObject  _createnextparams(RemoteObject __ref,RemoteObject _playercode,RemoteObject _deviceid,RemoteObject _timezoneoffsetminutes,RemoteObject _appversion,RemoteObject _startmode,RemoteObject _playlistindex) throws Exception{
 try {
-		Debug.PushSubsStack("CreateNextParams (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,112);
+		Debug.PushSubsStack("CreateNextParams (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,112);
 if (RapidSub.canDelegate("createnextparams")) { return __ref.runUserSub(false, "networksyncservice","createnextparams", __ref, _playercode, _deviceid, _timezoneoffsetminutes, _appversion, _startmode, _playlistindex);}
 RemoteObject _params = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.Map");
 Debug.locals.put("playerCode", _playercode);
@@ -322,7 +322,7 @@ finally {
 		}}
 public static RemoteObject  _fetchdata(RemoteObject __ref,RemoteObject _timeoutms) throws Exception{
 try {
-		Debug.PushSubsStack("FetchData (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,14);
+		Debug.PushSubsStack("FetchData (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,14);
 if (RapidSub.canDelegate("fetchdata")) { return __ref.runUserSub(false, "networksyncservice","fetchdata", __ref, _timeoutms);}
 ResumableSub_FetchData rsub = new ResumableSub_FetchData(null,__ref,_timeoutms);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -351,7 +351,7 @@ RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.co
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("FetchData (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,14);
+		Debug.PushSubsStack("FetchData (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,14);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -399,7 +399,7 @@ public static void  _complete(RemoteObject __ref,RemoteObject _result) throws Ex
 }
 public static RemoteObject  _fetchjsonwithtimeout(RemoteObject __ref,RemoteObject _url,RemoteObject _timeoutms) throws Exception{
 try {
-		Debug.PushSubsStack("FetchJsonWithTimeout (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,69);
+		Debug.PushSubsStack("FetchJsonWithTimeout (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,69);
 if (RapidSub.canDelegate("fetchjsonwithtimeout")) { return __ref.runUserSub(false, "networksyncservice","fetchjsonwithtimeout", __ref, _url, _timeoutms);}
 ResumableSub_FetchJsonWithTimeout rsub = new ResumableSub_FetchJsonWithTimeout(null,__ref,_url,_timeoutms);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -434,7 +434,7 @@ RemoteObject _failurekind = RemoteObject.createImmutable("");
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("FetchJsonWithTimeout (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,69);
+		Debug.PushSubsStack("FetchJsonWithTimeout (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,69);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -637,7 +637,7 @@ finally {
 }
 public static RemoteObject  _fetchnext(RemoteObject __ref,RemoteObject _timeoutms,RemoteObject _appversion,RemoteObject _startmode,RemoteObject _playlistindex) throws Exception{
 try {
-		Debug.PushSubsStack("FetchNext (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,21);
+		Debug.PushSubsStack("FetchNext (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,21);
 if (RapidSub.canDelegate("fetchnext")) { return __ref.runUserSub(false, "networksyncservice","fetchnext", __ref, _timeoutms, _appversion, _startmode, _playlistindex);}
 ResumableSub_FetchNext rsub = new ResumableSub_FetchNext(null,__ref,_timeoutms,_appversion,_startmode,_playlistindex);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -672,7 +672,7 @@ RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.co
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("FetchNext (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,21);
+		Debug.PushSubsStack("FetchNext (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,21);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -721,7 +721,7 @@ finally {
 }
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _store) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,9);
+		Debug.PushSubsStack("Initialize (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,9);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "networksyncservice","initialize", __ref, _ba, _store);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -743,7 +743,7 @@ finally {
 		}}
 public static RemoteObject  _isnetworkhttperror(RemoteObject __ref,RemoteObject _errormessage) throws Exception{
 try {
-		Debug.PushSubsStack("IsNetworkHttpError (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,156);
+		Debug.PushSubsStack("IsNetworkHttpError (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,156);
 if (RapidSub.canDelegate("isnetworkhttperror")) { return __ref.runUserSub(false, "networksyncservice","isnetworkhttperror", __ref, _errormessage);}
 RemoteObject _messagelower = RemoteObject.createImmutable("");
 Debug.locals.put("errorMessage", _errormessage);
@@ -767,7 +767,7 @@ finally {
 		}}
 public static RemoteObject  _loghttpfailure(RemoteObject __ref,RemoteObject _url,RemoteObject _kind) throws Exception{
 try {
-		Debug.PushSubsStack("LogHttpFailure (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,56);
+		Debug.PushSubsStack("LogHttpFailure (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,56);
 if (RapidSub.canDelegate("loghttpfailure")) { return __ref.runUserSub(false, "networksyncservice","loghttpfailure", __ref, _url, _kind);}
 RemoteObject _consecutiveerrors = RemoteObject.createImmutable(0);
 Debug.locals.put("url", _url);
@@ -814,7 +814,7 @@ finally {
 		}}
 public static RemoteObject  _submitclaim(RemoteObject __ref,RemoteObject _timeoutms) throws Exception{
 try {
-		Debug.PushSubsStack("SubmitClaim (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,28);
+		Debug.PushSubsStack("SubmitClaim (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,28);
 if (RapidSub.canDelegate("submitclaim")) { return __ref.runUserSub(false, "networksyncservice","submitclaim", __ref, _timeoutms);}
 ResumableSub_SubmitClaim rsub = new ResumableSub_SubmitClaim(null,__ref,_timeoutms);
 rsub.remoteResumableSub = anywheresoftware.b4a.pc.PCResumableSub.createDebugResumeSubForFilter();
@@ -843,7 +843,7 @@ RemoteObject _result = RemoteObject.declareNull("anywheresoftware.b4a.objects.co
 @Override
 public void resume(BA ba, RemoteObject result) throws Exception{
 try {
-		Debug.PushSubsStack("SubmitClaim (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,28);
+		Debug.PushSubsStack("SubmitClaim (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,28);
 Debug.locals = rsLocals;Debug.currentSubFrame.locals = rsLocals;
 
     while (true) {
@@ -889,7 +889,7 @@ finally {
 }
 public static RemoteObject  _urlencode(RemoteObject __ref,RemoteObject _value) throws Exception{
 try {
-		Debug.PushSubsStack("UrlEncode (networksyncservice) ","networksyncservice",10,__ref.getField(false, "ba"),__ref,161);
+		Debug.PushSubsStack("UrlEncode (networksyncservice) ","networksyncservice",9,__ref.getField(false, "ba"),__ref,161);
 if (RapidSub.canDelegate("urlencode")) { return __ref.runUserSub(false, "networksyncservice","urlencode", __ref, _value);}
 RemoteObject _jo = RemoteObject.declareNull("anywheresoftware.b4j.object.JavaObject");
 Debug.locals.put("value", _value);

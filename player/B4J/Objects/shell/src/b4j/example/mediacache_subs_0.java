@@ -5288,7 +5288,7 @@ _outputstream.runVoidMethod ("Close");};
        catch (Exception e27) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e27.toString()); BA.debugLineNum = 884;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(524288);
-mediacache.__c.runVoidMethod ("LogImpl","284344859",mediacache.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+mediacache.__c.runVoidMethod ("LogImpl","239714843",mediacache.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  BA.debugLineNum = 886;BA.debugLine="Try";
 Debug.ShouldStop(2097152);
@@ -5301,7 +5301,7 @@ _inputstream.runVoidMethod ("Close");};
        catch (Exception e32) {
 			BA.rdebugUtils.runVoidMethod("setLastException",__ref.getField(false, "ba"), e32.toString()); BA.debugLineNum = 889;BA.debugLine="Log(LastException.Message)";
 Debug.ShouldStop(16777216);
-mediacache.__c.runVoidMethod ("LogImpl","284344864",mediacache.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
+mediacache.__c.runVoidMethod ("LogImpl","239714848",mediacache.__c.runMethod(false,"LastException",__ref.getField(false, "ba")).runMethod(true,"getMessage"),0);
  };
  BA.debugLineNum = 891;BA.debugLine="DeleteFileIfExists(GetTracksDir, flatFileName)";
 Debug.ShouldStop(67108864);

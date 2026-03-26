@@ -55,10 +55,11 @@ public boolean isSingleton() {
 	}
 public static RemoteObject __c = RemoteObject.declareNull("anywheresoftware.b4a.keywords.Common");
 public static b4j.example.main _main = null;
+public static b4j.example.platformbridge _platformbridge = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
   public Object[] GetGlobals() {
-		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"Main",Debug.moduleToString(b4j.example.main.class)};
+		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"Main",Debug.moduleToString(b4j.example.main.class),"PlatformBridge",Debug.moduleToString(b4j.example.platformbridge.class)};
 }
 }

@@ -8,7 +8,7 @@ public class playbacktracerouter_subs_0 {
 
 public static RemoteObject  _appendrecentdebugcontext(RemoteObject __ref,RemoteObject _title) throws Exception{
 try {
-		Debug.PushSubsStack("AppendRecentDebugContext (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,50);
+		Debug.PushSubsStack("AppendRecentDebugContext (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,50);
 if (RapidSub.canDelegate("appendrecentdebugcontext")) { return __ref.runUserSub(false, "playbacktracerouter","appendrecentdebugcontext", __ref, _title);}
 RemoteObject _debuglines = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _debugline = RemoteObject.createImmutable("");
@@ -67,7 +67,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _handlediagnostictracemessage(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("HandleDiagnosticTraceMessage (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,72);
+		Debug.PushSubsStack("HandleDiagnosticTraceMessage (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,72);
 if (RapidSub.canDelegate("handlediagnostictracemessage")) { return __ref.runUserSub(false, "playbacktracerouter","handlediagnostictracemessage", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 72;BA.debugLine="Private Sub HandleDiagnosticTraceMessage(message A";
@@ -314,7 +314,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba,RemoteObject _tracesvc,RemoteObject _formattervalue,RemoteObject _isreleasebuild,RemoteObject _debugcontextlinecount) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,12);
+		Debug.PushSubsStack("Initialize (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,12);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbacktracerouter","initialize", __ref, _ba, _tracesvc, _formattervalue, _isreleasebuild, _debugcontextlinecount);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -348,7 +348,7 @@ finally {
 		}}
 public static RemoteObject  _normalizelegacydetails(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("NormalizeLegacyDetails (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,250);
+		Debug.PushSubsStack("NormalizeLegacyDetails (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,250);
 if (RapidSub.canDelegate("normalizelegacydetails")) { return __ref.runUserSub(false, "playbacktracerouter","normalizelegacydetails", __ref, _text);}
 RemoteObject _value = RemoteObject.createImmutable("");
 Debug.locals.put("text", _text);
@@ -379,7 +379,7 @@ finally {
 		}}
 public static RemoteObject  _shouldsuppresstracemessage(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("ShouldSuppressTraceMessage (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,166);
+		Debug.PushSubsStack("ShouldSuppressTraceMessage (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,166);
 if (RapidSub.canDelegate("shouldsuppresstracemessage")) { return __ref.runUserSub(false, "playbacktracerouter","shouldsuppresstracemessage", __ref, _message);}
 RemoteObject _noisyprefixes = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 RemoteObject _prefix = RemoteObject.createImmutable("");
@@ -643,7 +643,7 @@ finally {
 		}}
 public static RemoteObject  _tailafter(RemoteObject __ref,RemoteObject _text,RemoteObject _prefix) throws Exception{
 try {
-		Debug.PushSubsStack("TailAfter (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,257);
+		Debug.PushSubsStack("TailAfter (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,257);
 if (RapidSub.canDelegate("tailafter")) { return __ref.runUserSub(false, "playbacktracerouter","tailafter", __ref, _text, _prefix);}
 Debug.locals.put("text", _text);
 Debug.locals.put("prefix", _prefix);
@@ -668,7 +668,7 @@ finally {
 		}}
 public static RemoteObject  _tailafterfirstspace(RemoteObject __ref,RemoteObject _text) throws Exception{
 try {
-		Debug.PushSubsStack("TailAfterFirstSpace (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,262);
+		Debug.PushSubsStack("TailAfterFirstSpace (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,262);
 if (RapidSub.canDelegate("tailafterfirstspace")) { return __ref.runUserSub(false, "playbacktracerouter","tailafterfirstspace", __ref, _text);}
 RemoteObject _firstspace = RemoteObject.createImmutable(0);
 Debug.locals.put("text", _text);
@@ -696,7 +696,7 @@ finally {
 		}}
 public static RemoteObject  _tracedebug(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("TraceDebug (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,46);
+		Debug.PushSubsStack("TraceDebug (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,46);
 if (RapidSub.canDelegate("tracedebug")) { return __ref.runUserSub(false, "playbacktracerouter","tracedebug", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 46;BA.debugLine="Private Sub TraceDebug(message As String)";
@@ -716,7 +716,7 @@ finally {
 		}}
 public static RemoteObject  _tracedebugmessage(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("TraceDebugMessage (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,42);
+		Debug.PushSubsStack("TraceDebugMessage (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,42);
 if (RapidSub.canDelegate("tracedebugmessage")) { return __ref.runUserSub(false, "playbacktracerouter","tracedebugmessage", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 42;BA.debugLine="Public Sub TraceDebugMessage(message As String)";
@@ -736,7 +736,7 @@ finally {
 		}}
 public static RemoteObject  _traceerror(RemoteObject __ref,RemoteObject _category,RemoteObject _message,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("TraceError (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,33);
+		Debug.PushSubsStack("TraceError (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,33);
 if (RapidSub.canDelegate("traceerror")) { return __ref.runUserSub(false, "playbacktracerouter","traceerror", __ref, _category, _message, _details);}
 Debug.locals.put("category", _category);
 Debug.locals.put("message", _message);
@@ -761,7 +761,7 @@ finally {
 		}}
 public static RemoteObject  _traceinfo(RemoteObject __ref,RemoteObject _category,RemoteObject _message,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("TraceInfo (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,25);
+		Debug.PushSubsStack("TraceInfo (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,25);
 if (RapidSub.canDelegate("traceinfo")) { return __ref.runUserSub(false, "playbacktracerouter","traceinfo", __ref, _category, _message, _details);}
 Debug.locals.put("category", _category);
 Debug.locals.put("message", _message);
@@ -783,7 +783,7 @@ finally {
 		}}
 public static RemoteObject  _tracelog(RemoteObject __ref,RemoteObject _message) throws Exception{
 try {
-		Debug.PushSubsStack("TraceLog (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,19);
+		Debug.PushSubsStack("TraceLog (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,19);
 if (RapidSub.canDelegate("tracelog")) { return __ref.runUserSub(false, "playbacktracerouter","tracelog", __ref, _message);}
 Debug.locals.put("message", _message);
  BA.debugLineNum = 19;BA.debugLine="Public Sub TraceLog(message As String)";
@@ -811,7 +811,7 @@ finally {
 		}}
 public static RemoteObject  _tracestate(RemoteObject __ref,RemoteObject _category,RemoteObject _message,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("TraceState (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,38);
+		Debug.PushSubsStack("TraceState (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,38);
 if (RapidSub.canDelegate("tracestate")) { return __ref.runUserSub(false, "playbacktracerouter","tracestate", __ref, _category, _message, _details);}
 Debug.locals.put("category", _category);
 Debug.locals.put("message", _message);
@@ -833,7 +833,7 @@ finally {
 		}}
 public static RemoteObject  _tracewarn(RemoteObject __ref,RemoteObject _category,RemoteObject _message,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("TraceWarn (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,29);
+		Debug.PushSubsStack("TraceWarn (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,29);
 if (RapidSub.canDelegate("tracewarn")) { return __ref.runUserSub(false, "playbacktracerouter","tracewarn", __ref, _category, _message, _details);}
 Debug.locals.put("category", _category);
 Debug.locals.put("message", _message);
@@ -855,7 +855,7 @@ finally {
 		}}
 public static RemoteObject  _trimdebugcontextline(RemoteObject __ref,RemoteObject _debugline) throws Exception{
 try {
-		Debug.PushSubsStack("TrimDebugContextLine (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,59);
+		Debug.PushSubsStack("TrimDebugContextLine (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,59);
 if (RapidSub.canDelegate("trimdebugcontextline")) { return __ref.runUserSub(false, "playbacktracerouter","trimdebugcontextline", __ref, _debugline);}
 RemoteObject _marker = RemoteObject.createImmutable("");
 RemoteObject _markerindex = RemoteObject.createImmutable(0);
@@ -891,7 +891,7 @@ finally {
 		}}
 public static RemoteObject  _writetraceentry(RemoteObject __ref,RemoteObject _level,RemoteObject _category,RemoteObject _message,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("WriteTraceEntry (playbacktracerouter) ","playbacktracerouter",17,__ref.getField(false, "ba"),__ref,67);
+		Debug.PushSubsStack("WriteTraceEntry (playbacktracerouter) ","playbacktracerouter",21,__ref.getField(false, "ba"),__ref,67);
 if (RapidSub.canDelegate("writetraceentry")) { return __ref.runUserSub(false, "playbacktracerouter","writetraceentry", __ref, _level, _category, _message, _details);}
 RemoteObject _line = RemoteObject.createImmutable("");
 Debug.locals.put("level", _level);

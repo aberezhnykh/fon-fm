@@ -8,7 +8,7 @@ public class playbacktraceformatter_subs_0 {
 
 public static RemoteObject  _addcountpart(RemoteObject __ref,RemoteObject _parts,RemoteObject _details,RemoteObject _key,RemoteObject _label) throws Exception{
 try {
-		Debug.PushSubsStack("AddCountPart (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,317);
+		Debug.PushSubsStack("AddCountPart (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,317);
 if (RapidSub.canDelegate("addcountpart")) { return __ref.runUserSub(false, "playbacktraceformatter","addcountpart", __ref, _parts, _details, _key, _label);}
 RemoteObject _value = RemoteObject.createImmutable("");
 Debug.locals.put("parts", _parts);
@@ -39,7 +39,7 @@ finally {
 		}}
 public static RemoteObject  _buildaudiosettingstext(RemoteObject __ref,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("BuildAudioSettingsText (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,250);
+		Debug.PushSubsStack("BuildAudioSettingsText (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,250);
 if (RapidSub.canDelegate("buildaudiosettingstext")) { return __ref.runUserSub(false, "playbacktraceformatter","buildaudiosettingstext", __ref, _details);}
 RemoteObject _volumetext = RemoteObject.createImmutable("");
 RemoteObject _gaintext = RemoteObject.createImmutable("");
@@ -101,7 +101,7 @@ finally {
 		}}
 public static RemoteObject  _buildcountstext(RemoteObject __ref,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("BuildCountsText (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,301);
+		Debug.PushSubsStack("BuildCountsText (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,301);
 if (RapidSub.canDelegate("buildcountstext")) { return __ref.runUserSub(false, "playbacktraceformatter","buildcountstext", __ref, _details);}
 RemoteObject _parts = RemoteObject.declareNull("anywheresoftware.b4a.objects.collections.List");
 Debug.locals.put("details", _details);
@@ -159,7 +159,7 @@ finally {
 		}}
 public static RemoteObject  _buildhealthaudiosettingstext(RemoteObject __ref,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("BuildHealthAudioSettingsText (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,268);
+		Debug.PushSubsStack("BuildHealthAudioSettingsText (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,268);
 if (RapidSub.canDelegate("buildhealthaudiosettingstext")) { return __ref.runUserSub(false, "playbacktraceformatter","buildhealthaudiosettingstext", __ref, _details);}
 RemoteObject _volumetext = RemoteObject.createImmutable("");
 RemoteObject _gaintext = RemoteObject.createImmutable("");
@@ -221,7 +221,7 @@ finally {
 		}}
 public static RemoteObject  _buildhumantracemessage(RemoteObject __ref,RemoteObject _category,RemoteObject _message,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("BuildHumanTraceMessage (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,11);
+		Debug.PushSubsStack("BuildHumanTraceMessage (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,11);
 if (RapidSub.canDelegate("buildhumantracemessage")) { return __ref.runUserSub(false, "playbacktraceformatter","buildhumantracemessage", __ref, _category, _message, _details);}
 RemoteObject _delaysec = RemoteObject.createImmutable("");
 RemoteObject _playertext = RemoteObject.createImmutable("");
@@ -761,7 +761,7 @@ finally {
 		}}
 public static RemoteObject  _buildreasontext(RemoteObject __ref,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("BuildReasonText (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,286);
+		Debug.PushSubsStack("BuildReasonText (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,286);
 if (RapidSub.canDelegate("buildreasontext")) { return __ref.runUserSub(false, "playbacktraceformatter","buildreasontext", __ref, _details);}
 RemoteObject _messagetext = RemoteObject.createImmutable("");
 RemoteObject _reasontext = RemoteObject.createImmutable("");
@@ -825,7 +825,7 @@ finally {
 		}}
 public static RemoteObject  _buildversionplayertext(RemoteObject __ref,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("BuildVersionPlayerText (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,228);
+		Debug.PushSubsStack("BuildVersionPlayerText (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,228);
 if (RapidSub.canDelegate("buildversionplayertext")) { return __ref.runUserSub(false, "playbacktraceformatter","buildversionplayertext", __ref, _details);}
 RemoteObject _versiontext = RemoteObject.createImmutable("");
 RemoteObject _playertext = RemoteObject.createImmutable("");
@@ -877,7 +877,7 @@ return RemoteObject.createImmutable("");
 }
 public static RemoteObject  _defaultifempty(RemoteObject __ref,RemoteObject _value,RemoteObject _fallback) throws Exception{
 try {
-		Debug.PushSubsStack("DefaultIfEmpty (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,333);
+		Debug.PushSubsStack("DefaultIfEmpty (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,333);
 if (RapidSub.canDelegate("defaultifempty")) { return __ref.runUserSub(false, "playbacktraceformatter","defaultifempty", __ref, _value, _fallback);}
 Debug.locals.put("value", _value);
 Debug.locals.put("fallback", _fallback);
@@ -902,7 +902,7 @@ finally {
 		}}
 public static RemoteObject  _extractdetailtail(RemoteObject __ref,RemoteObject _details,RemoteObject _key) throws Exception{
 try {
-		Debug.PushSubsStack("ExtractDetailTail (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,348);
+		Debug.PushSubsStack("ExtractDetailTail (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,348);
 if (RapidSub.canDelegate("extractdetailtail")) { return __ref.runUserSub(false, "playbacktraceformatter","extractdetailtail", __ref, _details, _key);}
 RemoteObject _marker = RemoteObject.createImmutable("");
 RemoteObject _startindex = RemoteObject.createImmutable(0);
@@ -935,7 +935,7 @@ finally {
 		}}
 public static RemoteObject  _extractdetailvalue(RemoteObject __ref,RemoteObject _details,RemoteObject _key) throws Exception{
 try {
-		Debug.PushSubsStack("ExtractDetailValue (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,338);
+		Debug.PushSubsStack("ExtractDetailValue (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,338);
 if (RapidSub.canDelegate("extractdetailvalue")) { return __ref.runUserSub(false, "playbacktraceformatter","extractdetailvalue", __ref, _details, _key);}
 RemoteObject _marker = RemoteObject.createImmutable("");
 RemoteObject _startindex = RemoteObject.createImmutable(0);
@@ -980,7 +980,7 @@ finally {
 		}}
 public static RemoteObject  _initialize(RemoteObject __ref,RemoteObject _ba) throws Exception{
 try {
-		Debug.PushSubsStack("Initialize (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,8);
+		Debug.PushSubsStack("Initialize (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,8);
 if (RapidSub.canDelegate("initialize")) { return __ref.runUserSub(false, "playbacktraceformatter","initialize", __ref, _ba);}
 __ref.runVoidMethodAndSync("innerInitializeHelper", _ba);
 Debug.locals.put("ba", _ba);
@@ -998,7 +998,7 @@ finally {
 		}}
 public static RemoteObject  _joinwords(RemoteObject __ref,RemoteObject _parts) throws Exception{
 try {
-		Debug.PushSubsStack("JoinWords (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,323);
+		Debug.PushSubsStack("JoinWords (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,323);
 if (RapidSub.canDelegate("joinwords")) { return __ref.runUserSub(false, "playbacktraceformatter","joinwords", __ref, _parts);}
 RemoteObject _sb = RemoteObject.declareNull("anywheresoftware.b4a.keywords.StringBuilderWrapper");
 int _i = 0;
@@ -1044,7 +1044,7 @@ finally {
 		}}
 public static RemoteObject  _traceitemlabelfromdetails(RemoteObject __ref,RemoteObject _details) throws Exception{
 try {
-		Debug.PushSubsStack("TraceItemLabelFromDetails (playbacktraceformatter) ","playbacktraceformatter",13,__ref.getField(false, "ba"),__ref,239);
+		Debug.PushSubsStack("TraceItemLabelFromDetails (playbacktraceformatter) ","playbacktraceformatter",20,__ref.getField(false, "ba"),__ref,239);
 if (RapidSub.canDelegate("traceitemlabelfromdetails")) { return __ref.runUserSub(false, "playbacktraceformatter","traceitemlabelfromdetails", __ref, _details);}
 RemoteObject _itemtype = RemoteObject.createImmutable("");
 RemoteObject _itemid = RemoteObject.createImmutable("");

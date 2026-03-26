@@ -65,10 +65,11 @@ public static RemoteObject _fx = RemoteObject.declareNull("anywheresoftware.b4j.
 public static RemoteObject _mainform = RemoteObject.declareNull("anywheresoftware.b4j.objects.Form");
 public static RemoteObject _startedbyhost = RemoteObject.createImmutable(false);
 public static b4j.example.uistyle _uistyle = null;
+public static b4j.example.platformbridge _platformbridge = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
 public static b4j.example.httputils2service _httputils2service = null;
   public Object[] GetGlobals() {
-		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"ExitCodeApplyUpdate",main._exitcodeapplyupdate,"ExitCodeRestart",main._exitcoderestart,"ExitCodeStop",main._exitcodestop,"fx",main._fx,"HostArgument",main._hostargument,"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"LabelName",main._labelname,"mainForm",main._mainform,"startedByHost",main._startedbyhost,"UiStyle",Debug.moduleToString(b4j.example.uistyle.class),"VersionCode",main._versioncode,"VersionName",main._versionname};
+		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"ExitCodeApplyUpdate",main._exitcodeapplyupdate,"ExitCodeRestart",main._exitcoderestart,"ExitCodeStop",main._exitcodestop,"fx",main._fx,"HostArgument",main._hostargument,"HttpUtils2Service",Debug.moduleToString(b4j.example.httputils2service.class),"LabelName",main._labelname,"mainForm",main._mainform,"PlatformBridge",Debug.moduleToString(b4j.example.platformbridge.class),"startedByHost",main._startedbyhost,"UiStyle",Debug.moduleToString(b4j.example.uistyle.class),"VersionCode",main._versioncode,"VersionName",main._versionname};
 }
 }

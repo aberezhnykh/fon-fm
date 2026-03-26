@@ -12,6 +12,29 @@ function player_json_code(mixed $value): string {
     return strtolower(trim((string)$value));
 }
 
+function delete_stale_player_routes(string $dir, string $playerId, string $keepFile): int {
+    if ($playerId === '' || !is_dir($dir)) return 0;
+
+    $deleted = 0;
+    foreach (scandir($dir) ?: [] as $name) {
+        if (!is_string($name) || substr($name, -5) !== '.json') continue;
+        if ($name === $keepFile) continue;
+
+        $path = $dir . '/' . $name;
+        $json = @file_get_contents($path);
+        if (!is_string($json) || $json === '') continue;
+
+        $data = json_decode($json, true);
+        if (!is_array($data)) continue;
+
+        if (trim((string)($data['player'] ?? '')) !== $playerId) continue;
+        @unlink($path);
+        $deleted++;
+    }
+
+    return $deleted;
+}
+
 // Player route JSON содержит только внешний code и внутренние связи.
 $fields = [
     'id',
@@ -101,6 +124,7 @@ foreach ($ids as $id) {
 
     delete_file($outDir, $legacyFile);
     write_json_file($outDir, $routeFile, $json);
+    delete_stale_player_routes($outDir, $id, $routeFile);
     $done[] = ['id' => $id, 'code' => $code, 'written' => true];
 }
 

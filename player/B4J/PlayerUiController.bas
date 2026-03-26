@@ -5,6 +5,8 @@ Type=Class
 Version=10.5
 @EndOfDesignText@
 
+' B4J-only presentation helper. После ревизии общий UI-state останется shared, а визуальная реализация будет платформенной.
+
 ' Presentation helper для player screen.
 ' Держит текстовый/rendering слой отдельно от orchestration, чтобы B4XMainPage был ближе к composition-root.
 

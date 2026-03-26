@@ -60,9 +60,10 @@ public static RemoteObject _tempfolder = RemoteObject.createImmutable("");
 public static RemoteObject _taskcounter = RemoteObject.createImmutable(0);
 public static b4j.example.main _main = null;
 public static b4j.example.uistyle _uistyle = null;
+public static b4j.example.platformbridge _platformbridge = null;
 public static b4j.example.b4xpages _b4xpages = null;
 public static b4j.example.b4xcollections _b4xcollections = null;
   public Object[] GetGlobals() {
-		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"hc",httputils2service._hc,"Main",Debug.moduleToString(b4j.example.main.class),"taskCounter",httputils2service._taskcounter,"TaskIdToJob",httputils2service._taskidtojob,"TempFolder",httputils2service._tempfolder,"UiStyle",Debug.moduleToString(b4j.example.uistyle.class)};
+		return new Object[] {"B4XCollections",Debug.moduleToString(b4j.example.b4xcollections.class),"B4XPages",Debug.moduleToString(b4j.example.b4xpages.class),"hc",httputils2service._hc,"Main",Debug.moduleToString(b4j.example.main.class),"PlatformBridge",Debug.moduleToString(b4j.example.platformbridge.class),"taskCounter",httputils2service._taskcounter,"TaskIdToJob",httputils2service._taskidtojob,"TempFolder",httputils2service._tempfolder,"UiStyle",Debug.moduleToString(b4j.example.uistyle.class)};
 }
 }
